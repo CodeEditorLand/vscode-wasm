@@ -1,22 +1,33 @@
 {
   "name": "testbed-rust-threads",
-  "private": "false",
-  "publisher": "ms-vscode",
   "version": "0.0.1",
+  "private": "false",
   "description": "Rust Threads Example",
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "MIT",
   "author": {
     "name": "Nikola Hristov",
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
   },
-  "license": "MIT",
-  "engines": {
-    "vscode": "1.67.0"
-  },
+  "publisher": "playform",
+  "type": "module",
   "main": "./out/extension.js",
-  "activationEvents": [
-    "*"
-  ],
+  "scripts": {
+    "build": "npm run compile:ts && npm run build:rust",
+    "build:rust": "cargo build --target wasm32-wasi-preview1-threads",
+    "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
+    "wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
+    "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+  },
   "contributes": {
     "commands": [
       {
@@ -26,27 +37,16 @@
       }
     ]
   },
-  "scripts": {
-    "build": "npm run compile:ts && npm run build:rust",
-    "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-    "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-    "build:rust": "cargo build --target wasm32-wasi-preview1-threads",
-    "wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
-  },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
+  "activationEvents": [
+    "*"
+  ],
   "devDependencies": {
     "typescript-esbuild": "0.3.1"
+  },
+  "engines": {
+    "vscode": "1.67.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

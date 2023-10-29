@@ -1,19 +1,7 @@
 {
   "name": "wasm-testbeds",
+  "version": "0.0.1",
   "private": "false",
-  "dependencies": {
-    "vscode-uri": "3.0.8"
-  },
-  "devDependencies": {
-    "@types/vscode": "1.83.1",
-    "typescript-esbuild": "0.3.1"
-  },
-  "scripts": {
-    "clean": "cd ./coreutils && npm run clean",
-    "postinstall": "cd .. && npm run symlink",
-    "lint": "node ../node_modules/eslint/bin/eslint.js --ext ts cpp python rust ruby php threads",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
-  },
   "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
   "bugs": {
     "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
@@ -22,15 +10,28 @@
     "type": "git",
     "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
-  "version": "0.0.1",
   "license": "MIT",
-  "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
   "author": {
     "name": "Nikola Hristov",
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
+  },
+  "publisher": "playform",
+  "type": "module",
+  "scripts": {
+    "clean": "cd ./coreutils && npm run clean",
+    "postinstall": "cd .. && npm run symlink",
+    "lint": "node ../node_modules/eslint/bin/eslint.js --ext ts cpp python rust ruby php threads",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  },
+  "dependencies": {
+    "vscode-uri": "3.0.8"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.83.1",
+    "typescript-esbuild": "0.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

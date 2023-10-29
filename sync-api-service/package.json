@@ -1,59 +1,60 @@
 {
   "name": "@vscode/sync-api-service",
   "version": "0.0.1",
+  "private": "false",
   "description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
-  "engines": {
-    "node": ">=16.14.2",
-    "vscode": "1.71.0"
-  },
-  "main": "./lib/main.js",
-  "typings": "./lib/main.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
   "keywords": [
     "VSCode",
     "API"
   ],
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "MIT",
   "author": {
     "name": "Nikola Hristov",
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "enabledApiProposals": [
-    "fsChunks"
-  ],
-  "dependencies": {
-    "uuid": "9.0.1",
-    "vscode-uri": "3.0.8",
-    "@vscode/sync-api-common": "0.9.0"
-  },
-  "devDependencies": {
-    "@types/vscode": "1.83.1",
-    "@types/uuid": "9.0.6",
-    "typescript-esbuild": "0.3.1"
-  },
+  "publisher": "playform",
+  "type": "module",
+  "main": "./lib/main.js",
+  "typings": "./lib/main.d.ts",
   "scripts": {
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
-    "prepack": "npm run all:publish",
+    "all": "npm run clean && npm run compile && npm run lint && npm run test",
+    "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && cd ../sync-api-tests && npm run all:publish && cd ..",
+    "clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
     "compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
     "compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-    "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
-    "clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
     "lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
+    "prepack": "npm run all:publish",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
     "test": "cd ../sync-api-tests && npm test",
-    "all": "npm run clean && npm run compile && npm run lint && npm run test",
-    "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && cd ../sync-api-tests && npm run all:publish && cd .."
+    "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
   },
-  "type": "module",
-  "private": "false",
+  "dependencies": {
+    "@vscode/sync-api-common": "0.9.0",
+    "uuid": "9.0.1",
+    "vscode-uri": "3.0.8"
+  },
+  "devDependencies": {
+    "@types/uuid": "9.0.6",
+    "@types/vscode": "1.83.1",
+    "typescript-esbuild": "0.3.1"
+  },
+  "engines": {
+    "node": ">=16.14.2",
+    "vscode": "1.71.0"
+  },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "enabledApiProposals": [
+    "fsChunks"
+  ]
 }
