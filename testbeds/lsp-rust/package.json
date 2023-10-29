@@ -1,19 +1,40 @@
 {
-	"name": "lsp-testbed",
-	"description": "LSP Testbed",
-	"version": "0.1.0",
-	"publisher": "vscode",
-	"engines": {
-		"vscode": "1.78.0"
-	},
-	"main": "./client/out/extension.js",
-	"activationEvents": [
-		"onLanguage:bat"
-	],
-	"enabledApiProposals": [
-	],
-	"contributes": {
-	},
-	"scripts": {
-	}
+  "name": "lsp-testbed",
+  "description": "LSP Testbed",
+  "version": "0.0.1",
+  "publisher": "vscode",
+  "engines": {
+    "vscode": "1.78.0"
+  },
+  "main": "./client/out/extension.js",
+  "activationEvents": [
+    "onLanguage:bat"
+  ],
+  "enabledApiProposals": [],
+  "contributes": {},
+  "scripts": {
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  },
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "devDependencies": {
+    "typescript-esbuild": "0.3.1"
+  }
 }

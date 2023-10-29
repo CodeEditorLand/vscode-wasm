@@ -1,10 +1,31 @@
 {
-	"name": "emccc-pure-wasi",
-	"version": "0.1.0",
-	"description": "",
-	"author": "MS",
-	"license": "MIT",
-	"scripts": {
-		"compile": "em++ hello.cpp -o ./out/hello-em.js"
-  	}
+  "name": "emccc-pure-wasi",
+  "version": "0.0.1",
+  "description": "",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "license": "MIT",
+  "scripts": {
+    "compile": "em++ hello.cpp -o ./out/hello-em.js",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  },
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "type": "module",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript-esbuild": "0.3.1"
+  }
 }

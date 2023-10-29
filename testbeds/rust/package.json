@@ -1,31 +1,51 @@
 {
-	"name": "testbed-rust",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.0.1",
-	"description": "Rust Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "1.67.0"
-	},
-	"main": "./out/extension.js",
-	"activationEvents": [
-		"*"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "testbed-rust.run",
-				"category": "wasm",
-				"title": "Run Rust Program"
-			}
-		]
-	},
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"build:rust": "cargo build --target wasm32-wasi"
-	}
+  "name": "testbed-rust",
+  "private": "false",
+  "publisher": "ms-vscode",
+  "version": "0.0.1",
+  "description": "Rust Example",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "1.67.0"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "testbed-rust.run",
+        "category": "wasm",
+        "title": "Run Rust Program"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "npm run compile:ts && npm run build:rust",
+    "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+    "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
+    "build:rust": "cargo build --target wasm32-wasi",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  },
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript-esbuild": "0.3.1"
+  }
 }
