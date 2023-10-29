@@ -22,7 +22,7 @@
 		"shell"
 	],
 	"engines": {
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
@@ -43,7 +43,7 @@
 		"@vscode/wasm-wasi": "0.13.0-pre.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.78.0"
+		"@types/vscode": "1.83.1"
 	},
 	"scripts": {
 		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run esbuild",

@@ -22,20 +22,20 @@
 		"wasi"
 	],
 	"engines": {
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	},
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
 	"activationEvents": [],
 	"dependencies": {
-		"uuid": "^9.0.0"
+		"uuid": "9.0.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.78.0",
-		"@types/uuid": "^9.0.1",
-		"@types/assert": "^1.5.6",
-		"assert": "^2.0.0",
-		"find-process": "^1.4.7"
+		"@types/vscode": "1.83.1",
+		"@types/uuid": "9.0.6",
+		"@types/assert": "1.5.8",
+		"assert": "2.1.0",
+		"find-process": "1.4.7"
 	},
 	"scripts": {
 		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run update:version && npm run esbuild",
