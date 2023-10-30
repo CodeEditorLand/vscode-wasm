@@ -58,24 +58,28 @@ public static class Methods
 
 }
 
-class LSPServer {
+class LSPServer
+{
 
-    private readonly JsonRpc jsonRpc;
+	private readonly JsonRpc jsonRpc;
 
-	public LSPServer(Stream sender, Stream reader) {
+	public LSPServer(Stream sender, Stream reader)
+	{
 		jsonRpc = JsonRpc.Attach(sender, reader, this);
 		jsonRpc.StartListening();
 	}
 
 	[JsonRpcMethod(Methods.Initialize)]
-	public object Initialize(JToken arg) {
+	public object Initialize(JToken arg)
+	{
 		var init_params = arg.ToObject<InitializeParams>();
-		ServerCapabilities capabilities = new ServerCapabilities(declarationProvider: new (true));
+		ServerCapabilities capabilities = new ServerCapabilities(declarationProvider: new(true));
 		return capabilities;
 	}
 
 	[JsonRpcMethod(Methods.TextDocumentDefinition)]
-	public object Definition(JToken arg) {
+	public object Definition(JToken arg)
+	{
 		var declaration_params = arg.ToObject<TextDocumentPositionParams>();
 		var result = new Location(declaration_params.TextDocument.Uri, new Microsoft.LanguageServer.Protocol.Range(new Position(0, 0), new Position(0, 0)));
 		return result;

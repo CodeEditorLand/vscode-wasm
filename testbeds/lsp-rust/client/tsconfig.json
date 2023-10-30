@@ -9,13 +9,9 @@
 		"target": "es2020",
 		"outDir": "out",
 		"rootDir": "src",
-		"lib": [ "es2020", "WebWorker" ],
+		"lib": ["es2020", "WebWorker"],
 		"sourceMap": true
 	},
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["src"],
+	"exclude": ["node_modules"]
 }

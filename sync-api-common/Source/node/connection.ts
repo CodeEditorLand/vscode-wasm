@@ -3,19 +3,27 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { MessagePort, Worker } from 'worker_threads';
+import { MessagePort, Worker } from "worker_threads";
 
-import RAL from '../common/ral';
-import { BaseServiceConnection, BaseClientConnection, Message, RequestType, Params } from '../common/connection';
+import RAL from "../common/ral";
+import {
+	BaseServiceConnection,
+	BaseClientConnection,
+	Message,
+	RequestType,
+	Params,
+} from "../common/connection";
 
-export class ClientConnection<Requests extends RequestType | undefined = undefined, ReadyParams extends Params | undefined = undefined> extends BaseClientConnection<Requests, ReadyParams> {
-
+export class ClientConnection<
+	Requests extends RequestType | undefined = undefined,
+	ReadyParams extends Params | undefined = undefined,
+> extends BaseClientConnection<Requests, ReadyParams> {
 	private readonly port: MessagePort | Worker;
 
 	constructor(port: MessagePort | Worker) {
 		super();
 		this.port = port;
-		this.port.on('message', (message: Message) => {
+		this.port.on("message", (message: Message) => {
 			try {
 				this.handleMessage(message);
 			} catch (error) {
@@ -29,20 +37,25 @@ export class ClientConnection<Requests extends RequestType | undefined = undefin
 	}
 }
 
-export class ServiceConnection<RequestHandlers extends RequestType | undefined = undefined, ReadyParams extends Params | undefined = undefined> extends BaseServiceConnection<RequestHandlers, ReadyParams> {
-
+export class ServiceConnection<
+	RequestHandlers extends RequestType | undefined = undefined,
+	ReadyParams extends Params | undefined = undefined,
+> extends BaseServiceConnection<RequestHandlers, ReadyParams> {
 	private readonly port: MessagePort | Worker;
 
 	constructor(port: MessagePort | Worker) {
 		super();
 		this.port = port;
-		this.port.on('message', async (sharedArrayBuffer: SharedArrayBuffer) => {
-			try {
-				await this.handleMessage(sharedArrayBuffer);
-			} catch (error) {
-				RAL().console.error(error);
+		this.port.on(
+			"message",
+			async (sharedArrayBuffer: SharedArrayBuffer) => {
+				try {
+					await this.handleMessage(sharedArrayBuffer);
+				} catch (error) {
+					RAL().console.error(error);
+				}
 			}
-		});
+		);
 	}
 
 	protected postMessage(message: Message): void {

@@ -1,49 +1,49 @@
 {
-  "name": "testbed-php",
-  "version": "0.0.1",
-  "private": "false",
-  "description": "PHP Example",
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
-  },
-  "publisher": "playform",
-  "type": "module",
-  "main": "./out/extension.js",
-  "scripts": {
-    "build": "npm run compile",
-    "compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
-    "watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-  },
-  "contributes": {
-    "commands": [
-      {
-        "command": "testbed-php.runFile",
-        "category": "wasm",
-        "title": "Run PHP File",
-        "enablement": "editorLangId == php"
-      }
-    ]
-  },
-  "activationEvents": [],
-  "devDependencies": {
-    "typescript-esbuild": "0.3.1"
-  },
-  "engines": {
-    "vscode": "1.67.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "testbed-php",
+	"version": "0.0.1",
+	"private": "false",
+	"description": "PHP Example",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
+	"main": "./out/extension.js",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "testbed-php.runFile",
+				"category": "wasm",
+				"title": "Run PHP File",
+				"enablement": "editorLangId == php"
+			}
+		]
+	},
+	"activationEvents": [],
+	"devDependencies": {
+		"typescript-esbuild": "0.3.1"
+	},
+	"engines": {
+		"vscode": "1.67.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

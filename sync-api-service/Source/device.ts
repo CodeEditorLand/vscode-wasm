@@ -3,10 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { Uri } from 'vscode';
+import { Uri } from "vscode";
 
 export interface Source {
-
 	/**
 	 * A unique URI representing the byte source.
 	 */
@@ -22,7 +21,6 @@ export interface Source {
 }
 
 export interface Sink {
-
 	/**
 	 * A unique URI representing the byte sink.
 	 */
@@ -37,20 +35,22 @@ export interface Sink {
 	write(bytes: Uint8Array): Promise<number>;
 }
 
-export type FileDescriptorDescription = {
-	kind: 'fileSystem';
-	uri: Uri;
-	path: string;
-} | {
-	kind: 'terminal';
-	uri: Uri;
-} | {
-	kind: 'console';
-	uri: Uri;
-};
+export type FileDescriptorDescription =
+	| {
+			kind: "fileSystem";
+			uri: Uri;
+			path: string;
+	  }
+	| {
+			kind: "terminal";
+			uri: Uri;
+	  }
+	| {
+			kind: "console";
+			uri: Uri;
+	  };
 
 export interface CharacterDeviceDriver {
-
 	/**
 	 * A unique URI representing the character device.
 	 */

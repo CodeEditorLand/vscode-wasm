@@ -7,7 +7,6 @@ Installed wasm-wasi sdk
 https://iandouglasscott.com/2019/07/18/experimenting-with-webassembly-dynamic-linking-with-clang/
 https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md
 
-
 ### Normal OS executable (e.g. Linux)
 
 ```
@@ -24,7 +23,10 @@ clang main.c module1.so -o main
 ~/bin/wasi-sdk/bin/clang -Wl,--allow-undefined main.c out/func1.wasm -o main.wasm
 ```
 
-This compiles without any errors and warning however as suspected WASM doesn't dyn-load this (e.g. will not load the `func1.wasm` via something like dlopen). We would need to load it ourself and do the binding between. The `func1.wasm` has a correct `dylink.0` format.
+This compiles without any errors and warning however as suspected WASM doesn't
+dyn-load this (e.g. will not load the `func1.wasm` via something like dlopen).
+We would need to load it ourself and do the binding between. The `func1.wasm`
+has a correct `dylink.0` format.
 
 ### With emscripten
 
@@ -38,7 +40,3 @@ emcc -sSIDE_MODULE out/func1.o -o func1.wasm
 emcc -sMAIN_MODULE main.c func1.wasm -o main.js
 node main.js
 ```
-
-
-
-

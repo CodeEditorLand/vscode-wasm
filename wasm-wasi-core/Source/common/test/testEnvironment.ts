@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { HostConnection, WasiHost } from '../host';
-import { Memory } from './memory';
-import { TestSetup } from './messages';
+import { HostConnection, WasiHost } from "../host";
+import { Memory } from "./memory";
+import { TestSetup } from "./messages";
 
 namespace TestEnvironment {
 	let _wasi: WasiHost | undefined;
@@ -16,14 +16,14 @@ namespace TestEnvironment {
 	}
 	export function wasi(): WasiHost {
 		if (_wasi === undefined) {
-			throw new Error('TestEnvironment not initialized');
+			throw new Error("TestEnvironment not initialized");
 		}
 		return _wasi;
 	}
 
 	export function createMemory(byteLength: number = 65536): Memory {
 		if (_setup === undefined) {
-			throw new Error('TestEnvironment not initialized');
+			throw new Error("TestEnvironment not initialized");
 		}
 		const result = new Memory(byteLength, _setup.shared);
 		_wasi?.initialize(result);
@@ -32,14 +32,14 @@ namespace TestEnvironment {
 
 	export function qualifier(): string {
 		if (_setup === undefined) {
-			throw new Error('TestEnvironment not initialized');
+			throw new Error("TestEnvironment not initialized");
 		}
-		return _setup.shared ? 'SharedArrayBuffer' : 'ArrayBuffer';
+		return _setup.shared ? "SharedArrayBuffer" : "ArrayBuffer";
 	}
 
-	export function stats(): TestSetup['stats'] {
+	export function stats(): TestSetup["stats"] {
 		if (_setup === undefined) {
-			throw new Error('TestEnvironment not initialized');
+			throw new Error("TestEnvironment not initialized");
 		}
 		return _setup?.stats;
 	}
