@@ -1,32 +1,18 @@
 {
 	"name": "testbed-rust",
+	"private": "true",
+	"publisher": "ms-vscode",
 	"version": "0.0.1",
-	"private": "false",
 	"description": "Rust Example",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
+	"author": "MS",
 	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
+	"engines": {
+		"vscode": "^1.67.0"
 	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./out/extension.js",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"build:rust": "cargo build --target wasm32-wasi",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
+	"activationEvents": [
+		"*"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -36,16 +22,10 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"*"
-	],
-	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
-	},
-	"engines": {
-		"vscode": "1.67.0"
-	},
-	"publishConfig": {
-		"access": "public"
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
+		"build:rust": "cargo build --target wasm32-wasi"
 	}
 }

@@ -1,57 +1,44 @@
 {
 	"name": "@vscode/sync-api-common",
-	"version": "0.0.1",
-	"private": "false",
+	"version": "0.9.0",
 	"description": "An RPC implementation between Web and NodeJS workers that works sync",
-	"keywords": [
-		"VSCode",
-		"rpc",
-		"sync"
-	],
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	"engines": {
+		"node": ">=16.14.2"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
-	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
-	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./lib/node/main.js",
 	"browser": {
 		"./lib/node/main.js": "./lib/browser/main.js"
 	},
 	"typings": "./lib/common/api.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+	},
+	"keywords": [
+		"VSCode",
+		"rpc",
+		"sync"
+	],
+	"author": "Visual Studio Code Team",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-wasm/issues"
+	},
+	"homepage": "https://github.com/microsoft/vscode-wasm/blob/main/sync-api-common/README.md",
 	"scripts": {
-		"all": "npm run clean && npm run compile && npm run lint && npm run test",
-		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm run test",
-		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
+		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"prepack": "npm run all:publish",
 		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
 		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-		"esbuild": "node ./bin/esbuild.js",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
+		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
 		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"prepack": "npm run all:publish",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"esbuild": "node ./bin/esbuild.js",
 		"test": "npm run test:node && npm run test:browser",
-		"test:browser": "npm run esbuild && node ../build/bin/runBrowserTests.js  http://127.0.0.1:8080/sync-api-common/src/browser/test/",
 		"test:node": "node ../node_modules/mocha/bin/_mocha",
+		"test:browser": "npm run esbuild && node ../build/bin/runBrowserTests.js  http://127.0.0.1:8080/sync-api-common/src/browser/test/",
 		"test:runServer": "npm run esbuild && node ../build/bin/runServer.js",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-	},
-	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
-	},
-	"engines": {
-		"node": ">=16.14.2"
-	},
-	"publishConfig": {
-		"access": "public"
+		"all": "npm run clean && npm run compile && npm run lint && npm run test",
+		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm run test"
 	}
 }

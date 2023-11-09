@@ -1,35 +1,18 @@
 {
 	"name": "testbed-cpp",
+	"private": "true",
+	"publisher": "ms-vscode",
 	"version": "0.0.1",
-	"private": "false",
 	"description": "C++ Example",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
+	"author": "MS",
 	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
+	"engines": {
+		"vscode": "^1.67.0"
 	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./out/extension.js",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:cpp && npm run build:wasi",
-		"build:cpp": "../../node_modules/.bin/make-dir ./out && g++ hello.cpp -o ./out/hello",
-		"build:em": "../../node_modules/.bin/make-dir ./out && em++ hello.cpp -o ./out/hello-em.js",
-		"build:wasi": "../../node_modules/.bin/make-dir ./out && ~/bin/wasi-sdk/bin/clang++ hello.cpp -o ./out/hello.wasm",
-		"clean": "node ../../node_modules/rimraf/bin.js out",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
+	"activationEvents": [
+		"*"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -39,16 +22,13 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"*"
-	],
-	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
-	},
-	"engines": {
-		"vscode": "1.67.0"
-	},
-	"publishConfig": {
-		"access": "public"
+	"scripts": {
+		"clean": "node ../../node_modules/rimraf/bin.js out",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
+		"build": "npm run compile:ts && npm run build:cpp && npm run build:wasi",
+		"build:cpp": "../../node_modules/.bin/make-dir ./out && g++ hello.cpp -o ./out/hello",
+		"build:wasi": "../../node_modules/.bin/make-dir ./out && ~/bin/wasi-sdk/bin/clang++ hello.cpp -o ./out/hello.wasm",
+		"build:em": "../../node_modules/.bin/make-dir ./out && em++ hello.cpp -o ./out/hello-em.js"
 	}
 }

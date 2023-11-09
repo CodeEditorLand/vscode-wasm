@@ -1,33 +1,23 @@
 {
 	"name": "testbed-python",
+	"private": "true",
+	"publisher": "ms-vscode",
 	"version": "0.0.1",
-	"private": "false",
 	"description": "Python Example",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
+	"author": "MS",
 	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
+	"engines": {
+		"vscode": "^1.67.0"
 	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./out/extension.js",
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
+	"activationEvents": [
+		"onCommand:testbed-python.webshell.python"
+	],
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core",
+		"ms-vscode.webshell"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -67,20 +57,10 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onCommand:testbed-python.webshell.python"
-	],
-	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
-	},
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core",
-		"ms-vscode.webshell"
-	],
-	"engines": {
-		"vscode": "1.67.0"
-	},
-	"publishConfig": {
-		"access": "public"
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
+		"esbuild": "node ./bin/esbuild.js"
 	}
 }

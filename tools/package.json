@@ -1,38 +1,30 @@
 {
 	"name": "@vscode/wasm-tools",
-	"version": "0.0.1",
-	"private": "false",
+	"private": true,
+	"version": "0.1.0",
+	"author": "MS",
+	"license": "MIT",
+	"publisher": "ms-vscode",
 	"description": "Tools for this project",
 	"categories": [
 		"Other"
 	],
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+		"url": "git+https://github.com/microsoft/vscode-wasm.git"
 	},
-	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-wasm/issues"
 	},
-	"publisher": "playform",
-	"type": "module",
+	"homepage": "https://github.com/microsoft/vscode-wasm#readme",
 	"scripts": {
 		"clean": "node ../node_modules/rimraf/bin.js lib",
 		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
+		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src"
+	},
+	"dependencies": {
 	},
 	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
-	},
-	"publishConfig": {
-		"access": "public"
 	}
 }

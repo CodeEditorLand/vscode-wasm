@@ -16,99 +16,84 @@ and limitations under the License.
 
 type BufferSource = ArrayBufferView | ArrayBuffer;
 declare namespace WebAssembly {
-	type ImportExportKind = "function" | "global" | "memory" | "table";
-	type TableKind = "anyfunc" | "externref";
-	type ValueType =
-		| "anyfunc"
-		| "externref"
-		| "f32"
-		| "f64"
-		| "i32"
-		| "i64"
-		| "v128";
-	type ExportValue = Function | Global | Memory | Table;
-	type Exports = Record<string, ExportValue>;
-	type ImportValue = ExportValue | number;
-	type Imports = Record<string, ModuleImports>;
-	type ModuleImports = Record<string, ImportValue>;
 
-	interface GlobalDescriptor {
-		mutable?: boolean;
-		value: ValueType;
-	}
+    type ImportExportKind = 'function' | 'global' | 'memory' | 'table';
+    type TableKind = 'anyfunc' | 'externref';
+    type ValueType = 'anyfunc' | 'externref' | 'f32' | 'f64' | 'i32' | 'i64' | 'v128';
+    type ExportValue = Function | Global | Memory | Table;
+    type Exports = Record<string, ExportValue>;
+    type ImportValue = ExportValue | number;
+    type Imports = Record<string, ModuleImports>;
+    type ModuleImports = Record<string, ImportValue>;
 
-	interface ModuleExportDescriptor {
-		kind: ImportExportKind;
-		name: string;
-	}
+    interface GlobalDescriptor {
+    	mutable?: boolean;
+    	value: ValueType;
+    }
 
-	interface ModuleImportDescriptor {
-		kind: ImportExportKind;
-		module: string;
-		name: string;
-	}
+    interface ModuleExportDescriptor {
+    	kind: ImportExportKind;
+    	name: string;
+    }
 
-	interface TableDescriptor {
-		element: TableKind;
-		initial: number;
-		maximum?: number;
-	}
+    interface ModuleImportDescriptor {
+    	kind: ImportExportKind;
+    	module: string;
+    	name: string;
+    }
 
-	interface Table {
-		readonly length: number;
-		get(index: number): any;
-		grow(delta: number, value?: any): number;
-		set(index: number, value?: any): void;
-	}
+    interface TableDescriptor {
+    	element: TableKind;
+    	initial: number;
+    	maximum?: number;
+    }
 
-	var Table: {
-		prototype: Table;
-		new (descriptor: TableDescriptor, value?: any): Table;
-	};
+    interface Table {
+    	readonly length: number;
+    	get(index: number): any;
+    	grow(delta: number, value?: any): number;
+    	set(index: number, value?: any): void;
+    }
 
-	interface Global {
-		value: any;
-		valueOf(): any;
-	}
+    var Table: {
+    	prototype: Table;
+    	new(descriptor: TableDescriptor, value?: any): Table;
+    };
 
-	var Global: {
-		prototype: Global;
-		new (descriptor: GlobalDescriptor, v?: any): Global;
-	};
+    interface Global {
+    	value: any;
+    	valueOf(): any;
+    }
 
-	interface Instance {
-		readonly exports: Exports;
-	}
+    var Global: {
+    	prototype: Global;
+    	new(descriptor: GlobalDescriptor, v?: any): Global;
+    };
 
-	var Instance: {
-		prototype: Instance;
-		new (module: Module, importObject?: Imports): Instance;
-	};
+    interface Instance {
+    	readonly exports: Exports;
+    }
 
-	var Module: {
-		prototype: Module;
-		new (bytes: BufferSource): Module;
-		customSections(
-			moduleObject: Module,
-			sectionName: string
-		): ArrayBuffer[];
-		exports(moduleObject: Module): ModuleExportDescriptor[];
-		imports(moduleObject: Module): ModuleImportDescriptor[];
-	};
+    var Instance: {
+    	prototype: Instance;
+    	new(module: Module, importObject?: Imports): Instance;
+    };
 
-	interface WebAssemblyInstantiatedSource {
-		instance: Instance;
-		module: Module;
-	}
+    var Module: {
+    	prototype: Module;
+    	new(bytes: BufferSource): Module;
+    	customSections(moduleObject: Module, sectionName: string): ArrayBuffer[];
+    	exports(moduleObject: Module): ModuleExportDescriptor[];
+    	imports(moduleObject: Module): ModuleImportDescriptor[];
+    };
 
-	function compile(bytes: BufferSource): Promise<Module>;
-	function instantiate(
-		bytes: BufferSource,
-		importObject?: Imports
-	): Promise<WebAssemblyInstantiatedSource>;
-	function instantiate(
-		moduleObject: Module,
-		importObject?: Imports
-	): Promise<Instance>;
-	function validate(bytes: BufferSource): boolean;
+    interface WebAssemblyInstantiatedSource {
+    	instance: Instance;
+    	module: Module;
+    }
+
+    function compile(bytes: BufferSource): Promise<Module>;
+    function instantiate(bytes: BufferSource, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;
+    function instantiate(moduleObject: Module, importObject?: Imports): Promise<Instance>;
+    function validate(bytes: BufferSource): boolean;
 }

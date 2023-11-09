@@ -1,40 +1,19 @@
 {
 	"name": "lsp-testbed",
-	"version": "0.0.1",
-	"private": "false",
 	"description": "LSP Testbed",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	"version": "0.1.0",
+	"publisher": "vscode",
+	"engines": {
+		"vscode": "^1.78.0"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
-	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
-	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./client/out/extension.js",
-	"scripts": {
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
-	},
-	"contributes": {},
 	"activationEvents": [
 		"onLanguage:bat"
 	],
-	"devDependencies": {
-		"typescript-esbuild": "0.3.1"
+	"enabledApiProposals": [
+	],
+	"contributes": {
 	},
-	"engines": {
-		"vscode": "1.78.0"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"enabledApiProposals": []
+	"scripts": {
+	}
 }

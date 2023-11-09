@@ -1,63 +1,43 @@
 {
 	"name": "@vscode/sync-api-tests",
-	"version": "0.0.1",
-	"private": "false",
+	"publisher": "ms-vscode",
+	"private": true,
 	"description": "Test cases for the sync vscode API",
+	"version": "0.9.0",
+	"engines": {
+		"vscode": "^1.71.0"
+	},
 	"categories": [
 		"Other"
 	],
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
-	"license": "MIT",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
-	},
-	"publisher": "playform",
-	"type": "module",
-	"main": "./extension.js",
-	"browser": "./extension.js",
-	"scripts": {
-		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test",
-		"clean": "node ../node_modules/rimraf/bin.js lib",
-		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
-		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"symlink:publish": "node ../build/bin/symlink-sync-api-tests-publish.js",
-		"test": "npm run test:desktop && npm run test:web",
-		"test:desktop": "node lib/desktop/runTests.js",
-		"test:runWebTests": "node lib/web/runTests.js",
-		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-	},
-	"contributes": {},
 	"activationEvents": [
 		"*"
 	],
+	"main": "./extension.js",
+	"browser": "./extension.js",
+	"contributes": {},
+	"scripts": {
+		"clean": "node ../node_modules/rimraf/bin.js lib",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
+		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
+		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
+		"esbuild": "node ./bin/esbuild.js",
+		"test": "npm run test:desktop && npm run test:web",
+		"test:desktop": "node lib/desktop/runTests.js",
+		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js",
+		"test:runWebTests": "node lib/web/runTests.js",
+		"symlink:publish": "node ../build/bin/symlink-sync-api-tests-publish.js",
+		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test"
+	},
 	"dependencies": {
 		"@vscode/sync-api-client": "0.9.0",
-		"vscode-uri": "3.0.8"
+		"vscode-uri": "^3.0.7"
 	},
 	"devDependencies": {
-		"@types/uuid": "9.0.6",
-		"@types/vscode": "1.83.1",
-		"find-process": "1.4.7",
-		"typescript-esbuild": "0.3.1",
-		"uuid": "9.0.1"
-	},
-	"engines": {
-		"vscode": "1.71.0"
-	},
-	"publishConfig": {
-		"access": "public"
+		"@types/uuid": "^9.0.0",
+		"@types/vscode": "1.71.0",
+		"uuid": "^9.0.0",
+		"find-process": "^1.4.7"
 	}
 }

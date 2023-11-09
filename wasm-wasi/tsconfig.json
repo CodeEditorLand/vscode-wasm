@@ -1,15 +1,15 @@
 {
-	"compilerOptions": {
-		"incremental": true,
-		"composite": true
-	},
-	"files": [],
-	"references": [
-		{
-			"path": "./src/api/tsconfig.json"
-		},
-		{
-			"path": "./src/tools/tsconfig.json"
-		}
-	]
+    "compilerOptions": {
+        "incremental": true,
+        "composite": true
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./src/api/tsconfig.json"
+        },
+        {
+            "path": "./src/tools/tsconfig.json"
+        }
+    ]
 }
