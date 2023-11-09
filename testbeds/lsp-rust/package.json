@@ -1,19 +1,16 @@
 {
 	"name": "lsp-testbed",
-	"description": "LSP Testbed",
 	"version": "0.1.0",
+	"description": "LSP Testbed",
 	"publisher": "vscode",
-	"engines": {
-		"vscode": "^1.78.0"
-	},
 	"main": "./client/out/extension.js",
+	"scripts": {},
+	"contributes": {},
 	"activationEvents": [
 		"onLanguage:bat"
 	],
-	"enabledApiProposals": [
-	],
-	"contributes": {
+	"engines": {
+		"vscode": "1.78.0"
 	},
-	"scripts": {
-	}
+	"enabledApiProposals": []
 }

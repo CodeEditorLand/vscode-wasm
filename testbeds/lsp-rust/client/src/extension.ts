@@ -3,14 +3,17 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { ExtensionContext, Uri, window, workspace } from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
-import { Wasm, ProcessOptions, Stdio } from '@vscode/wasm-wasi';
-import { runServerProcess } from './lspServer';
-
+import { ExtensionContext, Uri, window, workspace } from "vscode";
+import {
+	LanguageClient,
+	LanguageClientOptions,
+	ServerOptions,
+} from "vscode-languageclient/node";
+import { Wasm, ProcessOptions, Stdio } from "@vscode/wasm-wasi";
+import { runServerProcess } from "./lspServer";
 
 let client: LanguageClient;
-const channel = window.createOutputChannel('LSP Rust Server');
+const channel = window.createOutputChannel("LSP Rust Server");
 
 export async function activate(context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
@@ -18,28 +21,38 @@ export async function activate(context: ExtensionContext) {
 	const serverOptions: ServerOptions = async () => {
 		const stdio: Stdio = {
 			in: {
-				kind: 'pipeIn',
+				kind: "pipeIn",
 			},
 			out: {
-				kind: 'pipeOut'
+				kind: "pipeOut",
 			},
 			err: {
-				kind: 'pipeOut'
-			}
+				kind: "pipeOut",
+			},
 		};
 
 		const options: ProcessOptions = {
 			stdio: stdio,
-			mountPoints: [
-				{ kind: 'workspaceFolder' },
-			]
+			mountPoints: [{ kind: "workspaceFolder" }],
 		};
-		const filename = Uri.joinPath(context.extensionUri, 'server', 'target', 'wasm32-wasi-preview1-threads', 'release', 'server.wasm');
+		const filename = Uri.joinPath(
+			context.extensionUri,
+			"server",
+			"target",
+			"wasm32-wasi-preview1-threads",
+			"release",
+			"server.wasm"
+		);
 		const bits = await workspace.fs.readFile(filename);
 		const module = await WebAssembly.compile(bits);
-		const process = await wasm.createProcess('lsp-server', module, { initial: 160, maximum: 160, shared: true }, options);
+		const process = await wasm.createProcess(
+			"lsp-server",
+			module,
+			{ initial: 160, maximum: 160, shared: true },
+			options
+		);
 
-		const decoder = new TextDecoder('utf-8');
+		const decoder = new TextDecoder("utf-8");
 		process.stderr!.onData((data) => {
 			channel.append(decoder.decode(data));
 		});
@@ -48,18 +61,21 @@ export async function activate(context: ExtensionContext) {
 	};
 
 	const clientOptions: LanguageClientOptions = {
-		documentSelector: [
-			{ language: 'bat' }
-		],
+		documentSelector: [{ language: "bat" }],
 		outputChannel: channel,
-		diagnosticCollectionName: 'markers',
+		diagnosticCollectionName: "markers",
 	};
 
-	client = new LanguageClient('lspClient', 'LSP Client', serverOptions, clientOptions);
+	client = new LanguageClient(
+		"lspClient",
+		"LSP Client",
+		serverOptions,
+		clientOptions
+	);
 	try {
 		await client.start();
 	} catch (error) {
-		client.error(`Start failed`, error, 'force');
+		client.error(`Start failed`, error, "force");
 	}
 }
 

@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "incremental": true,
-        "composite": true
-    },
-    "files": [],
-    "references": [
-        {
-            "path": "./src/api/tsconfig.watch.json"
-        },
-        {
-            "path": "./src/tools/tsconfig.watch.json"
-        }
-    ]
+	"compilerOptions": {
+		"incremental": true,
+		"composite": true
+	},
+	"files": [],
+	"references": [
+		{
+			"path": "./src/api/tsconfig.watch.json"
+		},
+		{
+			"path": "./src/tools/tsconfig.watch.json"
+		}
+	]
 }

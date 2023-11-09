@@ -6,10 +6,10 @@
 			"request": "launch",
 			"name": "Core Testbed",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}/wasm-wasi-core"],
-			"outFiles": [
-				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js"
+			"args": [
+				"--extensionDevelopmentPath=${workspaceRoot}/wasm-wasi-core"
 			],
+			"outFiles": ["${workspaceRoot}/wasm-wasi-core/lib/**/*.js"],
 			"sourceMaps": true
 		},
 		{
@@ -59,7 +59,7 @@
 			],
 			"outFiles": [
 				"${workspaceRoot}/testbeds/rust/out/**/*.js",
-				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js",
+				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js"
 			],
 			"sourceMaps": true,
 			"preLaunchTask": "Build Rust Example"
@@ -75,7 +75,7 @@
 			],
 			"outFiles": [
 				"${workspaceRoot}/testbeds/rust-threads/out/**/*.js",
-				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js",
+				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js"
 			],
 			"sourceMaps": true,
 			"preLaunchTask": "Build Rust Threads Example"
@@ -91,7 +91,7 @@
 			],
 			"outFiles": [
 				"${workspaceRoot}/testbeds/threads/out/**/*.js",
-				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js",
+				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js"
 			],
 			"sourceMaps": true,
 			"preLaunchTask": "Build Thread Example"
@@ -139,7 +139,7 @@
 			],
 			"outFiles": [
 				"${workspaceRoot}/testbeds/cpp/out/**/*.js",
-				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js",
+				"${workspaceRoot}/wasm-wasi-core/lib/**/*.js"
 			],
 			"sourceMaps": true,
 			"preLaunchTask": "Build C++ Example"
@@ -184,7 +184,7 @@
 			"cwd": "${workspaceRoot}/sync-api-common",
 			"runtimeExecutable": null,
 			"runtimeArgs": [],
-			"env": { },
+			"env": {},
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/sync-api-common/lib/**/*.js"],
 			"preLaunchTask": "npm: watch"

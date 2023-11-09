@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import type { Uri } from 'vscode';
+import type { Uri } from "vscode";
 
 interface _Path {
 	dirname(path: string): string;
@@ -15,7 +15,6 @@ interface _Path {
 	sep: string;
 	delimiter: string;
 }
-
 
 interface RAL {
 	readonly path: _Path;

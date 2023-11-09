@@ -4,9 +4,9 @@
  * ------------------------------------------------------------------------------------------ */
 
 // @ts-check
-'use strict';
+"use strict";
 
-const { CompilerOptions } = require('@vscode/tsconfig-gen');
+const { CompilerOptions } = require("@vscode/tsconfig-gen");
 
 /**
  * @typedef {import('@vscode/tsconfig-gen').SharableOptions} SharableOptions
@@ -25,7 +25,7 @@ const { CompilerOptions } = require('@vscode/tsconfig-gen');
 function createPublishProjectDescription(projectDescription) {
 	const result = Object.assign({}, projectDescription);
 	delete result.references;
-	return result
+	return result;
 }
 
 /** @type SharableOptions */
@@ -37,66 +37,66 @@ const general = {
 	compilerOptions: {
 		module: "Node16",
 		moduleResolution: "Node16",
-		target: 'es2020',
-		lib: [ 'es2020' ],
-	}
+		target: "es2020",
+		lib: ["es2020"],
+	},
 };
 
 /** @type SharableOptions */
 const testMixin = {
 	compilerOptions: {
-		types: ['mocha']
-	}
+		types: ["mocha"],
+	},
 };
 
 /** @type SharableOptions */
 const vscodeMixin = {
 	compilerOptions: {
-		types: ['vscode']
-	}
+		types: ["vscode"],
+	},
 };
 
 /** @type SharableOptions */
 const common = {
-	extends: [ general ],
+	extends: [general],
 	compilerOptions: {
-		rootDir: '.'
+		rootDir: ".",
 	},
-	include: ['.']
+	include: ["."],
 };
 
 /** @type SharableOptions */
 const browser = {
-	extends: [ general ],
+	extends: [general],
 	compilerOptions: {
-		rootDir: '.',
+		rootDir: ".",
 		types: [],
-		lib: [ 'webworker' ]
+		lib: ["webworker"],
 	},
-	include: ['.']
+	include: ["."],
 };
 
 /** @type SharableOptions */
 const node = {
-	extends: [ general ],
+	extends: [general],
 	compilerOptions: {
-		rootDir: '.',
-		types: ['node']
+		rootDir: ".",
+		types: ["node"],
 	},
-	include: ['.']
+	include: ["."],
 };
 
 /** @type SharableOptions */
 const webworker = {
 	compilerOptions: {
-		lib: [ 'webworker' ]
-	}
-}
+		lib: ["webworker"],
+	},
+};
 
 /** @type SharableOptions */
 const referenced = {
 	compilerOptions: {
-		composite: true
+		composite: true,
 	},
 };
 
@@ -105,268 +105,269 @@ const testbedOptions = {
 	compilerOptions: {
 		rootDir: ".",
 		skipLibCheck: true,
-		lib: [ "es2020", "webworker"],
+		lib: ["es2020", "webworker"],
 		types: ["node", "vscode"],
 		module: "Node16",
 		moduleResolution: "Node16",
-		outDir: "./out"
-	}
+		outDir: "./out",
+	},
 };
 
 /** @type ProjectDescription */
 const sync_api_common = {
-	name: 'sync-api-common',
-	path: './sync-api-common',
+	name: "sync-api-common",
+	path: "./sync-api-common",
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	sourceFolders: [
 		{
-			path: './src/common',
-			extends: [ common ],
-			exclude: [ 'test' ],
+			path: "./src/common",
+			extends: [common],
+			exclude: ["test"],
 		},
 		{
-			path: './src/common/test',
-			extends: [ common, testMixin ],
-			references: [ '..' ]
+			path: "./src/common/test",
+			extends: [common, testMixin],
+			references: [".."],
 		},
 		{
-			path: './src/browser',
-			extends: [ browser ],
-			exclude: [ 'test' ],
-			references: [ '../common' ]
+			path: "./src/browser",
+			extends: [browser],
+			exclude: ["test"],
+			references: ["../common"],
 		},
 		{
-			path: './src/browser/test',
-			extends: [ browser, testMixin ],
-			references: [ '../../common/test', '..' ]
+			path: "./src/browser/test",
+			extends: [browser, testMixin],
+			references: ["../../common/test", ".."],
 		},
 		{
-			path: './src/node',
-			extends: [ node ],
-			exclude: [ 'test' ],
-			references: [ '../common' ]
+			path: "./src/node",
+			extends: [node],
+			exclude: ["test"],
+			references: ["../common"],
 		},
 		{
-			path: './src/node/test',
-			extends: [ node, testMixin ],
-			references: [ '../../common/test', '..' ]
-		}
-	]
+			path: "./src/node/test",
+			extends: [node, testMixin],
+			references: ["../../common/test", ".."],
+		},
+	],
 };
 
 /** @type ProjectDescription */
 const sync_api_client = {
-	name: 'sync-api-client',
-	path: './sync-api-client',
-	extends: [ common, referenced ],
+	name: "sync-api-client",
+	path: "./sync-api-client",
+	extends: [common, referenced],
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	compilerOptions: {
-		rootDir: './src'
+		rootDir: "./src",
 	},
-	references: [
-		sync_api_common
-	]
+	references: [sync_api_common],
 };
 
 /** @type ProjectDescription */
 const sync_api_service = {
-	name: 'sync-api-service',
-	path: './sync-api-service',
-	extends: [ common, vscodeMixin, referenced ],
+	name: "sync-api-service",
+	path: "./sync-api-service",
+	extends: [common, vscodeMixin, referenced],
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	compilerOptions: {
-		rootDir: './src'
+		rootDir: "./src",
 	},
-	references: [
-		sync_api_common
-	]
+	references: [sync_api_common],
 };
 
 /** @type ProjectDescription */
 const sync_api_tests = {
-	name: 'sync-api-tests',
-	path: './sync-api-tests',
-	extends: [ common, vscodeMixin, testMixin ],
+	name: "sync-api-tests",
+	path: "./sync-api-tests",
+	extends: [common, vscodeMixin, testMixin],
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	compilerOptions: {
-		rootDir: './src'
+		rootDir: "./src",
 	},
-	references: [
-		sync_api_client, sync_api_service
-	]
+	references: [sync_api_client, sync_api_service],
 };
 
 /** @type ProjectDescription */
 const wasm_wasi_core = {
-	name: 'wasm-wasi-core',
-	path: './wasm-wasi-core',
+	name: "wasm-wasi-core",
+	path: "./wasm-wasi-core",
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	sourceFolders: [
 		{
-			path: './src/common',
-			extends: [ common, vscodeMixin ],
-			exclude: [ 'test' ]
+			path: "./src/common",
+			extends: [common, vscodeMixin],
+			exclude: ["test"],
 		},
 		{
-			path: './src/common/test',
-			extends: [ common, vscodeMixin, testMixin ],
-			references: [ '..' ]
+			path: "./src/common/test",
+			extends: [common, vscodeMixin, testMixin],
+			references: [".."],
 		},
 		{
-			path: './src/web',
-			extends: [ browser, vscodeMixin ],
-			exclude: [ 'test' ],
-			references: [ '../common' ]
+			path: "./src/web",
+			extends: [browser, vscodeMixin],
+			exclude: ["test"],
+			references: ["../common"],
 		},
 		{
-			path: './src/web/test',
-			extends: [ browser, vscodeMixin, testMixin, node ],
-			references: [ '..', '../../common/test' ]
+			path: "./src/web/test",
+			extends: [browser, vscodeMixin, testMixin, node],
+			references: ["..", "../../common/test"],
 		},
 		{
-			path: './src/desktop',
-			extends: [ node, vscodeMixin ],
-			exclude: [ 'test' ],
-			references: [ '../common' ]
+			path: "./src/desktop",
+			extends: [node, vscodeMixin],
+			exclude: ["test"],
+			references: ["../common"],
 		},
 		{
-			path: './src/desktop/test',
-			extends: [ node, vscodeMixin, testMixin],
-			references: [ '..', '../../common/test' ]
-		}
-	]
+			path: "./src/desktop/test",
+			extends: [node, vscodeMixin, testMixin],
+			references: ["..", "../../common/test"],
+		},
+	],
 };
 
 /** @type ProjectDescription */
 const wasm_wasi = {
-	name: 'wasm-wasi',
-	path: './wasm-wasi',
+	name: "wasm-wasi",
+	path: "./wasm-wasi",
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	sourceFolders: [
 		{
-			path: './src/api',
-			extends: [ common, vscodeMixin ],
+			path: "./src/api",
+			extends: [common, vscodeMixin],
 		},
 		{
-			path: './src/tools',
-			extends: [ node ],
-		}
-	]
-}
+			path: "./src/tools",
+			extends: [node],
+		},
+	],
+};
 
 /** @type ProjectDescription */
 const webshell = {
-	name: 'webshell',
-	path: './webshell',
+	name: "webshell",
+	path: "./webshell",
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	sourceFolders: [
 		{
-			path: './src/common',
-			extends: [ common, vscodeMixin ],
+			path: "./src/common",
+			extends: [common, vscodeMixin],
 		},
 		{
-			path: './src/web',
-			extends: [ browser, vscodeMixin ],
-			references: [ '../common' ]
+			path: "./src/web",
+			extends: [browser, vscodeMixin],
+			references: ["../common"],
 		},
 		{
-			path: './src/desktop',
-			extends: [ node, vscodeMixin ],
-			references: [ '../common' ]
-		}
+			path: "./src/desktop",
+			extends: [node, vscodeMixin],
+			references: ["../common"],
+		},
 	],
-	references: [
-		wasm_wasi
-	]
+	references: [wasm_wasi],
 };
 
 /** @type ProjectDescription */
 const tools = {
-	name: 'tools',
-	path: './tools',
-	extends: [ node ],
+	name: "tools",
+	path: "./tools",
+	extends: [node],
 	out: {
-		dir: './lib',
-		buildInfoFile: '${buildInfoFile}.tsbuildInfo'
+		dir: "./lib",
+		buildInfoFile: "${buildInfoFile}.tsbuildInfo",
 	},
 	compilerOptions: {
-		rootDir: './src'
-	}
+		rootDir: "./src",
+	},
 };
 
 /** @type ProjectDescription */
 const testbed_coreutils = {
 	name: "coreutils",
-	path: './testbeds/coreutils',
-	extends: [ testbedOptions ],
-	out:  {
-		dir: './out'
-	}
-}
+	path: "./testbeds/coreutils",
+	extends: [testbedOptions],
+	out: {
+		dir: "./out",
+	},
+};
 
 /** @type ProjectDescription */
 const testbed_cpp = {
 	name: "cpp",
-	path: './testbeds/cpp',
-	extends: [ testbedOptions ],
-	out:  {
-		dir: './out'
-	}
-}
+	path: "./testbeds/cpp",
+	extends: [testbedOptions],
+	out: {
+		dir: "./out",
+	},
+};
 
 /** @type ProjectDescription */
 const testbed_python = {
 	name: "python",
-	path: './testbeds/python',
-	extends: [ testbedOptions ],
-	out:  {
-		dir: './out'
-	}
-}
+	path: "./testbeds/python",
+	extends: [testbedOptions],
+	out: {
+		dir: "./out",
+	},
+};
 
 /** @type ProjectDescription */
 const testbed_rust = {
 	name: "rust",
-	path: './testbeds/rust',
-	extends: [ testbedOptions ],
-	out:  {
-		dir: './out'
-	}
-}
+	path: "./testbeds/rust",
+	extends: [testbedOptions],
+	out: {
+		dir: "./out",
+	},
+};
 
 /** @type ProjectDescription */
 const testbeds = {
-	name: 'testbeds',
-	path: './testbeds',
-	references: [ testbed_coreutils, testbed_cpp, testbed_python, testbed_rust ]
-}
+	name: "testbeds",
+	path: "./testbeds",
+	references: [testbed_coreutils, testbed_cpp, testbed_python, testbed_rust],
+};
 
 /** @type ProjectDescription */
 const root = {
-	name: 'root',
-	path: './',
-	references: [ sync_api_common, sync_api_client, sync_api_service, sync_api_tests, wasm_wasi_core, wasm_wasi, webshell, tools ]
+	name: "root",
+	path: "./",
+	references: [
+		sync_api_common,
+		sync_api_client,
+		sync_api_service,
+		sync_api_tests,
+		wasm_wasi_core,
+		wasm_wasi,
+		webshell,
+		tools,
+	],
 };
 
 /** @type CompilerOptions */
@@ -376,7 +377,7 @@ const defaultCompilerOptions = {
 	noImplicitReturns: true,
 	noImplicitThis: true,
 	declaration: true,
-	stripInternal: true
+	stripInternal: true,
 };
 
 /** @type CompilerOptions */
@@ -388,10 +389,10 @@ const compileCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 
 /** @type ProjectOptions */
 const compileProjectOptions = {
-	tags: ['compile'],
-	tsconfig: 'tsconfig.json',
-	variables: new Map([['buildInfoFile', 'compile']]),
-	compilerOptions: compileCompilerOptions
+	tags: ["compile"],
+	tsconfig: "tsconfig.json",
+	variables: new Map([["buildInfoFile", "compile"]]),
+	compilerOptions: compileCompilerOptions,
 };
 
 /** @type CompilerOptions */
@@ -404,10 +405,10 @@ const watchCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 
 /** @type ProjectOptions */
 const watchProjectOptions = {
-	tags: ['watch'],
-	tsconfig: 'tsconfig.watch.json',
-	variables: new Map([['buildInfoFile', 'watch']]),
-	compilerOptions: watchCompilerOptions
+	tags: ["watch"],
+	tsconfig: "tsconfig.watch.json",
+	variables: new Map([["buildInfoFile", "watch"]]),
+	compilerOptions: watchCompilerOptions,
 };
 
 /** @type CompilerOptions */
@@ -419,35 +420,38 @@ const publishCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 
 /** @type ProjectOptions */
 const publishProjectOptions = {
-	tags: ['publish'],
-	tsconfig: 'tsconfig.publish.json',
-	variables: new Map([['buildInfoFile', 'publish']]),
-	compilerOptions: publishCompilerOptions
+	tags: ["publish"],
+	tsconfig: "tsconfig.publish.json",
+	variables: new Map([["buildInfoFile", "publish"]]),
+	compilerOptions: publishCompilerOptions,
 };
 
 /** @type Projects */
 const projects = [
-	[ sync_api_common, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(sync_api_common), [ publishProjectOptions] ],
-	[ sync_api_client, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(sync_api_client), [ publishProjectOptions ] ],
-	[ sync_api_service, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(sync_api_service), [ publishProjectOptions ] ],
-	[ sync_api_tests, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(sync_api_tests), [ publishProjectOptions ] ],
-	[ wasm_wasi_core, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(wasm_wasi_core), [ publishProjectOptions ] ],
-	[ wasm_wasi, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(wasm_wasi), [ publishProjectOptions ] ],
-	[ webshell, [ compileProjectOptions, watchProjectOptions ] ],
-	[ createPublishProjectDescription(webshell), [ publishProjectOptions ] ],
-	[ tools, [ compileProjectOptions, watchProjectOptions ] ],
-	[ root, [compileProjectOptions, watchProjectOptions ] ],
-	[ testbed_coreutils, [ compileProjectOptions ] ],
-	[ testbed_cpp, [ compileProjectOptions ] ],
-	[ testbed_python, [ compileProjectOptions ] ],
-	[ testbed_rust, [ compileProjectOptions ] ],
-	[ testbeds, [ compileProjectOptions ] ]
+	[sync_api_common, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(sync_api_common), [publishProjectOptions]],
+	[sync_api_client, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(sync_api_client), [publishProjectOptions]],
+	[sync_api_service, [compileProjectOptions, watchProjectOptions]],
+	[
+		createPublishProjectDescription(sync_api_service),
+		[publishProjectOptions],
+	],
+	[sync_api_tests, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(sync_api_tests), [publishProjectOptions]],
+	[wasm_wasi_core, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(wasm_wasi_core), [publishProjectOptions]],
+	[wasm_wasi, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(wasm_wasi), [publishProjectOptions]],
+	[webshell, [compileProjectOptions, watchProjectOptions]],
+	[createPublishProjectDescription(webshell), [publishProjectOptions]],
+	[tools, [compileProjectOptions, watchProjectOptions]],
+	[root, [compileProjectOptions, watchProjectOptions]],
+	[testbed_coreutils, [compileProjectOptions]],
+	[testbed_cpp, [compileProjectOptions]],
+	[testbed_python, [compileProjectOptions]],
+	[testbed_rust, [compileProjectOptions]],
+	[testbeds, [compileProjectOptions]],
 ];
 
 module.exports = projects;

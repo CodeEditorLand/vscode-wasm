@@ -3,9 +3,16 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { WasmProcess, Readable, Writable } from '@vscode/wasm-wasi';
-import { Message, WriteableStreamMessageWriter, Disposable, Emitter, Event, ReadableStreamMessageReader, MessageTransports } from 'vscode-languageclient/node';
-
+import { WasmProcess, Readable, Writable } from "@vscode/wasm-wasi";
+import {
+	Message,
+	WriteableStreamMessageWriter,
+	Disposable,
+	Emitter,
+	Event,
+	ReadableStreamMessageReader,
+	MessageTransports,
+} from "vscode-languageclient/node";
 
 interface ReadableStream {
 	onData(listener: (data: Uint8Array) => void): Disposable;
@@ -15,8 +22,9 @@ interface ReadableStream {
 }
 
 class ReadableStreamImpl implements ReadableStream {
-
-	private readonly errorEmitter: Emitter<[Error, Message | undefined, number | undefined]>;
+	private readonly errorEmitter: Emitter<
+		[Error, Message | undefined, number | undefined]
+	>;
 	private readonly closeEmitter: Emitter<void>;
 	private readonly endEmitter: Emitter<void>;
 
@@ -33,7 +41,9 @@ class ReadableStreamImpl implements ReadableStream {
 		return this.readable.onData;
 	}
 
-	public get onError(): Event<[Error, Message | undefined, number | undefined]> {
+	public get onError(): Event<
+		[Error, Message | undefined, number | undefined]
+	> {
 		return this.errorEmitter.event;
 	}
 
@@ -58,7 +68,7 @@ class ReadableStreamImpl implements ReadableStream {
 	}
 }
 
-type MessageBufferEncoding = 'ascii' | 'utf-8';
+type MessageBufferEncoding = "ascii" | "utf-8";
 interface WritableStream {
 	onClose(listener: () => void): Disposable;
 	onError(listener: (error: any) => void): Disposable;
@@ -69,8 +79,9 @@ interface WritableStream {
 }
 
 class WritableStreamImpl implements WritableStream {
-
-	private readonly errorEmitter: Emitter<[Error, Message | undefined, number | undefined]>;
+	private readonly errorEmitter: Emitter<
+		[Error, Message | undefined, number | undefined]
+	>;
 	private readonly closeEmitter: Emitter<void>;
 	private readonly endEmitter: Emitter<void>;
 
@@ -83,7 +94,9 @@ class WritableStreamImpl implements WritableStream {
 		this.writable = writable;
 	}
 
-	public get onError(): Event<[Error, Message | undefined, number | undefined]> {
+	public get onError(): Event<
+		[Error, Message | undefined, number | undefined]
+	> {
 		return this.errorEmitter.event;
 	}
 
@@ -107,36 +120,54 @@ class WritableStreamImpl implements WritableStream {
 		this.endEmitter.fire(undefined);
 	}
 
-	public write(data: string | Uint8Array, _encoding?: MessageBufferEncoding): Promise<void> {
-		if (typeof data === 'string') {
-			return this.writable.write(data, 'utf-8');
+	public write(
+		data: string | Uint8Array,
+		_encoding?: MessageBufferEncoding
+	): Promise<void> {
+		if (typeof data === "string") {
+			return this.writable.write(data, "utf-8");
 		} else {
 			return this.writable.write(data);
 		}
 	}
 
-	public end(): void {
-	}
+	public end(): void {}
 }
 
-export async function runServerProcess(process: WasmProcess, readable: Readable | undefined = process.stdout, writable: Writable | undefined = process.stdin): Promise<MessageTransports> {
-
+export async function runServerProcess(
+	process: WasmProcess,
+	readable: Readable | undefined = process.stdout,
+	writable: Writable | undefined = process.stdin
+): Promise<MessageTransports> {
 	if (readable === undefined || writable === undefined) {
-		throw new Error('Process created without streams or no streams provided.');
+		throw new Error(
+			"Process created without streams or no streams provided."
+		);
 	}
 
 	const reader = new ReadableStreamImpl(readable);
 	const writer = new WritableStreamImpl(writable);
 
-	process.run().then((value) => {
-		if (value === 0) {
-			reader.fireEnd();
-		} else {
-			reader.fireError([new Error(`Process exited with code: ${value}`), undefined, undefined]);
+	process.run().then(
+		(value) => {
+			if (value === 0) {
+				reader.fireEnd();
+			} else {
+				reader.fireError([
+					new Error(`Process exited with code: ${value}`),
+					undefined,
+					undefined,
+				]);
+			}
+		},
+		(error) => {
+			reader.fireError([error, undefined, undefined]);
 		}
-	}, (error) => {
-		reader.fireError([error, undefined, undefined]);
-	});
+	);
 
-	return { reader: new ReadableStreamMessageReader(reader), writer: new WriteableStreamMessageWriter(writer), detached: false };
+	return {
+		reader: new ReadableStreamMessageReader(reader),
+		writer: new WriteableStreamMessageWriter(writer),
+		detached: false,
+	};
 }

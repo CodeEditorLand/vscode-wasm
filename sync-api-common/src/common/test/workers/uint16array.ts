@@ -4,13 +4,13 @@
  * ------------------------------------------------------------------------------------------ */
 /* eslint-disable no-console */
 
-import { RAL, Uint16Result } from '../../api';
-import { assertResult, runSingle } from './tests';
+import { RAL, Uint16Result } from "../../api";
+import { assertResult, runSingle } from "./tests";
 
 export function run(): void {
 	runSingle((connection) => {
 		const resultType = Uint16Result.fromLength(16);
-		const result = connection.sendRequest('uint16array', resultType, 50);
+		const result = connection.sendRequest("uint16array", resultType, 50);
 		assertResult(result, resultType, 16, 1);
 	}).catch(RAL().console.error);
 }

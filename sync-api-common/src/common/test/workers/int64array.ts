@@ -4,13 +4,13 @@
  * ------------------------------------------------------------------------------------------ */
 /* eslint-disable no-console */
 
-import { RAL, Int64Result } from '../../api';
-import { assertResult, runSingle } from './tests';
+import { RAL, Int64Result } from "../../api";
+import { assertResult, runSingle } from "./tests";
 
 export function run(): void {
 	runSingle((connection) => {
 		const resultType = Int64Result.fromLength(64);
-		const result = connection.sendRequest('int64array', resultType, 50);
+		const result = connection.sendRequest("int64array", resultType, 50);
 		assertResult(result, resultType, 64, -1);
 	}).catch(RAL().console.error);
 }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 //@ts-check
-import * as esbuild from 'esbuild'
+import * as esbuild from "esbuild";
 
 /**
  * @typedef {import('esbuild').BuildOptions} BuildOptions
@@ -12,25 +12,25 @@ import * as esbuild from 'esbuild'
 /** @type BuildOptions */
 const sharedBrowserOptions = {
 	bundle: true,
-	external: ['vscode'],
-	target: 'es2020',
-	platform: 'browser',
+	external: ["vscode"],
+	target: "es2020",
+	platform: "browser",
 	sourcemap: true,
 };
 
 /** @type BuildOptions */
 const webOptions = {
-	entryPoints: ['extension.ts'],
-	outfile: 'dist/web/extension.js',
-	format: 'cjs',
+	entryPoints: ["extension.ts"],
+	outfile: "dist/web/extension.js",
+	format: "cjs",
 	...sharedBrowserOptions,
 };
 
 /** @type BuildOptions */
 const webWorkerOptions = {
-	entryPoints: ['worker.ts'],
-	outfile: 'dist/web/worker.js',
-	format: 'iife',
+	entryPoints: ["worker.ts"],
+	outfile: "dist/web/worker.js",
+	format: "iife",
 	...sharedBrowserOptions,
 };
 

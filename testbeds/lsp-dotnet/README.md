@@ -8,7 +8,8 @@ You can build the app from Visual Studio or from the command-line:
 dotnet build -c Debug/Release
 ```
 
-After building the app, the result is in the `bin/$(Configuration)/net8.0/wasi-wasm/AppBundle` directory.
+After building the app, the result is in the
+`bin/$(Configuration)/net8.0/wasi-wasm/AppBundle` directory.
 
 ## Run
 

@@ -3,15 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DeviceDriver } from './deviceDriver';
+import { DeviceDriver } from "./deviceDriver";
 import {
-	Errno, fd, fdflags, Filetype, filetype, oflags, Rights, rights, WasiError
-} from './wasi';
+	Errno,
+	fd,
+	fdflags,
+	Filetype,
+	filetype,
+	oflags,
+	Rights,
+	rights,
+	WasiError,
+} from "./wasi";
 
 type DeviceId = bigint;
 
 export interface FileDescriptor {
-
 	readonly deviceId: DeviceId;
 
 	/**
@@ -105,7 +112,6 @@ export interface FileDescriptor {
 }
 
 export abstract class BaseFileDescriptor implements FileDescriptor {
-
 	public readonly deviceId: bigint;
 
 	public readonly fd: fd;
@@ -120,7 +126,15 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 
 	public readonly inode: bigint;
 
-	constructor(deviceId: bigint, fd: fd, fileType: filetype, rights_base: rights, rights_inheriting: rights, fdflags: fdflags, inode: bigint) {
+	constructor(
+		deviceId: bigint,
+		fd: fd,
+		fileType: filetype,
+		rights_base: rights,
+		rights_inheriting: rights,
+		fdflags: fdflags,
+		inode: bigint
+	) {
 		this.deviceId = deviceId;
 		this.fd = fd;
 		this.fileType = fileType;
@@ -159,7 +173,6 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		throw new WasiError(Errno.perm);
 	}
 
-
 	public assertFdflags(fdflags: fdflags): void {
 		if (!Rights.supportFdflags(this.rights_base, fdflags)) {
 			throw new WasiError(Errno.perm);
@@ -184,33 +197,31 @@ export interface FdProvider {
 }
 
 export class FileDescriptors implements FdProvider {
-
 	private readonly descriptors: Map<fd, FileDescriptor> = new Map();
 	private readonly rootDescriptors: Map<DeviceId, FileDescriptor> = new Map();
 
-	private mode: 'init' | 'running' = 'init';
+	private mode: "init" | "running" = "init";
 	private counter: fd = 0;
 	private firstReal: fd = 3;
 
-	constructor() {
-	}
+	constructor() {}
 
 	public get firstRealFileDescriptor(): fd {
 		return this.firstReal;
 	}
 
 	public next(): fd {
-		if (this.mode === 'init') {
+		if (this.mode === "init") {
 			throw new WasiError(Errno.inval);
 		}
 		return this.counter++;
 	}
 
 	public switchToRunning(start: fd): void {
-		if (this.mode === 'running') {
+		if (this.mode === "running") {
 			throw new WasiError(Errno.inval);
 		}
-		this.mode = 'running';
+		this.mode = "running";
 		this.counter = start;
 		this.firstReal = start;
 	}

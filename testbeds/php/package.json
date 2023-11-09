@@ -1,17 +1,17 @@
 {
 	"name": "testbed-php",
-	"private": "true",
-	"publisher": "ms-vscode",
 	"version": "0.0.1",
+	"private": "true",
 	"description": "PHP Example",
-	"author": "MS",
 	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
-	},
+	"author": "MS",
+	"publisher": "ms-vscode",
 	"main": "./out/extension.js",
-	"activationEvents": [
-	],
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -22,9 +22,8 @@
 			}
 		]
 	},
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	"activationEvents": [],
+	"engines": {
+		"vscode": "1.67.0"
 	}
 }
