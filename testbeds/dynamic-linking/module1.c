@@ -1,4 +1,6 @@
 
 int bar();
 
-int foo() { return 1 + bar(); }
+int foo() {
+	return 1 + bar();
+}

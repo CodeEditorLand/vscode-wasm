@@ -6,7 +6,7 @@
 #define NUM_THREADS 10
 
 void *thread_entry_point(void *ctx) {
-	int id = (int)ctx;
+	int id = (int) ctx;
 	printf(" in thread %d\n", id);
 	return 0;
 }
@@ -14,8 +14,7 @@ void *thread_entry_point(void *ctx) {
 int main(int argc, char **argv) {
 	pthread_t threads[10];
 	for (int i = 0; i < NUM_THREADS; i++) {
-		int ret =
-			pthread_create(&threads[i], NULL, &thread_entry_point, (void *)i);
+		int ret = pthread_create(&threads[i], NULL, &thread_entry_point, (void *) i);
 		if (ret) {
 			printf("failed to spawn thread: %s", strerror(ret));
 		}
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
 		printf("Thread %d joined with result: %i\n", i, ret);
 	}
 
-	sleep(5);
-	printf("After sleep\n");
-	return 0;
+  sleep(5);
+  printf("After sleep\n");
+  return 0;
 }

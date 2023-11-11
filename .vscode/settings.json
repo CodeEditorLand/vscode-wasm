@@ -1,10 +1,14 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-	"git.branchProtection": ["main"],
+	"git.branchProtection": [
+		"main"
+	],
 	"git.branchProtectionPrompt": "alwaysCommitToNewBranch",
 	"editor.insertSpaces": false,
 	"[markdown][typescript]": {
-		"editor.rulers": [80]
+		"editor.rulers": [
+			80
+		]
 	},
 	"files.eol": "\n",
 	"files.trimTrailingWhitespace": true,
@@ -27,18 +31,23 @@
 
 	"eslint.format.enable": true,
 	"eslint.enable": true,
-	"eslint.validate": ["typescript"],
+	"eslint.validate": [
+		"typescript"
+	],
 	"eslint.useESLintClass": true,
 	"eslint.workingDirectories": [
 		"./sync-api-common",
 		"./sync-api-client",
 		"./sync-api-service",
 		"./sync-api-tests",
+		"./wasm-component-model",
+		"./wasi",
 		"./wasm-wasi-core",
 		"./wasm-wasi",
 		"./webshell",
 		"./tools",
-		"./testbeds"
+		"./testbeds",
+		"./preview2"
 	],
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true

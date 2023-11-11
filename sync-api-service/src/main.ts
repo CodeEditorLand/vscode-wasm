@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-export * from "@vscode/sync-api-common";
-export * from "./apiService";
-export * from "./device";
-export * from "./terminal";
+export * from '@vscode/sync-api-common';
+export * from './apiService';
+export * from './device';
+export * from './terminal';

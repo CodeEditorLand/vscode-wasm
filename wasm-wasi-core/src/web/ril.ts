@@ -2,12 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import type { Disposable } from "vscode";
+import type { Disposable } from 'vscode';
 
-import RAL from "../common/ral";
-import * as path from "./path";
+import RAL from '../common/ral';
+import * as path from './path';
 
-interface RIL extends RAL {}
+interface RIL extends RAL {
+}
 
 // In Browser environments we can only encode / decode utf-8
 const encoder: RAL.TextEncoder = new TextEncoder();
@@ -15,12 +16,12 @@ const decoder: RAL.TextDecoder = new TextDecoder();
 
 const _ril: RIL = Object.freeze<RIL>({
 	TextEncoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextEncoder {
+		create(_encoding: string = 'utf-8'): RAL.TextEncoder {
 			return encoder;
-		},
+		}
 	}),
 	TextDecoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextDecoder {
+		create(_encoding: string = 'utf-8'): RAL.TextDecoder {
 			return {
 				decode(input?: Uint8Array): string {
 					if (input === undefined) {
@@ -32,33 +33,22 @@ const _ril: RIL = Object.freeze<RIL>({
 							return decoder.decode(input);
 						}
 					}
-				},
+				}
 			};
-		},
+		}
 	}),
 	console: console,
 	timer: Object.freeze({
-		setTimeout(
-			callback: (...args: any[]) => void,
-			ms: number,
-			...args: any[]
-		): Disposable {
+		setTimeout(callback: (...args: any[]) => void, ms: number, ...args: any[]): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
 			return { dispose: () => clearTimeout(handle) };
 		},
-		setImmediate(
-			callback: (...args: any[]) => void,
-			...args: any[]
-		): Disposable {
+		setImmediate(callback: (...args: any[]) => void, ...args: any[]): Disposable {
 			const handle = setTimeout(callback, 0, ...args);
 			return { dispose: () => clearTimeout(handle) };
 		},
-		setInterval(
-			callback: (...args: any[]) => void,
-			ms: number,
-			...args: any[]
-		): Disposable {
-			const handle = setInterval(callback, ms, ...args);
+		setInterval(callback: (...args: any[]) => void, ms: number, ...args: any[]): Disposable {
+			const handle =  setInterval(callback, ms, ...args);
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),
@@ -81,10 +71,11 @@ const _ril: RIL = Object.freeze<RIL>({
 			const result = new Uint8Array(size);
 			self.crypto.getRandomValues(result);
 			return result;
-		},
+		}
 	}),
-	path: path,
+	path: path
 });
+
 
 function RIL(): RIL {
 	return _ril;

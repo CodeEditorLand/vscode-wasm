@@ -1,6 +1,8 @@
 #include <stdio.h>
 
-int bar() { return 2; }
+int bar() {
+	return 2;
+}
 
 int main() {
 	int result = bar() + bar();
@@ -11,7 +13,7 @@ int main() {
 
 	// fp = fopen(file_name, "r");
 	// while((ch = fgetc(fp)) != EOF)
-	// 	printf("%c", ch);
+    // 	printf("%c", ch);
 
 	// fclose(fp);
 

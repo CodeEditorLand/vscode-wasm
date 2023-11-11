@@ -3,18 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri } from "vscode";
+import { Uri } from 'vscode';
 
-import { Errno, WasiError } from "../wasi";
-import {
-	DeviceDriverKind,
-	DeviceId,
-	FileSystemDeviceDriver,
-	NoSysDeviceDriver,
-} from "../deviceDriver";
-import { FileDescriptor } from "../fileDescriptor";
+import { Errno, WasiError } from '../wasi';
+import { DeviceDriverKind, DeviceId, FileSystemDeviceDriver, NoSysDeviceDriver } from '../deviceDriver';
+import { FileDescriptor } from '../fileDescriptor';
 
 export function create(deviceId: DeviceId, uri: Uri): FileSystemDeviceDriver {
+
 	const result: object = Object.create(null);
 	return Object.assign(result, NoSysDeviceDriver, {
 		id: deviceId,
@@ -25,6 +21,6 @@ export function create(deviceId: DeviceId, uri: Uri): FileSystemDeviceDriver {
 		},
 		createStdioFileDescriptor(): Promise<FileDescriptor> {
 			throw new WasiError(Errno.nosys);
-		},
+		}
 	});
 }

@@ -4,39 +4,34 @@
  * ------------------------------------------------------------------------------------------ */
 /* eslint-disable no-console */
 
-import assert from "assert";
+import assert from 'assert';
 
-import { TestRequests, AssertionErrorData, ErrorData } from "./tests";
-import { Cancellation, RAL, ServiceConnection } from "../api";
+import { TestRequests, AssertionErrorData, ErrorData } from './tests';
+import { Cancellation, RAL, ServiceConnection } from '../api';
 
-let script: string = "";
+let script: string = '';
 
 export function setScript(value: string): void {
 	script = value;
 }
 
-async function runTest(
-	testCase: string,
-	test: (connection: ServiceConnection<TestRequests>) => void
-) {
-	if (script === "") {
+async function runTest(testCase: string, test: (connection: ServiceConnection<TestRequests>) => void) {
+
+	if (script === '') {
 		throw new Error(`No worker script installed`);
 	}
 
-	const connection = RAL().$testing.ServiceConnection.create<TestRequests>(
-		script,
-		testCase
-	);
+	const connection = RAL().$testing.ServiceConnection.create<TestRequests>(script, testCase);
 
 	let assertionError: AssertionErrorData | undefined;
 	let error: ErrorData | undefined;
 
-	connection.onRequest("testing/assertionError", (params) => {
+	connection.onRequest('testing/assertionError', (params) => {
 		assertionError = params;
 		return { errno: 0 };
 	});
 
-	connection.onRequest("testing/error", (params) => {
+	connection.onRequest('testing/error', (params) => {
 		error = params;
 		return { errno: 0 };
 	});
@@ -44,7 +39,7 @@ async function runTest(
 	test(connection);
 
 	await new Promise<void>((resolve) => {
-		connection.onRequest("testing/done", () => {
+		connection.onRequest('testing/done', () => {
 			resolve();
 			return { errno: 0 };
 		});
@@ -61,19 +56,20 @@ async function runTest(
 	}
 }
 
-suite("Connection", () => {
-	test("UInt8Array", async () => {
-		await runTest("uint8array", (connection) => {
-			connection.onRequest("uint8array", (params, resultBuffer) => {
+suite('Connection', () => {
+
+	test('UInt8Array', async () => {
+		await runTest('uint8array', (connection) => {
+			connection.onRequest('uint8array', (params, resultBuffer) => {
 				resultBuffer.set(RAL().TextEncoder.create().encode(params.p1));
 				return { errno: 0 };
 			});
 		});
 	});
 
-	test("Int8Array", async () => {
-		await runTest("int8array", (connection) => {
-			connection.onRequest("int8array", (resultBuffer) => {
+	test('Int8Array', async () => {
+		await runTest('int8array', (connection) => {
+			connection.onRequest('int8array', (resultBuffer) => {
 				const result = new Int8Array(8);
 				for (let i = 0; i < result.length; i++) {
 					result[i] = (i + 1) * -1;
@@ -84,22 +80,23 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Uint16Array", async () => {
-		await runTest("uint16array", (connection) => {
-			connection.onRequest("uint16array", (resultBuffer) => {
+	test('Uint16Array', async () => {
+		await runTest('uint16array', (connection) => {
+			connection.onRequest('uint16array', (resultBuffer) => {
 				const result = new Uint16Array(16);
 				for (let i = 0; i < result.length; i++) {
-					result[i] = i + 1;
+					result[i] = (i + 1);
 				}
 				resultBuffer.set(result);
 				return { errno: 0 };
 			});
 		});
+
 	});
 
-	test("Int16Array", async () => {
-		await runTest("int16array", (connection) => {
-			connection.onRequest("int16array", (resultBuffer) => {
+	test('Int16Array', async () => {
+		await runTest('int16array', (connection) => {
+			connection.onRequest('int16array', (resultBuffer) => {
 				const result = new Int16Array(16);
 				for (let i = 0; i < result.length; i++) {
 					result[i] = (i + 1) * -1;
@@ -110,12 +107,12 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Uint32Array", async () => {
-		await runTest("uint32array", (connection) => {
-			connection.onRequest("uint32array", (resultBuffer) => {
+	test('Uint32Array', async () => {
+		await runTest('uint32array', (connection) => {
+			connection.onRequest('uint32array', (resultBuffer) => {
 				const result = new Uint32Array(32);
 				for (let i = 0; i < result.length; i++) {
-					result[i] = i + 1;
+					result[i] = (i + 1);
 				}
 				resultBuffer.set(result);
 				return { errno: 0 };
@@ -123,9 +120,9 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Int32Array", async () => {
-		await runTest("int32array", (connection) => {
-			connection.onRequest("int32array", (resultBuffer) => {
+	test('Int32Array', async () => {
+		await runTest('int32array', (connection) => {
+			connection.onRequest('int32array', (resultBuffer) => {
 				const result = new Int32Array(32);
 				for (let i = 0; i < result.length; i++) {
 					result[i] = (i + 1) * -1;
@@ -136,9 +133,9 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Uint64Array", async () => {
-		await runTest("uint64array", (connection) => {
-			connection.onRequest("uint64array", (resultBuffer) => {
+	test('Uint64Array', async () => {
+		await runTest('uint64array', (connection) => {
+			connection.onRequest('uint64array', (resultBuffer) => {
 				const result = new BigUint64Array(64);
 				for (let i = 0; i < result.length; i++) {
 					result[i] = BigInt(i + 1);
@@ -149,9 +146,9 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Int64Array", async () => {
-		await runTest("int64array", (connection) => {
-			connection.onRequest("int64array", (resultBuffer) => {
+	test('Int64Array', async () => {
+		await runTest('int64array', (connection) => {
+			connection.onRequest('int64array', (resultBuffer) => {
 				const result = new BigInt64Array(64);
 				for (let i = 0; i < result.length; i++) {
 					result[i] = BigInt((i + 1) * -1);
@@ -162,28 +159,24 @@ suite("Connection", () => {
 		});
 	});
 
-	test("Variable UInt8Array", async () => {
-		await runTest("varUint8array", (connection) => {
-			connection.onRequest("varUint8array", () => {
-				return {
-					errno: 0,
-					data: RAL().TextEncoder.create().encode("1".repeat(32)),
-				};
+	test('Variable UInt8Array', async () => {
+		await runTest('varUint8array', (connection) => {
+			connection.onRequest('varUint8array', () => {
+				return { errno: 0, data: RAL().TextEncoder.create().encode('1'.repeat(32)) };
 			});
 		});
 	});
 
-	test("Variable JSON result", async () => {
-		await runTest("varJSON", (connection) => {
-			connection.onRequest("varJSON", () => {
-				return { errno: 0, data: { name: "vscode", age: 70 } };
+	test('Variable JSON result', async () => {
+		await runTest('varJSON', (connection) => {
+			connection.onRequest('varJSON', () => {
+				return { errno: 0, data: { name: 'vscode', age: 70 } };
 			});
 		});
 	});
 
-	test("Message Cancellation", async () => {
-		const message: { $cancellationData?: SharedArrayBuffer | undefined } =
-			{};
+	test('Message Cancellation', async () => {
+		const message: { $cancellationData?: SharedArrayBuffer | undefined } = {};
 		const cancel = Cancellation.addData(message);
 		assert.ok(message.$cancellationData instanceof SharedArrayBuffer);
 		const check = Cancellation.retrieveCheck(message);

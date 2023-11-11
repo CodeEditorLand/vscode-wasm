@@ -1,25 +1,26 @@
 steps:
-    - task: NodeTool@0
-      inputs:
-          versionSpec: "16.19.1"
-      displayName: "Install Node.js"
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.19.1'
+  displayName: 'Install Node.js'
 
-    - script: |
-          npm install
-      displayName: "Install Dependencies"
+- script: |
+    npm install
+  displayName: 'Install Dependencies'
 
-    - script: |
-          npm run compile
-      displayName: "Compile"
+- script: |
+    npm run compile
+  displayName: 'Compile'
 
-    - script: |
-          npm run lint
-      displayName: "Hygiene Checks"
+- script: |
+    npm run lint
+  displayName: 'Hygiene Checks'
 
-    - script: |
-          set PATHEXT=.COM;.EXE;.BAT;.CMD;
-          npm run test
-      displayName: "Unit Tests"
+- script: |
+    set PATHEXT=.COM;.EXE;.BAT;.CMD;
+    npm run test
+  displayName: 'Unit Tests'
+
 # - task: RichCodeNavIndexer@0
 #   displayName: VS Rich Code Navigation Upload
 #   inputs:

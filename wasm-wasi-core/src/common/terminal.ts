@@ -2,12 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { Event, EventEmitter } from "vscode";
+import { Event, EventEmitter } from 'vscode';
 
-import RAL from "./ral";
-import { Stdio, WasmPseudoterminal, PseudoterminalState } from "./api";
+import RAL from './ral';
+import { Stdio, WasmPseudoterminal, PseudoterminalState } from './api';
 
 class LineBuffer {
+
 	private offset: number;
 	private cursor: number;
 	private content: string[];
@@ -24,7 +25,7 @@ class LineBuffer {
 	}
 
 	public setContent(content: string): void {
-		this.content = content.split("");
+		this.content = content.split('');
 		this.cursor = this.content.length;
 	}
 
@@ -37,7 +38,7 @@ class LineBuffer {
 	}
 
 	public getLine(): string {
-		return this.content.join("");
+		return this.content.join('');
 	}
 
 	public getCursor(): number {
@@ -107,10 +108,10 @@ class LineBuffer {
 		}
 		let index: number;
 		// check if we are at the beginning of a word
-		if (this.content[this.cursor - 1] === " ") {
+		if (this.content[this.cursor - 1] === ' ') {
 			index = this.cursor - 2;
 			while (index > 0) {
-				if (this.content[index] === " ") {
+				if (this.content[index] === ' ') {
 					index--;
 				} else {
 					break;
@@ -125,7 +126,7 @@ class LineBuffer {
 		}
 		// On the first character that is not space
 		while (index > 0) {
-			if (this.content[index] === " ") {
+			if (this.content[index] === ' ') {
 				index++;
 				break;
 			} else {
@@ -141,10 +142,10 @@ class LineBuffer {
 			return false;
 		}
 		let index: number;
-		if (this.content[this.cursor] === " ") {
+		if (this.content[this.cursor] === ' ') {
 			index = this.cursor + 1;
 			while (index < this.content.length) {
-				if (this.content[index] === " ") {
+				if (this.content[index] === ' ') {
 					index++;
 				} else {
 					break;
@@ -159,7 +160,7 @@ class LineBuffer {
 		}
 
 		while (index < this.content.length) {
-			if (this.content[index] === " ") {
+			if (this.content[index] === ' ') {
 				break;
 			} else {
 				index++;
@@ -175,11 +176,12 @@ export interface Options {
 }
 
 class CommandHistory {
+
 	private readonly history: string[];
 	private current: number;
 
 	constructor() {
-		this.history = [""];
+		this.history = [''];
 		this.current = 0;
 	}
 
@@ -192,13 +194,10 @@ class CommandHistory {
 		if (this.current !== this.history.length - 1) {
 			this.history[this.history.length - 1] = this.history[this.current];
 		}
-		if (
-			this.history[this.history.length - 1] ===
-			this.history[this.history.length - 2]
-		) {
+		if (this.history[this.history.length - 1] === this.history[this.history.length - 2]) {
 			this.history.pop();
 		}
-		this.history.push("");
+		this.history.push('');
 		this.current = this.history.length - 1;
 	}
 
@@ -218,6 +217,7 @@ class CommandHistory {
 }
 
 export class WasmPseudoterminalImpl implements WasmPseudoterminal {
+
 	private readonly options: Options;
 	private readonly commandHistory: CommandHistory | undefined;
 	private state: PseudoterminalState;
@@ -237,21 +237,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	private readonly _onAnyKey: EventEmitter<void>;
 	public readonly onAnyKey: Event<void>;
 
-	private readonly _onDidChangeState: EventEmitter<{
-		old: PseudoterminalState;
-		new: PseudoterminalState;
-	}>;
-	public readonly onDidChangeState: Event<{
-		old: PseudoterminalState;
-		new: PseudoterminalState;
-	}>;
+	private readonly _onDidChangeState: EventEmitter<{ old: PseudoterminalState; new: PseudoterminalState }>;
+	public readonly onDidChangeState: Event<{ old: PseudoterminalState; new: PseudoterminalState }>;
 
 	private readonly _onDidCloseTerminal: EventEmitter<void>;
 	public readonly onDidCloseTerminal: Event<void>;
 
 	private lines: string[];
 	private lineBuffer: LineBuffer;
-	private readlineCallback: ((value: string) => void) | undefined;
+	private readlineCallback: ((value: string ) => void) | undefined;
 
 	private isOpen: boolean;
 	private nameBuffer: string | undefined;
@@ -261,9 +255,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	constructor(options: Options = {}) {
 		this.options = options;
-		this.commandHistory = this.options.history
-			? new CommandHistory()
-			: undefined;
+		this.commandHistory = this.options.history ? new CommandHistory() : undefined;
 		this.state = PseudoterminalState.busy;
 
 		this._onDidClose = new EventEmitter();
@@ -281,10 +273,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		this._onAnyKey = new EventEmitter<void>();
 		this.onAnyKey = this._onAnyKey.event;
 
-		this._onDidChangeState = new EventEmitter<{
-			old: PseudoterminalState;
-			new: PseudoterminalState;
-		}>();
+		this._onDidChangeState = new EventEmitter<{ old: PseudoterminalState; new: PseudoterminalState }>();
 		this.onDidChangeState = this._onDidChangeState.event;
 
 		this._onDidCloseTerminal = new EventEmitter<void>();
@@ -301,9 +290,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	public get stdio(): Stdio {
 		return {
-			in: { kind: "terminal", terminal: this },
-			out: { kind: "terminal", terminal: this },
-			err: { kind: "terminal", terminal: this },
+			in: { kind: 'terminal', terminal: this },
+			out: { kind: 'terminal', terminal: this },
+			err: { kind: 'terminal', terminal: this }
 		};
 	}
 
@@ -363,12 +352,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	}
 
 	public write(content: string): Promise<void>;
-	public write(content: Uint8Array, encoding?: "utf-8"): Promise<number>;
-	public write(
-		content: Uint8Array | string,
-		encoding?: "utf-8"
-	): Promise<void> | Promise<number> {
-		if (typeof content === "string") {
+	public write(content: Uint8Array, encoding?: 'utf-8'): Promise<number>;
+	public write(content: Uint8Array | string, encoding?: 'utf-8'): Promise<void> | Promise<number> {
+		if (typeof content === 'string') {
 			this.writeString(this.replaceNewlines(content));
 			return Promise.resolve();
 		} else {
@@ -400,58 +386,34 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		}
 		const previousCursor = this.lineBuffer.getCursor();
 		switch (data) {
-			case "\x03": // ctrl+C
+			case '\x03': // ctrl+C
 				this.handleInterrupt();
 				break;
-			case "\x06": // ctrl+f
-			case "\x1b[C": // right
-				this.adjustCursor(
-					this.lineBuffer.moveCursorRelative(1),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x06': // ctrl+f
+			case '\x1b[C': // right
+				this.adjustCursor(this.lineBuffer.moveCursorRelative(1), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x1bf": // alt+f
-			case "\x1b[1;5C": // ctrl+right
-				this.adjustCursor(
-					this.lineBuffer.moveCursorWordRight(),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x1bf': // alt+f
+			case '\x1b[1;5C': // ctrl+right
+				this.adjustCursor(this.lineBuffer.moveCursorWordRight(), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x02": // ctrl+b
-			case "\x1b[D": // left
-				this.adjustCursor(
-					this.lineBuffer.moveCursorRelative(-1),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x02': // ctrl+b
+			case '\x1b[D': // left
+				this.adjustCursor(this.lineBuffer.moveCursorRelative(-1), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x1bb": // alt+b
-			case "\x1b[1;5D": // ctrl+left
-				this.adjustCursor(
-					this.lineBuffer.moveCursorWordLeft(),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x1bb': // alt+b
+			case '\x1b[1;5D': // ctrl+left
+				this.adjustCursor(this.lineBuffer.moveCursorWordLeft(), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x01": // ctrl+a
-			case "\x1b[H": // home
-				this.adjustCursor(
-					this.lineBuffer.moveCursorStartOfLine(),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x01': // ctrl+a
+			case '\x1b[H': // home
+				this.adjustCursor(this.lineBuffer.moveCursorStartOfLine(), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x05": // ctrl+e
-			case "\x1b[F": // end
-				this.adjustCursor(
-					this.lineBuffer.moveCursorEndOfLine(),
-					previousCursor,
-					this.lineBuffer.getCursor()
-				);
+			case '\x05': // ctrl+e
+			case '\x1b[F': // end
+				this.adjustCursor(this.lineBuffer.moveCursorEndOfLine(), previousCursor, this.lineBuffer.getCursor());
 				break;
-			case "\x1b[A": // up
+			case '\x1b[A': // up
 				if (this.commandHistory === undefined) {
 					this.bell();
 				} else {
@@ -465,7 +427,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					}
 				}
 				break;
-			case "\x1b[B": // down
+			case '\x1b[B': // down
 				if (this.commandHistory === undefined) {
 					this.bell();
 				} else {
@@ -479,24 +441,20 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					}
 				}
 				break;
-			case "\x08": // shift+backspace
-			case "\x7F": // backspace
-				this.lineBuffer.backspace()
-					? this._onDidWrite.fire("\x1b[D\x1b[P")
-					: this.bell();
+			case '\x08': // shift+backspace
+			case '\x7F': // backspace
+				this.lineBuffer.backspace() ? this._onDidWrite.fire('\x1b[D\x1b[P') : this.bell();
 				break;
-			case "\x1b[3~": // delete key
-				this.lineBuffer.del()
-					? this._onDidWrite.fire("\x1b[P")
-					: this.bell();
+			case '\x1b[3~': // delete key
+				this.lineBuffer.del() ? this._onDidWrite.fire('\x1b[P'): this.bell();
 				break;
-			case "\r": // enter
+			case '\r': // enter
 				this.handleEnter();
 				break;
 			default:
 				this.lineBuffer.insert(data);
 				if (!this.lineBuffer.isCursorAtEnd()) {
-					this._onDidWrite.fire("\x1b[@");
+					this._onDidWrite.fire('\x1b[@');
 				}
 				this._onDidWrite.fire(data);
 				if (this.commandHistory !== undefined) {
@@ -507,15 +465,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	private handleInterrupt(): void {
 		this._onDidCtrlC.fire();
-		this._onDidWrite.fire("\x1b[31m^C\x1b[0m\r\n");
+		this._onDidWrite.fire('\x1b[31m^C\x1b[0m\r\n');
 		this.lineBuffer.clear();
 		this.lines.length = 0;
-		this.readlineCallback?.("\n");
+		this.readlineCallback?.('\n');
 		this.readlineCallback = undefined;
 	}
 
 	private handleEnter(): void {
-		this._onDidWrite.fire("\r\n");
+		this._onDidWrite.fire('\r\n');
 		const line = this.lineBuffer.getLine();
 		this.lineBuffer.clear();
 		this.lines.push(line);
@@ -523,24 +481,20 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 			this.commandHistory.markExecuted();
 		}
 		if (this.readlineCallback !== undefined) {
-			const result = this.lines.shift()! + "\n";
+			const result = this.lines.shift()! + '\n';
 			this.readlineCallback(result);
 			this.readlineCallback = undefined;
 		}
 	}
 
-	private adjustCursor(
-		success: boolean,
-		oldCursor: number,
-		newCursor: number
-	): void {
+	private adjustCursor(success: boolean, oldCursor: number, newCursor: number): void {
 		if (!success) {
 			this.bell();
 			return;
 		}
 
 		const change = oldCursor - newCursor;
-		const code = change > 0 ? "D" : "C";
+	    const code = change > 0 ? 'D' : 'C';
 		const sequence = `\x1b[${code}`.repeat(Math.abs(change));
 		this._onDidWrite.fire(sequence);
 	}
@@ -554,25 +508,22 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	}
 
 	private bell() {
-		this._onDidWrite.fire("\x07");
+		this._onDidWrite.fire('\x07');
 	}
 
 	private static terminalRegExp = /(\r\n)|(\n)/gm;
 	private replaceNewlines(str: string): string {
-		return str.replace(
-			WasmPseudoterminalImpl.terminalRegExp,
-			(match: string, m1: string, m2: string) => {
-				if (m1) {
-					return m1;
-				} else if (m2) {
-					return "\r\n";
-				} else {
-					return match;
-				}
+		return str.replace(WasmPseudoterminalImpl.terminalRegExp, (match: string, m1: string, m2: string) => {
+			if (m1) {
+				return m1;
+			} else if (m2) {
+				return '\r\n';
+			} else {
+				return match;
 			}
-		);
+		});
 	}
-	private getString(bytes: Uint8Array, _encoding?: "utf-8"): string {
+	private getString(bytes: Uint8Array, _encoding?: 'utf-8'): string {
 		return this.replaceNewlines(this.decoder.decode(bytes.slice()));
 	}
 }
