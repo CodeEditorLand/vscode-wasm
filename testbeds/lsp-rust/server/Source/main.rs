@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 use std::error::Error;
 
+use lsp_types::OneOf;
 use lsp_types::{
-	request::GotoDefinition, GotoDefinitionResponse, InitializeParams, Location, OneOf,
-	ServerCapabilities,
+	request::GotoDefinition, GotoDefinitionResponse, InitializeParams, Location, ServerCapabilities,
 };
 
 use lsp_server::{Connection, ExtractError, Message, Request, RequestId, Response};

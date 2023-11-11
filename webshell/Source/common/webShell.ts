@@ -42,12 +42,14 @@ export class WebShell {
 		this.commandHandlers = new Map<string, CommandHandler>();
 		this.userBin = await wasm.createMemoryFileSystem();
 		const fsContributions: ExtensionLocationDescriptor[] =
-			WebShell.contributions.getDirectoryMountPoints().map((entry) => ({
-				kind: "extensionLocation",
-				extension: entry.extension,
-				path: entry.path,
-				mountPoint: entry.mountPoint,
-			}));
+			WebShell.contributions
+				.getDirectoryMountPoints()
+				.map((entry) => ({
+					kind: "extensionLocation",
+					extension: entry.extension,
+					path: entry.path,
+					mountPoint: entry.mountPoint,
+				}));
 		const mountPoints: MountPointDescriptor[] = [
 			{ kind: "workspaceFolder" },
 			{
