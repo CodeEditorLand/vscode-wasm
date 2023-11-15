@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, commands } from "vscode";
+import { ExtensionContext, commands } from 'vscode';
 
-import { Wasm } from "@vscode/wasm-wasi";
+import { Wasm } from '@vscode/wasm-wasi';
 
-import { WebShell } from "./webShell";
-import { CoreUtils } from "./coreUtils";
-import { WebShellContributions } from "./webShellContributions";
+import { WebShell } from './webShell';
+import { CoreUtils } from './coreUtils';
+import { WebShellContributions } from './webShellContributions';
 
 export async function activate(context: ExtensionContext): Promise<void> {
 	const wasm: Wasm = await Wasm.load();
@@ -17,8 +17,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 	const coreUtils = new CoreUtils(context);
 	coreUtils.contributeHandlers(wasm, WebShell);
 
-	commands.registerCommand("ms-vscode.webshell.create", async () => {
-		const webShell = new WebShell(wasm, "/workspace");
+	commands.registerCommand('ms-vscode.webshell.create', async () => {
+		const webShell = new WebShell(wasm, '/workspace');
 		void webShell.runCommandLoop();
 	});
 }

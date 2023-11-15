@@ -13,7 +13,7 @@ export interface Disposable {
 export namespace Disposable {
 	export function create(func: () => void): Disposable {
 		return {
-			dispose: func,
+			dispose: func
 		};
 	}
 }

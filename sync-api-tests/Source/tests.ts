@@ -16,14 +16,12 @@ export type ErrorData = {
 	message: string;
 };
 
-export type TestRequests =
-	| {
-			method: "testing/assertionError";
-			params: AssertionErrorData;
-			result: null;
-	  }
-	| {
-			method: "testing/error";
-			params: ErrorData;
-			result: null;
-	  };
+export type TestRequests = {
+	method: 'testing/assertionError';
+	params: AssertionErrorData;
+	result: null;
+} | {
+	method: 'testing/error';
+	params: ErrorData;
+	result: null;
+};
