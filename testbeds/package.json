@@ -2,10 +2,10 @@
 	"name": "wasm-testbeds",
 	"private": true,
 	"dependencies": {
-		"vscode-uri": "3.0.8"
+		"vscode-uri": "3.0.3"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.84.1"
+		"@types/vscode": "^1.71.0"
 	},
 	"scripts": {
 		"clean": "",
