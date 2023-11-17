@@ -24,9 +24,9 @@
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
 	"dependencies": {
-		"yargs": "^17.7.2"
+		"yargs": "17.7.2"
 	},
 	"devDependencies": {
-		"peggy": "^3.0.2"
+		"peggy": "3.0.2"
 	}
 }

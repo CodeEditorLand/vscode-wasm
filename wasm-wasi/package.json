@@ -34,17 +34,17 @@
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
 	"dependencies": {
-		"semver": "^7.5.4",
-		"yargs": "^17.7.2"
+		"semver": "7.5.4",
+		"yargs": "17.7.2"
 	},
 	"devDependencies": {
-		"@types/semver": "^7.5.5",
+		"@types/semver": "7.5.5",
 		"@types/vscode": "1.78.0",
-		"@types/yargs": "^17.0.31"
+		"@types/yargs": "17.0.31"
 	},
 	"engines": {
 		"node": ">=16.17.1",
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	},
 	"enabledApiProposals": []
 }

@@ -52,6 +52,6 @@
 		"ms-vscode.wasm-wasi-core"
 	],
 	"engines": {
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	}
 }

@@ -39,16 +39,16 @@
 	},
 	"activationEvents": [],
 	"dependencies": {
-		"uuid": "^9.0.1"
+		"uuid": "9.0.1"
 	},
 	"devDependencies": {
-		"@types/assert": "^1.5.9",
-		"@types/uuid": "^9.0.7",
+		"@types/assert": "1.5.9",
+		"@types/uuid": "9.0.7",
 		"@types/vscode": "1.78.0",
-		"assert": "^2.1.0",
-		"find-process": "^1.4.7"
+		"assert": "2.1.0",
+		"find-process": "1.4.7"
 	},
 	"engines": {
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	}
 }
