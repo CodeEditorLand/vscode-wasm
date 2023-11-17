@@ -46,7 +46,7 @@
 		"@vscode/wasm-wasi": "0.13.0-pre.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.78.0"
+		"@types/vscode": "1.84.1"
 	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"

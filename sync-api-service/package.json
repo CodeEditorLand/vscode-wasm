@@ -37,7 +37,7 @@
 	},
 	"devDependencies": {
 		"@types/uuid": "9.0.7",
-		"@types/vscode": "1.71.0"
+		"@types/vscode": "1.84.1"
 	},
 	"engines": {
 		"node": ">=16.14.2",

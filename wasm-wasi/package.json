@@ -39,7 +39,7 @@
 	},
 	"devDependencies": {
 		"@types/semver": "7.5.5",
-		"@types/vscode": "1.78.0",
+		"@types/vscode": "1.84.1",
 		"@types/yargs": "17.0.31"
 	},
 	"engines": {
