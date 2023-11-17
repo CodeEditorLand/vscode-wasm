@@ -3,29 +3,36 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Wasm } from '@vscode/wasm-wasi';
-import { commands, ExtensionContext, Uri, window, workspace } from 'vscode';
+import { Wasm } from "@vscode/wasm-wasi";
+import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-
 	// Load the WASM API
 	const wasm: Wasm = await Wasm.api();
 
 	// Register a command that runs the C example
-	commands.registerCommand('wasm-wasi-c-example.run', async () => {
+	commands.registerCommand("wasm-wasi-c-example.run", async () => {
 		// Create a pseudoterminal to provide stdio to the WASM process.
 		const pty = wasm.createPseudoterminal();
-		const terminal = window.createTerminal({ name: 'Run C Example', pty, isTransient: true });
+		const terminal = window.createTerminal({
+			name: "Run C Example",
+			pty,
+			isTransient: true,
+		});
 		terminal.show(true);
 
 		// Load the WASM module. It is stored alongside the extension JS code.
 		// So we can use VS Code's file system API to load it. Makes it
 		// independent of whether the code runs in the desktop or the web.
 		try {
-			const bits = await workspace.fs.readFile(Uri.joinPath(context.extensionUri, 'hello.wasm'));
+			const bits = await workspace.fs.readFile(
+				Uri.joinPath(context.extensionUri, "hello.wasm")
+			);
 			const module = await WebAssembly.compile(bits);
 			// Create a WASM process.
-			const process = await wasm.createProcess('hello', module, { stdio: pty.stdio });
+			const process = await wasm.createProcess("hello", module, {
+				stdio: pty.stdio,
+			});
 			// Run the process and wait for its result.
 			const result = await process.run();
 		} catch (error) {
@@ -34,5 +41,4 @@ export async function activate(context: ExtensionContext) {
 		}
 	});
 }
-export function deactivate() {
-}
+export function deactivate() {}
