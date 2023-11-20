@@ -45,7 +45,7 @@
 		"@vscode/test-electron": "2.3.6",
 		"@vscode/test-web": "0.0.48",
 		"@vscode/tsconfig-gen": "0.1.0",
-		"esbuild": "0.19.5",
+		"esbuild": "0.19.6",
 		"eslint": "8.54.0",
 		"glob": "10.3.10",
 		"http-server": "14.1.1",
