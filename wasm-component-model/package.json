@@ -1,23 +1,24 @@
 {
 	"name": "@vscode/wasm-component-model",
-	"version": "0.1.0-pre.1",
-	"private": true,
+	"version": "0.0.1",
+	"private": "false",
 	"description": "A VS Code specific component model implementation",
-	"keywords": [
-		"VSCode",
-		"WASM",
-		"Component Model"
-	],
-	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
 	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
 	},
 	"license": "MIT",
-	"author": "Visual Studio Code Team",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
 	"main": "./lib/desktop/main.js",
 	"browser": {
 		"./lib/desktop/main.js": "./lib/web/main.js"
@@ -35,7 +36,7 @@
 		"generate:testCase": "wasm-tools component wit --json ./src/common/test/test-data.wit | node ./lib/tools/main.js --stdin --noMain --resourceStyle module --outDir ./src/common/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
 		"prepack": "npm run all:publish",
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"test": "npm run test:desktop",
 		"test:desktop": "node ../node_modules/mocha/bin/_mocha",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
@@ -44,11 +45,11 @@
 		"yargs": "17.7.2"
 	},
 	"devDependencies": {
-		"@types/yargs": "17.0.31"
+		"@types/yargs": "17.0.32",
+		"typescript-esbuild": "0.3.1"
 	},
-	"engines": {
-		"node": ">=16.17.1",
-		"vscode": "1.78.0"
+	"publishConfig": {
+		"access": "public"
 	},
 	"enabledApiProposals": []
 }

@@ -1,23 +1,24 @@
 {
 	"name": "@vscode/wasi",
-	"version": "0.1.0-pre.1",
-	"private": true,
+	"version": "0.0.1",
+	"private": "false",
 	"description": "WASI preview 2 interfaces for VS Code",
-	"keywords": [
-		"VSCode",
-		"WASM",
-		"Component Model"
-	],
-	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
 	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
 	},
 	"license": "MIT",
-	"author": "Visual Studio Code Team",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
 	"main": "./lib/main.js",
 	"typings": "./lib/main.d.ts",
 	"scripts": {
@@ -29,14 +30,15 @@
 		"generate": "node ../wasm-component-model/lib/tools/main.js --outDir ./src --resourceStyle module --package wasi ./src/wasi.json",
 		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
 		"prepack": "npm run all:publish",
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
 	"dependencies": {},
-	"devDependencies": {},
-	"engines": {
-		"node": ">=18.15.0",
-		"vscode": "1.78.0"
+	"devDependencies": {
+		"typescript-esbuild": "0.3.1"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"enabledApiProposals": []
 }

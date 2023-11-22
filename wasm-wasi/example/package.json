@@ -1,18 +1,32 @@
 {
 	"name": "wasm-wasi-c-example",
-	"version": "0.1.0",
-	"private": "true",
+	"version": "0.0.1",
+	"private": "false",
 	"description": "C Example",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+	},
 	"license": "MIT",
-	"author": "MS",
-	"publisher": "vscode-samples",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
 		"build:wasi": "clang hello.c -o ./hello.wasm",
 		"compile:ts": "tsc -p tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
 	},
 	"contributes": {
 		"commands": [
@@ -28,12 +42,13 @@
 		"@vscode/wasm-wasi": "0.11.0-next.0"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.84.1"
+		"@types/vscode": "1.84.2",
+		"typescript-esbuild": "0.3.1"
 	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
 	],
-	"engines": {
-		"vscode": "1.77.0"
+	"publishConfig": {
+		"access": "public"
 	}
 }
