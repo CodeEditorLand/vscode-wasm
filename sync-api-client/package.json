@@ -1,45 +1,45 @@
 {
-  "name": "@vscode/sync-api-client",
-  "version": "0.0.1",
-  "private": "false",
-  "description": "A client that calls VS Code API from a non extension host worker in sync fashion.",
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
-  },
-  "publisher": "playform",
-  "type": "module",
-  "main": "./lib/main.js",
-  "typings": "./lib/main.d.ts",
-  "scripts": {
-    "all": "npm run clean && npm run compile && npm run lint",
-    "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
-    "clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
-    "compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
-    "compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-    "lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-    "prepack": "npm run all:publish",
-    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-    "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-  },
-  "dependencies": {
-    "@vscode/sync-api-common": "0.9.0",
-    "vscode-uri": "3.0.8"
-  },
-  "devDependencies": {
-    "typescript-esbuild": "0.3.1"
-  },
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "@vscode/sync-api-client",
+	"version": "0.0.1",
+	"private": "false",
+	"description": "A client that calls VS Code API from a non extension host worker in sync fashion.",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
+	"main": "./lib/main.js",
+	"typings": "./lib/main.d.ts",
+	"scripts": {
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
+		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
+		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
+		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
+		"prepack": "npm run all:publish",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
+	},
+	"dependencies": {
+		"@vscode/sync-api-common": "0.9.0",
+		"vscode-uri": "3.0.8"
+	},
+	"devDependencies": {
+		"typescript-esbuild": "0.3.1"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

@@ -1,53 +1,53 @@
 {
-  "name": "@vscode/wasm-wasi",
-  "version": "0.0.1",
-  "private": "false",
-  "description": "An API facade for the WASM WASI CORE VS Code extension",
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
-  },
-  "publisher": "playform",
-  "type": "module",
-  "main": "./lib/api/main.js",
-  "typings": "./lib/api/main.d.ts",
-  "bin": {
-    "dir-dump": "./bin/dir-dump"
-  },
-  "scripts": {
-    "all": "npm run clean && npm run compile && npm run lint",
-    "all:publish": "git clean -xfd . && npm install && npm run update:version && npm run compile:publish && npm run lint",
-    "clean": "node ../node_modules/rimraf/bin.js lib",
-    "compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
-    "compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-    "lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-    "prepack": "npm run all:publish",
-    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-    "update:version": "node ./bin/updateVersion.mjs",
-    "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-  },
-  "dependencies": {
-    "semver": "7.5.4",
-    "yargs": "17.7.2"
-  },
-  "devDependencies": {
-    "@types/semver": "7.5.6",
-    "@types/vscode": "1.84.2",
-    "@types/yargs": "17.0.32",
-    "typescript-esbuild": "0.3.1"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "enabledApiProposals": []
+	"name": "@vscode/wasm-wasi",
+	"version": "0.0.1",
+	"private": "false",
+	"description": "An API facade for the WASM WASI CORE VS Code extension",
+	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Nikola Hristov",
+		"email": "nikola@nikolahristov.tech",
+		"url": "https://nikolahristov.tech"
+	},
+	"publisher": "playform",
+	"type": "module",
+	"main": "./lib/api/main.js",
+	"typings": "./lib/api/main.d.ts",
+	"bin": {
+		"dir-dump": "./bin/dir-dump"
+	},
+	"scripts": {
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run update:version && npm run compile:publish && npm run lint",
+		"clean": "node ../node_modules/rimraf/bin.js lib",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
+		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
+		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
+		"prepack": "npm run all:publish",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"update:version": "node ./bin/updateVersion.mjs",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
+	},
+	"dependencies": {
+		"semver": "7.5.4",
+		"yargs": "17.7.2"
+	},
+	"devDependencies": {
+		"@types/semver": "7.5.6",
+		"@types/vscode": "1.84.2",
+		"@types/yargs": "17.0.32",
+		"typescript-esbuild": "0.3.1"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"enabledApiProposals": []
 }
