@@ -147,8 +147,8 @@ export class FileSystemError extends Error {
 			typeof messageOrUri === "string"
 				? messageOrUri
 				: messageOrUri !== undefined
-				? messageOrUri.toString()
-				: "Unknown error"
+				  ? messageOrUri.toString()
+				  : "Unknown error"
 		);
 		this.code = code;
 	}
