@@ -41,7 +41,7 @@
 	"devDependencies": {
 		"@types/uuid": "9.0.7",
 		"@types/vscode": "1.84.2",
-		"typescript-esbuild": "0.3.1"
+		"typescript-esbuild": "0.3.2"
 	},
 	"publishConfig": {
 		"access": "public"

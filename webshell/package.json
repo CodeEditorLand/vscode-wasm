@@ -47,7 +47,7 @@
 	},
 	"devDependencies": {
 		"@types/vscode": "1.84.2",
-		"typescript-esbuild": "0.3.1"
+		"typescript-esbuild": "0.3.2"
 	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"

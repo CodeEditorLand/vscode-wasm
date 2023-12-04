@@ -46,7 +46,7 @@
 	},
 	"devDependencies": {
 		"@types/yargs": "17.0.32",
-		"typescript-esbuild": "0.3.1"
+		"typescript-esbuild": "0.3.2"
 	},
 	"publishConfig": {
 		"access": "public"
