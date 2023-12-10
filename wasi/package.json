@@ -1,44 +1,45 @@
 {
+	"private": true,
 	"name": "@vscode/wasi",
-	"version": "0.0.1",
-	"private": "false",
+	"version": "0.1.0-pre.1",
 	"description": "WASI preview 2 interfaces for VS Code",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+	"engines": {
+		"node": ">=18.15.0",
+		"vscode": "^1.78.0"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
-	},
-	"publisher": "playform",
-	"type": "module",
 	"main": "./lib/main.js",
 	"typings": "./lib/main.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+	},
+	"keywords": [
+		"VSCode",
+		"WASM",
+		"Component Model"
+	],
+	"author": "Visual Studio Code Team",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-wasm/issues"
+	},
+	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
+	"enabledApiProposals": [
+	],
+	"dependencies": {
+	},
+	"devDependencies": {
+	},
 	"scripts": {
-		"all": "npm run clean && npm run compile && npm run lint",
-		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
-		"clean": "node ../node_modules/rimraf/bin.js lib",
+		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"prepack": "npm run all:publish",
 		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
 		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-		"generate": "node ../wasm-component-model/lib/tools/main.js --outDir ./src --resourceStyle module --package wasi ./src/wasi.json",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
+		"clean": "node ../node_modules/rimraf/bin.js lib",
 		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"prepack": "npm run all:publish",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-	},
-	"dependencies": {},
-	"devDependencies": {
-		"typescript-esbuild": "0.3.2"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"enabledApiProposals": []
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
+		"generate": "node ../wasm-component-model/lib/tools/main.js --outDir ./src --resourceStyle module --package wasi ./src/wasi.json"
+	}
 }
