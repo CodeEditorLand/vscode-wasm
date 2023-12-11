@@ -22,7 +22,7 @@
 		"shell"
 	],
 	"engines": {
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
