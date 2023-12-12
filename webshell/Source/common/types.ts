@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Stdio, RootFileSystem } from "@vscode/wasm-wasi";
+import type { Stdio, RootFileSystem } from '@vscode/wasm-wasi';
 
 export type CommandHandler = (
 	command: string,

@@ -3,6 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+
+
 export namespace WasiHost {
-	export function create(): void {}
+	export function create(): void {
+
+	}
 }
