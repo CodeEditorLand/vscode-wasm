@@ -23,7 +23,7 @@
     "@vscode/sync-api-common": "0.9.0"
   },
   "devDependencies": {
-    "@types/vscode": "1.71.0",
+    "@types/vscode": "1.85.0",
     "@types/uuid": "9.0.7"
   },
   "scripts": {
