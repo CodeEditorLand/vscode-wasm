@@ -3,16 +3,33 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
+import { Uri } from "vscode";
 
-import RAL from './ral';
-import { Filetype as ApiFiletype, RootFileSystem } from './api';
-import { Errno, Filestat, Filetype, Lookupflags, WasiError, Filetype as WasiFiletype, errno, fd, fdflags, filetype, inode, rights } from './wasi';
-import { RootFileSystemDeviceDriver } from './rootFileSystemDriver';
-import { DeviceDrivers, RootFileSystemInfo } from './kernel';
-import { DeviceDriver, FileSystemDeviceDriver } from './deviceDriver';
-import { BaseFileDescriptor, FileDescriptor, FileDescriptors } from './fileDescriptor';
-import { FileSystemService } from './service';
+import RAL from "./ral";
+import { Filetype as ApiFiletype, RootFileSystem } from "./api";
+import {
+	Errno,
+	Filestat,
+	Filetype,
+	Lookupflags,
+	WasiError,
+	Filetype as WasiFiletype,
+	errno,
+	fd,
+	fdflags,
+	filetype,
+	inode,
+	rights,
+} from "./wasi";
+import { RootFileSystemDeviceDriver } from "./rootFileSystemDriver";
+import { DeviceDrivers, RootFileSystemInfo } from "./kernel";
+import { DeviceDriver, FileSystemDeviceDriver } from "./deviceDriver";
+import {
+	BaseFileDescriptor,
+	FileDescriptor,
+	FileDescriptors,
+} from "./fileDescriptor";
+import { FileSystemService } from "./service";
 
 export namespace Filetypes {
 	export function from(filetype: filetype): ApiFiletype {
@@ -28,7 +45,7 @@ export namespace Filetypes {
 		}
 	}
 	export function to(filetype: ApiFiletype): filetype {
-		switch(filetype) {
+		switch (filetype) {
 			case ApiFiletype.regular_file:
 				return WasiFiletype.regular_file;
 			case ApiFiletype.directory:
@@ -42,7 +59,6 @@ export namespace Filetypes {
 }
 
 export interface BaseNode {
-
 	readonly filetype: filetype;
 
 	/**
@@ -62,7 +78,6 @@ export interface BaseNode {
 }
 
 export interface FileNode extends BaseNode {
-
 	readonly filetype: typeof WasiFiletype.regular_file;
 
 	/**
@@ -72,7 +87,6 @@ export interface FileNode extends BaseNode {
 }
 
 export interface CharacterDeviceNode extends BaseNode {
-
 	readonly filetype: typeof WasiFiletype.character_device;
 
 	/**
@@ -82,7 +96,6 @@ export interface CharacterDeviceNode extends BaseNode {
 }
 
 export interface DirectoryNode extends BaseNode {
-
 	readonly filetype: typeof WasiFiletype.directory;
 
 	/**
@@ -98,8 +111,11 @@ export interface DirectoryNode extends BaseNode {
 
 type Node = FileNode | DirectoryNode | CharacterDeviceNode;
 
-export abstract class BaseFileSystem<D extends DirectoryNode, F extends FileNode, C extends CharacterDeviceNode > {
-
+export abstract class BaseFileSystem<
+	D extends DirectoryNode,
+	F extends FileNode,
+	C extends CharacterDeviceNode,
+> {
 	private inodeCounter: bigint;
 	private readonly root: D;
 
@@ -118,11 +134,14 @@ export abstract class BaseFileSystem<D extends DirectoryNode, F extends FileNode
 	}
 
 	public findNode(path: string): D | F | C | undefined;
-	public findNode(parent: D, path: string): D | F | C |undefined;
-	public findNode(parentOrPath: D | string, p?: string): D | F | C |undefined {
+	public findNode(parent: D, path: string): D | F | C | undefined;
+	public findNode(
+		parentOrPath: D | string,
+		p?: string,
+	): D | F | C | undefined {
 		let parent: D;
 		let path: string;
-		if (typeof parentOrPath === 'string') {
+		if (typeof parentOrPath === "string") {
 			parent = this.root;
 			path = parentOrPath;
 		} else {
@@ -131,9 +150,9 @@ export abstract class BaseFileSystem<D extends DirectoryNode, F extends FileNode
 		}
 		const parts = this.getSegmentsFromPath(path);
 		if (parts.length === 1) {
-			if (parts[0] === '.') {
+			if (parts[0] === ".") {
 				return parent;
-			} else if (parts[0] === '..') {
+			} else if (parts[0] === "..") {
 				return parent.parent as D;
 			}
 		}
@@ -143,7 +162,10 @@ export abstract class BaseFileSystem<D extends DirectoryNode, F extends FileNode
 				case WasiFiletype.regular_file:
 					return undefined;
 				case WasiFiletype.directory:
-					current = current.entries.get(parts[i]) as F | D | undefined;
+					current = current.entries.get(parts[i]) as
+						| F
+						| D
+						| undefined;
 					if (current === undefined) {
 						return undefined;
 					}
@@ -154,18 +176,38 @@ export abstract class BaseFileSystem<D extends DirectoryNode, F extends FileNode
 	}
 
 	private getSegmentsFromPath(path: string): string[] {
-		if (path.charAt(0) === '/') { path = path.substring(1); }
-		if (path.charAt(path.length - 1) === '/') { path = path.substring(0, path.length - 1); }
-		return path.normalize().split('/');
+		if (path.charAt(0) === "/") {
+			path = path.substring(1);
+		}
+		if (path.charAt(path.length - 1) === "/") {
+			path = path.substring(0, path.length - 1);
+		}
+		return path.normalize().split("/");
 	}
 }
 
 abstract class NodeDescriptor<N extends Node> extends BaseFileDescriptor {
-
 	public readonly node: N;
 
-	constructor(deviceId: bigint, fd: fd, filetype: filetype, rights_base: rights, rights_inheriting: rights, fdflags: fdflags, inode: bigint, node: N) {
-		super(deviceId, fd, filetype, rights_base, rights_inheriting, fdflags, inode);
+	constructor(
+		deviceId: bigint,
+		fd: fd,
+		filetype: filetype,
+		rights_base: rights,
+		rights_inheriting: rights,
+		fdflags: fdflags,
+		inode: bigint,
+		node: N,
+	) {
+		super(
+			deviceId,
+			fd,
+			filetype,
+			rights_base,
+			rights_inheriting,
+			fdflags,
+			inode,
+		);
 		this.node = node;
 		this.node.refs++;
 	}
@@ -177,16 +219,38 @@ abstract class NodeDescriptor<N extends Node> extends BaseFileDescriptor {
 }
 
 export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
-
 	private _cursor: bigint;
 
-	constructor(deviceId: bigint, fd: fd, rights_base: rights, fdflags: fdflags, inode: bigint, node: F) {
-		super(deviceId, fd, Filetype.regular_file, rights_base, 0n, fdflags, inode, node);
+	constructor(
+		deviceId: bigint,
+		fd: fd,
+		rights_base: rights,
+		fdflags: fdflags,
+		inode: bigint,
+		node: F,
+	) {
+		super(
+			deviceId,
+			fd,
+			Filetype.regular_file,
+			rights_base,
+			0n,
+			fdflags,
+			inode,
+			node,
+		);
 		this._cursor = 0n;
 	}
 
 	public with(change: { fd: fd }): FileDescriptor {
-		return new FileNodeDescriptor(this.deviceId, change.fd, this.rights_base, this.fdflags, this.inode, this.node as F);
+		return new FileNodeDescriptor(
+			this.deviceId,
+			change.fd,
+			this.rights_base,
+			this.fdflags,
+			this.inode,
+			this.node as F,
+		);
 	}
 
 	public get cursor(): bigint {
@@ -201,37 +265,95 @@ export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
 	}
 }
 
-export class CharacterDeviceNodeDescriptor<C extends CharacterDeviceNode> extends NodeDescriptor<C> {
-	constructor(deviceId: bigint, fd: fd, rights_base: rights, fdflags: fdflags, inode: bigint, node: C) {
-		super(deviceId, fd, Filetype.regular_file, rights_base, 0n, fdflags, inode, node);
+export class CharacterDeviceNodeDescriptor<
+	C extends CharacterDeviceNode,
+> extends NodeDescriptor<C> {
+	constructor(
+		deviceId: bigint,
+		fd: fd,
+		rights_base: rights,
+		fdflags: fdflags,
+		inode: bigint,
+		node: C,
+	) {
+		super(
+			deviceId,
+			fd,
+			Filetype.regular_file,
+			rights_base,
+			0n,
+			fdflags,
+			inode,
+			node,
+		);
 	}
 
 	public with(change: { fd: fd }): FileDescriptor {
-		return new CharacterDeviceNodeDescriptor(this.deviceId, change.fd, this.rights_base, this.fdflags, this.inode, this.node as C);
+		return new CharacterDeviceNodeDescriptor(
+			this.deviceId,
+			change.fd,
+			this.rights_base,
+			this.fdflags,
+			this.inode,
+			this.node as C,
+		);
 	}
 }
 
-export class DirectoryNodeDescriptor<D extends DirectoryNode> extends NodeDescriptor<D> {
-
-	constructor(deviceId: bigint, fd: fd, rights_base: rights, rights_inheriting: rights, fdflags: fdflags, inode: bigint, node: D) {
-		super(deviceId, fd, Filetype.directory, rights_base, rights_inheriting, fdflags, inode, node);
+export class DirectoryNodeDescriptor<
+	D extends DirectoryNode,
+> extends NodeDescriptor<D> {
+	constructor(
+		deviceId: bigint,
+		fd: fd,
+		rights_base: rights,
+		rights_inheriting: rights,
+		fdflags: fdflags,
+		inode: bigint,
+		node: D,
+	) {
+		super(
+			deviceId,
+			fd,
+			Filetype.directory,
+			rights_base,
+			rights_inheriting,
+			fdflags,
+			inode,
+			node,
+		);
 	}
 
 	public with(change: { fd: fd }): FileDescriptor {
-		return new DirectoryNodeDescriptor(this.deviceId, change.fd, this.rights_base, this.rights_inheriting, this.fdflags, this.inode, this.node as D);
+		return new DirectoryNodeDescriptor(
+			this.deviceId,
+			change.fd,
+			this.rights_base,
+			this.rights_inheriting,
+			this.fdflags,
+			this.inode,
+			this.node as D,
+		);
 	}
 
-	childDirectoryRights(requested_rights: rights, fileOnlyBaseRights: rights): rights {
-		return (this.rights_inheriting & requested_rights) & ~fileOnlyBaseRights;
+	childDirectoryRights(
+		requested_rights: rights,
+		fileOnlyBaseRights: rights,
+	): rights {
+		return this.rights_inheriting & requested_rights & ~fileOnlyBaseRights;
 	}
 
-	childFileRights(requested_rights: rights, directoryOnlyBaseRights: rights): rights {
-		return (this.rights_inheriting & requested_rights) & ~directoryOnlyBaseRights;
+	childFileRights(
+		requested_rights: rights,
+		directoryOnlyBaseRights: rights,
+	): rights {
+		return (
+			this.rights_inheriting & requested_rights & ~directoryOnlyBaseRights
+		);
 	}
 }
 
 export class WasmRootFileSystemImpl implements RootFileSystem {
-
 	private readonly deviceDrivers: DeviceDrivers;
 	private readonly preOpens: Map<string, FileSystemDeviceDriver>;
 	private readonly fileDescriptors: FileDescriptors;
@@ -243,11 +365,23 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		this.deviceDrivers = info.deviceDrivers;
 		this.preOpens = info.preOpens;
 		this.fileDescriptors = fileDescriptors;
-		if (info.kind === 'virtual') {
-			this.service = FileSystemService.create(info.deviceDrivers, fileDescriptors, info.fileSystem, info.preOpens, {});
+		if (info.kind === "virtual") {
+			this.service = FileSystemService.create(
+				info.deviceDrivers,
+				fileDescriptors,
+				info.fileSystem,
+				info.preOpens,
+				{},
+			);
 			this.virtualFileSystem = info.fileSystem;
 		} else {
-			this.service = FileSystemService.create(info.deviceDrivers, fileDescriptors, undefined, info.preOpens, {});
+			this.service = FileSystemService.create(
+				info.deviceDrivers,
+				fileDescriptors,
+				undefined,
+				info.preOpens,
+				{},
+			);
 			this.singleFileSystem = info.fileSystem;
 		}
 	}
@@ -279,7 +413,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 			if (deviceDriver === undefined) {
 				return undefined;
 			}
-			return deviceDriver.joinPath(...relativePath.split('/'));
+			return deviceDriver.joinPath(...relativePath.split("/"));
 		} catch (error) {
 			if (error instanceof WasiError && error.errno === Errno.noent) {
 				return undefined;
@@ -294,7 +428,9 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 			if (mountPoint === undefined) {
 				return undefined;
 			}
-			const relative = uri.toString().substring(root.toString().length + 1);
+			const relative = uri
+				.toString()
+				.substring(root.toString().length + 1);
 			return RAL().path.join(mountPoint, relative);
 		} catch (error) {
 			if (error instanceof WasiError && error.errno === Errno.noent) {
@@ -307,23 +443,39 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 	async stat(path: string): Promise<{ filetype: ApiFiletype }> {
 		const [fileDescriptor, relativePath] = this.getFileDescriptor(path);
 		if (fileDescriptor !== undefined) {
-			const deviceDriver = this.deviceDrivers.get(fileDescriptor.deviceId);
-			if (deviceDriver !== undefined && deviceDriver.kind === 'fileSystem') {
+			const deviceDriver = this.deviceDrivers.get(
+				fileDescriptor.deviceId,
+			);
+			if (
+				deviceDriver !== undefined &&
+				deviceDriver.kind === "fileSystem"
+			) {
 				const result = Filestat.createHeap();
-				await deviceDriver.path_filestat_get(fileDescriptor, Lookupflags.none, relativePath, result);
+				await deviceDriver.path_filestat_get(
+					fileDescriptor,
+					Lookupflags.none,
+					relativePath,
+					result,
+				);
 				return { filetype: Filetypes.from(result.filetype) };
 			}
 		}
 		throw new WasiError(Errno.noent);
 	}
 
-	private getFileDescriptor(path: string): [FileDescriptor | undefined, string] {
+	private getFileDescriptor(
+		path: string,
+	): [FileDescriptor | undefined, string] {
 		if (this.virtualFileSystem !== undefined) {
-			const [deviceDriver, rest] = this.virtualFileSystem.getDeviceDriver(path);
+			const [deviceDriver, rest] =
+				this.virtualFileSystem.getDeviceDriver(path);
 			if (deviceDriver !== undefined) {
 				return [this.fileDescriptors.getRoot(deviceDriver), rest];
 			} else {
-				return [this.fileDescriptors.getRoot(this.virtualFileSystem), path];
+				return [
+					this.fileDescriptors.getRoot(this.virtualFileSystem),
+					path,
+				];
 			}
 		} else if (this.singleFileSystem !== undefined) {
 			return [this.fileDescriptors.getRoot(this.singleFileSystem), path];
@@ -332,7 +484,9 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		}
 	}
 
-	private getDeviceDriver(path: string): [FileSystemDeviceDriver | undefined, string] {
+	private getDeviceDriver(
+		path: string,
+	): [FileSystemDeviceDriver | undefined, string] {
 		if (this.virtualFileSystem !== undefined) {
 			return this.virtualFileSystem.getDeviceDriver(path);
 		} else if (this.singleFileSystem !== undefined) {
@@ -348,8 +502,12 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		} else if (this.singleFileSystem !== undefined) {
 			const uriStr = uri.toString();
 			const rootStr = this.singleFileSystem.uri.toString();
-			if (uriStr === rootStr || (uriStr.startsWith(rootStr) && uriStr.charAt(rootStr.length) === '/')) {
-				return ['/', this.singleFileSystem.uri];
+			if (
+				uriStr === rootStr ||
+				(uriStr.startsWith(rootStr) &&
+					uriStr.charAt(rootStr.length) === "/")
+			) {
+				return ["/", this.singleFileSystem.uri];
 			}
 		}
 		return [undefined, uri];

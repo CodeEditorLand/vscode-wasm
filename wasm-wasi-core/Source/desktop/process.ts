@@ -4,25 +4,33 @@
  *--------------------------------------------------------------------------------------------*/
 /// <reference path="../../typings/webAssemblyNode.d.ts" />
 
-import { MessagePort, Worker } from 'node:worker_threads';
+import { MessagePort, Worker } from "node:worker_threads";
 
-import { LogOutputChannel, Uri } from 'vscode';
+import { LogOutputChannel, Uri } from "vscode";
 
-import RAL from '../common/ral';
-import { ptr, u32 } from '../common/baseTypes';
-import { WasiProcess } from '../common/process';
-import { WasiService, ServiceConnection } from '../common/service';
-import type { ServiceMessage, StartMainMessage, StartThreadMessage, WorkerMessage } from '../common/connection';
-import { ProcessOptions } from '../common/api';
+import RAL from "../common/ral";
+import { ptr, u32 } from "../common/baseTypes";
+import { WasiProcess } from "../common/process";
+import { WasiService, ServiceConnection } from "../common/service";
+import type {
+	ServiceMessage,
+	StartMainMessage,
+	StartThreadMessage,
+	WorkerMessage,
+} from "../common/connection";
+import { ProcessOptions } from "../common/api";
 
 export class NodeServiceConnection extends ServiceConnection {
-
 	private readonly port: MessagePort | Worker;
 
-	constructor(wasiService: WasiService, port: MessagePort | Worker, logChannel?: LogOutputChannel | undefined) {
+	constructor(
+		wasiService: WasiService,
+		port: MessagePort | Worker,
+		logChannel?: LogOutputChannel | undefined,
+	) {
 		super(wasiService, logChannel);
 		this.port = port;
-		this.port.on('message', (message: WorkerMessage) => {
+		this.port.on("message", (message: WorkerMessage) => {
 			this.handleMessage(message).catch(RAL().console.error);
 		});
 	}
@@ -33,7 +41,6 @@ export class NodeServiceConnection extends ServiceConnection {
 }
 
 export class NodeWasiProcess extends WasiProcess {
-
 	private readonly baseUri: Uri;
 	private readonly module: Promise<WebAssembly.Module>;
 
@@ -44,13 +51,20 @@ export class NodeWasiProcess extends WasiProcess {
 	private mainWorker: Worker | undefined;
 	private threadWorkers: Map<u32, Worker>;
 
-	constructor(baseUri: Uri, programName: string, module: WebAssembly.Module | Promise<WebAssembly.Module>, memory: WebAssembly.Memory | WebAssembly.MemoryDescriptor | undefined, options: ProcessOptions = {}) {
+	constructor(
+		baseUri: Uri,
+		programName: string,
+		module: WebAssembly.Module | Promise<WebAssembly.Module>,
+		memory: WebAssembly.Memory | WebAssembly.MemoryDescriptor | undefined,
+		options: ProcessOptions = {},
+	) {
 		super(programName, options);
 		this.baseUri = baseUri;
 		this.threadWorkers = new Map();
-		this.module = module instanceof WebAssembly.Module
-			? Promise.resolve(module)
-			: module;
+		this.module =
+			module instanceof WebAssembly.Module
+				? Promise.resolve(module)
+				: module;
 		if (memory instanceof WebAssembly.Memory) {
 			this.memory = memory;
 		} else {
@@ -59,46 +73,82 @@ export class NodeWasiProcess extends WasiProcess {
 	}
 
 	protected async startMain(wasiService: WasiService): Promise<void> {
-		const filename = Uri.joinPath(this.baseUri, './dist/desktop/mainWorker.js').fsPath;
+		const filename = Uri.joinPath(
+			this.baseUri,
+			"./dist/desktop/mainWorker.js",
+		).fsPath;
 		this.mainWorker = new Worker(filename);
-		this.mainWorker.on('exit', async (exitCode: number) => {
-			this.cleanUpWorkers().catch(error => RAL().console.error(error));
-			this.cleanupFileDescriptors().catch(error => RAL().console.error(error));
+		this.mainWorker.on("exit", async (exitCode: number) => {
+			this.cleanUpWorkers().catch((error) => RAL().console.error(error));
+			this.cleanupFileDescriptors().catch((error) =>
+				RAL().console.error(error),
+			);
 			// We might be in proc_exit state.
-			if (this.state !== 'exiting') {
+			if (this.state !== "exiting") {
 				this.resolveRunPromise(exitCode);
 			}
 		});
-		const connection = new NodeServiceConnection(wasiService, this.mainWorker, this.options.trace);
+		const connection = new NodeServiceConnection(
+			wasiService,
+			this.mainWorker,
+			this.options.trace,
+		);
 		await connection.workerReady();
 		const module = await this.module;
 		this.importsMemory = this.doesImportMemory(module);
 		if (this.importsMemory) {
 			if (this.memoryDescriptor === undefined) {
-				throw new Error('Web assembly imports memory but no memory descriptor was provided.');
+				throw new Error(
+					"Web assembly imports memory but no memory descriptor was provided.",
+				);
 			}
 			this.memory = new WebAssembly.Memory(this.memoryDescriptor);
 		}
-		const message: StartMainMessage = { method: 'startMain', module: await this.module, memory: this.memory, trace: this.options.trace !== undefined };
+		const message: StartMainMessage = {
+			method: "startMain",
+			module: await this.module,
+			memory: this.memory,
+			trace: this.options.trace !== undefined,
+		};
 		connection.postMessage(message);
 		return Promise.resolve();
 	}
 
-	protected async startThread(wasiService: WasiService, tid: u32, start_arg: ptr): Promise<void> {
+	protected async startThread(
+		wasiService: WasiService,
+		tid: u32,
+		start_arg: ptr,
+	): Promise<void> {
 		if (this.mainWorker === undefined) {
-			throw new Error('Main worker not started');
+			throw new Error("Main worker not started");
 		}
 		if (!this.importsMemory || this.memory === undefined) {
-			throw new Error('Multi threaded applications need to import shared memory.');
+			throw new Error(
+				"Multi threaded applications need to import shared memory.",
+			);
 		}
-		const filename = Uri.joinPath(this.baseUri, './dist/desktop/threadWorker.js').fsPath;
+		const filename = Uri.joinPath(
+			this.baseUri,
+			"./dist/desktop/threadWorker.js",
+		).fsPath;
 		const worker = new Worker(filename);
-		worker.on('exit', () => {
+		worker.on("exit", () => {
 			this.threadWorkers.delete(tid);
 		});
-		const connection = new NodeServiceConnection(wasiService, worker, this.options.trace);
+		const connection = new NodeServiceConnection(
+			wasiService,
+			worker,
+			this.options.trace,
+		);
 		await connection.workerReady();
-		const message: StartThreadMessage = { method: 'startThread', module: await this.module, memory: this.memory!, tid, start_arg, trace: this.options.trace !== undefined };
+		const message: StartThreadMessage = {
+			method: "startThread",
+			module: await this.module,
+			memory: this.memory!,
+			tid,
+			start_arg,
+			trace: this.options.trace !== undefined,
+		};
 		connection.postMessage(message);
 		this.threadWorkers.set(tid, worker);
 		return Promise.resolve();
@@ -140,7 +190,7 @@ export class NodeWasiProcess extends WasiProcess {
 	private doesImportMemory(module: WebAssembly.Module): boolean {
 		const imports = WebAssembly.Module.imports(module);
 		for (const item of imports) {
-			if (item.kind === 'memory' && item.name === 'memory') {
+			if (item.kind === "memory" && item.name === "memory") {
 				return true;
 			}
 		}
