@@ -5,8 +5,6 @@
 /* eslint-disable no-console */
 //@ts-check
 
-"use strict";
-
 const path = require("path");
 const httpServer = require("http-server");
 

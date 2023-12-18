@@ -7,8 +7,8 @@ import RAL from "../common/ral";
 
 import {
 	MessagePort,
-	Worker,
 	TransferListItem,
+	Worker,
 	parentPort,
 } from "worker_threads";
 import { BaseMessageConnection } from "../common/messageConnection";
@@ -38,7 +38,7 @@ export class MessageConnection<
 
 	protected postMessage(
 		message: BaseMessageConnection.Message,
-		transferList?: TransferListItem[]
+		transferList?: TransferListItem[],
 	): void {
 		this.port.postMessage(message, transferList);
 	}

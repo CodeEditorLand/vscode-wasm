@@ -1,16 +1,16 @@
+import * as crypto from "crypto";
+import * as path from "path";
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { TextDecoder } from "util";
-import * as path from "path";
-import * as crypto from "crypto";
 
 import type { Disposable } from "vscode";
 
 import RAL from "../common/ral";
 
-interface RIL extends RAL {}
+type RIL = RAL;
 
 const _ril: RIL = Object.freeze<RIL>({
 	TextEncoder: Object.freeze({
@@ -23,7 +23,7 @@ const _ril: RIL = Object.freeze<RIL>({
 		},
 	}),
 	TextDecoder: Object.freeze({
-		create(encoding: string = "utf-8"): RAL.TextDecoder {
+		create(encoding = "utf-8"): RAL.TextDecoder {
 			return new TextDecoder(encoding);
 		},
 	}),

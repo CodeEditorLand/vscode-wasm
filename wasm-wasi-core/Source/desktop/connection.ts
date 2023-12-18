@@ -5,9 +5,9 @@
 
 import { MessagePort, Worker } from "worker_threads";
 
-import RAL from "../common/ral";
-import { HostConnection } from "../common/host";
 import type { ServiceMessage, WorkerMessage } from "../common/connection";
+import { HostConnection } from "../common/host";
+import RAL from "../common/ral";
 
 export abstract class NodeHostConnection extends HostConnection {
 	private readonly port: MessagePort | Worker;

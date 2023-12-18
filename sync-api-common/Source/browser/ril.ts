@@ -5,11 +5,11 @@
 
 import RAL from "../common/ral";
 
-import type { Disposable } from "../common/disposable";
 import type { Params, RequestType } from "../common/connection";
+import type { Disposable } from "../common/disposable";
 import { ClientConnection, ServiceConnection } from "./connection";
 
-interface RIL extends RAL {}
+type RIL = RAL;
 
 // In Browser environments we can only encode / decode utf-8
 const encoder: RAL.TextEncoder = new TextEncoder();
@@ -36,12 +36,12 @@ class TestServiceConnection<
 const _ril: RIL = Object.freeze<RIL>({
 	type: RAL.Type.Browser,
 	TextEncoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextEncoder {
+		create(_encoding = "utf-8"): RAL.TextEncoder {
 			return encoder;
 		},
 	}),
 	TextDecoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextDecoder {
+		create(_encoding = "utf-8"): RAL.TextDecoder {
 			return decoder;
 		},
 	}),
@@ -87,7 +87,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>(script: string, testCase?: string) {
 				return new TestServiceConnection<RequestHandlers, ReadyParams>(
 					script,
-					testCase
+					testCase,
 				);
 			},
 		}),

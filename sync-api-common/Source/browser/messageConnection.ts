@@ -32,7 +32,7 @@ export class MessageConnection<
 
 	protected postMessage(
 		message: BaseMessageConnection.Message,
-		transfer?: Transferable[]
+		transfer?: Transferable[],
 	): void {
 		transfer !== undefined
 			? this.port.postMessage(message, transfer)
@@ -41,7 +41,7 @@ export class MessageConnection<
 
 	public listen(): void {
 		this.port.onmessage = (
-			event: MessageEvent<BaseMessageConnection.Message>
+			event: MessageEvent<BaseMessageConnection.Message>,
 		) => {
 			this.handleMessage(event.data).catch(RAL().console.error);
 		};

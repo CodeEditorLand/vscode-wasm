@@ -1,17 +1,9 @@
+import { Uri } from "vscode";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { size } from "./baseTypes";
-import {
-	fd,
-	fdflags,
-	fdstat,
-	filestat,
-	Filetype,
-	Rights,
-	rights,
-} from "./wasi";
 import {
 	CharacterDeviceDriver,
 	DeviceDriverKind,
@@ -20,7 +12,15 @@ import {
 } from "./deviceDriver";
 import { BaseFileDescriptor, FileDescriptor } from "./fileDescriptor";
 import RAL from "./ral";
-import { Uri } from "vscode";
+import {
+	Filetype,
+	Rights,
+	fd,
+	fdflags,
+	fdstat,
+	filestat,
+	rights,
+} from "./wasi";
 
 const ConsoleBaseRights: rights =
 	Rights.fd_read |
@@ -38,7 +38,7 @@ class ConsoleFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		rights_inheriting: rights,
 		fdflags: fdflags,
-		inode: bigint
+		inode: bigint,
 	) {
 		super(
 			deviceId,
@@ -47,7 +47,7 @@ class ConsoleFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode
+			inode,
 		);
 	}
 
@@ -58,7 +58,7 @@ class ConsoleFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.rights_inheriting,
 			this.fdflags,
-			this.inode
+			this.inode,
 		);
 	}
 }
@@ -68,7 +68,7 @@ export const uri: Uri = Uri.from({
 	authority: "f36f1dd6-913a-417f-a53c-360730fde485",
 });
 export function create(deviceId: DeviceId): CharacterDeviceDriver {
-	let inodeCounter: bigint = 0n;
+	let inodeCounter = 0n;
 	const decoder = RAL().TextDecoder.create();
 
 	function createConsoleFileDescriptor(fd: 0 | 1 | 2): ConsoleFileDescriptor {
@@ -78,7 +78,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 			ConsoleBaseRights,
 			ConsoleInheritingRights,
 			0,
-			inodeCounter++
+			inodeCounter++,
 		);
 	}
 
@@ -100,7 +100,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat
+			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -110,7 +110,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 		},
 		fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat
+			result: filestat,
 		): Promise<void> {
 			result.dev = fileDescriptor.deviceId;
 			result.ino = fileDescriptor.inode;
@@ -125,7 +125,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 		},
 		fd_write(
 			_fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			let buffer: Uint8Array;
 			if (buffers.length === 1) {
@@ -133,7 +133,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 			} else {
 				const byteLength: number = buffers.reduce<number>(
 					(prev, current) => prev + current.length,
-					0
+					0,
 				);
 				buffer = new Uint8Array(byteLength);
 				let offset = 0;

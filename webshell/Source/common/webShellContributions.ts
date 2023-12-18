@@ -7,8 +7,8 @@ import {
 	Event,
 	EventEmitter,
 	Extension,
-	extensions as Extensions,
 	Uri,
+	extensions as Extensions,
 } from "vscode";
 
 export interface CommandMountPointContribution {
@@ -35,7 +35,7 @@ export interface DirectoryMountPointContribution {
 }
 export namespace DirectoryMountPointContribution {
 	export function is(
-		value: object
+		value: object,
 	): value is DirectoryMountPointContribution {
 		const candidate = value as DirectoryMountPointContribution;
 		return (
@@ -113,11 +113,11 @@ class WebShellContributionsImpl implements WebShellContributions {
 				for (const mountPoint of mountPoints) {
 					if (CommandMountPointContribution.is(mountPoint)) {
 						result.commands.push(
-							Object.assign({ extension }, mountPoint)
+							Object.assign({ extension }, mountPoint),
 						);
 					} else if (DirectoryMountPointContribution.is(mountPoint)) {
 						result.directories.push(
-							Object.assign({}, mountPoint, { extension })
+							Object.assign({}, mountPoint, { extension }),
 						);
 					}
 				}
@@ -130,10 +130,13 @@ class WebShellContributionsImpl implements WebShellContributions {
 		const { commands, directories } = this.parseExtensions();
 
 		const oldCommands: Map<string, CommandMountPoint> = new Map(
-			this.commandMountPoints.map((command) => [command.command, command])
+			this.commandMountPoints.map((command) => [
+				command.command,
+				command,
+			]),
 		);
 		const newCommands: Map<string, CommandMountPoint> = new Map(
-			commands.map((command) => [command.command, command])
+			commands.map((command) => [command.command, command]),
 		);
 
 		const addedCommands: CommandMountPoint[] = [];
@@ -153,19 +156,19 @@ class WebShellContributionsImpl implements WebShellContributions {
 			this.directoryMountPoints.map((directory) => [
 				Uri.joinPath(
 					directory.extension.extensionUri,
-					directory.path
+					directory.path,
 				).toString(),
 				directory,
-			])
+			]),
 		);
 		const newDirectories: Map<string, DirectoryMountPoint> = new Map(
 			directories.map((directory) => [
 				Uri.joinPath(
 					directory.extension.extensionUri,
-					directory.path
+					directory.path,
 				).toString(),
 				directory,
-			])
+			]),
 		);
 		const addedDirectories: DirectoryMountPoint[] = [];
 		const removedDirectories: DirectoryMountPoint[] = [];

@@ -6,8 +6,7 @@ import { LogOutputChannel, Uri } from "vscode";
 
 import RAL from "../common/ral";
 
-import { WasiProcess } from "../common/process";
-import { WasiService, ServiceConnection } from "../common/service";
+import type { ProcessOptions } from "../common/api";
 import type { ptr, u32 } from "../common/baseTypes";
 import type {
 	ServiceMessage,
@@ -15,7 +14,8 @@ import type {
 	StartThreadMessage,
 	WorkerMessage,
 } from "../common/connection";
-import type { ProcessOptions } from "../common/api";
+import { WasiProcess } from "../common/process";
+import { ServiceConnection, WasiService } from "../common/service";
 
 export class BrowserServiceConnection extends ServiceConnection {
 	private readonly port: MessagePort | Worker;
@@ -23,13 +23,13 @@ export class BrowserServiceConnection extends ServiceConnection {
 	constructor(
 		wasiService: WasiService,
 		port: MessagePort | Worker,
-		logChannel?: LogOutputChannel | undefined
+		logChannel?: LogOutputChannel | undefined,
 	) {
 		super(wasiService, logChannel);
 		this.port = port;
 		this.port.onmessage = (event: MessageEvent<WorkerMessage>) => {
 			this.handleMessage(event.data).catch((error) =>
-				RAL().console.error(error)
+				RAL().console.error(error),
 			);
 		};
 	}
@@ -59,7 +59,7 @@ export class BrowserWasiProcess extends WasiProcess {
 		programName: string,
 		module: WebAssembly.Module | Promise<WebAssembly.Module>,
 		memory: WebAssembly.Memory | WebAssembly.MemoryDescriptor | undefined,
-		options: ProcessOptions = {}
+		options: ProcessOptions = {},
 	) {
 		super(programName, options);
 		this.baseUri = baseUri;
@@ -98,13 +98,13 @@ export class BrowserWasiProcess extends WasiProcess {
 	protected async startMain(wasiService: WasiService): Promise<void> {
 		const filename = Uri.joinPath(
 			this.baseUri,
-			"./dist/web/mainWorker.js"
+			"./dist/web/mainWorker.js",
 		).toString();
 		this.mainWorker = new Worker(filename);
 		const connection = new BrowserServiceConnection(
 			wasiService,
 			this.mainWorker,
-			this.options.trace
+			this.options.trace,
 		);
 		await connection.workerReady();
 		const module = await this.module;
@@ -112,7 +112,7 @@ export class BrowserWasiProcess extends WasiProcess {
 		if (this.importsMemory && this.memory === undefined) {
 			if (this.memoryDescriptor === undefined) {
 				throw new Error(
-					"Web assembly imports memory but no memory descriptor was provided."
+					"Web assembly imports memory but no memory descriptor was provided.",
 				);
 			}
 			this.memory = new WebAssembly.Memory(this.memoryDescriptor);
@@ -140,25 +140,25 @@ export class BrowserWasiProcess extends WasiProcess {
 	protected async startThread(
 		wasiService: WasiService,
 		tid: u32,
-		start_arg: ptr
+		start_arg: ptr,
 	): Promise<void> {
 		if (this.mainWorker === undefined) {
 			throw new Error("Main worker not started");
 		}
 		if (!this.importsMemory || this.memory === undefined) {
 			throw new Error(
-				"Multi threaded applications need to import shared memory."
+				"Multi threaded applications need to import shared memory.",
 			);
 		}
 		const filename = Uri.joinPath(
 			this.baseUri,
-			"./dist/web/threadWorker.js"
+			"./dist/web/threadWorker.js",
 		).toString();
 		const worker = new Worker(filename);
 		const connection = new BrowserServiceConnection(
 			wasiService,
 			worker,
-			this.options.trace
+			this.options.trace,
 		);
 		await connection.workerReady();
 		const message: StartThreadMessage = {

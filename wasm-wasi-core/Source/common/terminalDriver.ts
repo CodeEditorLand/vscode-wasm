@@ -7,21 +7,21 @@ import { Uri } from "vscode";
 import type { WasmPseudoterminal } from "./api";
 import type { size } from "./baseTypes";
 import {
-	fd,
-	fdflags,
-	fdstat,
-	filestat,
-	Filetype,
-	Rights,
-	rights,
-} from "./wasi";
-import {
 	CharacterDeviceDriver,
 	DeviceDriverKind,
 	DeviceId,
 	NoSysDeviceDriver,
 } from "./deviceDriver";
 import { BaseFileDescriptor, FileDescriptor } from "./fileDescriptor";
+import {
+	Filetype,
+	Rights,
+	fd,
+	fdflags,
+	fdstat,
+	filestat,
+	rights,
+} from "./wasi";
 
 const TerminalBaseRights: rights =
 	Rights.fd_read |
@@ -39,7 +39,7 @@ class TerminalFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		rights_inheriting: rights,
 		fdflags: fdflags,
-		inode: bigint
+		inode: bigint,
 	) {
 		super(
 			deviceId,
@@ -48,7 +48,7 @@ class TerminalFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode
+			inode,
 		);
 	}
 
@@ -59,19 +59,19 @@ class TerminalFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.rights_inheriting,
 			this.fdflags,
-			this.inode
+			this.inode,
 		);
 	}
 }
 
 export function create(
 	deviceId: DeviceId,
-	terminal: WasmPseudoterminal
+	terminal: WasmPseudoterminal,
 ): CharacterDeviceDriver {
-	let inodeCounter: bigint = 0n;
+	let inodeCounter = 0n;
 
 	function createTerminalFileDescriptor(
-		fd: 0 | 1 | 2
+		fd: 0 | 1 | 2,
 	): TerminalFileDescriptor {
 		return new TerminalFileDescriptor(
 			deviceId,
@@ -79,7 +79,7 @@ export function create(
 			TerminalBaseRights,
 			TerminalInheritingRights,
 			0,
-			inodeCounter++
+			inodeCounter++,
 		);
 	}
 
@@ -105,7 +105,7 @@ export function create(
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat
+			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -115,7 +115,7 @@ export function create(
 		},
 		fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat
+			result: filestat,
 		): Promise<void> {
 			result.dev = fileDescriptor.deviceId;
 			result.ino = fileDescriptor.inode;
@@ -130,14 +130,14 @@ export function create(
 		},
 		async fd_read(
 			_fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			if (buffers.length === 0) {
 				return 0;
 			}
 			const maxBytesToRead = buffers.reduce<number>(
 				(prev, current) => prev + current.length,
-				0
+				0,
 			);
 			const result = await terminal.read(maxBytesToRead);
 			let offset = 0;
@@ -155,7 +155,7 @@ export function create(
 		},
 		fd_write(
 			_fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			let buffer: Uint8Array;
 			if (buffers.length === 1) {
@@ -163,7 +163,7 @@ export function create(
 			} else {
 				const byteLength: number = buffers.reduce<number>(
 					(prev, current) => prev + current.length,
-					0
+					0,
 				);
 				buffer = new Uint8Array(byteLength);
 				let offset = 0;

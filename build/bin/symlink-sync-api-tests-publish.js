@@ -4,8 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 //@ts-check
 
-"use strict";
-
 const path = require("path");
 const ln = require("./linking");
 
@@ -22,7 +20,7 @@ const node_modules = "node_modules";
 			"sync-api-tests",
 			node_modules,
 			"@vscode",
-			"sync-api-service"
-		)
+			"sync-api-service",
+		),
 	);
 })();

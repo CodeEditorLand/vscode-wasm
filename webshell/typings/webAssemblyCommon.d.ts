@@ -14,7 +14,7 @@ and limitations under the License.
 ***************************************************************************** */
 
 declare namespace WebAssembly {
-	interface CompileError extends Error {}
+	type CompileError = Error;
 
 	var CompileError: {
 		prototype: CompileError;
@@ -22,7 +22,7 @@ declare namespace WebAssembly {
 		(message?: string): CompileError;
 	};
 
-	interface LinkError extends Error {}
+	type LinkError = Error;
 
 	var LinkError: {
 		prototype: LinkError;
@@ -46,9 +46,9 @@ declare namespace WebAssembly {
 		new (descriptor: MemoryDescriptor): Memory;
 	};
 
-	interface Module {}
+	type Module = {};
 
-	interface RuntimeError extends Error {}
+	type RuntimeError = Error;
 
 	var RuntimeError: {
 		prototype: RuntimeError;

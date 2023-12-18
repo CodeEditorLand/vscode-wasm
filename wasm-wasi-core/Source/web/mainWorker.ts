@@ -5,14 +5,14 @@
 import RIL from "./ril";
 RIL.install();
 
-import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
-import { BrowserHostConnection } from "./connection";
 import {
 	ServiceMessage,
 	StartMainMessage,
 	WorkerReadyMessage,
 } from "../common/connection";
+import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
 import { CapturedPromise } from "../common/promises";
+import { BrowserHostConnection } from "./connection";
 
 class MainBrowserHostConnection extends BrowserHostConnection {
 	private _done: CapturedPromise<void>;
@@ -57,7 +57,7 @@ class MainBrowserHostConnection extends BrowserHostConnection {
 }
 
 async function main(
-	port: MessagePort | Worker | DedicatedWorkerGlobalScope
+	port: MessagePort | Worker | DedicatedWorkerGlobalScope,
 ): Promise<void> {
 	const connection = new MainBrowserHostConnection(port);
 	try {

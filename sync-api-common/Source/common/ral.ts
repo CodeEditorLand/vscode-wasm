@@ -3,13 +3,13 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { Disposable } from "./disposable";
 import type {
-	RequestType,
 	ClientConnection,
-	ServiceConnection,
 	Params,
+	RequestType,
+	ServiceConnection,
 } from "./connection";
+import { Disposable } from "./disposable";
 
 interface _TextEncoder {
 	encode(input?: string): Uint8Array;
@@ -79,7 +79,7 @@ interface RAL {
 				ReadyParams extends Params | undefined = undefined,
 			>(
 				script: string,
-				testCase?: string
+				testCase?: string,
 			): _TestServiceConnection<RequestHandlers, ReadyParams>;
 		};
 		readonly testCase: string;

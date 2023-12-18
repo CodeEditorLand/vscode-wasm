@@ -3,14 +3,14 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import RAL from "../common/ral";
 import {
-	BaseServiceConnection,
 	BaseClientConnection,
+	BaseServiceConnection,
 	Message,
-	RequestType,
 	Params,
+	RequestType,
 } from "../common/connection";
+import RAL from "../common/ral";
 
 export class ClientConnection<
 	Requests extends RequestType | undefined = undefined,
@@ -41,7 +41,7 @@ export class ServiceConnection<
 		super();
 		this.port = port;
 		this.port.onmessage = async (
-			event: MessageEvent<SharedArrayBuffer>
+			event: MessageEvent<SharedArrayBuffer>,
 		) => {
 			try {
 				await this.handleMessage(event.data);

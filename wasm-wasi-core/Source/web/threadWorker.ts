@@ -5,14 +5,14 @@
 import RIL from "./ril";
 RIL.install();
 
-import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
-import { BrowserHostConnection } from "./connection";
 import {
 	ServiceMessage,
 	StartThreadMessage,
 	WorkerReadyMessage,
 } from "../common/connection";
+import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
 import { CapturedPromise } from "../common/promises";
+import { BrowserHostConnection } from "./connection";
 
 class ThreadBrowserHostConnection extends BrowserHostConnection {
 	private _done: CapturedPromise<void>;
@@ -44,7 +44,7 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 			host.initialize(memory ?? instance);
 			(instance.exports.wasi_thread_start as Function)(
 				message.tid,
-				message.start_arg
+				message.start_arg,
 			);
 			host.thread_exit(message.tid);
 			if (tracer !== undefined) {
@@ -56,7 +56,7 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 }
 
 async function main(
-	port: MessagePort | Worker | DedicatedWorkerGlobalScope
+	port: MessagePort | Worker | DedicatedWorkerGlobalScope,
 ): Promise<void> {
 	const connection = new ThreadBrowserHostConnection(port);
 	try {

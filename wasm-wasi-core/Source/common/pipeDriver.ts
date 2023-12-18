@@ -3,18 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { Uri } from "vscode";
 import { size } from "./baseTypes";
-import {
-	Errno,
-	fd,
-	fdflags,
-	fdstat,
-	filestat,
-	Filetype,
-	Rights,
-	rights,
-	WasiError,
-} from "./wasi";
 import {
 	CharacterDeviceDriver,
 	DeviceDriverKind,
@@ -22,7 +12,17 @@ import {
 	NoSysDeviceDriver,
 } from "./deviceDriver";
 import { BaseFileDescriptor, FileDescriptor } from "./fileDescriptor";
-import { Uri } from "vscode";
+import {
+	Errno,
+	Filetype,
+	Rights,
+	WasiError,
+	fd,
+	fdflags,
+	fdstat,
+	filestat,
+	rights,
+} from "./wasi";
 
 const PipeBaseRights: rights =
 	Rights.fd_read |
@@ -40,7 +40,7 @@ class PipeFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		rights_inheriting: rights,
 		fdflags: fdflags,
-		inode: bigint
+		inode: bigint,
 	) {
 		super(
 			deviceId,
@@ -49,7 +49,7 @@ class PipeFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode
+			inode,
 		);
 	}
 
@@ -60,7 +60,7 @@ class PipeFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.rights_inheriting,
 			this.fdflags,
-			this.inode
+			this.inode,
 		);
 	}
 }
@@ -77,9 +77,9 @@ export function create(
 	deviceId: DeviceId,
 	stdin: Stdin | undefined,
 	stdout: Stdout | undefined,
-	stderr: Stdout | undefined
+	stderr: Stdout | undefined,
 ): CharacterDeviceDriver {
-	let inodeCounter: bigint = 0n;
+	let inodeCounter = 0n;
 
 	function createPipeFileDescriptor(fd: 0 | 1 | 2): PipeFileDescriptor {
 		return new PipeFileDescriptor(
@@ -88,7 +88,7 @@ export function create(
 			PipeBaseRights,
 			PipeInheritingRights,
 			0,
-			inodeCounter++
+			inodeCounter++,
 		);
 	}
 
@@ -118,7 +118,7 @@ export function create(
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat
+			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -128,7 +128,7 @@ export function create(
 		},
 		fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat
+			result: filestat,
 		): Promise<void> {
 			result.dev = fileDescriptor.deviceId;
 			result.ino = fileDescriptor.inode;
@@ -143,7 +143,7 @@ export function create(
 		},
 		async fd_read(
 			_fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			if (buffers.length === 0) {
 				return 0;
@@ -154,7 +154,7 @@ export function create(
 
 			const maxBytesToRead = buffers.reduce<number>(
 				(prev, current) => prev + current.length,
-				0
+				0,
 			);
 			const result = await stdin.read(maxBytesToRead);
 			let offset = 0;
@@ -172,7 +172,7 @@ export function create(
 		},
 		async fd_write(
 			fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			let buffer: Uint8Array;
 			if (buffers.length === 1) {
@@ -180,7 +180,7 @@ export function create(
 			} else {
 				const byteLength: number = buffers.reduce<number>(
 					(prev, current) => prev + current.length,
-					0
+					0,
 				);
 				buffer = new Uint8Array(byteLength);
 				let offset = 0;

@@ -5,8 +5,8 @@
 /* eslint-disable no-console */
 
 import { BigIntStats, Dir } from "node:fs";
-import * as paths from "node:path";
 import * as fs from "node:fs/promises";
+import * as paths from "node:path";
 
 import * as yargs from "yargs";
 
@@ -51,7 +51,7 @@ export namespace Options {
 
 async function readDirectory(
 	path: string,
-	stat: BigIntStats
+	stat: BigIntStats,
 ): Promise<DirectoryNode> {
 	const name = paths.basename(path);
 	if (!stat.isDirectory()) {
@@ -119,7 +119,7 @@ async function run(options: Options): Promise<number> {
 			directory,
 			(_key, value) =>
 				typeof value === "bigint" ? value.toString() : value,
-			"\t"
+			"\t",
 		);
 		if (options.out) {
 			await fs.writeFile(options.out, dump);
@@ -144,11 +144,11 @@ export async function main(): Promise<number> {
 		.usage(
 			`Tool to generate a directory content for accessing in vscode.dev\nVersion: ${
 				require("../../package.json").version
-			}\nUsage: dir-dump [options] directory`
+			}\nUsage: dir-dump [options] directory`,
 		)
 		.example(
 			`dir-dump --stdout .`,
-			`Create a directory dump for the current directory and print it to stdout.`
+			`Create a directory dump for the current directory and print it to stdout.`,
 		)
 		.version(false)
 		.wrap(Math.min(100, yargs.terminalWidth()))

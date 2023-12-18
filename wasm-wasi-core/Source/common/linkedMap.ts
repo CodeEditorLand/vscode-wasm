@@ -137,7 +137,7 @@ export class LinkedMap<K, V> implements Map<K, V> {
 
 	public forEach(
 		callbackfn: (value: V, key: K, map: LinkedMap<K, V>) => void,
-		thisArg?: any
+		thisArg?: any,
 	): void {
 		const state = this._state;
 		let current = this._head;
@@ -257,11 +257,11 @@ export class LinkedMap<K, V> implements Map<K, V> {
 		// First time Insert
 		if (!this._head && !this._tail) {
 			this._tail = item;
-		} else if (!this._head) {
-			throw new Error("Invalid list");
-		} else {
+		} else if (this._head) {
 			item.next = this._head;
 			this._head.previous = item;
+		} else {
+			throw new Error("Invalid list");
 		}
 		this._head = item;
 		this._state++;
@@ -271,11 +271,11 @@ export class LinkedMap<K, V> implements Map<K, V> {
 		// First time Insert
 		if (!this._head && !this._tail) {
 			this._head = item;
-		} else if (!this._tail) {
-			throw new Error("Invalid list");
-		} else {
+		} else if (this._tail) {
 			item.previous = this._tail;
 			this._tail.next = item;
+		} else {
+			throw new Error("Invalid list");
 		}
 		this._tail = item;
 		this._state++;
@@ -399,7 +399,7 @@ export class LRUCache<K, V> extends LinkedMap<K, V> {
 	private _limit: number;
 	private _ratio: number;
 
-	public constructor(limit: number, ratio: number = 1) {
+	public constructor(limit: number, ratio = 1) {
 		super();
 		this._limit = limit;
 		this._ratio = Math.min(Math.max(0, ratio), 1);

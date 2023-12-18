@@ -3,14 +3,14 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { TextDecoder } from "util";
-import { parentPort, Worker } from "worker_threads";
+import { Worker, parentPort } from "worker_threads";
 
-import RAL from "../common/ral";
-import type { Disposable } from "../common/disposable";
 import type { Params, RequestType } from "../common/connection";
+import type { Disposable } from "../common/disposable";
+import RAL from "../common/ral";
 import { ClientConnection, ServiceConnection } from "./connection";
 
-interface RIL extends RAL {}
+type RIL = RAL;
 
 class TestServiceConnection<
 	RequestHandlers extends RequestType | undefined = undefined,
@@ -20,7 +20,7 @@ class TestServiceConnection<
 	constructor(script: string, testCase?: string) {
 		const worker = new Worker(
 			script,
-			testCase !== undefined ? { argv: [testCase] } : undefined
+			testCase !== undefined ? { argv: [testCase] } : undefined,
 		);
 		super(worker);
 		this.worker = worker;
@@ -42,7 +42,7 @@ const _ril: RIL = Object.freeze<RIL>({
 		},
 	}),
 	TextDecoder: Object.freeze({
-		create(encoding: string = "utf-8"): RAL.TextDecoder {
+		create(encoding = "utf-8"): RAL.TextDecoder {
 			return new TextDecoder(encoding);
 		},
 	}),
@@ -80,7 +80,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>() {
 				if (!parentPort) {
 					throw new Error(
-						`No parent port defined. Shouldn't happen in test setup`
+						`No parent port defined. Shouldn't happen in test setup`,
 					);
 				}
 				return new ClientConnection<Requests, ReadyParams>(parentPort);
@@ -93,7 +93,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>(script: string, testCase?: string) {
 				return new TestServiceConnection<RequestHandlers, ReadyParams>(
 					script,
-					testCase
+					testCase,
 				);
 			},
 		}),

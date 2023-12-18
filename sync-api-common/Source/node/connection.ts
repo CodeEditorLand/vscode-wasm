@@ -5,14 +5,14 @@
 
 import { MessagePort, Worker } from "worker_threads";
 
-import RAL from "../common/ral";
 import {
-	BaseServiceConnection,
 	BaseClientConnection,
+	BaseServiceConnection,
 	Message,
-	RequestType,
 	Params,
+	RequestType,
 } from "../common/connection";
+import RAL from "../common/ral";
 
 export class ClientConnection<
 	Requests extends RequestType | undefined = undefined,
@@ -54,7 +54,7 @@ export class ServiceConnection<
 				} catch (error) {
 					RAL().console.error(error);
 				}
-			}
+			},
 		);
 	}
 

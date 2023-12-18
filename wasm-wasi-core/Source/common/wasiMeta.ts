@@ -61,7 +61,7 @@ export namespace WasiFunctionSignature {
 		};
 	}
 	function getMemorySize(params: Param[]): number {
-		let result: number = 0;
+		let result = 0;
 		for (const param of params) {
 			result += param.size;
 		}
@@ -94,7 +94,7 @@ export type ArgumentTransfer = {
 		wasmMemory: ArrayBuffer,
 		from: ptr,
 		transferMemory: SharedArrayBuffer,
-		to: ptr
+		to: ptr,
 	) => ReverseArgumentTransfer | undefined;
 };
 
@@ -117,7 +117,7 @@ export namespace ArgumentsTransfer {
 	}
 
 	function getMemorySize(transfers: ArgumentTransfer[]): number {
-		let result: number = 0;
+		let result = 0;
 		for (const transfer of transfers) {
 			result += transfer.memorySize;
 		}
@@ -136,14 +136,14 @@ export type CustomMemoryTransfer = {
 		args: (number | bigint)[],
 		paramBuffer: SharedArrayBuffer,
 		paramIndex: number,
-		transferMemory: SharedArrayBuffer
+		transferMemory: SharedArrayBuffer,
 	) => ReverseCustomTransfer;
 };
 
 export type MemoryTransfer = ArgumentsTransfer | CustomMemoryTransfer;
 export namespace MemoryTransfer {
 	export function isCustom(
-		transfer: MemoryTransfer | undefined
+		transfer: MemoryTransfer | undefined,
 	): transfer is CustomMemoryTransfer {
 		const candidate = transfer as CustomMemoryTransfer;
 		return (
@@ -153,7 +153,7 @@ export namespace MemoryTransfer {
 		);
 	}
 	export function isArguments(
-		transfer: MemoryTransfer | undefined
+		transfer: MemoryTransfer | undefined,
 	): transfer is ArgumentsTransfer {
 		const candidate = transfer as ArgumentsTransfer;
 		return (
@@ -167,13 +167,13 @@ export namespace MemoryTransfer {
 export type ReverseTransfer = ReverseArgumentsTransfer | ReverseCustomTransfer;
 export namespace ReverseTransfer {
 	export function isCustom(
-		transfer: ReverseTransfer | undefined
+		transfer: ReverseTransfer | undefined,
 	): transfer is ReverseCustomTransfer {
 		const candidate = transfer as ReverseCustomTransfer;
 		return candidate && typeof candidate.copy === "function";
 	}
 	export function isArguments(
-		transfer: ReverseTransfer | undefined
+		transfer: ReverseTransfer | undefined,
 	): transfer is ReverseArgumentsTransfer {
 		const candidate = transfer as ReverseArgumentsTransfer;
 		return candidate && Array.isArray(candidate);
@@ -259,7 +259,7 @@ export namespace Bytes {
 	export const $ptr = PtrParam;
 	export function createTransfer(
 		length: number,
-		direction: MemoryTransferDirection
+		direction: MemoryTransferDirection,
 	): ArgumentTransfer {
 		return {
 			memorySize: length,
@@ -269,7 +269,7 @@ export namespace Bytes {
 					direction === MemoryTransferDirection.both
 				) {
 					new Uint8Array(transferMemory, to, length).set(
-						new Uint8Array(wasmMemory, from, length)
+						new Uint8Array(wasmMemory, from, length),
 					);
 				}
 				return direction === MemoryTransferDirection.param
@@ -348,7 +348,7 @@ export namespace Ptr {
 
 	export function createTransfer(
 		length: number,
-		direction: MemoryTransferDirection
+		direction: MemoryTransferDirection,
 	): ArgumentTransfer {
 		return {
 			memorySize: length * size,
@@ -358,7 +358,7 @@ export namespace Ptr {
 					direction === MemoryTransferDirection.both
 				) {
 					new Uint8Array(transferMemory, to, size).set(
-						new Uint8Array(wasmMemory, from, size)
+						new Uint8Array(wasmMemory, from, size),
 					);
 				}
 				return direction === MemoryTransferDirection.param

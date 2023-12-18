@@ -2,62 +2,56 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { cstring, ptr, size, u32, u64, u8 } from "./baseTypes";
+import { cstring, ptr, size, u8, u32, u64 } from "./baseTypes";
+import { Offsets, WorkerMessage } from "./connection";
+import { TraceMessage } from "./trace";
 import {
-	fd,
-	errno,
 	Errno,
-	lookupflags,
-	oflags,
-	rights,
-	fdflags,
-	dircookie,
-	filesize,
-	advise,
-	filedelta,
-	whence,
-	clockid,
-	timestamp,
-	fstflags,
-	exitcode,
 	WasiError,
-	event,
-	subscription,
-	riflags,
-	siflags,
-	sdflags,
-	dirent,
-	ciovec,
-	iovec,
-	fdstat,
-	filestat,
-	prestat,
-	args_sizes_get,
+	advise,
 	args_get,
+	args_sizes_get,
+	ciovec,
 	clock_res_get,
 	clock_time_get,
-	environ_sizes_get,
+	clockid,
+	dircookie,
+	dirent,
 	environ_get,
+	environ_sizes_get,
+	errno,
+	event,
+	exitcode,
+	fd,
 	fd_advise,
 	fd_allocate,
 	fd_close,
 	fd_datasync,
-	fd_fdstat_set_flags,
 	fd_fdstat_get,
+	fd_fdstat_set_flags,
 	fd_filestat_get,
 	fd_filestat_set_size,
 	fd_filestat_set_times,
 	fd_pread,
-	fd_prestat_get,
 	fd_prestat_dir_name,
+	fd_prestat_get,
 	fd_pwrite,
 	fd_read,
 	fd_readdir,
-	fd_seek,
 	fd_renumber,
+	fd_seek,
 	fd_sync,
 	fd_tell,
 	fd_write,
+	fdflags,
+	fdstat,
+	filedelta,
+	filesize,
+	filestat,
+	fstflags,
+	iovec,
+	lookupflags,
+	oflags,
 	path_create_directory,
 	path_filestat_get,
 	path_filestat_set_times,
@@ -69,25 +63,31 @@ import {
 	path_symlink,
 	path_unlink_file,
 	poll_oneoff,
+	prestat,
 	proc_exit,
-	sched_yield,
 	random_get,
+	riflags,
+	rights,
+	sched_yield,
+	sdflags,
+	siflags,
 	sock_accept,
 	sock_shutdown,
-	thread_spawn,
+	subscription,
 	thread_exit,
+	thread_spawn,
+	timestamp,
+	whence,
 } from "./wasi";
-import {
-	ParamKind,
-	WasiFunctions,
-	WasiFunctionSignature,
-	WasiFunction,
-	MemoryTransfer,
-	ReverseTransfer,
-} from "./wasiMeta";
-import { Offsets, WorkerMessage } from "./connection";
 import { WASI } from "./wasi";
-import { TraceMessage } from "./trace";
+import {
+	MemoryTransfer,
+	ParamKind,
+	ReverseTransfer,
+	WasiFunction,
+	WasiFunctionSignature,
+	WasiFunctions,
+} from "./wasiMeta";
 
 export abstract class HostConnection {
 	private readonly timeout: number | undefined;
@@ -104,7 +104,7 @@ export abstract class HostConnection {
 		func: WasiFunction,
 		args: (number | bigint)[],
 		wasmMemory: ArrayBuffer,
-		transfers?: MemoryTransfer
+		transfers?: MemoryTransfer,
 	): errno {
 		const signature = func.signature;
 		if (signature.params.length !== args.length) {
@@ -116,7 +116,7 @@ export abstract class HostConnection {
 				signature,
 				args,
 				wasmMemory,
-				transfers
+				transfers,
 			);
 		const result = this.doCall(paramBuffer, resultBuffer);
 		if (
@@ -146,9 +146,9 @@ export abstract class HostConnection {
 								new Uint8Array(
 									resultBuffer,
 									single.from,
-									single.size
+									single.size,
 								),
-								single.to
+								single.to,
 							);
 						}
 					} else {
@@ -156,9 +156,9 @@ export abstract class HostConnection {
 							new Uint8Array(
 								resultBuffer,
 								reverse.from,
-								reverse.size
+								reverse.size,
 							),
-							reverse.to
+							reverse.to,
 						);
 					}
 				}
@@ -169,7 +169,7 @@ export abstract class HostConnection {
 
 	private doCall(
 		paramBuffer: SharedArrayBuffer,
-		resultBuffer: SharedArrayBuffer
+		resultBuffer: SharedArrayBuffer,
 	): errno {
 		const sync = new Int32Array(paramBuffer, Offsets.lock_index, 1);
 		Atomics.store(sync, 0, 0);
@@ -198,16 +198,16 @@ export abstract class HostConnection {
 		signature: WasiFunctionSignature,
 		args: (number | bigint)[],
 		wasmMemory: ArrayBuffer,
-		transfer: MemoryTransfer | undefined
+		transfer: MemoryTransfer | undefined,
 	): [SharedArrayBuffer, SharedArrayBuffer, ReverseTransfer | undefined] {
 		const paramBuffer = new SharedArrayBuffer(
-			Offsets.header_size + signature.memorySize
+			Offsets.header_size + signature.memorySize,
 		);
 		const paramView = new DataView(paramBuffer);
 		paramView.setUint32(
 			Offsets.method_index,
 			WasiFunctions.getIndex(name),
-			true
+			true,
 		);
 		// The WASM memory is shared so we can share it with the kernel thread.
 		// So no need to copy data into yet another shared array.
@@ -230,7 +230,7 @@ export abstract class HostConnection {
 					args,
 					paramBuffer,
 					offset,
-					resultBuffer
+					resultBuffer,
 				);
 			} else if (MemoryTransfer.isArguments(transfer)) {
 				let transferIndex = 0;
@@ -248,15 +248,15 @@ export abstract class HostConnection {
 								wasmMemory,
 								args[i] as number,
 								resultBuffer,
-								result_ptr
-							)
+								result_ptr,
+							),
 						);
 						result_ptr += transferItem.memorySize;
 					} else {
 						param.write(
 							paramView,
 							offset,
-							args[i] as number & bigint
+							args[i] as number & bigint,
 						);
 					}
 					offset += param.size;
@@ -303,7 +303,7 @@ declare namespace WebAssembly {
 
 export interface WasiHost extends WASI {
 	initialize: (
-		instOrMemory: WebAssembly.Instance | WebAssembly.Memory
+		instOrMemory: WebAssembly.Instance | WebAssembly.Memory,
 	) => void;
 	memory: () => ArrayBuffer;
 	thread_exit: (tid: u32) => void;
@@ -325,7 +325,7 @@ export namespace WasiHost {
 				$instance.exports.memory === undefined
 			) {
 				throw new Error(
-					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`
+					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
 				);
 			}
 			return ($instance.exports.memory as WebAssembly.Memory).buffer;
@@ -340,11 +340,11 @@ export namespace WasiHost {
 				$instance.exports.memory === undefined
 			) {
 				throw new Error(
-					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`
+					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
 				);
 			}
 			return new DataView(
-				($instance.exports.memory as WebAssembly.Memory).buffer
+				($instance.exports.memory as WebAssembly.Memory).buffer,
 			);
 		}
 
@@ -357,7 +357,7 @@ export namespace WasiHost {
 
 		const wasi: WasiHost = {
 			initialize: (
-				instOrMemory: WebAssembly.Instance | WebAssembly.Memory
+				instOrMemory: WebAssembly.Instance | WebAssembly.Memory,
 			): void => {
 				if (instOrMemory instanceof WebAssembly.Instance) {
 					$instance = instOrMemory;
@@ -372,7 +372,7 @@ export namespace WasiHost {
 			},
 			args_sizes_get: (
 				argvCount_ptr: ptr<u32>,
-				argvBufSize_ptr: ptr<u32>
+				argvBufSize_ptr: ptr<u32>,
 			): errno => {
 				try {
 					args_size.count = 0;
@@ -381,14 +381,14 @@ export namespace WasiHost {
 						args_sizes_get,
 						[argvCount_ptr, argvBufSize_ptr],
 						memory(),
-						args_sizes_get.transfers()
+						args_sizes_get.transfers(),
 					);
 					if (result === Errno.success) {
 						const view = memoryView();
 						args_size.count = view.getUint32(argvCount_ptr, true);
 						args_size.bufferSize = view.getUint32(
 							argvBufSize_ptr,
-							true
+							true,
 						);
 					}
 					return result;
@@ -398,7 +398,7 @@ export namespace WasiHost {
 			},
 			args_get: (
 				argv_ptr: ptr<ptr<cstring>[]>,
-				argvBuf_ptr: ptr<cstring>
+				argvBuf_ptr: ptr<cstring>,
 			): errno => {
 				if (args_size.count === 0 || args_size.bufferSize === 0) {
 					return Errno.inval;
@@ -411,8 +411,8 @@ export namespace WasiHost {
 						args_get.transfers(
 							memoryView(),
 							args_size.count,
-							args_size.bufferSize
-						)
+							args_size.bufferSize,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -424,7 +424,7 @@ export namespace WasiHost {
 						clock_res_get,
 						[id, timestamp_ptr],
 						memory(),
-						clock_res_get.transfers()
+						clock_res_get.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -433,14 +433,14 @@ export namespace WasiHost {
 			clock_time_get: (
 				id: clockid,
 				precision: timestamp,
-				timestamp_ptr: ptr<u64>
+				timestamp_ptr: ptr<u64>,
 			): errno => {
 				try {
 					return connection.call(
 						clock_time_get,
 						[id, precision, timestamp_ptr],
 						memory(),
-						clock_time_get.transfers()
+						clock_time_get.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -448,7 +448,7 @@ export namespace WasiHost {
 			},
 			environ_sizes_get: (
 				environCount_ptr: ptr<u32>,
-				environBufSize_ptr: ptr<u32>
+				environBufSize_ptr: ptr<u32>,
 			): errno => {
 				try {
 					environ_size.count = 0;
@@ -457,17 +457,17 @@ export namespace WasiHost {
 						environ_sizes_get,
 						[environCount_ptr, environBufSize_ptr],
 						memory(),
-						environ_sizes_get.transfers()
+						environ_sizes_get.transfers(),
 					);
 					if (result === Errno.success) {
 						const view = memoryView();
 						environ_size.count = view.getUint32(
 							environCount_ptr,
-							true
+							true,
 						);
 						environ_size.bufferSize = view.getUint32(
 							environBufSize_ptr,
-							true
+							true,
 						);
 					}
 					return result;
@@ -477,7 +477,7 @@ export namespace WasiHost {
 			},
 			environ_get: (
 				environ_ptr: ptr<u32>,
-				environBuf_ptr: ptr<cstring>
+				environBuf_ptr: ptr<cstring>,
 			): errno => {
 				if (environ_size.count === 0 || environ_size.bufferSize === 0) {
 					return Errno.inval;
@@ -490,8 +490,8 @@ export namespace WasiHost {
 						environ_get.transfers(
 							memoryView(),
 							environ_size.count,
-							environ_size.bufferSize
-						)
+							environ_size.bufferSize,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -501,13 +501,13 @@ export namespace WasiHost {
 				fd: fd,
 				offset: filesize,
 				length: filesize,
-				advise: advise
+				advise: advise,
 			): errno => {
 				try {
 					return connection.call(
 						fd_advise,
 						[fd, offset, length, advise],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -518,7 +518,7 @@ export namespace WasiHost {
 					return connection.call(
 						fd_allocate,
 						[fd, offset, len],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -544,7 +544,7 @@ export namespace WasiHost {
 						fd_fdstat_get,
 						[fd, fdstat_ptr],
 						memory(),
-						fd_fdstat_get.transfers()
+						fd_fdstat_get.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -555,7 +555,7 @@ export namespace WasiHost {
 					return connection.call(
 						fd_fdstat_set_flags,
 						[fd, fdflags],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -567,7 +567,7 @@ export namespace WasiHost {
 						fd_filestat_get,
 						[fd, filestat_ptr],
 						memory(),
-						fd_filestat_get.transfers()
+						fd_filestat_get.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -578,7 +578,7 @@ export namespace WasiHost {
 					return connection.call(
 						fd_filestat_set_size,
 						[fd, size],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -588,13 +588,13 @@ export namespace WasiHost {
 				fd: fd,
 				atim: timestamp,
 				mtim: timestamp,
-				fst_flags: fstflags
+				fst_flags: fstflags,
 			): errno => {
 				try {
 					return connection.call(
 						fd_filestat_set_times,
 						[fd, atim, mtim, fst_flags],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -605,14 +605,14 @@ export namespace WasiHost {
 				iovs_ptr: ptr<iovec>,
 				iovs_len: u32,
 				offset: filesize,
-				bytesRead_ptr: ptr<u32>
+				bytesRead_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_pread,
 						[fd, iovs_ptr, iovs_len, offset, bytesRead_ptr],
 						memory(),
-						fd_pread.transfers(memoryView(), iovs_ptr, iovs_len)
+						fd_pread.transfers(memoryView(), iovs_ptr, iovs_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -624,7 +624,7 @@ export namespace WasiHost {
 						fd_prestat_get,
 						[fd, bufPtr],
 						memory(),
-						fd_prestat_get.transfers()
+						fd_prestat_get.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -633,7 +633,7 @@ export namespace WasiHost {
 			fd_prestat_dir_name: (
 				fd: fd,
 				pathPtr: ptr<u8[]>,
-				pathLen: size
+				pathLen: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -643,8 +643,8 @@ export namespace WasiHost {
 						fd_prestat_dir_name.transfers(
 							memoryView(),
 							pathPtr,
-							pathLen
-						)
+							pathLen,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -655,14 +655,14 @@ export namespace WasiHost {
 				ciovs_ptr: ptr<ciovec>,
 				ciovs_len: u32,
 				offset: filesize,
-				bytesWritten_ptr: ptr<u32>
+				bytesWritten_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_pwrite,
 						[fd, ciovs_ptr, ciovs_len, offset, bytesWritten_ptr],
 						memory(),
-						fd_pwrite.transfers(memoryView(), ciovs_ptr, ciovs_len)
+						fd_pwrite.transfers(memoryView(), ciovs_ptr, ciovs_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -672,14 +672,14 @@ export namespace WasiHost {
 				fd: fd,
 				iovs_ptr: ptr<iovec>,
 				iovs_len: u32,
-				bytesRead_ptr: ptr<u32>
+				bytesRead_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_read,
 						[fd, iovs_ptr, iovs_len, bytesRead_ptr],
 						memory(),
-						fd_read.transfers(memoryView(), iovs_ptr, iovs_len)
+						fd_read.transfers(memoryView(), iovs_ptr, iovs_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -690,14 +690,14 @@ export namespace WasiHost {
 				buf_ptr: ptr<dirent>,
 				buf_len: size,
 				cookie: dircookie,
-				buf_used_ptr: ptr<u32>
+				buf_used_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_readdir,
 						[fd, buf_ptr, buf_len, cookie, buf_used_ptr],
 						memory(),
-						fd_readdir.transfers(memoryView(), buf_ptr, buf_len)
+						fd_readdir.transfers(memoryView(), buf_ptr, buf_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -707,14 +707,14 @@ export namespace WasiHost {
 				fd: fd,
 				offset: filedelta,
 				whence: whence,
-				new_offset_ptr: ptr<u64>
+				new_offset_ptr: ptr<u64>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_seek,
 						[fd, offset, whence, new_offset_ptr],
 						memory(),
-						fd_seek.transfers()
+						fd_seek.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -740,7 +740,7 @@ export namespace WasiHost {
 						fd_tell,
 						[fd, offset_ptr],
 						memory(),
-						fd_tell.transfers()
+						fd_tell.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -750,14 +750,14 @@ export namespace WasiHost {
 				fd: fd,
 				ciovs_ptr: ptr<ciovec>,
 				ciovs_len: u32,
-				bytesWritten_ptr: ptr<u32>
+				bytesWritten_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						fd_write,
 						[fd, ciovs_ptr, ciovs_len, bytesWritten_ptr],
 						memory(),
-						fd_write.transfers(memoryView(), ciovs_ptr, ciovs_len)
+						fd_write.transfers(memoryView(), ciovs_ptr, ciovs_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -766,7 +766,7 @@ export namespace WasiHost {
 			path_create_directory: (
 				fd: fd,
 				path_ptr: ptr<u8[]>,
-				path_len: size
+				path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -776,8 +776,8 @@ export namespace WasiHost {
 						path_create_directory.transfers(
 							memoryView(),
 							path_ptr,
-							path_len
-						)
+							path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -788,7 +788,7 @@ export namespace WasiHost {
 				flags: lookupflags,
 				path_ptr: ptr<u8[]>,
 				path_len: size,
-				filestat_ptr: ptr
+				filestat_ptr: ptr,
 			): errno => {
 				try {
 					return connection.call(
@@ -798,8 +798,8 @@ export namespace WasiHost {
 						path_filestat_get.transfers(
 							memoryView(),
 							path_ptr,
-							path_len
-						)
+							path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -812,7 +812,7 @@ export namespace WasiHost {
 				path_len: size,
 				atim: timestamp,
 				mtim: timestamp,
-				fst_flags: fstflags
+				fst_flags: fstflags,
 			): errno => {
 				try {
 					return connection.call(
@@ -822,8 +822,8 @@ export namespace WasiHost {
 						path_filestat_set_times.transfers(
 							memoryView(),
 							path_ptr,
-							path_len
-						)
+							path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -836,7 +836,7 @@ export namespace WasiHost {
 				old_path_len: size,
 				new_fd: fd,
 				new_path_ptr: ptr<u8[]>,
-				new_path_len: size
+				new_path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -856,8 +856,8 @@ export namespace WasiHost {
 							old_path_ptr,
 							old_path_len,
 							new_path_ptr,
-							new_path_len
-						)
+							new_path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -872,7 +872,7 @@ export namespace WasiHost {
 				fs_rights_base: rights,
 				fs_rights_inheriting: rights,
 				fdflags: fdflags,
-				fd_ptr: ptr<fd>
+				fd_ptr: ptr<fd>,
 			): errno => {
 				try {
 					return connection.call(
@@ -889,7 +889,7 @@ export namespace WasiHost {
 							fd_ptr,
 						],
 						memory(),
-						path_open.transfers(memoryView(), path_ptr, path_len)
+						path_open.transfers(memoryView(), path_ptr, path_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -901,7 +901,7 @@ export namespace WasiHost {
 				path_len: size,
 				buf_ptr: ptr,
 				buf_len: size,
-				result_size_ptr: ptr<u32>
+				result_size_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
@@ -920,8 +920,8 @@ export namespace WasiHost {
 							path_ptr,
 							path_len,
 							buf_ptr,
-							buf_len
-						)
+							buf_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -930,7 +930,7 @@ export namespace WasiHost {
 			path_remove_directory: (
 				fd: fd,
 				path_ptr: ptr<u8[]>,
-				path_len: size
+				path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -940,8 +940,8 @@ export namespace WasiHost {
 						path_remove_directory.transfers(
 							memoryView(),
 							path_ptr,
-							path_len
-						)
+							path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -953,7 +953,7 @@ export namespace WasiHost {
 				old_path_len: size,
 				new_fd: fd,
 				new_path_ptr: ptr<u8[]>,
-				new_path_len: size
+				new_path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -972,8 +972,8 @@ export namespace WasiHost {
 							old_path_ptr,
 							old_path_len,
 							new_path_ptr,
-							new_path_len
-						)
+							new_path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -984,7 +984,7 @@ export namespace WasiHost {
 				old_path_len: size,
 				fd: fd,
 				new_path_ptr: ptr<u8[]>,
-				new_path_len: size
+				new_path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -1002,8 +1002,8 @@ export namespace WasiHost {
 							old_path_ptr,
 							old_path_len,
 							new_path_ptr,
-							new_path_len
-						)
+							new_path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1012,7 +1012,7 @@ export namespace WasiHost {
 			path_unlink_file: (
 				fd: fd,
 				path_ptr: ptr<u8[]>,
-				path_len: size
+				path_len: size,
 			): errno => {
 				try {
 					return connection.call(
@@ -1022,8 +1022,8 @@ export namespace WasiHost {
 						path_unlink_file.transfers(
 							memoryView(),
 							path_ptr,
-							path_len
-						)
+							path_len,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1033,7 +1033,7 @@ export namespace WasiHost {
 				input: ptr<subscription>,
 				output: ptr<event[]>,
 				subscriptions: size,
-				result_size_ptr: ptr<u32>
+				result_size_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
@@ -1044,8 +1044,8 @@ export namespace WasiHost {
 							memoryView(),
 							input,
 							output,
-							subscriptions
-						)
+							subscriptions,
+						),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1078,7 +1078,7 @@ export namespace WasiHost {
 						random_get,
 						[buf, buf_len],
 						memory(),
-						random_get.transfers(memoryView(), buf, buf_len)
+						random_get.transfers(memoryView(), buf, buf_len),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1087,14 +1087,14 @@ export namespace WasiHost {
 			sock_accept: (
 				_fd: fd,
 				_flags: fdflags,
-				_result_fd_ptr: ptr<u32>
+				_result_fd_ptr: ptr<u32>,
 			): errno => {
 				try {
 					return connection.call(
 						sock_accept,
 						[_fd, _flags, _result_fd_ptr],
 						memory(),
-						sock_accept.transfers()
+						sock_accept.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1106,7 +1106,7 @@ export namespace WasiHost {
 				_ri_data_len: u32,
 				_ri_flags: riflags,
 				_ro_datalen_ptr: ptr,
-				_roflags_ptr: ptr
+				_roflags_ptr: ptr,
 			): errno => {
 				return Errno.nosys;
 			},
@@ -1115,7 +1115,7 @@ export namespace WasiHost {
 				_si_data_ptr: ptr,
 				_si_data_len: u32,
 				_si_flags: siflags,
-				_si_datalen_ptr: ptr
+				_si_datalen_ptr: ptr,
 			): errno => {
 				return Errno.nosys;
 			},
@@ -1124,7 +1124,7 @@ export namespace WasiHost {
 					return connection.call(
 						sock_shutdown,
 						[fd, sdflags],
-						memory()
+						memory(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1136,7 +1136,7 @@ export namespace WasiHost {
 						thread_spawn,
 						[start_args_ptr],
 						memory(),
-						thread_spawn.transfers()
+						thread_spawn.transfers(),
 					);
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -1165,7 +1165,7 @@ export namespace TraceWasiHost {
 				summary.push(
 					`${name} was called ${count} times and took ${time}ms in total. Average time: ${
 						time / count
-					}ms.`
+					}ms.`,
 				);
 			}
 			connection.postMessage({
@@ -1178,7 +1178,7 @@ export namespace TraceWasiHost {
 			get: (
 				target: WasiHost,
 				property: string | symbol,
-				receiver: any
+				receiver: any,
 			) => {
 				const value = Reflect.get(target, property, receiver);
 				const propertyName = property.toString();
@@ -1197,8 +1197,8 @@ export namespace TraceWasiHost {
 								? traceFunction(
 										host.memory(),
 										result,
-										...(args as (number & bigint)[])
-									)
+										...(args as (number & bigint)[]),
+								  )
 								: `Missing trace function for ${propertyName}. Execution took ${timeTaken}ms.`;
 						connection.postMessage({
 							method: "trace",
@@ -1211,13 +1211,13 @@ export namespace TraceWasiHost {
 							(args[0] !== 0 && args[0] !== 1 && args[0] !== 2)
 						) {
 							let perFunction = timePerFunction.get(
-								property.toString()
+								property.toString(),
 							);
 							if (perFunction === undefined) {
 								perFunction = { count: 0, time: 0 };
 								timePerFunction.set(
 									property.toString(),
-									perFunction
+									perFunction,
 								);
 							}
 							perFunction.count++;

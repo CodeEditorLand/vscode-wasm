@@ -39,7 +39,7 @@ class LineBuffer {
 		return this.cursor === 0;
 	}
 
-	public insert(value: String) {
+	public insert(value: string) {
 		for (const char of value) {
 			this.content.splice(this.cursor, 0, char);
 			this.cursor++;
@@ -325,7 +325,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(1),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x1bf":
@@ -334,7 +334,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordRight(),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x02":
@@ -343,7 +343,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(-1),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x1bb":
@@ -352,7 +352,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordLeft(),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x01":
@@ -361,7 +361,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorStartOfLine(),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x05":
@@ -370,7 +370,7 @@ class ServiceTerminalImpl
 				this.adjustCursor(
 					this.lineBuffer.moveCursorEndOfLine(),
 					previousCursor,
-					this.lineBuffer.getCursor()
+					this.lineBuffer.getCursor(),
 				);
 				break;
 			case "\x1b[A": // up
@@ -417,7 +417,7 @@ class ServiceTerminalImpl
 	private adjustCursor(
 		success: boolean,
 		oldCursor: number,
-		newCursor: number
+		newCursor: number,
 	): void {
 		if (!success) {
 			this.bell();
@@ -447,7 +447,7 @@ class ServiceTerminalImpl
 					} else {
 						return match;
 					}
-				}
+				},
 			);
 	}
 }

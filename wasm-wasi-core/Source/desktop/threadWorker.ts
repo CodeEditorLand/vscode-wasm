@@ -7,14 +7,14 @@ RIL.install();
 
 import { MessagePort, Worker, parentPort } from "worker_threads";
 
-import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
-import { NodeHostConnection } from "./connection";
 import {
 	ServiceMessage,
 	StartThreadMessage,
 	WorkerReadyMessage,
 } from "../common/connection";
+import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
 import { CapturedPromise } from "../common/promises";
+import { NodeHostConnection } from "./connection";
 
 if (parentPort === null) {
 	throw new Error("This file is only intended to be run in a worker thread");
@@ -50,7 +50,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 			host.initialize(memory ?? instance);
 			(instance.exports.wasi_thread_start as Function)(
 				message.tid,
-				message.start_arg
+				message.start_arg,
 			);
 			host.thread_exit(message.tid);
 			if (tracer !== undefined) {

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import { Disposable, Event, EventEmitter } from "vscode";
 
-import RAL from "./ral";
 import type { Readable, Writable } from "./api";
 import { CapturedPromise } from "./promises";
+import RAL from "./ral";
 
 export class DestroyError extends Error {
 	constructor() {
@@ -44,13 +44,13 @@ export abstract class Stream {
 		// Wait for the necessary space.
 		const targetFillLevel = Math.max(
 			0,
-			Stream.BufferSize - chunk.byteLength
+			Stream.BufferSize - chunk.byteLength,
 		);
 		try {
 			await this.awaitFillLevel(targetFillLevel);
 			if (this.fillLevel > targetFillLevel) {
 				throw new Error(
-					`Invalid state: fillLevel should be <= ${targetFillLevel}`
+					`Invalid state: fillLevel should be <= ${targetFillLevel}`,
 				);
 			}
 			this.chunks.push(chunk);
@@ -81,7 +81,7 @@ export abstract class Stream {
 		}
 		if (this.chunks.length === 0) {
 			throw new Error(
-				"Invalid state: no bytes available after awaiting data"
+				"Invalid state: no bytes available after awaiting data",
 			);
 		}
 		// No max bytes or all data fits into the result.
@@ -108,7 +108,7 @@ export abstract class Stream {
 			this.signalSpace();
 			return result;
 		} else {
-			let resultSize = chunk.byteLength;
+			const resultSize = chunk.byteLength;
 			for (let i = 1; i < this.chunks.length; i++) {
 				if (resultSize + this.chunks[i].byteLength > maxBytes) {
 					break;
@@ -194,7 +194,7 @@ export class WritableStream extends Stream implements Writable {
 
 	public async write(chunk: Uint8Array | string): Promise<void> {
 		return super.write(
-			typeof chunk === "string" ? this.encoder.encode(chunk) : chunk
+			typeof chunk === "string" ? this.encoder.encode(chunk) : chunk,
 		);
 	}
 
@@ -202,9 +202,9 @@ export class WritableStream extends Stream implements Writable {
 }
 
 enum ReadableStreamMode {
-	initial,
-	flowing,
-	paused,
+	initial = 0,
+	flowing = 1,
+	paused = 2,
 }
 
 export class ReadableStream extends Stream implements Readable {
@@ -229,7 +229,7 @@ export class ReadableStream extends Stream implements Readable {
 		return this._onDataEvent;
 	}
 
-	public pause(flush: boolean = false): void {
+	public pause(flush = false): void {
 		// When we are in flowing mode emit all chunks as data events
 		// before switching to paused mode.
 		if (this.mode === ReadableStreamMode.flowing) {
@@ -283,7 +283,7 @@ export class ReadableStream extends Stream implements Readable {
 					this._onData.fire(chunk);
 				} catch (error) {
 					RAL().console.error(
-						`[ReadableStream]: Error while emitting data event: ${error}`
+						`[ReadableStream]: Error while emitting data event: ${error}`,
 					);
 				}
 			}

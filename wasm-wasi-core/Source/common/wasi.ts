@@ -9,34 +9,34 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
+	byte,
+	bytes,
+	cstring,
 	ptr,
+	s64,
 	size,
+	u8,
 	u16,
 	u32,
 	u64,
-	s64,
-	u8,
-	cstring,
-	byte,
-	bytes,
 } from "./baseTypes";
 import {
 	ArgumentTransfer,
-	MemoryTransferDirection,
-	WasiFunctionSignature,
-	WasiFunctions,
 	ArgumentsTransfer,
-	U32,
-	Ptr,
 	Byte,
-	U64,
+	Bytes,
+	CustomMemoryTransfer,
+	MemoryTransferDirection,
+	Ptr,
+	S64,
+	SingleReverseArgumentTransfer,
+	Size,
 	U8,
 	U16,
-	Bytes,
-	Size,
-	S64,
-	CustomMemoryTransfer,
-	SingleReverseArgumentTransfer,
+	U32,
+	U64,
+	WasiFunctionSignature,
+	WasiFunctions,
 } from "./wasiMeta";
 
 interface MemoryStruct<T> {
@@ -54,7 +54,7 @@ class StructArray<T> {
 		memory: DataView,
 		ptr: ptr,
 		len: number,
-		struct: MemoryStruct<T>
+		struct: MemoryStruct<T>,
 	) {
 		this.memory = memory;
 		this.ptr = ptr;
@@ -80,7 +80,7 @@ class StructArray<T> {
 						done: false,
 						value: this.struct.create(
 							this.memory,
-							this.ptr + index++ * this.struct.size
+							this.ptr + index++ * this.struct.size,
 						),
 					};
 				}
@@ -95,7 +95,7 @@ class StructArray<T> {
 		}
 		return this.struct.create(
 			this.memory,
-			this.ptr + index * this.struct.size
+			this.ptr + index * this.struct.size,
 		);
 	}
 }
@@ -143,7 +143,7 @@ class PointerArray {
 						done: false,
 						value: this.memory.getUint32(
 							this.ptr + index++ * 4,
-							true
+							true,
 						),
 					};
 				}
@@ -1627,7 +1627,7 @@ export namespace Filestat {
 	export const $ptr = Ptr.$param;
 	export const $transfer = Bytes.createTransfer(
 		Filestat.size,
-		MemoryTransferDirection.result
+		MemoryTransferDirection.result,
 	);
 }
 
@@ -1749,14 +1749,14 @@ export namespace Fdstat {
 			get fs_rights_inheriting(): rights {
 				return memory.getBigUint64(
 					ptr + offsets.fs_rights_inheriting,
-					true
+					true,
 				);
 			},
 			set fs_rights_inheriting(value: rights) {
 				memory.setBigUint64(
 					ptr + offsets.fs_rights_inheriting,
 					value,
-					true
+					true,
 				);
 			},
 		};
@@ -1767,7 +1767,7 @@ export namespace Fdstat {
 	export const $ptr = Ptr.$param;
 	export const $transfer = Bytes.createTransfer(
 		Fdstat.size,
-		MemoryTransferDirection.result
+		MemoryTransferDirection.result,
 	);
 }
 
@@ -1898,7 +1898,7 @@ export namespace Prestat {
 	export const $ptr = Ptr.$param;
 	export const $transfer = Bytes.createTransfer(
 		Prestat.size,
-		MemoryTransferDirection.result
+		MemoryTransferDirection.result,
 	);
 }
 
@@ -1962,14 +1962,14 @@ export namespace Iovec {
 	export function createTransfer(
 		memory: DataView,
 		iovec: ptr<iovec_array>,
-		iovs_len: u32
+		iovs_len: u32,
 	): ArgumentTransfer {
 		let dataSize = Iovec.size * iovs_len;
 		for (const item of new StructArray<iovec>(
 			memory,
 			iovec,
 			iovs_len,
-			Iovec
+			Iovec,
 		).values()) {
 			dataSize += item.buf_len;
 		}
@@ -1978,20 +1978,20 @@ export namespace Iovec {
 			copy: (wasmMemory, from, transferMemory, to) => {
 				if (from !== iovec) {
 					throw new Error(
-						`IovecPtrParam needs to be used as an instance object`
+						`IovecPtrParam needs to be used as an instance object`,
 					);
 				}
 				const forms = new StructArray<iovec>(
 					new DataView(wasmMemory),
 					from,
 					iovs_len,
-					Iovec
+					Iovec,
 				);
 				const tos = new StructArray<iovec>(
 					new DataView(transferMemory),
 					to,
 					iovs_len,
-					Iovec
+					Iovec,
 				);
 				let bufferIndex = to + Iovec.size * iovs_len;
 				const result: SingleReverseArgumentTransfer[] = [];
@@ -2077,14 +2077,14 @@ export namespace Ciovec {
 	export function createTransfer(
 		memory: DataView,
 		ciovec: ptr<ciovec_array>,
-		ciovs_len: u32
+		ciovs_len: u32,
 	): ArgumentTransfer {
 		let dataSize = Ciovec.size * ciovs_len;
 		for (const item of new StructArray<ciovec>(
 			memory,
 			ciovec,
 			ciovs_len,
-			Ciovec
+			Ciovec,
 		).values()) {
 			dataSize += item.buf_len;
 		}
@@ -2093,20 +2093,20 @@ export namespace Ciovec {
 			copy: (wasmMemory, from, transferMemory, to) => {
 				if (from !== ciovec) {
 					throw new Error(
-						`CiovecPtrParam needs to be used as an instance object`
+						`CiovecPtrParam needs to be used as an instance object`,
 					);
 				}
 				const forms = new StructArray<ciovec>(
 					new DataView(wasmMemory),
 					from,
 					ciovs_len,
-					Ciovec
+					Ciovec,
 				);
 				const tos = new StructArray<ciovec>(
 					new DataView(transferMemory),
 					to,
 					ciovs_len,
-					Ciovec
+					Ciovec,
 				);
 				const transferBuffer = new Uint8Array(transferMemory);
 				let bufferIndex = to + Ciovec.size * ciovs_len;
@@ -2119,9 +2119,9 @@ export namespace Ciovec {
 						new Uint8Array(
 							wasmMemory,
 							fromIovec.buf,
-							fromIovec.buf_len
+							fromIovec.buf_len,
 						),
-						toIovec.buf
+						toIovec.buf,
 					);
 					bufferIndex += toIovec.buf_len;
 				}
@@ -2349,7 +2349,7 @@ export namespace Event {
 			get fd_readwrite(): event_fd_readwrite {
 				return Event_fd_readwrite.create(
 					memory,
-					ptr + offsets.fd_readwrite
+					ptr + offsets.fd_readwrite,
 				);
 			},
 		};
@@ -2361,7 +2361,7 @@ export namespace Event {
 	export function createTransfer(length: number): ArgumentTransfer {
 		return Bytes.createTransfer(
 			Event.size * length,
-			MemoryTransferDirection.result
+			MemoryTransferDirection.result,
 		);
 	}
 }
@@ -2449,7 +2449,7 @@ export namespace Subscription_fd_readwrite {
 	};
 	export function create(
 		memory: DataView,
-		ptr: ptr
+		ptr: ptr,
 	): subscription_fd_readwrite {
 		return {
 			get file_descriptor(): fd {
@@ -2497,7 +2497,7 @@ export namespace Subscription_u {
 				}
 				return Subscription_fd_readwrite.create(
 					memory,
-					ptr + offsets.fd_read
+					ptr + offsets.fd_read,
 				);
 			},
 			get fd_write(): subscription_fd_readwrite {
@@ -2508,7 +2508,7 @@ export namespace Subscription_u {
 				}
 				return Subscription_fd_readwrite.create(
 					memory,
-					ptr + offsets.fd_write
+					ptr + offsets.fd_write,
 				);
 			},
 		};
@@ -2555,7 +2555,7 @@ export namespace Subscription {
 	export function createTransfer(length: number): ArgumentTransfer {
 		return Bytes.createTransfer(
 			length * Subscription.size,
-			MemoryTransferDirection.param
+			MemoryTransferDirection.param,
 		);
 	}
 }
@@ -2642,7 +2642,7 @@ export namespace WasiPath {
 
 	export function createTransfer(
 		path_len: size,
-		direction: MemoryTransferDirection
+		direction: MemoryTransferDirection,
 	): ArgumentTransfer {
 		return Bytes.createTransfer(path_len, direction);
 	}
@@ -2656,7 +2656,7 @@ export namespace WasiPath {
  */
 export type args_sizes_get = (
 	argvCount_ptr: ptr<u32>,
-	argvBufSize_ptr: ptr<u32>
+	argvBufSize_ptr: ptr<u32>,
 ) => errno;
 export namespace args_sizes_get {
 	export const name: string = "args_sizes_get";
@@ -2669,7 +2669,7 @@ export namespace args_sizes_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		argvCount_ptr: ptr<u32>,
-		argvBufSize_ptr: ptr<u32>
+		argvBufSize_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(args_sizes_get);
 }
@@ -2683,7 +2683,7 @@ export namespace args_sizes_get {
  */
 export type args_get = (
 	argv_ptr: ptr<ptr<cstring>[]>,
-	argvBuf_ptr: ptr<bytes>
+	argvBuf_ptr: ptr<bytes>,
 ) => errno;
 export namespace args_get {
 	export const name: string = "args_get";
@@ -2694,7 +2694,7 @@ export namespace args_get {
 	export function transfers(
 		_memory: DataView,
 		argvCount: u32,
-		argvBufSize: u32
+		argvBufSize: u32,
 	): CustomMemoryTransfer {
 		return {
 			size: argvCount * Ptr.size + argvBufSize,
@@ -2703,7 +2703,7 @@ export namespace args_get {
 				args: (number | bigint)[],
 				paramBuffer,
 				paramIndex,
-				transferMemory
+				transferMemory,
 			) {
 				// On the call side we only need to fill in the arguments;
 				const transfer_argv_ptr = 0;
@@ -2714,7 +2714,7 @@ export namespace args_get {
 				paramView.setUint32(
 					paramIndex + Ptr.size,
 					transfer_argvBuf_ptr,
-					true
+					true,
 				);
 				return {
 					copy() {
@@ -2725,17 +2725,17 @@ export namespace args_get {
 						const wasm_argv_array = new PointerArray(
 							new DataView(wasmMemory),
 							wasm_argv_ptr,
-							argvCount
+							argvCount,
 						);
 						const transfer_argv_array = new PointerArray(
 							new DataView(transferMemory),
 							transfer_argv_ptr,
-							argvCount
+							argvCount,
 						);
 						for (let i = 0; i < argvCount; i++) {
 							wasm_argv_array.set(
 								i,
-								transfer_argv_array.get(i) + diff
+								transfer_argv_array.get(i) + diff,
 							);
 						}
 						// Copy the actual strings
@@ -2743,9 +2743,9 @@ export namespace args_get {
 							new Uint8Array(
 								transferMemory,
 								transfer_argvBuf_ptr,
-								argvBufSize
+								argvBufSize,
 							),
-							wasm_argvBuf_ptr
+							wasm_argvBuf_ptr,
 						);
 					},
 				};
@@ -2755,7 +2755,7 @@ export namespace args_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		argv_ptr: ptr<ptr<cstring>[]>,
-		argvBuf_ptr: ptr<bytes>
+		argvBuf_ptr: ptr<bytes>,
 	) => Promise<errno>;
 	WasiFunctions.add(args_get);
 }
@@ -2770,7 +2770,7 @@ export namespace args_get {
  */
 export type clock_res_get = (
 	id: clockid,
-	timestamp_ptr: ptr<timestamp>
+	timestamp_ptr: ptr<timestamp>,
 ) => errno;
 export namespace clock_res_get {
 	export const name: string = "clock_res_get";
@@ -2785,7 +2785,7 @@ export namespace clock_res_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		id: clockid,
-		timestamp_ptr: ptr<u64>
+		timestamp_ptr: ptr<u64>,
 	) => Promise<errno>;
 	WasiFunctions.add(clock_res_get);
 }
@@ -2802,7 +2802,7 @@ export namespace clock_res_get {
 export type clock_time_get = (
 	id: clockid,
 	precision: timestamp,
-	timestamp_ptr: ptr<u64>
+	timestamp_ptr: ptr<u64>,
 ) => errno;
 export namespace clock_time_get {
 	export const name: string = "clock_time_get";
@@ -2819,7 +2819,7 @@ export namespace clock_time_get {
 		memory: ArrayBuffer,
 		id: clockid,
 		precision: timestamp,
-		timestamp_ptr: ptr<u64>
+		timestamp_ptr: ptr<u64>,
 	) => Promise<errno>;
 	WasiFunctions.add(clock_time_get);
 }
@@ -2832,7 +2832,7 @@ export namespace clock_time_get {
  */
 export type environ_sizes_get = (
 	environCount_ptr: ptr<u32>,
-	environBufSize_ptr: ptr<u32>
+	environBufSize_ptr: ptr<u32>,
 ) => errno;
 export namespace environ_sizes_get {
 	export const name: string = "environ_sizes_get";
@@ -2844,7 +2844,7 @@ export namespace environ_sizes_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		environCount_ptr: ptr<u32>,
-		environBufSize_ptr: ptr<u32>
+		environBufSize_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(environ_sizes_get);
 }
@@ -2859,7 +2859,7 @@ export namespace environ_sizes_get {
  */
 export type environ_get = (
 	environ_ptr: ptr<ptr<cstring>[]>,
-	environBuf_ptr: ptr<bytes>
+	environBuf_ptr: ptr<bytes>,
 ) => errno;
 export namespace environ_get {
 	export const name: string = "environ_get";
@@ -2870,7 +2870,7 @@ export namespace environ_get {
 	export function transfers(
 		_memory: DataView,
 		argvCount: u32,
-		argvBufSize: u32
+		argvBufSize: u32,
 	): CustomMemoryTransfer {
 		return {
 			size: argvCount * Ptr.size + argvBufSize,
@@ -2879,7 +2879,7 @@ export namespace environ_get {
 				args: (number | bigint)[],
 				paramBuffer,
 				paramIndex,
-				transferMemory
+				transferMemory,
 			) {
 				// On the call side we only need to fill in the arguments;
 				const transfer_environ_ptr = 0;
@@ -2890,7 +2890,7 @@ export namespace environ_get {
 				paramView.setUint32(
 					paramIndex + Ptr.size,
 					transfer_environBuf_ptr,
-					true
+					true,
 				);
 				return {
 					copy() {
@@ -2902,17 +2902,17 @@ export namespace environ_get {
 						const wasm_environ_array = new PointerArray(
 							new DataView(wasmMemory),
 							wasm_environ_ptr,
-							argvCount
+							argvCount,
 						);
 						const transfer_environ_array = new PointerArray(
 							new DataView(transferMemory),
 							transfer_environ_ptr,
-							argvCount
+							argvCount,
 						);
 						for (let i = 0; i < argvCount; i++) {
 							wasm_environ_array.set(
 								i,
-								transfer_environ_array.get(i) + diff
+								transfer_environ_array.get(i) + diff,
 							);
 						}
 						// Copy the actual strings
@@ -2920,9 +2920,9 @@ export namespace environ_get {
 							new Uint8Array(
 								transferMemory,
 								transfer_environBuf_ptr,
-								argvBufSize
+								argvBufSize,
 							),
-							wasm_environBuf_ptr
+							wasm_environBuf_ptr,
 						);
 					},
 				};
@@ -2932,7 +2932,7 @@ export namespace environ_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		environ_ptr: ptr<ptr<cstring>[]>,
-		environBuf_ptr: ptr<bytes>
+		environBuf_ptr: ptr<bytes>,
 	) => Promise<errno>;
 	WasiFunctions.add(environ_get);
 }
@@ -2950,7 +2950,7 @@ export type fd_advise = (
 	fd: fd,
 	offset: filesize,
 	length: filesize,
-	advise: advise
+	advise: advise,
 ) => errno;
 export namespace fd_advise {
 	export const name: string = "fd_advise";
@@ -2965,7 +2965,7 @@ export namespace fd_advise {
 		fd: fd,
 		offset: filesize,
 		length: filesize,
-		advise: advise
+		advise: advise,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_advise);
 }
@@ -2990,7 +2990,7 @@ export namespace fd_allocate {
 		memory: ArrayBuffer,
 		fd: fd,
 		offset: filesize,
-		len: filesize
+		len: filesize,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_allocate);
 }
@@ -3006,7 +3006,7 @@ export namespace fd_close {
 	export const signature = WasiFunctionSignature.create([Fd.$param]);
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		fd: fd
+		fd: fd,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_close);
 }
@@ -3023,7 +3023,7 @@ export namespace fd_datasync {
 	export const signature = WasiFunctionSignature.create([Fd.$param]);
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		fd: fd
+		fd: fd,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_datasync);
 }
@@ -3049,7 +3049,7 @@ export namespace fd_fdstat_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		fdstat_ptr: ptr<fdstat>
+		fdstat_ptr: ptr<fdstat>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_fdstat_get);
 }
@@ -3071,7 +3071,7 @@ export namespace fd_fdstat_set_flags {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		fdflags: fdflags
+		fdflags: fdflags,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_fdstat_set_flags);
 }
@@ -3096,7 +3096,7 @@ export namespace fd_filestat_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		filestat_ptr: ptr<filestat>
+		filestat_ptr: ptr<filestat>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_filestat_get);
 }
@@ -3119,7 +3119,7 @@ export namespace fd_filestat_set_size {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		size: filesize
+		size: filesize,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_filestat_set_size);
 }
@@ -3137,7 +3137,7 @@ export type fd_filestat_set_times = (
 	fd: fd,
 	atim: timestamp,
 	mtim: timestamp,
-	fst_flags: fstflags
+	fst_flags: fstflags,
 ) => errno;
 export namespace fd_filestat_set_times {
 	export const name: string = "fd_filestat_set_times";
@@ -3152,7 +3152,7 @@ export namespace fd_filestat_set_times {
 		fd: fd,
 		atim: timestamp,
 		mtim: timestamp,
-		fst_flags: fstflags
+		fst_flags: fstflags,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_filestat_set_times);
 }
@@ -3172,7 +3172,7 @@ export type fd_pread = (
 	iovs_ptr: ptr<iovec[]>,
 	iovs_len: u32,
 	offset: filesize,
-	bytesRead_ptr: ptr<u32>
+	bytesRead_ptr: ptr<u32>,
 ) => errno;
 export namespace fd_pread {
 	export const name: string = "fd_pread";
@@ -3186,7 +3186,7 @@ export namespace fd_pread {
 	export function transfers(
 		memory: DataView,
 		iovs_ptr: ptr<iovec[]>,
-		iovs_len: u32
+		iovs_len: u32,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Iovec.createTransfer(memory, iovs_ptr, iovs_len),
@@ -3199,7 +3199,7 @@ export namespace fd_pread {
 		iovs_ptr: ptr<iovec[]>,
 		iovs_len: u32,
 		offset: filesize,
-		bytesRead_ptr: ptr<u32>
+		bytesRead_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_pread);
 }
@@ -3224,7 +3224,7 @@ export namespace fd_prestat_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		bufPtr: ptr<prestat>
+		bufPtr: ptr<prestat>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_prestat_get);
 }
@@ -3239,7 +3239,7 @@ export namespace fd_prestat_get {
 export type fd_prestat_dir_name = (
 	fd: fd,
 	pathPtr: ptr<byte[]>,
-	pathLen: size
+	pathLen: size,
 ) => errno;
 export namespace fd_prestat_dir_name {
 	export const name: string = "fd_prestat_dir_name";
@@ -3251,7 +3251,7 @@ export namespace fd_prestat_dir_name {
 	export function transfers(
 		_memory: DataView,
 		_pathPtr: ptr<byte[]>,
-		pathLen: size
+		pathLen: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(pathLen, MemoryTransferDirection.result),
@@ -3261,7 +3261,7 @@ export namespace fd_prestat_dir_name {
 		memory: ArrayBuffer,
 		fd: fd,
 		pathPtr: ptr<byte[]>,
-		pathLen: size
+		pathLen: size,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_prestat_dir_name);
 }
@@ -3281,7 +3281,7 @@ export type fd_pwrite = (
 	ciovs_ptr: ptr<ciovec>,
 	ciovs_len: u32,
 	offset: filesize,
-	bytesWritten_ptr: ptr<u32>
+	bytesWritten_ptr: ptr<u32>,
 ) => errno;
 export namespace fd_pwrite {
 	export const name: string = "fd_pwrite";
@@ -3295,7 +3295,7 @@ export namespace fd_pwrite {
 	export function transfers(
 		memory: DataView,
 		ciovs_ptr: ptr<ciovec>,
-		ciovs_len: u32
+		ciovs_len: u32,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Ciovec.createTransfer(memory, ciovs_ptr, ciovs_len),
@@ -3308,7 +3308,7 @@ export namespace fd_pwrite {
 		ciovs_ptr: ptr<ciovec>,
 		ciovs_len: u32,
 		offset: filesize,
-		bytesWritten_ptr: ptr<u32>
+		bytesWritten_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_pwrite);
 }
@@ -3325,7 +3325,7 @@ export type fd_read = (
 	fd: fd,
 	iovs_ptr: ptr<iovec>,
 	iovs_len: u32,
-	bytesRead_ptr: ptr<u32>
+	bytesRead_ptr: ptr<u32>,
 ) => errno;
 export namespace fd_read {
 	export const name: string = "fd_read";
@@ -3338,7 +3338,7 @@ export namespace fd_read {
 	export function transfers(
 		memory: DataView,
 		iovs_ptr: ptr<iovec>,
-		iovs_len: u32
+		iovs_len: u32,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Iovec.createTransfer(memory, iovs_ptr, iovs_len),
@@ -3350,7 +3350,7 @@ export namespace fd_read {
 		fd: fd,
 		iovs_ptr: ptr<iovec>,
 		iovs_len: u32,
-		bytesRead_ptr: ptr<u32>
+		bytesRead_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_read);
 }
@@ -3378,7 +3378,7 @@ export type fd_readdir = (
 	buf_ptr: ptr<dirent>,
 	buf_len: size,
 	cookie: dircookie,
-	buf_used_ptr: ptr<u32>
+	buf_used_ptr: ptr<u32>,
 ) => errno;
 export namespace fd_readdir {
 	export const name: string = "fd_readdir";
@@ -3392,7 +3392,7 @@ export namespace fd_readdir {
 	export function transfers(
 		_memory: DataView,
 		_buf_ptr: ptr<dirent>,
-		buf_len: size
+		buf_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Dirent.createTransfer(buf_len),
@@ -3405,7 +3405,7 @@ export namespace fd_readdir {
 		buf_ptr: ptr<dirent>,
 		buf_len: size,
 		cookie: dircookie,
-		buf_used_ptr: ptr<u32>
+		buf_used_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_readdir);
 }
@@ -3429,7 +3429,7 @@ export namespace fd_renumber {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		to: fd
+		to: fd,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_renumber);
 }
@@ -3447,7 +3447,7 @@ export type fd_seek = (
 	fd: fd,
 	offset: filedelta,
 	whence: whence,
-	new_offset_ptr: ptr<u64>
+	new_offset_ptr: ptr<u64>,
 ) => errno;
 export namespace fd_seek {
 	export const name: string = "fd_seek";
@@ -3469,7 +3469,7 @@ export namespace fd_seek {
 		fd: fd,
 		offset: filedelta,
 		whence: whence,
-		new_offset_ptr: ptr<u64>
+		new_offset_ptr: ptr<u64>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_seek);
 }
@@ -3487,7 +3487,7 @@ export namespace fd_sync {
 		WasiFunctionSignature.create([Fd.$param]);
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		fd: fd
+		fd: fd,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_sync);
 }
@@ -3516,7 +3516,7 @@ export namespace fd_tell {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		offset_ptr: ptr<u64>
+		offset_ptr: ptr<u64>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_tell);
 }
@@ -3533,7 +3533,7 @@ export type fd_write = (
 	fd: fd,
 	ciovs_ptr: ptr<ciovec>,
 	ciovs_len: u32,
-	bytesWritten_ptr: ptr<u32>
+	bytesWritten_ptr: ptr<u32>,
 ) => errno;
 export namespace fd_write {
 	export const name: string = "fd_write";
@@ -3546,7 +3546,7 @@ export namespace fd_write {
 	export function transfers(
 		memory: DataView,
 		ciovs_ptr: ptr<ciovec>,
-		ciovs_len: u32
+		ciovs_len: u32,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Ciovec.createTransfer(memory, ciovs_ptr, ciovs_len),
@@ -3558,7 +3558,7 @@ export namespace fd_write {
 		fd: fd,
 		ciovs_ptr: ptr<ciovec>,
 		ciovs_len: u32,
-		bytesWritten_ptr: ptr<u32>
+		bytesWritten_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(fd_write);
 }
@@ -3573,7 +3573,7 @@ export namespace fd_write {
 export type path_create_directory = (
 	fd: fd,
 	path_ptr: ptr<byte[]>,
-	path_len: size
+	path_len: size,
 ) => errno;
 export namespace path_create_directory {
 	export const name: string = "path_create_directory";
@@ -3585,7 +3585,7 @@ export namespace path_create_directory {
 	export function transfers(
 		_memory: DataView,
 		_path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -3595,7 +3595,7 @@ export namespace path_create_directory {
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_create_directory);
 }
@@ -3615,7 +3615,7 @@ export type path_filestat_get = (
 	flags: lookupflags,
 	path_ptr: ptr<byte[]>,
 	path_len: size,
-	filestat_ptr: ptr
+	filestat_ptr: ptr,
 ) => errno;
 export namespace path_filestat_get {
 	export const name: string = "path_filestat_get";
@@ -3629,7 +3629,7 @@ export namespace path_filestat_get {
 	export function transfers(
 		_memory: DataView,
 		_path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -3642,7 +3642,7 @@ export namespace path_filestat_get {
 		flags: lookupflags,
 		path_ptr: ptr<byte[]>,
 		path_len: size,
-		filestat_ptr: ptr
+		filestat_ptr: ptr,
 	) => Promise<errno>;
 	WasiFunctions.add(path_filestat_get);
 }
@@ -3666,7 +3666,7 @@ export type path_filestat_set_times = (
 	path_len: size,
 	atim: timestamp,
 	mtim: timestamp,
-	fst_flags: fstflags
+	fst_flags: fstflags,
 ) => errno;
 export namespace path_filestat_set_times {
 	export const name: string = "path_filestat_set_times";
@@ -3682,7 +3682,7 @@ export namespace path_filestat_set_times {
 	export function transfers(
 		_memory: DataView,
 		_path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -3696,7 +3696,7 @@ export namespace path_filestat_set_times {
 		path_len: size,
 		atim: timestamp,
 		mtim: timestamp,
-		fst_flags: fstflags
+		fst_flags: fstflags,
 	) => Promise<errno>;
 	WasiFunctions.add(path_filestat_set_times);
 }
@@ -3722,7 +3722,7 @@ export type path_link = (
 	old_path_len: size,
 	new_fd: fd,
 	new_path_ptr: ptr<byte[]>,
-	new_path_len: size
+	new_path_len: size,
 ) => errno;
 export namespace path_link {
 	export const name: string = "path_link";
@@ -3740,16 +3740,16 @@ export namespace path_link {
 		_old_path_ptr: ptr<byte[]>,
 		old_path_len: size,
 		_new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(
 				old_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 			WasiPath.createTransfer(
 				new_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 		]);
 	}
@@ -3761,7 +3761,7 @@ export namespace path_link {
 		old_path_len: size,
 		new_fd: fd,
 		new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_link);
 }
@@ -3800,7 +3800,7 @@ export type path_open = (
 	fs_rights_base: rights,
 	fs_rights_inheriting: rights,
 	fdflags: fdflags,
-	fd_ptr: ptr<fd>
+	fd_ptr: ptr<fd>,
 ) => errno;
 export namespace path_open {
 	export const name: string = "path_open";
@@ -3818,7 +3818,7 @@ export namespace path_open {
 	export function transfers(
 		_memory: DataView,
 		_path: ptr<byte[]>,
-		pathLen: size
+		pathLen: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(pathLen, MemoryTransferDirection.param),
@@ -3835,7 +3835,7 @@ export namespace path_open {
 		fs_rights_base: rights,
 		fs_rights_inheriting: rights,
 		fdflags: fdflags,
-		fd_ptr: ptr<fd>
+		fd_ptr: ptr<fd>,
 	) => Promise<errno>;
 	WasiFunctions.add(path_open);
 }
@@ -3858,7 +3858,7 @@ export type path_readlink = (
 	path_len: size,
 	buf: ptr<byte[]>,
 	buf_len: size,
-	result_size_ptr: ptr<u32>
+	result_size_ptr: ptr<u32>,
 ) => errno;
 export namespace path_readlink {
 	export const name: string = "path_readlink";
@@ -3875,7 +3875,7 @@ export namespace path_readlink {
 		_path_ptr: ptr<byte[]>,
 		path_len: size,
 		_buf: ptr<byte[]>,
-		buf_len: size
+		buf_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -3890,7 +3890,7 @@ export namespace path_readlink {
 		path_len: size,
 		buf: ptr<byte[]>,
 		buf_len: size,
-		result_size_ptr: ptr<u32>
+		result_size_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(path_readlink);
 }
@@ -3906,7 +3906,7 @@ export namespace path_readlink {
 export type path_remove_directory = (
 	fd: fd,
 	path_ptr: ptr<byte[]>,
-	path_len: size
+	path_len: size,
 ) => errno;
 export namespace path_remove_directory {
 	export const name: string = "path_remove_directory";
@@ -3918,7 +3918,7 @@ export namespace path_remove_directory {
 	export function transfers(
 		_memory: DataView,
 		_path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -3928,7 +3928,7 @@ export namespace path_remove_directory {
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_remove_directory);
 }
@@ -3952,7 +3952,7 @@ export type path_rename = (
 	old_path_len: size,
 	new_fd: fd,
 	new_path_ptr: ptr<byte[]>,
-	new_path_len: size
+	new_path_len: size,
 ) => errno;
 export namespace path_rename {
 	export const name: string = "path_rename";
@@ -3969,16 +3969,16 @@ export namespace path_rename {
 		_old_path_ptr: ptr<byte[]>,
 		old_path_len: size,
 		_new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(
 				old_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 			WasiPath.createTransfer(
 				new_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 		]);
 	}
@@ -3989,7 +3989,7 @@ export namespace path_rename {
 		old_path_len: size,
 		new_fd: fd,
 		new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_rename);
 }
@@ -4010,7 +4010,7 @@ export type path_symlink = (
 	old_path_len: size,
 	fd: fd,
 	new_path_ptr: ptr<byte[]>,
-	new_path_len: size
+	new_path_len: size,
 ) => errno;
 export namespace path_symlink {
 	export const name: string = "path_symlink";
@@ -4026,16 +4026,16 @@ export namespace path_symlink {
 		_old_path_ptr: ptr<byte[]>,
 		old_path_len: size,
 		_new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(
 				old_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 			WasiPath.createTransfer(
 				new_path_len,
-				MemoryTransferDirection.param
+				MemoryTransferDirection.param,
 			),
 		]);
 	}
@@ -4045,7 +4045,7 @@ export namespace path_symlink {
 		old_path_len: size,
 		fd: fd,
 		new_path_ptr: ptr<byte[]>,
-		new_path_len: size
+		new_path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_symlink);
 }
@@ -4061,7 +4061,7 @@ export namespace path_symlink {
 export type path_unlink_file = (
 	fd: fd,
 	path_ptr: ptr<byte[]>,
-	path_len: size
+	path_len: size,
 ) => errno;
 export namespace path_unlink_file {
 	export const name: string = "path_unlink_file";
@@ -4073,7 +4073,7 @@ export namespace path_unlink_file {
 	export function transfers(
 		_memory: DataView,
 		_path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
@@ -4083,7 +4083,7 @@ export namespace path_unlink_file {
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
-		path_len: size
+		path_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(path_unlink_file);
 }
@@ -4100,7 +4100,7 @@ export type poll_oneoff = (
 	input: ptr<subscription[]>,
 	output: ptr<event[]>,
 	subscriptions: size,
-	result_size_ptr: ptr<u32>
+	result_size_ptr: ptr<u32>,
 ) => errno;
 export namespace poll_oneoff {
 	export const name: string = "poll_oneoff";
@@ -4114,7 +4114,7 @@ export namespace poll_oneoff {
 		_memory: DataView,
 		_input: ptr<subscription[]>,
 		_output: ptr<event[]>,
-		subscriptions: size
+		subscriptions: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Subscription.createTransfer(subscriptions),
@@ -4127,7 +4127,7 @@ export namespace poll_oneoff {
 		input: ptr<subscription[]>,
 		output: ptr<event[]>,
 		subscriptions: size,
-		result_size_ptr: ptr<u32>
+		result_size_ptr: ptr<u32>,
 	) => Promise<errno>;
 	WasiFunctions.add(poll_oneoff);
 }
@@ -4145,7 +4145,7 @@ export namespace proc_exit {
 	export const signature = WasiFunctionSignature.create([Exitcode.$param]);
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		rval: exitcode
+		rval: exitcode,
 	) => Promise<errno>;
 	WasiFunctions.add(proc_exit);
 }
@@ -4183,7 +4183,7 @@ export namespace random_get {
 	export function transfers(
 		_memory: DataView,
 		_buf: ptr<byte[]>,
-		buf_len: size
+		buf_len: size,
 	): ArgumentsTransfer {
 		return ArgumentsTransfer.create([
 			Bytes.createTransfer(buf_len, MemoryTransferDirection.result),
@@ -4192,7 +4192,7 @@ export namespace random_get {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		buf: ptr<byte[]>,
-		buf_len: size
+		buf_len: size,
 	) => Promise<errno>;
 	WasiFunctions.add(random_get);
 }
@@ -4208,7 +4208,7 @@ export namespace random_get {
 export type sock_accept = (
 	fd: fd,
 	flags: fdflags,
-	result_fd_ptr: ptr<fd>
+	result_fd_ptr: ptr<fd>,
 ) => errno;
 export namespace sock_accept {
 	export const name: string = "sock_accept";
@@ -4225,7 +4225,7 @@ export namespace sock_accept {
 		memory: ArrayBuffer,
 		fd: fd,
 		flags: fdflags,
-		result_fd_ptr: ptr<fd>
+		result_fd_ptr: ptr<fd>,
 	) => Promise<errno>;
 	WasiFunctions.add(sock_accept);
 }
@@ -4249,7 +4249,7 @@ export type sock_recv = (
 	ri_data_len: u32,
 	ri_flags: riflags,
 	ro_datalen_ptr: ptr,
-	roflags_ptr: ptr
+	roflags_ptr: ptr,
 ) => errno;
 
 /**
@@ -4269,7 +4269,7 @@ export type sock_send = (
 	si_data_ptr: ptr,
 	si_data_len: u32,
 	si_flags: siflags,
-	si_datalen_ptr: ptr
+	si_datalen_ptr: ptr,
 ) => errno;
 
 /**
@@ -4289,7 +4289,7 @@ export namespace sock_shutdown {
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
-		sdflags: sdflags
+		sdflags: sdflags,
 	) => Promise<errno>;
 	WasiFunctions.add(sock_shutdown);
 }
@@ -4312,7 +4312,7 @@ export namespace thread_spawn {
 	}
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		start_args_ptr: ptr<u32>
+		start_args_ptr: ptr<u32>,
 	) => Promise<tid>;
 	WasiFunctions.add(thread_spawn);
 }
@@ -4323,7 +4323,7 @@ export namespace thread_exit {
 	export const signature = WasiFunctionSignature.create([U32.$param]);
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
-		tid: u32
+		tid: u32,
 	) => Promise<errno>;
 	WasiFunctions.add(thread_exit);
 }

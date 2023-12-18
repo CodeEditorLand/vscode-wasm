@@ -4,8 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 import * as path from "./path";
 
-import RAL from "../common/ral";
 import { Uri } from "vscode";
+import RAL from "../common/ral";
 
 const _ril: RAL = Object.freeze<RAL>({
 	path: path.posix,

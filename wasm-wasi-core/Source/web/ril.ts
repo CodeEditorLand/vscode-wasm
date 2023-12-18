@@ -7,7 +7,7 @@ import type { Disposable } from "vscode";
 import RAL from "../common/ral";
 import * as path from "./path";
 
-interface RIL extends RAL {}
+type RIL = RAL;
 
 // In Browser environments we can only encode / decode utf-8
 const encoder: RAL.TextEncoder = new TextEncoder();
@@ -15,22 +15,20 @@ const decoder: RAL.TextDecoder = new TextDecoder();
 
 const _ril: RIL = Object.freeze<RIL>({
 	TextEncoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextEncoder {
+		create(_encoding = "utf-8"): RAL.TextEncoder {
 			return encoder;
 		},
 	}),
 	TextDecoder: Object.freeze({
-		create(_encoding: string = "utf-8"): RAL.TextDecoder {
+		create(_encoding = "utf-8"): RAL.TextDecoder {
 			return {
 				decode(input?: Uint8Array): string {
 					if (input === undefined) {
 						return decoder.decode(input);
+					} else if (input.buffer instanceof SharedArrayBuffer) {
+						return decoder.decode(input.slice(0));
 					} else {
-						if (input.buffer instanceof SharedArrayBuffer) {
-							return decoder.decode(input.slice(0));
-						} else {
-							return decoder.decode(input);
-						}
+						return decoder.decode(input);
 					}
 				},
 			};

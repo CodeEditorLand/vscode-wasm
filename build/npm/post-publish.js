@@ -32,7 +32,7 @@ function updateNextTag() {
 		const result = cp.spawnSync(
 			npm,
 			["--otp", token, "dist-tags", "add", name + "@" + version, "next"],
-			opts
+			opts,
 		);
 
 		rl.close();

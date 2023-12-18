@@ -6,14 +6,14 @@
 import { DeviceDriver } from "./deviceDriver";
 import {
 	Errno,
+	Filetype,
+	Rights,
+	WasiError,
 	fd,
 	fdflags,
-	Filetype,
 	filetype,
 	oflags,
-	Rights,
 	rights,
-	WasiError,
 } from "./wasi";
 
 type DeviceId = bigint;
@@ -133,7 +133,7 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		rights_base: rights,
 		rights_inheriting: rights,
 		fdflags: fdflags,
-		inode: bigint
+		inode: bigint,
 	) {
 		this.deviceId = deviceId;
 		this.fd = fd;

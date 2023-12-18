@@ -4,8 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 //@ts-check
 
-"use strict";
-
 const path = require("path");
 const ln = require("./linking");
 
@@ -17,6 +15,12 @@ const node_modules = "node_modules";
 
 	ln.softLink(
 		path.join(root, "wasm-wasi"),
-		path.join(root, "wasm-wasi-tests", node_modules, "@vscode", "wasm-wasi")
+		path.join(
+			root,
+			"wasm-wasi-tests",
+			node_modules,
+			"@vscode",
+			"wasm-wasi",
+		),
 	);
 })();

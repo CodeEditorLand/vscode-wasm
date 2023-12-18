@@ -6,48 +6,48 @@ import { BigIntStats, Dir } from "node:fs";
 import fs from "node:fs/promises";
 import paths from "node:path";
 
-import RAL from "../common/ral";
-import { u64, size } from "../common/baseTypes";
-import {
-	fdstat,
-	filestat,
-	Rights,
-	fd,
-	rights,
-	fdflags,
-	Filetype,
-	WasiError,
-	Errno,
-	filetype,
-	Whence,
-	lookupflags,
-	timestamp,
-	fstflags,
-	oflags,
-	Oflags,
-	filesize,
-	Fdflags,
-	inode,
-	Lookupflags,
-	Fstflags,
-	errno,
-} from "../common/wasi";
+import { Dirent } from "node:fs";
+import { Uri } from "vscode";
+import { size, u64 } from "../common/baseTypes";
 import { BigInts } from "../common/converter";
+import {
+	DeviceDriverKind,
+	DeviceId,
+	FileSystemDeviceDriver,
+	NoSysDeviceDriver,
+	ReaddirEntry,
+} from "../common/deviceDriver";
+import { WritePermDeniedDeviceDriver } from "../common/deviceDriver";
 import {
 	BaseFileDescriptor,
 	FdProvider,
 	FileDescriptor,
 } from "../common/fileDescriptor";
+import RAL from "../common/ral";
 import {
-	NoSysDeviceDriver,
-	ReaddirEntry,
-	FileSystemDeviceDriver,
-	DeviceId,
-	DeviceDriverKind,
-} from "../common/deviceDriver";
-import { Dirent } from "node:fs";
-import { Uri } from "vscode";
-import { WritePermDeniedDeviceDriver } from "../common/deviceDriver";
+	Errno,
+	Fdflags,
+	Filetype,
+	Fstflags,
+	Lookupflags,
+	Oflags,
+	Rights,
+	WasiError,
+	Whence,
+	errno,
+	fd,
+	fdflags,
+	fdstat,
+	filesize,
+	filestat,
+	filetype,
+	fstflags,
+	inode,
+	lookupflags,
+	oflags,
+	rights,
+	timestamp,
+} from "../common/wasi";
 
 const _DirectoryBaseRights: rights =
 	Rights.fd_fdstat_set_flags |
@@ -69,7 +69,7 @@ const _DirectoryBaseRights: rights =
 	Rights.path_unlink_file |
 	Rights.path_symlink;
 const _DirectoryBaseRightsReadonly = _DirectoryBaseRights & Rights.ReadOnly;
-function getDirectoryBaseRights(readOnly: boolean = false): rights {
+function getDirectoryBaseRights(readOnly = false): rights {
 	return readOnly ? _DirectoryBaseRightsReadonly : _DirectoryBaseRights;
 }
 
@@ -88,7 +88,7 @@ const _FileBaseRights: rights =
 	Rights.fd_filestat_set_times |
 	Rights.poll_fd_readwrite;
 const _FileBaseRightsReadOnly = _FileBaseRights & Rights.ReadOnly;
-function getFileBaseRights(readOnly: boolean = false): rights {
+function getFileBaseRights(readOnly = false): rights {
 	return readOnly ? _FileBaseRightsReadOnly : _FileBaseRights;
 }
 
@@ -96,7 +96,7 @@ const _DirectoryInheritingRights: rights =
 	_DirectoryBaseRights | _FileBaseRights;
 const _DirectoryInheritingRightsReadonly =
 	_DirectoryInheritingRights & Rights.ReadOnly;
-function getDirectoryInheritingRights(readOnly: boolean = false): rights {
+function getDirectoryInheritingRights(readOnly = false): rights {
 	return readOnly
 		? _DirectoryInheritingRightsReadonly
 		: _DirectoryInheritingRights;
@@ -125,7 +125,7 @@ class GenericFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		handle: fs.FileHandle
+		handle: fs.FileHandle,
 	) {
 		super(deviceId, fd, filetype, rights_base, 0n, fdflags, inode);
 		this.handle = handle;
@@ -140,7 +140,7 @@ class GenericFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.fdflags,
 			this.inode,
-			this.handle
+			this.handle,
 		);
 	}
 
@@ -172,7 +172,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 		fdflags: fdflags,
 		inode: bigint,
 		handle: fs.FileHandle,
-		dir: Dir
+		dir: Dir,
 	) {
 		super(
 			deviceId,
@@ -181,7 +181,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode
+			inode,
 		);
 		this.handle = handle;
 		this._dir = dir;
@@ -210,7 +210,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			this.fdflags,
 			this.inode,
 			this.handle,
-			this.dir
+			this.dir,
 		);
 	}
 
@@ -228,7 +228,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 export function create(
 	deviceId: DeviceId,
 	basePath: string,
-	readOnly: boolean = false
+	readOnly = false,
 ): FileSystemDeviceDriver {
 	function createGenericDescriptor(
 		fd: fd,
@@ -236,7 +236,7 @@ export function create(
 		rights_base: rights,
 		fdflags: fdflags,
 		inode: inode,
-		handle: fs.FileHandle
+		handle: fs.FileHandle,
 	): GenericFileDescriptor {
 		return new GenericFileDescriptor(
 			deviceId,
@@ -245,12 +245,12 @@ export function create(
 			rights_base,
 			fdflags,
 			inode,
-			handle
+			handle,
 		);
 	}
 
 	function assertGenericDescriptor(
-		fileDescriptor: FileDescriptor
+		fileDescriptor: FileDescriptor,
 	): asserts fileDescriptor is GenericFileDescriptor {
 		if (!(fileDescriptor instanceof GenericFileDescriptor)) {
 			throw new WasiError(Errno.badf);
@@ -264,7 +264,7 @@ export function create(
 		fdflags: fdflags,
 		inode: inode,
 		handle: fs.FileHandle,
-		dir: Dir
+		dir: Dir,
 	): DirectoryFileDescriptor {
 		return new DirectoryFileDescriptor(
 			deviceId,
@@ -274,12 +274,12 @@ export function create(
 			fdflags,
 			inode,
 			handle,
-			dir
+			dir,
 		);
 	}
 
 	function assertDirectoryDescriptor(
-		fileDescriptor: FileDescriptor
+		fileDescriptor: FileDescriptor,
 	): asserts fileDescriptor is DirectoryFileDescriptor {
 		if (!(fileDescriptor instanceof DirectoryFileDescriptor)) {
 			throw new WasiError(Errno.badf);
@@ -287,7 +287,7 @@ export function create(
 	}
 
 	function assertHandleDescriptor(
-		fileDescriptor: FileDescriptor
+		fileDescriptor: FileDescriptor,
 	): asserts fileDescriptor is BaseFileDescriptor & {
 		handle: fs.FileHandle;
 	} {
@@ -300,7 +300,7 @@ export function create(
 	}
 
 	async function getRootFileDescriptor(
-		fd: fd
+		fd: fd,
 	): Promise<DirectoryFileDescriptor> {
 		try {
 			const stat = await fs.stat(basePath, { bigint: true });
@@ -317,7 +317,7 @@ export function create(
 				0,
 				stat.ino,
 				handle,
-				dir
+				dir,
 			);
 		} catch (error) {
 			throw handleError(error);
@@ -325,7 +325,7 @@ export function create(
 	}
 
 	async function assertDirectoryExists(
-		fileDescriptor: DirectoryFileDescriptor
+		fileDescriptor: DirectoryFileDescriptor,
 	): Promise<void> {
 		try {
 			const stat = await fileDescriptor.handle.stat();
@@ -358,7 +358,7 @@ export function create(
 	function assignStat(
 		result: filestat,
 		inode: inode,
-		stat: BigIntStats
+		stat: BigIntStats,
 	): void {
 		result.dev = deviceId;
 		result.ino = inode;
@@ -434,7 +434,7 @@ export function create(
 			_oflags: oflags | undefined = Oflags.none,
 			_fs_rights_base: rights | undefined,
 			_fdflags: fdflags | undefined = Fdflags.none,
-			_fd: 0 | 1 | 2
+			_fd: 0 | 1 | 2,
 		): Promise<FileDescriptor> {
 			// The file system shouldn't be used to give WASM processes access to the workspace files, even not on the desktop.
 			// It main purpose is to read file from the extensions installation directory. So we don't support stdio operations.
@@ -447,7 +447,7 @@ export function create(
 			fileDescriptor: FileDescriptor,
 			_offset: bigint,
 			_length: bigint,
-			_advise: number
+			_advise: number,
 		): Promise<void> {
 			assertGenericDescriptor(fileDescriptor);
 			// We don't have advisory in NodeFS. So treat it as successful.
@@ -456,19 +456,19 @@ export function create(
 		async fd_allocate(
 			fileDescriptor: FileDescriptor,
 			offset: bigint,
-			len: bigint
+			len: bigint,
 		): Promise<void> {
 			assertGenericDescriptor(fileDescriptor);
 			try {
 				const buffer = await fileDescriptor.handle.readFile();
 				const newBuffer = Buffer.alloc(
-					buffer.byteLength + BigInts.asNumber(len)
+					buffer.byteLength + BigInts.asNumber(len),
 				);
 				buffer.copy(newBuffer, 0, 0, BigInts.asNumber(offset));
 				buffer.copy(
 					newBuffer,
 					BigInts.asNumber(offset + len),
-					BigInts.asNumber(offset)
+					BigInts.asNumber(offset),
 				);
 				await fileDescriptor.handle.write(newBuffer);
 			} catch (error) {
@@ -502,7 +502,7 @@ export function create(
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat
+			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -512,21 +512,21 @@ export function create(
 		},
 		fd_fdstat_set_flags(
 			fileDescriptor: FileDescriptor,
-			fdflags: number
+			fdflags: number,
 		): Promise<void> {
 			fileDescriptor.fdflags = fdflags;
 			return Promise.resolve();
 		},
 		async fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat
+			result: filestat,
 		): Promise<void> {
 			try {
 				assertHandleDescriptor(fileDescriptor);
 				assignStat(
 					result,
 					fileDescriptor.inode,
-					await fileDescriptor.handle.stat({ bigint: true })
+					await fileDescriptor.handle.stat({ bigint: true }),
 				);
 			} catch (error) {
 				throw handleError(error);
@@ -534,7 +534,7 @@ export function create(
 		},
 		async fd_filestat_set_size(
 			fileDescriptor: FileDescriptor,
-			size: bigint
+			size: bigint,
 		): Promise<void> {
 			try {
 				assertGenericDescriptor(fileDescriptor);
@@ -547,7 +547,7 @@ export function create(
 			_fileDescriptor: FileDescriptor,
 			_atim: bigint,
 			_mtim: bigint,
-			_fst_flags: fstflags
+			_fst_flags: fstflags,
 		): Promise<void> {
 			// For new we do nothing. We could cache the timestamp in memory
 			// But we would loose them during reload. We could also store them
@@ -557,7 +557,7 @@ export function create(
 		async fd_pread(
 			fileDescriptor: FileDescriptor,
 			offset: filesize,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<size> {
 			if (buffers.length === 0) {
 				return 0;
@@ -565,7 +565,7 @@ export function create(
 			try {
 				assertGenericDescriptor(fileDescriptor);
 				const handle = fileDescriptor.handle;
-				let pos = BigInts.asNumber(offset);
+				const pos = BigInts.asNumber(offset);
 				return (await handle.readv(buffers, pos)).bytesRead;
 			} catch (error) {
 				throw handleError(error);
@@ -574,7 +574,7 @@ export function create(
 		async fd_pwrite(
 			fileDescriptor: FileDescriptor,
 			offset: filesize,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<number> {
 			if (buffers.length === 0) {
 				return 0;
@@ -582,7 +582,7 @@ export function create(
 			try {
 				assertGenericDescriptor(fileDescriptor);
 				const handle = fileDescriptor.handle;
-				let pos = BigInts.asNumber(offset);
+				const pos = BigInts.asNumber(offset);
 				return (await handle.writev(buffers, pos)).bytesWritten;
 			} catch (error) {
 				throw handleError(error);
@@ -590,7 +590,7 @@ export function create(
 		},
 		async fd_read(
 			fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<number> {
 			if (buffers.length === 0) {
 				return 0;
@@ -608,7 +608,7 @@ export function create(
 			}
 		},
 		async fd_readdir(
-			fileDescriptor: FileDescriptor
+			fileDescriptor: FileDescriptor,
 		): Promise<ReaddirEntry[]> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
@@ -634,7 +634,7 @@ export function create(
 		async fd_seek(
 			fileDescriptor: FileDescriptor,
 			_offset: bigint,
-			whence: number
+			whence: number,
 		): Promise<bigint> {
 			assertGenericDescriptor(fileDescriptor);
 
@@ -671,7 +671,7 @@ export function create(
 		},
 		async fd_write(
 			fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[]
+			buffers: Uint8Array[],
 		): Promise<number> {
 			if (buffers.length === 0) {
 				return 0;
@@ -690,7 +690,7 @@ export function create(
 		},
 		async path_create_directory(
 			fileDescriptor: FileDescriptor,
-			path: string
+			path: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
@@ -705,15 +705,15 @@ export function create(
 			fileDescriptor: FileDescriptor,
 			flags: lookupflags,
 			path: string,
-			result: filestat
+			result: filestat,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
 				await assertDirectoryExists(fileDescriptor);
 				const fullpath = Lookupflags.symlink_followOn(flags)
 					? await followSymlink(
-							paths.join(fileDescriptor.dir.path, path)
-						)
+							paths.join(fileDescriptor.dir.path, path),
+					  )
 					: paths.join(fileDescriptor.dir.path, path);
 				const stat = await fs.stat(fullpath, { bigint: true });
 				assignStat(result, stat.ino, stat);
@@ -727,15 +727,15 @@ export function create(
 			path: string,
 			atim: timestamp,
 			mtim: timestamp,
-			fst_flags: fstflags
+			fst_flags: fstflags,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
 				await assertDirectoryExists(fileDescriptor);
-				let fullpath = Lookupflags.symlink_followOn(flags)
+				const fullpath = Lookupflags.symlink_followOn(flags)
 					? await followSymlink(
-							paths.join(fileDescriptor.dir.path, path)
-						)
+							paths.join(fileDescriptor.dir.path, path),
+					  )
 					: paths.join(fileDescriptor.dir.path, path);
 				const now = RAL().clock.realtime();
 				if (Fstflags.atim_nowOn(fst_flags)) {
@@ -747,7 +747,7 @@ export function create(
 				await fs.utimes(
 					fullpath,
 					BigInts.asNumber(atim),
-					BigInts.asNumber(mtim)
+					BigInts.asNumber(mtim),
 				);
 			} catch (error) {
 				throw handleError(error);
@@ -758,22 +758,22 @@ export function create(
 			old_flags: lookupflags,
 			old_path: string,
 			newFileDescriptor: FileDescriptor,
-			new_path: string
+			new_path: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(oldFileDescriptor);
 				await assertDirectoryExists(oldFileDescriptor);
 				const oldFullpath = Lookupflags.symlink_followOn(old_flags)
 					? await followSymlink(
-							paths.join(oldFileDescriptor.dir.path, old_path)
-						)
+							paths.join(oldFileDescriptor.dir.path, old_path),
+					  )
 					: paths.join(oldFileDescriptor.dir.path, old_path);
 
 				assertDirectoryDescriptor(newFileDescriptor);
 				await assertDirectoryExists(newFileDescriptor);
 				const newFullpath = paths.join(
 					newFileDescriptor.dir.path,
-					new_path
+					new_path,
 				);
 
 				await fs.link(oldFullpath, newFullpath);
@@ -789,7 +789,7 @@ export function create(
 			fs_rights_base: rights,
 			fs_rights_inheriting: rights,
 			fdflags: fdflags,
-			fdProvider: FdProvider
+			fdProvider: FdProvider,
 		): Promise<FileDescriptor> {
 			assertDirectoryDescriptor(fileDescriptor);
 			await assertDirectoryExists(fileDescriptor);
@@ -797,9 +797,9 @@ export function create(
 				? await followSymlink(paths.join(fileDescriptor.dir.path, path))
 				: paths.join(fileDescriptor.dir.path, path);
 
-			let nodeFlags: number = 0;
-			let needs_rights_base: bigint = 0n;
-			let needs_rights_inheriting: bigint = 0n;
+			let nodeFlags = 0;
+			let needs_rights_base = 0n;
+			let needs_rights_inheriting = 0n;
 
 			const read =
 				(fs_rights_base & (Rights.fd_read | Rights.fd_readdir)) !== 0n;
@@ -873,23 +873,23 @@ export function create(
 						? createDirectoryDescriptor(
 								fdProvider.next(),
 								fileDescriptor.childDirectoryRights(
-									fs_rights_base
+									fs_rights_base,
 								),
 								fs_rights_inheriting |
 									getDirectoryInheritingRights(readOnly),
 								fdflags,
 								stat.ino,
 								handle,
-								await fs.opendir(fullpath)
-							)
+								await fs.opendir(fullpath),
+						  )
 						: createGenericDescriptor(
 								fdProvider.next(),
 								filetype,
 								fileDescriptor.childFileRights(fs_rights_base),
 								fdflags,
 								stat.ino,
-								handle
-							);
+								handle,
+						  );
 				return result;
 			} catch (error) {
 				throw handleError(error);
@@ -897,7 +897,7 @@ export function create(
 		},
 		async path_readlink(
 			fileDescriptor: FileDescriptor,
-			path: string
+			path: string,
 		): Promise<string> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
@@ -914,7 +914,7 @@ export function create(
 		},
 		async path_remove_directory(
 			fileDescriptor: FileDescriptor,
-			path: string
+			path: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
@@ -929,21 +929,21 @@ export function create(
 			oldFileDescriptor: FileDescriptor,
 			oldPath: string,
 			newFileDescriptor: FileDescriptor,
-			newPath: string
+			newPath: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(oldFileDescriptor);
 				await assertDirectoryExists(oldFileDescriptor);
 				const oldFullpath = paths.join(
 					oldFileDescriptor.dir.path,
-					oldPath
+					oldPath,
 				);
 
 				assertDirectoryDescriptor(newFileDescriptor);
 				await assertDirectoryExists(newFileDescriptor);
 				const newFullpath = paths.join(
 					newFileDescriptor.dir.path,
-					newPath
+					newPath,
 				);
 
 				await fs.rename(oldFullpath, newFullpath);
@@ -954,18 +954,18 @@ export function create(
 		async path_symlink(
 			oldPath: string,
 			fileDescriptor: FileDescriptor,
-			newPath: string
+			newPath: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
 				await assertDirectoryExists(fileDescriptor);
 				const oldFullpath = paths.join(
 					fileDescriptor.dir.path,
-					oldPath
+					oldPath,
 				);
 				const newFullpath = paths.join(
 					fileDescriptor.dir.path,
-					newPath
+					newPath,
 				);
 
 				await fs.symlink(oldFullpath, newFullpath);
@@ -975,7 +975,7 @@ export function create(
 		},
 		async path_unlink_file(
 			fileDescriptor: FileDescriptor,
-			path: string
+			path: string,
 		): Promise<void> {
 			try {
 				assertDirectoryDescriptor(fileDescriptor);
@@ -987,7 +987,7 @@ export function create(
 			}
 		},
 		async fd_bytesAvailable(
-			fileDescriptor: FileDescriptor
+			fileDescriptor: FileDescriptor,
 		): Promise<filesize> {
 			try {
 				assertGenericDescriptor(fileDescriptor);
@@ -1003,6 +1003,6 @@ export function create(
 		{},
 		NoSysDeviceDriver,
 		$this,
-		readOnly ? WritePermDeniedDeviceDriver : {}
+		readOnly ? WritePermDeniedDeviceDriver : {},
 	);
 }

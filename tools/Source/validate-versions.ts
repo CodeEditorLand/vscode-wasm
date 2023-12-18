@@ -82,7 +82,7 @@ function check(): void {
 						? json.dependencies[dependency.package.name]
 						: json.devDependencies[dependency.package.name];
 				const validationEntry = validations.get(
-					dependency.package.name
+					dependency.package.name,
 				)!;
 				if (version === undefined) {
 					validationEntry.violations.push({
@@ -107,11 +107,11 @@ function printResult(): void {
 		}
 		process.exitCode = 1;
 		process.stdout.write(
-			`Package ${entry.package.name} at version ${entry.version} is incorrectly referenced in the following packages:\n`
+			`Package ${entry.package.name} at version ${entry.version} is incorrectly referenced in the following packages:\n`,
 		);
 		for (const violation of entry.violations) {
 			process.stdout.write(
-				`\t ${violation.package.name} with version ${violation.version}\n`
+				`\t ${violation.package.name} with version ${violation.version}\n`,
 			);
 		}
 	}

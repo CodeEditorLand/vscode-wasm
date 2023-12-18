@@ -5,12 +5,12 @@
 /// <reference path="../../typings/webAssemblyCommon.d.ts" />
 
 import {
-	extensions as Extensions,
 	Event,
+	Extension,
+	ExtensionContext,
 	Pseudoterminal,
 	Uri,
-	ExtensionContext,
-	Extension,
+	extensions as Extensions,
 } from "vscode";
 import version from "./version";
 
@@ -409,22 +409,22 @@ export enum Filetype {
 	 * The type of the file descriptor or file is unknown or is different from
 	 * any of the other types specified.
 	 */
-	unknown,
+	unknown = 0,
 
 	/**
 	 * The file descriptor or file refers to a directory.
 	 */
-	directory,
+	directory = 1,
 
 	/**
 	 * The file descriptor or file refers to a regular file.
 	 */
-	regular_file,
+	regular_file = 2,
 
 	/**
 	 * The file descriptor or file refers to a character device.
 	 */
-	character_device,
+	character_device = 3,
 }
 
 /**
@@ -436,7 +436,7 @@ export interface MemoryFileSystem {
 		path: string,
 		content:
 			| Uint8Array
-			| { size: bigint; reader: () => Promise<Uint8Array> }
+			| { size: bigint; reader: () => Promise<Uint8Array> },
 	): void;
 	createReadable(path: string): Readable;
 	createWritable(path: string, encoding?: "utf-8"): Writable;
@@ -489,7 +489,7 @@ export interface Wasm {
 	 * Creates a new root file system.
 	 */
 	createRootFileSystem(
-		descriptors: MountPointDescriptor[]
+		descriptors: MountPointDescriptor[],
 	): Promise<RootFileSystem>;
 
 	/**
@@ -512,7 +512,7 @@ export interface Wasm {
 	createProcess(
 		name: string,
 		module: WebAssembly.Module | Promise<WebAssembly.Module>,
-		options?: ProcessOptions
+		options?: ProcessOptions,
 	): Promise<WasmProcess>;
 
 	/**
@@ -527,7 +527,7 @@ export interface Wasm {
 		name: string,
 		module: WebAssembly.Module | Promise<WebAssembly.Module>,
 		memory: WebAssembly.MemoryDescriptor | WebAssembly.Memory,
-		options?: ProcessOptions
+		options?: ProcessOptions,
 	): Promise<WasmProcess>;
 
 	/**
@@ -554,7 +554,7 @@ export namespace Wasm {
 		}
 		if ($api === undefined) {
 			throw new Error(
-				`Wasm API not yet loaded. Call await Wasm.load() first.`
+				`Wasm API not yet loaded. Call await Wasm.load() first.`,
 			);
 		}
 		return $api;
@@ -578,13 +578,13 @@ export namespace Wasm {
 					const extVersion = semverParse(api.version);
 					if (extVersion === null) {
 						throw new Error(
-							`Unable to parse WASM WASI Core extension version: ${api.version}`
+							`Unable to parse WASM WASI Core extension version: ${api.version}`,
 						);
 					}
 					const moduleVersion = semverParse(version);
 					if (moduleVersion === null) {
 						throw new Error(
-							`Unable to parse WASM WASI Core module version: ${version}`
+							`Unable to parse WASM WASI Core module version: ${version}`,
 						);
 					}
 
@@ -595,7 +595,7 @@ export namespace Wasm {
 					if (moduleVersion.prerelease.length > 0) {
 						if (!extIsPrerelease) {
 							throw new Error(
-								`WASM WASI Core extension version ${api.version} is a pre-release version but the module version ${version} is not.`
+								`WASM WASI Core extension version ${api.version} is a pre-release version but the module version ${version} is not.`,
 							);
 						}
 						if (
@@ -603,7 +603,7 @@ export namespace Wasm {
 							moduleVersion.prerelease[1] !== 1
 						) {
 							throw new Error(
-								`WASM WASI Core extension version ${api.version} is a pre-release version but the module version ${version} is not a valid pre-release version`
+								`WASM WASI Core extension version ${api.version} is a pre-release version but the module version ${version} is not a valid pre-release version`,
 							);
 						}
 						moduleVersion.prerelease = [];
@@ -611,24 +611,24 @@ export namespace Wasm {
 					if (
 						!semverSatisfies(
 							api.version,
-							`^${moduleVersion.format()}`
+							`^${moduleVersion.format()}`,
 						)
 					) {
 						throw new Error(
-							`WASM WASI Core module version ${version} is not compatible with extension version ${api.version}`
+							`WASM WASI Core module version ${version} is not compatible with extension version ${api.version}`,
 						);
 					}
 					$api = api;
 				},
 				() => {
 					$api = null;
-				}
+				},
 			);
 			return $promise;
 		} catch (err) {
 			$promise = null;
 			throw new Error(
-				`Unable to activate WASM WASI Core extension: ${err}`
+				`Unable to activate WASM WASI Core extension: ${err}`,
 			);
 		}
 	}

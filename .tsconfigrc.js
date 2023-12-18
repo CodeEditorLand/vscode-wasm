@@ -4,7 +4,6 @@
  * ------------------------------------------------------------------------------------------ */
 
 // @ts-check
-"use strict";
 
 const { CompilerOptions } = require("@vscode/tsconfig-gen");
 
