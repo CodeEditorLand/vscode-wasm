@@ -79,7 +79,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		rights_inheriting: rights,
 		fdflags: fdflags,
-		inode: bigint,
+		inode: bigint
 	) {
 		super(
 			deviceId,
@@ -88,7 +88,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode,
+			inode
 		);
 	}
 
@@ -99,7 +99,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.rights_inheriting,
 			this.fdflags,
-			this.inode,
+			this.inode
 		);
 	}
 }
@@ -137,7 +137,7 @@ namespace VirtualDirectoryNode {
 	export function create(
 		id: inode,
 		parent: VirtualDirectoryNode | undefined,
-		name: string,
+		name: string
 	): VirtualDirectoryNode {
 		return {
 			kind: NodeKind.VirtualDirectory,
@@ -178,7 +178,7 @@ namespace MountPointNode {
 		id: inode,
 		parent: VirtualDirectoryNode,
 		name: string,
-		deviceDriver: FileSystemDeviceDriver,
+		deviceDriver: FileSystemDeviceDriver
 	): MountPointNode {
 		return {
 			kind: NodeKind.MountPoint,
@@ -207,7 +207,7 @@ class VirtualRootFileSystem {
 		this.root = VirtualDirectoryNode.create(
 			VirtualRootFileSystem.inodeCounter++,
 			undefined,
-			"/",
+			"/"
 		);
 		this.inodes.set(this.root.inode, this.root);
 		this.deviceDrivers = new Map();
@@ -220,7 +220,7 @@ class VirtualRootFileSystem {
 
 	public addMountPoint(
 		filepath: string,
-		deviceDriver: FileSystemDeviceDriver,
+		deviceDriver: FileSystemDeviceDriver
 	): void {
 		if (filepath.length === 0) {
 			throw new Error("Cannot mount root");
@@ -237,7 +237,7 @@ class VirtualRootFileSystem {
 				throw new Error(
 					`Cannot create virtual folder over mount point: ${
 						path.sep
-					}${segments.slice(0, i + 1).join(path.sep)}`,
+					}${segments.slice(0, i + 1).join(path.sep)}`
 				);
 			}
 			const segment = segments[i];
@@ -246,7 +246,7 @@ class VirtualRootFileSystem {
 					VirtualRootFileSystem.inodeCounter++,
 					current,
 					segment,
-					deviceDriver,
+					deviceDriver
 				);
 				this.inodes.set(child.inode, child);
 				current.entries.set(segment, child);
@@ -258,7 +258,7 @@ class VirtualRootFileSystem {
 					child = VirtualDirectoryNode.create(
 						VirtualRootFileSystem.inodeCounter++,
 						current,
-						segment,
+						segment
 					);
 					current.entries.set(segment, child);
 					this.inodes.set(child.inode, child);
@@ -278,7 +278,7 @@ class VirtualRootFileSystem {
 
 	public findNode(
 		parentNode: Node,
-		filePath: string,
+		filePath: string
 	): [Node, string | undefined] {
 		const path = RAL().path;
 		filePath = path.normalize(filePath);
@@ -326,7 +326,7 @@ class VirtualRootFileSystem {
 
 	public makeVirtualPath(
 		deviceDriver: FileSystemDeviceDriver,
-		filepath: string,
+		filepath: string
 	): string | undefined {
 		const node = this.deviceDrivers.get(deviceDriver);
 		if (node === undefined) {
@@ -337,7 +337,7 @@ class VirtualRootFileSystem {
 	}
 
 	public getDeviceDriver(
-		path: string,
+		path: string
 	): [FileSystemDeviceDriver | undefined, string] {
 		const [node, relativePath] = this.findNode(this.root, path);
 		if (node.kind === NodeKind.MountPoint) {
@@ -378,7 +378,7 @@ class VirtualRootFileSystem {
 export interface RootFileSystemDeviceDriver extends FileSystemDeviceDriver {
 	makeVirtualPath(
 		deviceDriver: FileSystemDeviceDriver,
-		filepath: string,
+		filepath: string
 	): string | undefined;
 	getDeviceDriver(path: string): [FileSystemDeviceDriver | undefined, string];
 	getMountPoint(uri: Uri): [string | undefined, Uri];
@@ -389,14 +389,14 @@ export function create(
 	rootFileDescriptors: {
 		getRoot(device: DeviceDriver): FileDescriptor | undefined;
 	},
-	mountPoints: Map<string, FileSystemDeviceDriver>,
+	mountPoints: Map<string, FileSystemDeviceDriver>
 ): RootFileSystemDeviceDriver {
 	let $atim: bigint = BigInt(Date.now()) * 1000000n;
 	let $mtim: bigint = $atim;
 	let $ctim: bigint = $atim;
 
 	function assertDirectoryDescriptor(
-		fileDescriptor: FileDescriptor,
+		fileDescriptor: FileDescriptor
 	): asserts fileDescriptor is FileDescriptor & {
 		readonly fileType: typeof Filetype.directory;
 	} {
@@ -412,7 +412,7 @@ export function create(
 			DirectoryBaseRights,
 			DirectoryInheritingRights,
 			0,
-			inode,
+			inode
 		);
 	}
 
@@ -431,12 +431,12 @@ export function create(
 		uri: Uri.from({ scheme: "wasi-root", path: "/" }),
 		makeVirtualPath(
 			deviceDriver: FileSystemDeviceDriver,
-			filepath: string,
+			filepath: string
 		): string | undefined {
 			return $fs.makeVirtualPath(deviceDriver, filepath);
 		},
 		getDeviceDriver(
-			path: string,
+			path: string
 		): [FileSystemDeviceDriver | undefined, string] {
 			return $fs.getDeviceDriver(path);
 		},
@@ -448,7 +448,7 @@ export function create(
 		},
 		createStdioFileDescriptor(): Promise<FileDescriptor> {
 			throw new Error(
-				`Virtual root FS can't provide stdio file descriptors`,
+				`Virtual root FS can't provide stdio file descriptors`
 			);
 		},
 		fd_create_prestat_fd(fd: fd): Promise<FileDescriptor> {
@@ -459,7 +459,7 @@ export function create(
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat,
+			result: fdstat
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -469,14 +469,14 @@ export function create(
 		},
 		fd_fdstat_set_flags(
 			fileDescriptor: FileDescriptor,
-			fdflags: number,
+			fdflags: number
 		): Promise<void> {
 			fileDescriptor.fdflags = fdflags;
 			return Promise.resolve();
 		},
 		fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat,
+			result: filestat
 		): Promise<void> {
 			assertDirectoryDescriptor(fileDescriptor);
 			const node = $fs.getNode(fileDescriptor.inode);
@@ -497,14 +497,14 @@ export function create(
 			_fileDescriptor: FileDescriptor,
 			atim: bigint,
 			mtim: bigint,
-			_fst_flags: fstflags,
+			_fst_flags: fstflags
 		): Promise<void> {
 			$atim = atim;
 			$mtim = mtim;
 			return Promise.resolve();
 		},
 		async fd_readdir(
-			fileDescriptor: FileDescriptor,
+			fileDescriptor: FileDescriptor
 		): Promise<ReaddirEntry[]> {
 			assertDirectoryDescriptor(fileDescriptor);
 
@@ -526,7 +526,7 @@ export function create(
 			fileDescriptor: FileDescriptor,
 			flags: lookupflags,
 			path: string,
-			result: filestat,
+			result: filestat
 		): Promise<void> {
 			assertDirectoryDescriptor(fileDescriptor);
 			const parentNode = $fs.getNode(fileDescriptor.inode);
@@ -536,7 +536,7 @@ export function create(
 			) {
 				return this.fd_filestat_get(
 					rootFileDescriptors.getRoot($this)!,
-					result,
+					result
 				);
 			}
 
@@ -552,7 +552,7 @@ export function create(
 					rootFileDescriptor,
 					flags,
 					pathRemainder!,
-					result,
+					result
 				);
 			}
 
@@ -574,7 +574,7 @@ export function create(
 			fs_rights_base: rights,
 			fs_rights_inheriting: rights,
 			fdflags: fdflags,
-			fdProvider: FdProvider,
+			fdProvider: FdProvider
 		): Promise<FileDescriptor> {
 			assertDirectoryDescriptor(parentDescriptor);
 			const parentNode = $fs.getNode(parentDescriptor.inode);
@@ -595,7 +595,7 @@ export function create(
 					fs_rights_base,
 					fs_rights_inheriting,
 					fdflags,
-					fdProvider,
+					fdProvider
 				);
 			}
 
@@ -608,7 +608,7 @@ export function create(
 		{},
 		NoSysDeviceDriver,
 		$driver,
-		WritePermDeniedDeviceDriver,
+		WritePermDeniedDeviceDriver
 	);
 	return $this;
 }

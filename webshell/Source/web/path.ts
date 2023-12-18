@@ -69,7 +69,7 @@ function normalizeString(
 	path: string,
 	allowAboveRoot: boolean,
 	separator: string,
-	isPathSeparator: (code?: number) => boolean,
+	isPathSeparator: (code?: number) => boolean
 ) {
 	let res = "";
 	let lastSegmentLength = 0;

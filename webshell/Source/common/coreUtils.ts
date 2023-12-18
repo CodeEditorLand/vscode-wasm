@@ -27,9 +27,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"cat",
@@ -41,9 +41,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"comm",
@@ -55,9 +55,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"cp",
@@ -69,9 +69,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"date",
@@ -80,9 +80,9 @@ export class CoreUtils {
 					wasm,
 					command,
 					args,
-					stdio,
+					stdio
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"dir",
@@ -94,9 +94,9 @@ export class CoreUtils {
 					cwd,
 					true,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"echo",
@@ -105,9 +105,9 @@ export class CoreUtils {
 					wasm,
 					command,
 					args,
-					stdio,
+					stdio
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"expand",
@@ -119,9 +119,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"factor",
@@ -130,9 +130,9 @@ export class CoreUtils {
 					wasm,
 					command,
 					args,
-					stdio,
+					stdio
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"head",
@@ -144,9 +144,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"ls",
@@ -158,9 +158,9 @@ export class CoreUtils {
 					cwd,
 					true,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"mkdir",
@@ -172,9 +172,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"mv",
@@ -186,9 +186,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"printenv",
@@ -197,9 +197,9 @@ export class CoreUtils {
 					wasm,
 					command,
 					args,
-					stdio,
+					stdio
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"realpath",
@@ -211,9 +211,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"rm",
@@ -225,9 +225,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"rmdir",
@@ -239,9 +239,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"sleep",
@@ -250,9 +250,9 @@ export class CoreUtils {
 					wasm,
 					command,
 					args,
-					stdio,
+					stdio
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"tail",
@@ -264,9 +264,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"touch",
@@ -278,9 +278,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"unexpand",
@@ -292,9 +292,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"unlink",
@@ -306,9 +306,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"vdir",
@@ -320,9 +320,9 @@ export class CoreUtils {
 					cwd,
 					true,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 		target.registerCommandHandler(
 			"wc",
@@ -334,9 +334,9 @@ export class CoreUtils {
 					cwd,
 					false,
 					stdio,
-					rootFileSystem,
+					rootFileSystem
 				);
-			},
+			}
 		);
 	}
 
@@ -347,7 +347,7 @@ export class CoreUtils {
 		const uri = Uri.joinPath(
 			this.context.extensionUri,
 			"wasm",
-			"coreutils.wasm",
+			"coreutils.wasm"
 		);
 		this.coreUtils = RAL().webAssembly.compile(uri);
 		return this.coreUtils;
@@ -360,7 +360,7 @@ export class CoreUtils {
 		cwd: string,
 		addCwd: boolean,
 		stdio: Stdio,
-		rootFileSystem: RootFileSystem,
+		rootFileSystem: RootFileSystem
 	): Promise<number> {
 		const module = await this.getCoreUtils();
 		const path = RAL().path;
@@ -392,7 +392,7 @@ export class CoreUtils {
 		wasm: Wasm,
 		command: string,
 		args: string[],
-		stdio: Stdio,
+		stdio: Stdio
 	): Promise<number> {
 		const module = await this.getCoreUtils();
 		const newArgs = [command].concat(args);

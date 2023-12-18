@@ -105,7 +105,7 @@ export class FileSystemError extends Error {
 	 * @param messageOrUri Message or uri.
 	 */
 	public static FileNotADirectory(
-		messageOrUri?: string | URI,
+		messageOrUri?: string | URI
 	): FileSystemError {
 		return new FileSystemError("FileNotADirectory", messageOrUri);
 	}
@@ -115,7 +115,7 @@ export class FileSystemError extends Error {
 	 * @param messageOrUri Message or uri.
 	 */
 	public static FileIsADirectory(
-		messageOrUri?: string | URI,
+		messageOrUri?: string | URI
 	): FileSystemError {
 		return new FileSystemError("FileIsADirectory", messageOrUri);
 	}
@@ -147,8 +147,8 @@ export class FileSystemError extends Error {
 			typeof messageOrUri === "string"
 				? messageOrUri
 				: messageOrUri !== undefined
-				  ? messageOrUri.toString()
-				  : "Unknown error",
+					? messageOrUri.toString()
+					: "Unknown error"
 		);
 		this.code = code;
 	}

@@ -15,7 +15,7 @@ export abstract class BrowserHostConnection extends HostConnection {
 	private readonly port: MessagePort | Worker | DedicatedWorkerGlobalScope;
 
 	public constructor(
-		port: MessagePort | Worker | DedicatedWorkerGlobalScope,
+		port: MessagePort | Worker | DedicatedWorkerGlobalScope
 	) {
 		super();
 		this.port = port;

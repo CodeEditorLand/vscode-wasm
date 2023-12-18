@@ -366,7 +366,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	public write(content: Uint8Array, encoding?: "utf-8"): Promise<number>;
 	public write(
 		content: Uint8Array | string,
-		encoding?: "utf-8",
+		encoding?: "utf-8"
 	): Promise<void> | Promise<number> {
 		if (typeof content === "string") {
 			this.writeString(this.replaceNewlines(content));
@@ -409,7 +409,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(1),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x1bf":
@@ -418,7 +418,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordRight(),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x02":
@@ -427,7 +427,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(-1),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x1bb":
@@ -436,7 +436,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordLeft(),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x01":
@@ -445,7 +445,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorStartOfLine(),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x05":
@@ -454,7 +454,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				this.adjustCursor(
 					this.lineBuffer.moveCursorEndOfLine(),
 					previousCursor,
-					this.lineBuffer.getCursor(),
+					this.lineBuffer.getCursor()
 				);
 				break;
 			case "\x1b[A": // up
@@ -539,7 +539,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	private adjustCursor(
 		success: boolean,
 		oldCursor: number,
-		newCursor: number,
+		newCursor: number
 	): void {
 		if (!success) {
 			this.bell();
@@ -576,7 +576,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				} else {
 					return match;
 				}
-			},
+			}
 		);
 	}
 	private getString(bytes: Uint8Array, _encoding?: "utf-8"): string {

@@ -13,6 +13,6 @@ await fs.writeFile(
 	file,
 	content.replace(
 		/const version = '.*?';/,
-		`const version = '${packJson.version}';`,
-	),
+		`const version = '${packJson.version}';`
+	)
 );

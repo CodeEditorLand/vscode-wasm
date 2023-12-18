@@ -17,12 +17,6 @@ const node_modules = "node_modules";
 
 	ln.softLink(
 		path.join(root, "wasm-wasi"),
-		path.join(
-			root,
-			"wasm-wasi-tests",
-			node_modules,
-			"@vscode",
-			"wasm-wasi",
-		),
+		path.join(root, "wasm-wasi-tests", node_modules, "@vscode", "wasm-wasi")
 	);
 })();

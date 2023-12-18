@@ -44,7 +44,7 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 			host.initialize(memory ?? instance);
 			(instance.exports.wasi_thread_start as Function)(
 				message.tid,
-				message.start_arg,
+				message.start_arg
 			);
 			host.thread_exit(message.tid);
 			if (tracer !== undefined) {
@@ -56,7 +56,7 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 }
 
 async function main(
-	port: MessagePort | Worker | DedicatedWorkerGlobalScope,
+	port: MessagePort | Worker | DedicatedWorkerGlobalScope
 ): Promise<void> {
 	const connection = new ThreadBrowserHostConnection(port);
 	try {

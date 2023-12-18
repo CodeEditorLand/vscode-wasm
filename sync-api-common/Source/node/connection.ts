@@ -54,7 +54,7 @@ export class ServiceConnection<
 				} catch (error) {
 					RAL().console.error(error);
 				}
-			},
+			}
 		);
 	}
 

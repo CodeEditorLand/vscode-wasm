@@ -137,7 +137,7 @@ export class LinkedMap<K, V> implements Map<K, V> {
 
 	public forEach(
 		callbackfn: (value: V, key: K, map: LinkedMap<K, V>) => void,
-		thisArg?: any,
+		thisArg?: any
 	): void {
 		const state = this._state;
 		let current = this._head;

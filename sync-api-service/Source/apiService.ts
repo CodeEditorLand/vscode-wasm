@@ -63,7 +63,7 @@ export class ApiService {
 	constructor(
 		_id: string,
 		receiver: ApiServiceConnection,
-		options?: Options,
+		options?: Options
 	) {
 		this.connection = receiver;
 
@@ -134,7 +134,7 @@ export class ApiService {
 				} catch (error) {
 					return handleError(error);
 				}
-			},
+			}
 		);
 
 		this.connection.onRequest("fileSystem/readFile", async (params) => {
@@ -168,7 +168,7 @@ export class ApiService {
 				} catch (error) {
 					return handleError(error);
 				}
-			},
+			}
 		);
 
 		this.connection.onRequest(
@@ -181,7 +181,7 @@ export class ApiService {
 				} catch (error) {
 					return handleError(error);
 				}
-			},
+			}
 		);
 
 		this.connection.onRequest("fileSystem/delete", async (params) => {
@@ -201,7 +201,7 @@ export class ApiService {
 				await vscode.workspace.fs.rename(
 					source,
 					target,
-					params.options,
+					params.options
 				);
 				return { errno: 0 };
 			} catch (error) {
@@ -233,13 +233,13 @@ export class ApiService {
 
 	public registerCharacterDeviceDriver(
 		deviceDriver: CharacterDeviceDriver,
-		useAsDefaultStdio: boolean,
+		useAsDefaultStdio: boolean
 	): void {
 		if (useAsDefaultStdio === true) {
 			this.setStdio(
 				deviceDriver.fileDescriptor,
 				deviceDriver.fileDescriptor,
-				deviceDriver.fileDescriptor,
+				deviceDriver.fileDescriptor
 			);
 		}
 		this.byteSources.set(deviceDriver.uri.toString(true), deviceDriver);
@@ -249,7 +249,7 @@ export class ApiService {
 	public setStdio(
 		stdin: FileDescriptorDescription | undefined,
 		stdout: FileDescriptorDescription | undefined,
-		stderr: FileDescriptorDescription | undefined,
+		stderr: FileDescriptorDescription | undefined
 	): void {
 		if (stdin !== undefined) {
 			this.stdio.stdin = stdin;
@@ -282,7 +282,7 @@ export class ApiService {
 	}
 
 	private asFileSystemError(
-		error: vscode.FileSystemError,
+		error: vscode.FileSystemError
 	): DTOs.FileSystemError {
 		switch (error.code) {
 			case "FileNotFound":
@@ -303,7 +303,7 @@ export class ApiService {
 	}
 
 	private asFileDescriptorDescription(
-		fileDescriptor: FileDescriptorDescription,
+		fileDescriptor: FileDescriptorDescription
 	): DTOs.FileDescriptorDescription {
 		switch (fileDescriptor.kind) {
 			case "fileSystem":

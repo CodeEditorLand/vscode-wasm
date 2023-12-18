@@ -38,7 +38,7 @@ export class MessageConnection<
 
 	protected postMessage(
 		message: BaseMessageConnection.Message,
-		transferList?: TransferListItem[],
+		transferList?: TransferListItem[]
 	): void {
 		this.port.postMessage(message, transferList);
 	}

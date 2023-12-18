@@ -44,13 +44,13 @@ export abstract class Stream {
 		// Wait for the necessary space.
 		const targetFillLevel = Math.max(
 			0,
-			Stream.BufferSize - chunk.byteLength,
+			Stream.BufferSize - chunk.byteLength
 		);
 		try {
 			await this.awaitFillLevel(targetFillLevel);
 			if (this.fillLevel > targetFillLevel) {
 				throw new Error(
-					`Invalid state: fillLevel should be <= ${targetFillLevel}`,
+					`Invalid state: fillLevel should be <= ${targetFillLevel}`
 				);
 			}
 			this.chunks.push(chunk);
@@ -81,7 +81,7 @@ export abstract class Stream {
 		}
 		if (this.chunks.length === 0) {
 			throw new Error(
-				"Invalid state: no bytes available after awaiting data",
+				"Invalid state: no bytes available after awaiting data"
 			);
 		}
 		// No max bytes or all data fits into the result.
@@ -194,7 +194,7 @@ export class WritableStream extends Stream implements Writable {
 
 	public async write(chunk: Uint8Array | string): Promise<void> {
 		return super.write(
-			typeof chunk === "string" ? this.encoder.encode(chunk) : chunk,
+			typeof chunk === "string" ? this.encoder.encode(chunk) : chunk
 		);
 	}
 
@@ -283,7 +283,7 @@ export class ReadableStream extends Stream implements Readable {
 					this._onData.fire(chunk);
 				} catch (error) {
 					RAL().console.error(
-						`[ReadableStream]: Error while emitting data event: ${error}`,
+						`[ReadableStream]: Error while emitting data event: ${error}`
 					);
 				}
 			}

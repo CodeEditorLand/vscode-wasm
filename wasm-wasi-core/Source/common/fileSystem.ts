@@ -137,7 +137,7 @@ export abstract class BaseFileSystem<
 	public findNode(parent: D, path: string): D | F | C | undefined;
 	public findNode(
 		parentOrPath: D | string,
-		p?: string,
+		p?: string
 	): D | F | C | undefined {
 		let parent: D;
 		let path: string;
@@ -197,7 +197,7 @@ abstract class NodeDescriptor<N extends Node> extends BaseFileDescriptor {
 		rights_inheriting: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: N,
+		node: N
 	) {
 		super(
 			deviceId,
@@ -206,7 +206,7 @@ abstract class NodeDescriptor<N extends Node> extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode,
+			inode
 		);
 		this.node = node;
 		this.node.refs++;
@@ -227,7 +227,7 @@ export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
 		rights_base: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: F,
+		node: F
 	) {
 		super(
 			deviceId,
@@ -237,7 +237,7 @@ export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
 			0n,
 			fdflags,
 			inode,
-			node,
+			node
 		);
 		this._cursor = 0n;
 	}
@@ -249,7 +249,7 @@ export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
 			this.rights_base,
 			this.fdflags,
 			this.inode,
-			this.node as F,
+			this.node as F
 		);
 	}
 
@@ -274,7 +274,7 @@ export class CharacterDeviceNodeDescriptor<
 		rights_base: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: C,
+		node: C
 	) {
 		super(
 			deviceId,
@@ -284,7 +284,7 @@ export class CharacterDeviceNodeDescriptor<
 			0n,
 			fdflags,
 			inode,
-			node,
+			node
 		);
 	}
 
@@ -295,7 +295,7 @@ export class CharacterDeviceNodeDescriptor<
 			this.rights_base,
 			this.fdflags,
 			this.inode,
-			this.node as C,
+			this.node as C
 		);
 	}
 }
@@ -310,7 +310,7 @@ export class DirectoryNodeDescriptor<
 		rights_inheriting: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: D,
+		node: D
 	) {
 		super(
 			deviceId,
@@ -320,7 +320,7 @@ export class DirectoryNodeDescriptor<
 			rights_inheriting,
 			fdflags,
 			inode,
-			node,
+			node
 		);
 	}
 
@@ -332,20 +332,20 @@ export class DirectoryNodeDescriptor<
 			this.rights_inheriting,
 			this.fdflags,
 			this.inode,
-			this.node as D,
+			this.node as D
 		);
 	}
 
 	childDirectoryRights(
 		requested_rights: rights,
-		fileOnlyBaseRights: rights,
+		fileOnlyBaseRights: rights
 	): rights {
 		return this.rights_inheriting & requested_rights & ~fileOnlyBaseRights;
 	}
 
 	childFileRights(
 		requested_rights: rights,
-		directoryOnlyBaseRights: rights,
+		directoryOnlyBaseRights: rights
 	): rights {
 		return (
 			this.rights_inheriting & requested_rights & ~directoryOnlyBaseRights
@@ -371,7 +371,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 				fileDescriptors,
 				info.fileSystem,
 				info.preOpens,
-				{},
+				{}
 			);
 			this.virtualFileSystem = info.fileSystem;
 		} else {
@@ -380,7 +380,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 				fileDescriptors,
 				undefined,
 				info.preOpens,
-				{},
+				{}
 			);
 			this.singleFileSystem = info.fileSystem;
 		}
@@ -444,7 +444,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		const [fileDescriptor, relativePath] = this.getFileDescriptor(path);
 		if (fileDescriptor !== undefined) {
 			const deviceDriver = this.deviceDrivers.get(
-				fileDescriptor.deviceId,
+				fileDescriptor.deviceId
 			);
 			if (
 				deviceDriver !== undefined &&
@@ -455,7 +455,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 					fileDescriptor,
 					Lookupflags.none,
 					relativePath,
-					result,
+					result
 				);
 				return { filetype: Filetypes.from(result.filetype) };
 			}
@@ -464,7 +464,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 	}
 
 	private getFileDescriptor(
-		path: string,
+		path: string
 	): [FileDescriptor | undefined, string] {
 		if (this.virtualFileSystem !== undefined) {
 			const [deviceDriver, rest] =
@@ -485,7 +485,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 	}
 
 	private getDeviceDriver(
-		path: string,
+		path: string
 	): [FileSystemDeviceDriver | undefined, string] {
 		if (this.virtualFileSystem !== undefined) {
 			return this.virtualFileSystem.getDeviceDriver(path);

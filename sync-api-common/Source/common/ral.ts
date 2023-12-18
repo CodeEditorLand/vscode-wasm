@@ -79,7 +79,7 @@ interface RAL {
 				ReadyParams extends Params | undefined = undefined,
 			>(
 				script: string,
-				testCase?: string,
+				testCase?: string
 			): _TestServiceConnection<RequestHandlers, ReadyParams>;
 		};
 		readonly testCase: string;

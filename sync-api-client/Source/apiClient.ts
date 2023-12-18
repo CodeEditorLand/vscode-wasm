@@ -48,7 +48,7 @@ export interface FileSystem {
 	createDirectory(uri: URI): void;
 	delete(
 		uri: URI,
-		options?: { recursive?: boolean; useTrash?: boolean },
+		options?: { recursive?: boolean; useTrash?: boolean }
 	): void;
 	rename(source: URI, target: URI, options?: { overwrite?: boolean }): void;
 }
@@ -128,7 +128,7 @@ class ByteSourceImpl implements ByteSource {
 		const result = this.connection.sendRequest(
 			"byteSource/read",
 			{ uri: uri.toJSON(), maxBytesToRead },
-			new VariableResult<Uint8Array>("binary"),
+			new VariableResult<Uint8Array>("binary")
 		);
 		if (RequestResult.hasData(result)) {
 			return result.data;
@@ -148,7 +148,7 @@ class ByteSinkImpl implements ByteSink {
 		const result = this.connection.sendRequest(
 			"byteSink/write",
 			{ uri: uri.toJSON(), binary: value },
-			Uint32Result.fromLength(1),
+			Uint32Result.fromLength(1)
 		);
 		if (RequestResult.hasData(result)) {
 			return result.data[0];
@@ -183,7 +183,7 @@ class ConsoleImpl implements Console {
 		message = message === undefined ? "\n" : `${message}\n`;
 		this.byteTransfer.write(
 			ConsoleImpl.stdout,
-			this.encoder.encode(message),
+			this.encoder.encode(message)
 		);
 	}
 
@@ -191,7 +191,7 @@ class ConsoleImpl implements Console {
 		message = message === undefined ? "\n" : `${message}\n`;
 		this.byteTransfer.write(
 			ConsoleImpl.stderr,
-			this.encoder.encode(message),
+			this.encoder.encode(message)
 		);
 	}
 }
@@ -207,7 +207,7 @@ class FileSystemImpl implements FileSystem {
 		const requestResult = this.connection.sendRequest(
 			"fileSystem/stat",
 			{ uri: uri.toJSON() },
-			DTOs.Stat.typedResult,
+			DTOs.Stat.typedResult
 		);
 		if (RequestResult.hasData(requestResult)) {
 			const stat = DTOs.Stat.create(requestResult.data);
@@ -230,7 +230,7 @@ class FileSystemImpl implements FileSystem {
 		const requestResult = this.connection.sendRequest(
 			"fileSystem/readFile",
 			{ uri: uri.toJSON() },
-			new VariableResult<Uint8Array>("binary"),
+			new VariableResult<Uint8Array>("binary")
 		);
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
@@ -241,7 +241,7 @@ class FileSystemImpl implements FileSystem {
 	public writeFile(uri: URI, content: Uint8Array): void {
 		const requestResult = this.connection.sendRequest(
 			"fileSystem/writeFile",
-			{ uri: uri.toJSON(), binary: content },
+			{ uri: uri.toJSON(), binary: content }
 		);
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
@@ -252,7 +252,7 @@ class FileSystemImpl implements FileSystem {
 		const requestResult = this.connection.sendRequest(
 			"fileSystem/readDirectory",
 			{ uri: uri.toJSON() },
-			new VariableResult<DTOs.DirectoryEntries>("json"),
+			new VariableResult<DTOs.DirectoryEntries>("json")
 		);
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
@@ -263,7 +263,7 @@ class FileSystemImpl implements FileSystem {
 	public createDirectory(uri: URI): void {
 		const requestResult = this.connection.sendRequest(
 			"fileSystem/createDirectory",
-			{ uri: uri.toJSON() },
+			{ uri: uri.toJSON() }
 		);
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
@@ -272,7 +272,7 @@ class FileSystemImpl implements FileSystem {
 
 	public delete(
 		uri: URI,
-		options?: { recursive?: boolean; useTrash?: boolean },
+		options?: { recursive?: boolean; useTrash?: boolean }
 	): void {
 		const requestResult = this.connection.sendRequest("fileSystem/delete", {
 			uri: uri.toJSON(),
@@ -286,7 +286,7 @@ class FileSystemImpl implements FileSystem {
 	public rename(
 		source: URI,
 		target: URI,
-		options?: { overwrite?: boolean },
+		options?: { overwrite?: boolean }
 	): void {
 		const requestResult = this.connection.sendRequest("fileSystem/rename", {
 			source: source.toJSON(),
@@ -296,14 +296,14 @@ class FileSystemImpl implements FileSystem {
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(
 				requestResult.errno,
-				`${source.toString()} -> ${target.toString()}`,
+				`${source.toString()} -> ${target.toString()}`
 			);
 		}
 	}
 
 	private asFileSystemError(
 		errno: RPCErrno,
-		uri: URI | string,
+		uri: URI | string
 	): vscode.FileSystemError {
 		switch (errno) {
 			case DTOs.FileSystemError.FileNotFound:
@@ -335,7 +335,7 @@ class WorkspaceImpl implements Workspace {
 	public get workspaceFolders(): vscode.WorkspaceFolder[] {
 		const requestResult = this.connection.sendRequest(
 			"workspace/workspaceFolders",
-			new VariableResult<DTOs.WorkspaceFolder[]>("json"),
+			new VariableResult<DTOs.WorkspaceFolder[]>("json")
 		);
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data.map((folder) => {
@@ -382,7 +382,7 @@ export class ApiClient implements ApiShape {
 		this.timer = new TimerImpl(this.connection);
 		this.process = new ProcessImpl(this.connection);
 		const byteSource = (this.byteSource = new ByteSourceImpl(
-			this.connection,
+			this.connection
 		));
 		const byteSink = (this.byteSink = new ByteSinkImpl(this.connection));
 		this.console = new ConsoleImpl(byteSink, this.encoder);
@@ -411,7 +411,7 @@ export class ApiClient implements ApiShape {
 	}
 
 	private asFileDescriptorDescription(
-		fileDescriptor: DTOs.FileDescriptorDescription,
+		fileDescriptor: DTOs.FileDescriptorDescription
 	): FileDescriptorDescription {
 		switch (fileDescriptor.kind) {
 			case "fileSystem":

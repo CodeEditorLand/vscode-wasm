@@ -22,7 +22,7 @@ const node_modules = "node_modules";
 			"sync-api-tests",
 			node_modules,
 			"@vscode",
-			"sync-api-service",
-		),
+			"sync-api-service"
+		)
 	);
 })();

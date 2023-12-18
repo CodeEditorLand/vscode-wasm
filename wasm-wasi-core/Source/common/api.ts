@@ -440,7 +440,7 @@ export interface MemoryFileSystem {
 		path: string,
 		content:
 			| Uint8Array
-			| { size: bigint; reader: () => Promise<Uint8Array> },
+			| { size: bigint; reader: () => Promise<Uint8Array> }
 	): void;
 	createReadable(path: string): Readable;
 	createWritable(path: string, encoding?: "utf-8"): Writable;
@@ -493,7 +493,7 @@ export interface Wasm {
 	 * Creates a new WASM file system.
 	 */
 	createRootFileSystem(
-		descriptors: MountPointDescriptor[],
+		descriptors: MountPointDescriptor[]
 	): Promise<RootFileSystem>;
 
 	/**
@@ -516,7 +516,7 @@ export interface Wasm {
 	createProcess(
 		name: string,
 		module: WebAssembly.Module | Promise<WebAssembly.Module>,
-		options?: ProcessOptions,
+		options?: ProcessOptions
 	): Promise<WasmProcess>;
 
 	/**
@@ -531,7 +531,7 @@ export interface Wasm {
 		name: string,
 		module: WebAssembly.Module | Promise<WebAssembly.Module>,
 		memory: WebAssembly.MemoryDescriptor | WebAssembly.Memory,
-		options?: ProcessOptions,
+		options?: ProcessOptions
 	): Promise<WasmProcess>;
 
 	/**
@@ -570,14 +570,14 @@ export namespace WasiCoreImpl {
 				| WebAssembly.Memory
 				| WebAssembly.MemoryDescriptor
 				| undefined,
-			options: ProcessOptions | undefined,
+			options: ProcessOptions | undefined
 		) => InternalWasiProcess,
-		compile: (source: Uri) => Promise<WebAssembly.Module>,
+		compile: (source: Uri) => Promise<WebAssembly.Module>
 	): Wasm {
 		return {
 			version,
 			createPseudoterminal(
-				options?: TerminalOptions,
+				options?: TerminalOptions
 			): WasmPseudoterminal {
 				return new WasmPseudoterminalImpl(options);
 			},
@@ -585,16 +585,16 @@ export namespace WasiCoreImpl {
 				return Promise.resolve(new MemoryFileSystemImpl());
 			},
 			async createRootFileSystem(
-				mountDescriptors: MountPointDescriptor[],
+				mountDescriptors: MountPointDescriptor[]
 			): Promise<RootFileSystem> {
 				const fileDescriptors = new FileDescriptors();
 				const info = await WasiKernel.createRootFileSystem(
 					fileDescriptors,
-					mountDescriptors,
+					mountDescriptors
 				);
 				const result = new WasmRootFileSystemImpl(
 					info,
-					fileDescriptors,
+					fileDescriptors
 				);
 				await result.initialize();
 				return result;
@@ -612,7 +612,7 @@ export namespace WasiCoreImpl {
 					| WebAssembly.MemoryDescriptor
 					| WebAssembly.Memory
 					| ProcessOptions,
-				optionsOrMapWorkspaceFolders?: ProcessOptions | boolean,
+				optionsOrMapWorkspaceFolders?: ProcessOptions | boolean
 			): Promise<WasmProcess> {
 				let memory:
 					| WebAssembly.Memory
@@ -635,7 +635,7 @@ export namespace WasiCoreImpl {
 					name,
 					module,
 					memory,
-					options,
+					options
 				);
 				await result.initialize();
 				return result;

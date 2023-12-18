@@ -7,7 +7,7 @@ const esbuild = require("esbuild");
 const path = require("path");
 const browser_assert = path.resolve(
 	__dirname,
-	"../node_modules/assert/build/assert.js",
+	"../node_modules/assert/build/assert.js"
 );
 
 /** @type esbuild.Plugin */

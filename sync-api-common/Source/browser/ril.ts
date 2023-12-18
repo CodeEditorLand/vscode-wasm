@@ -87,7 +87,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>(script: string, testCase?: string) {
 				return new TestServiceConnection<RequestHandlers, ReadyParams>(
 					script,
-					testCase,
+					testCase
 				);
 			},
 		}),

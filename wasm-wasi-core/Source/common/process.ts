@@ -58,7 +58,7 @@ type $Stdio = {
 
 namespace MapDirDescriptor {
 	export function getDescriptors(
-		descriptors: MountPointDescriptor[] | undefined,
+		descriptors: MountPointDescriptor[] | undefined
 	): {
 		workspaceFolders: WorkspaceFolderDescriptor | undefined;
 		extensions: ExtensionLocationDescriptor[];
@@ -106,7 +106,7 @@ namespace MountPointOptions {
 
 namespace RootFileSystemOptions {
 	export function is(
-		value: any,
+		value: any
 	): value is { rootFileSystem: WasmRootFileSystemImpl } {
 		const candidate = value as RootFileSystemOptions;
 		return (
@@ -212,11 +212,11 @@ export abstract class WasiProcess {
 					const extensionFS =
 						await WasiKernel.getOrCreateFileSystemByDescriptor(
 							this.localDeviceDrivers,
-							descriptor,
+							descriptor
 						);
 					this.preOpenDirectories.set(
 						descriptor.mountPoint,
-						extensionFS,
+						extensionFS
 					);
 				}
 			}
@@ -225,7 +225,7 @@ export abstract class WasiProcess {
 					const fs =
 						await WasiKernel.getOrCreateFileSystemByDescriptor(
 							this.localDeviceDrivers,
-							descriptor,
+							descriptor
 						);
 					this.preOpenDirectories.set(descriptor.mountPoint, fs);
 				}
@@ -235,7 +235,7 @@ export abstract class WasiProcess {
 					const dd =
 						await WasiKernel.getOrCreateFileSystemByDescriptor(
 							this.localDeviceDrivers,
-							descriptor,
+							descriptor
 						);
 					this.preOpenDirectories.set(descriptor.mountPoint, dd);
 				}
@@ -246,7 +246,7 @@ export abstract class WasiProcess {
 				if (mountPoint === "/") {
 					if (this.preOpenDirectories.size > 1) {
 						throw new Error(
-							`Cannot mount root directory when other directories are mounted as well.`,
+							`Cannot mount root directory when other directories are mounted as well.`
 						);
 					}
 				} else {
@@ -259,7 +259,7 @@ export abstract class WasiProcess {
 				this.virtualRootFileSystem = vrfs.create(
 					WasiKernel.nextDeviceId(),
 					this.fileDescriptors,
-					mountPoints,
+					mountPoints
 				);
 				this.preOpenDirectories.set("/", this.virtualRootFileSystem);
 				this.localDeviceDrivers.add(this.virtualRootFileSystem);
@@ -300,8 +300,8 @@ export abstract class WasiProcess {
 							args.push(
 								path.join(
 									mountPoint,
-									arg_str.substring(uri.length),
-								),
+									arg_str.substring(uri.length)
+								)
 							);
 							mapped = true;
 							break;
@@ -309,7 +309,7 @@ export abstract class WasiProcess {
 					}
 					if (!mapped) {
 						throw new Error(
-							`Could not map argument ${arg_str} to a mount point.`,
+							`Could not map argument ${arg_str} to a mount point.`
 						);
 					}
 				} else {
@@ -322,7 +322,7 @@ export abstract class WasiProcess {
 		const con: StdioConsoleDescriptor = { kind: "console" };
 		const stdio: $Stdio = Object.assign(
 			{ in: con, out: con, err: con },
-			this.options.stdio,
+			this.options.stdio
 		);
 		await this.handleConsole(stdio);
 		await this.handleTerminal(stdio);
@@ -339,7 +339,7 @@ export abstract class WasiProcess {
 			this.fileDescriptors,
 			this.programName,
 			this.preOpenDirectories.entries(),
-			options,
+			options
 		);
 		this.processService = {
 			proc_exit: async (_memory, exitCode: exitcode) => {
@@ -365,9 +365,9 @@ export abstract class WasiProcess {
 							this.fileDescriptors,
 							clock,
 							this.virtualRootFileSystem,
-							options,
+							options
 						),
-						this.processService,
+						this.processService
 					);
 					await this.startThread(wasiService, tid, start_args);
 					return Promise.resolve(tid);
@@ -395,9 +395,9 @@ export abstract class WasiProcess {
 					this.fileDescriptors,
 					clock,
 					this.virtualRootFileSystem,
-					this.options,
+					this.options
 				),
-				this.processService,
+				this.processService
 			);
 			this.startMain(wasiService).catch(reject);
 			this._state = "running";
@@ -446,14 +446,14 @@ export abstract class WasiProcess {
 	protected abstract startThread(
 		wasiService: WasiService,
 		tid: u32,
-		start_arg: ptr,
+		start_arg: ptr
 	): Promise<void>;
 
 	protected abstract threadEnded(tid: u32): Promise<void>;
 
 	private mapWorkspaceFolder(
 		folder: WorkspaceFolder,
-		single: boolean,
+		single: boolean
 	): Promise<void> {
 		const path = RAL().path;
 		const mountPoint: string = single
@@ -465,11 +465,11 @@ export abstract class WasiProcess {
 
 	private async mapDirEntry(
 		vscode_fs: Uri,
-		mountPoint: string,
+		mountPoint: string
 	): Promise<void> {
 		const fs = await WasiKernel.getOrCreateFileSystemByDescriptor(
 			this.localDeviceDrivers,
-			{ kind: "vscodeFileSystem", uri: vscode_fs, mountPoint },
+			{ kind: "vscodeFileSystem", uri: vscode_fs, mountPoint }
 		);
 		this.preOpenDirectories.set(mountPoint, fs);
 	}
@@ -477,17 +477,17 @@ export abstract class WasiProcess {
 	private async handleConsole(stdio: $Stdio): Promise<void> {
 		if (stdio.in.kind === "console") {
 			this.fileDescriptors.add(
-				WasiKernel.console.createStdioFileDescriptor(0),
+				WasiKernel.console.createStdioFileDescriptor(0)
 			);
 		}
 		if (stdio.out.kind === "console") {
 			this.fileDescriptors.add(
-				WasiKernel.console.createStdioFileDescriptor(1),
+				WasiKernel.console.createStdioFileDescriptor(1)
 			);
 		}
 		if (stdio.out.kind === "console") {
 			this.fileDescriptors.add(
-				WasiKernel.console.createStdioFileDescriptor(2),
+				WasiKernel.console.createStdioFileDescriptor(2)
 			);
 		}
 	}
@@ -499,31 +499,31 @@ export abstract class WasiProcess {
 			this.fileDescriptors.add(
 				this.getTerminalDevice(
 					terminalDevices,
-					stdio.in.terminal as WasmPseudoterminal,
-				).createStdioFileDescriptor(0),
+					stdio.in.terminal as WasmPseudoterminal
+				).createStdioFileDescriptor(0)
 			);
 		}
 		if (stdio.out.kind === "terminal") {
 			this.fileDescriptors.add(
 				this.getTerminalDevice(
 					terminalDevices,
-					stdio.out.terminal as WasmPseudoterminal,
-				).createStdioFileDescriptor(1),
+					stdio.out.terminal as WasmPseudoterminal
+				).createStdioFileDescriptor(1)
 			);
 		}
 		if (stdio.err.kind === "terminal") {
 			this.fileDescriptors.add(
 				this.getTerminalDevice(
 					terminalDevices,
-					stdio.err.terminal as WasmPseudoterminal,
-				).createStdioFileDescriptor(2),
+					stdio.err.terminal as WasmPseudoterminal
+				).createStdioFileDescriptor(2)
 			);
 		}
 	}
 
 	private getTerminalDevice(
 		devices: Map<WasmPseudoterminal, CharacterDeviceDriver>,
-		terminal: WasmPseudoterminal,
+		terminal: WasmPseudoterminal
 	): CharacterDeviceDriver {
 		let result = devices.get(terminal);
 		if (result === undefined) {
@@ -548,7 +548,7 @@ export abstract class WasiProcess {
 
 	private async handleFileDescriptor(
 		descriptor: StdioFileDescriptor,
-		fd: 0 | 1 | 2,
+		fd: 0 | 1 | 2
 	): Promise<void> {
 		const preOpened = Array.from(this.preOpenDirectories.entries());
 		for (const entry of preOpened) {
@@ -568,7 +568,7 @@ export abstract class WasiProcess {
 					descriptor.openFlags,
 					undefined,
 					descriptor.openFlags,
-					fd,
+					fd
 				);
 				this.fileDescriptors.add(fileDescriptor);
 				break;
@@ -601,7 +601,7 @@ export abstract class WasiProcess {
 			WasiKernel.nextDeviceId(),
 			this._stdin as WritableStream | undefined,
 			this._stdout as ReadableStream | undefined,
-			this._stderr as ReadableStream | undefined,
+			this._stderr as ReadableStream | undefined
 		);
 		if (this._stdin !== undefined) {
 			this.fileDescriptors.add(pipeDevice.createStdioFileDescriptor(0));

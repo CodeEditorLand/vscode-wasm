@@ -41,7 +41,7 @@ export class ServiceConnection<
 		super();
 		this.port = port;
 		this.port.onmessage = async (
-			event: MessageEvent<SharedArrayBuffer>,
+			event: MessageEvent<SharedArrayBuffer>
 		) => {
 			try {
 				await this.handleMessage(event.data);

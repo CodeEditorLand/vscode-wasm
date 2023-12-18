@@ -26,7 +26,7 @@ export async function activate(context: ExtensionContext) {
 		// independent of whether the code runs in the desktop or the web.
 		try {
 			const bits = await workspace.fs.readFile(
-				Uri.joinPath(context.extensionUri, "hello.wasm"),
+				Uri.joinPath(context.extensionUri, "hello.wasm")
 			);
 			const module = await WebAssembly.compile(bits);
 			// Create a WASM process.

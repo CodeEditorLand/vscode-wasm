@@ -36,7 +36,7 @@ export class WebShell {
 
 	public static async initialize(
 		wasm: Wasm,
-		contributions: WebShellContributions,
+		contributions: WebShellContributions
 	): Promise<void> {
 		this.contributions = contributions;
 		this.commandHandlers = new Map<string, CommandHandler>();
@@ -72,7 +72,7 @@ export class WebShell {
 	}
 
 	private static registerCommandContribution(
-		contribution: CommandMountPoint,
+		contribution: CommandMountPoint
 	): void {
 		const basename = paths.basename(contribution.mountPoint);
 		const dirname = paths.dirname(contribution.mountPoint);
@@ -84,7 +84,7 @@ export class WebShell {
 					args: string[],
 					cwd: string,
 					stdio: Stdio,
-					rootFileSystem: RootFileSystem,
+					rootFileSystem: RootFileSystem
 				): Promise<number> => {
 					await contribution.extension.activate();
 					return commands.executeCommand<number>(
@@ -93,15 +93,15 @@ export class WebShell {
 						args,
 						cwd,
 						stdio,
-						rootFileSystem,
+						rootFileSystem
 					);
-				},
+				}
 			);
 		}
 	}
 
 	private static unregisterCommandContribution(
-		contribution: CommandMountPoint,
+		contribution: CommandMountPoint
 	): void {
 		const basename = paths.basename(contribution.mountPoint);
 		this.unregisterCommandHandler(basename);
@@ -109,7 +109,7 @@ export class WebShell {
 
 	public static registerCommandHandler(
 		command: string,
-		handler: CommandHandler,
+		handler: CommandHandler
 	): void {
 		this.userBin.createFile(command, {
 			size: 0n,
@@ -173,18 +173,18 @@ export class WebShell {
 								args,
 								this.cwd,
 								this.pty.stdio,
-								WebShell.rootFs,
+								WebShell.rootFs
 							);
 						} catch (error: any) {
 							const message = error.message ?? error.toString();
 							void this.pty.write(
-								`-wesh: executing ${command} failed: ${message}\r\n`,
+								`-wesh: executing ${command} failed: ${message}\r\n`
 							);
 							exitCode = 1;
 						}
 					} else {
 						void this.pty.write(
-							`-wesh: ${command}: command not found\r\n`,
+							`-wesh: ${command}: command not found\r\n`
 						);
 						exitCode = 1;
 					}
@@ -215,7 +215,7 @@ export class WebShell {
 			// Do nothing
 		}
 		await this.pty.write(
-			`-wesh: cd: ${target}: No such file or directory\r\n`,
+			`-wesh: cd: ${target}: No such file or directory\r\n`
 		);
 		return 1;
 	}

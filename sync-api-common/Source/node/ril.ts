@@ -20,7 +20,7 @@ class TestServiceConnection<
 	constructor(script: string, testCase?: string) {
 		const worker = new Worker(
 			script,
-			testCase !== undefined ? { argv: [testCase] } : undefined,
+			testCase !== undefined ? { argv: [testCase] } : undefined
 		);
 		super(worker);
 		this.worker = worker;
@@ -80,7 +80,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>() {
 				if (!parentPort) {
 					throw new Error(
-						`No parent port defined. Shouldn't happen in test setup`,
+						`No parent port defined. Shouldn't happen in test setup`
 					);
 				}
 				return new ClientConnection<Requests, ReadyParams>(parentPort);
@@ -93,7 +93,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			>(script: string, testCase?: string) {
 				return new TestServiceConnection<RequestHandlers, ReadyParams>(
 					script,
-					testCase,
+					testCase
 				);
 			},
 		}),

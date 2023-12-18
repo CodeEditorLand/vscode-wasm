@@ -81,7 +81,7 @@ type ResponsePromise = {
 };
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-	k: infer I,
+	k: infer I
 ) => void
 	? I
 	: never;
@@ -100,17 +100,17 @@ type _SendRequestSignatures<
 			| undefined
 			| void
 			? (
-					method: R["method"],
-			  ) => Promise<
+					method: R["method"]
+				) => Promise<
 					R["result"] extends null | undefined ? void : R["result"]
-			  >
+				>
 			: (
 					method: R["method"],
 					params: R["params"],
-					transferList?: ReadonlyArray<TLI>,
-			  ) => Promise<
+					transferList?: ReadonlyArray<TLI>
+				) => Promise<
 					R["result"] extends null | undefined ? void : R["result"]
-			  >;
+				>;
 	}[keyof MethodKeys<Requests>]
 >;
 
@@ -133,18 +133,18 @@ type _HandleRequestSignatures<Requests extends _RequestType> =
 							R["result"] extends null | undefined
 								? void
 								: R["result"]
-						>,
-				  ) => void
+						>
+					) => void
 				: (
 						method: R["method"],
 						handler: (
-							params: R["params"],
+							params: R["params"]
 						) => Promise<
 							R["result"] extends null | undefined
 								? void
 								: R["result"]
-						>,
-				  ) => void;
+						>
+					) => void;
 		}[keyof MethodKeys<Requests>]
 	>;
 
@@ -167,8 +167,8 @@ type _SendNotificationSignatures<
 			: (
 					method: N["method"],
 					params: N["params"],
-					transferList?: ReadonlyArray<TLI>,
-			  ) => void;
+					transferList?: ReadonlyArray<TLI>
+				) => void;
 	}[keyof MethodKeys<Notifications>]
 >;
 
@@ -189,8 +189,8 @@ type _HandleNotificationSignatures<Notifications extends _NotificationType> =
 				? (method: N["method"], handler: () => void) => void
 				: (
 						method: N["method"],
-						handler: (params: N["params"]) => void,
-				  ) => void;
+						handler: (params: N["params"]) => void
+					) => void;
 		}[keyof MethodKeys<Notifications>]
 	>;
 
@@ -225,7 +225,7 @@ export abstract class BaseMessageConnection<
 	private _sendRequest(
 		method?: string,
 		params?: any,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: ReadonlyArray<TLI>
 	): Promise<any> {
 		if (method === undefined) {
 			return Promise.resolve();
@@ -266,7 +266,7 @@ export abstract class BaseMessageConnection<
 	private _sendNotification(
 		method?: string,
 		params?: any,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: ReadonlyArray<TLI>
 	): void {
 		if (method === undefined) {
 			return;
@@ -284,7 +284,7 @@ export abstract class BaseMessageConnection<
 
 	private _onNotification(
 		method?: string,
-		handler?: NotificationHandler,
+		handler?: NotificationHandler
 	): void {
 		if (method === undefined || handler === undefined) {
 			return;
@@ -296,7 +296,7 @@ export abstract class BaseMessageConnection<
 
 	protected abstract postMessage(
 		message: _Message | _Response,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: ReadonlyArray<TLI>
 	): void;
 
 	protected async handleMessage(message: _Message): Promise<void> {
@@ -327,13 +327,13 @@ export abstract class BaseMessageConnection<
 					promise.reject(
 						typeof message.error === "string"
 							? new Error(message.error)
-							: message.error,
+							: message.error
 					);
 				} else {
 					promise.reject(
 						new Error(
-							"Response has neither a result nor an error value",
-						),
+							"Response has neither a result nor an error value"
+						)
 					);
 				}
 			}
@@ -355,8 +355,8 @@ export abstract class BaseMessageConnection<
 				error === undefined
 					? "Unknown error"
 					: error instanceof Error
-					  ? error.message
-					  : error,
+						? error.message
+						: error,
 		};
 		this.postMessage(response);
 	}

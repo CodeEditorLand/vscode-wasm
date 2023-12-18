@@ -106,7 +106,7 @@ namespace FileNode {
 		inode: inode,
 		name: string,
 		time: bigint,
-		size: bigint,
+		size: bigint
 	): FileNode {
 		return {
 			kind: NodeKind.File,
@@ -166,7 +166,7 @@ namespace DirectoryNode {
 		id: inode,
 		name: string,
 		time: bigint,
-		size: bigint,
+		size: bigint
 	): DirectoryNode {
 		return {
 			kind: NodeKind.Directory,
@@ -297,7 +297,7 @@ class FileSystem {
 			inodeCounter++,
 			dump.name,
 			BigInt(dump.ctime),
-			BigInt(dump.size),
+			BigInt(dump.size)
 		);
 		this.processDirectoryNode(dump, root, inodeCounter);
 		return root;
@@ -306,7 +306,7 @@ class FileSystem {
 	private processDirectoryNode(
 		dump: Dump.DirectoryNode,
 		fs: DirectoryNode,
-		inodeCounter: bigint,
+		inodeCounter: bigint
 	): void {
 		for (const entry of Object.values(dump.children)) {
 			if (entry.kind === "directory") {
@@ -315,7 +315,7 @@ class FileSystem {
 					inodeCounter++,
 					entry.name,
 					BigInt(entry.ctime),
-					BigInt(entry.size),
+					BigInt(entry.size)
 				);
 				fs.entries.set(entry.name, child);
 				this.processDirectoryNode(entry, child, inodeCounter);
@@ -325,7 +325,7 @@ class FileSystem {
 					inodeCounter++,
 					entry.name,
 					BigInt(entry.ctime),
-					BigInt(entry.size),
+					BigInt(entry.size)
 				);
 				fs.entries.set(entry.name, child);
 			}
@@ -343,7 +343,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 		rights_base: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: FileNode,
+		node: FileNode
 	) {
 		super(
 			deviceId,
@@ -352,7 +352,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			0n,
 			fdflags,
-			inode,
+			inode
 		);
 		this.node = node;
 		this._cursor = 0n;
@@ -365,7 +365,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 			this.rights_base,
 			this.fdflags,
 			this.inode,
-			this.node,
+			this.node
 		);
 	}
 
@@ -391,7 +391,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 		rights_inheriting: rights,
 		fdflags: fdflags,
 		inode: bigint,
-		node: DirectoryNode,
+		node: DirectoryNode
 	) {
 		super(
 			deviceId,
@@ -400,7 +400,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			rights_base,
 			rights_inheriting,
 			fdflags,
-			inode,
+			inode
 		);
 		this.node = node;
 	}
@@ -413,7 +413,7 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 			this.rights_inheriting,
 			this.fdflags,
 			this.inode,
-			this.node,
+			this.node
 		);
 	}
 
@@ -431,12 +431,12 @@ class DirectoryFileDescriptor extends BaseFileDescriptor {
 export function create(
 	deviceId: DeviceId,
 	baseUri: Uri,
-	dump: Dump.DirectoryNode,
+	dump: Dump.DirectoryNode
 ): FileSystemDeviceDriver {
 	const $fs: FileSystem = new FileSystem(baseUri, dump);
 
 	function assertFileDescriptor(
-		fileDescriptor: FileDescriptor,
+		fileDescriptor: FileDescriptor
 	): asserts fileDescriptor is FileFileDescriptor {
 		if (!(fileDescriptor instanceof FileFileDescriptor)) {
 			throw new WasiError(Errno.badf);
@@ -444,7 +444,7 @@ export function create(
 	}
 
 	function assertDirectoryDescriptor(
-		fileDescriptor: FileDescriptor,
+		fileDescriptor: FileDescriptor
 	): asserts fileDescriptor is DirectoryFileDescriptor {
 		if (!(fileDescriptor instanceof DirectoryFileDescriptor)) {
 			throw new WasiError(Errno.badf);
@@ -452,7 +452,7 @@ export function create(
 	}
 
 	function assertDescriptor(
-		fileDescriptor: FileDescriptor,
+		fileDescriptor: FileDescriptor
 	): asserts fileDescriptor is FileFileDescriptor | DirectoryFileDescriptor {
 		if (
 			!(fileDescriptor instanceof FileFileDescriptor) &&
@@ -479,7 +479,7 @@ export function create(
 	function read(
 		content: Uint8Array,
 		offset: number,
-		buffers: Uint8Array[],
+		buffers: Uint8Array[]
 	): size {
 		let totalBytesRead = 0;
 		for (const buffer of buffers) {
@@ -507,7 +507,7 @@ export function create(
 			_oflags: oflags | undefined = Oflags.none,
 			_fs_rights_base: rights | undefined,
 			_fdflags: fdflags | undefined = Fdflags.none,
-			_fd: 0 | 1 | 2,
+			_fd: 0 | 1 | 2
 		): Promise<FileDescriptor> {
 			throw new WasiError(Errno.nosys);
 		},
@@ -522,15 +522,15 @@ export function create(
 					DirectoryInheritingRights,
 					Fdflags.none,
 					root.inode,
-					root,
-				),
+					root
+				)
 			);
 		},
 		fd_advise(
 			fileDescriptor: FileDescriptor,
 			_offset: bigint,
 			_length: bigint,
-			_advise: number,
+			_advise: number
 		): Promise<void> {
 			assertFileDescriptor(fileDescriptor);
 			// We don't have advisory in NodeFS. So treat it as successful.
@@ -543,7 +543,7 @@ export function create(
 		},
 		fd_fdstat_get(
 			fileDescriptor: FileDescriptor,
-			result: fdstat,
+			result: fdstat
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
 			result.fs_flags = fileDescriptor.fdflags;
@@ -553,7 +553,7 @@ export function create(
 		},
 		fd_filestat_get(
 			fileDescriptor: FileDescriptor,
-			result: filestat,
+			result: filestat
 		): Promise<void> {
 			assertFileDescriptor(fileDescriptor);
 			assignStat(result, fileDescriptor.node);
@@ -562,7 +562,7 @@ export function create(
 		async fd_pread(
 			fileDescriptor: FileDescriptor,
 			_offset: filesize,
-			buffers: Uint8Array[],
+			buffers: Uint8Array[]
 		): Promise<size> {
 			if (buffers.length === 0) {
 				return 0;
@@ -574,7 +574,7 @@ export function create(
 		},
 		async fd_read(
 			fileDescriptor: FileDescriptor,
-			buffers: Uint8Array[],
+			buffers: Uint8Array[]
 		): Promise<number> {
 			if (buffers.length === 0) {
 				return 0;
@@ -585,7 +585,7 @@ export function create(
 			const totalBytesRead = read(
 				content,
 				BigInts.asNumber(offset),
-				buffers,
+				buffers
 			);
 			fileDescriptor.cursor =
 				fileDescriptor.cursor + BigInt(totalBytesRead);
@@ -610,7 +610,7 @@ export function create(
 		async fd_seek(
 			fileDescriptor: FileDescriptor,
 			offset: bigint,
-			whence: number,
+			whence: number
 		): Promise<bigint> {
 			assertFileDescriptor(fileDescriptor);
 
@@ -640,7 +640,7 @@ export function create(
 			fileDescriptor: FileDescriptor,
 			_flags: lookupflags,
 			path: string,
-			result: filestat,
+			result: filestat
 		): Promise<void> {
 			assertDirectoryDescriptor(fileDescriptor);
 			const target = $fs.findNode(fileDescriptor.node, path);
@@ -657,7 +657,7 @@ export function create(
 			fs_rights_base: rights,
 			fs_rights_inheriting: rights,
 			fdflags: fdflags,
-			fdProvider: FdProvider,
+			fdProvider: FdProvider
 		): Promise<FileDescriptor> {
 			assertDirectoryDescriptor(fileDescriptor);
 
@@ -705,22 +705,22 @@ export function create(
 							fs_rights_inheriting | DirectoryInheritingRights,
 							fdflags,
 							target.inode,
-							target,
-					  )
+							target
+						)
 					: new FileFileDescriptor(
 							deviceId,
 							fdProvider.next(),
 							fileDescriptor.childFileRights(fs_rights_base),
 							fdflags,
 							target.inode,
-							target,
-					  );
+							target
+						);
 			$fs.refNode(target);
 			return Promise.resolve(result);
 		},
 		path_readlink(
 			fileDescriptor: FileDescriptor,
-			path: string,
+			path: string
 		): Promise<string> {
 			assertDirectoryDescriptor(fileDescriptor);
 			const target = $fs.findNode(fileDescriptor.node, path);
@@ -734,8 +734,8 @@ export function create(
 			return Promise.resolve(
 				BigInts.max(
 					0n,
-					fileDescriptor.node.size - fileDescriptor.cursor,
-				),
+					fileDescriptor.node.size - fileDescriptor.cursor
+				)
 			);
 		},
 	};
@@ -744,6 +744,6 @@ export function create(
 		{},
 		NoSysDeviceDriver,
 		$driver,
-		WritePermDeniedDeviceDriver,
+		WritePermDeniedDeviceDriver
 	);
 }

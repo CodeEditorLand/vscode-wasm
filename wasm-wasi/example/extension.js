@@ -25,7 +25,7 @@ async function activate(context) {
 		// independent of whether the code runs in the desktop or the web.
 		try {
 			const bits = await vscode_1.workspace.fs.readFile(
-				vscode_1.Uri.joinPath(context.extensionUri, "hello.wasm"),
+				vscode_1.Uri.joinPath(context.extensionUri, "hello.wasm")
 			);
 			const module = await WebAssembly.compile(bits);
 			// Create a WASM process.

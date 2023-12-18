@@ -50,7 +50,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 			host.initialize(memory ?? instance);
 			(instance.exports.wasi_thread_start as Function)(
 				message.tid,
-				message.start_arg,
+				message.start_arg
 			);
 			host.thread_exit(message.tid);
 			if (tracer !== undefined) {

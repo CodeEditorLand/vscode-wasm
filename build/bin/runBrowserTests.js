@@ -21,35 +21,35 @@ class EchoRunner extends events.EventEmitter {
 		event.on("start", () => this.emit("start"));
 		event.on("end", () => this.emit("end"));
 		event.on("suite", (suite) =>
-			this.emit("suite", EchoRunner.deserializeSuite(suite, title)),
+			this.emit("suite", EchoRunner.deserializeSuite(suite, title))
 		);
 		event.on("suite end", (suite) =>
-			this.emit("suite end", EchoRunner.deserializeSuite(suite, title)),
+			this.emit("suite end", EchoRunner.deserializeSuite(suite, title))
 		);
 		event.on("test", (test) =>
-			this.emit("test", EchoRunner.deserializeRunnable(test)),
+			this.emit("test", EchoRunner.deserializeRunnable(test))
 		);
 		event.on("test end", (test) =>
-			this.emit("test end", EchoRunner.deserializeRunnable(test)),
+			this.emit("test end", EchoRunner.deserializeRunnable(test))
 		);
 		event.on("hook", (hook) =>
-			this.emit("hook", EchoRunner.deserializeRunnable(hook)),
+			this.emit("hook", EchoRunner.deserializeRunnable(hook))
 		);
 		event.on("hook end", (hook) =>
-			this.emit("hook end", EchoRunner.deserializeRunnable(hook)),
+			this.emit("hook end", EchoRunner.deserializeRunnable(hook))
 		);
 		event.on("pass", (test) =>
-			this.emit("pass", EchoRunner.deserializeRunnable(test)),
+			this.emit("pass", EchoRunner.deserializeRunnable(test))
 		);
 		event.on("fail", (test, err) =>
 			this.emit(
 				"fail",
 				EchoRunner.deserializeRunnable(test, title),
-				EchoRunner.deserializeError(err),
-			),
+				EchoRunner.deserializeError(err)
+			)
 		);
 		event.on("pending", (test) =>
-			this.emit("pending", EchoRunner.deserializeRunnable(test)),
+			this.emit("pending", EchoRunner.deserializeRunnable(test))
 		);
 	}
 

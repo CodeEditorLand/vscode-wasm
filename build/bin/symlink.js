@@ -22,8 +22,8 @@ const node_modules = "node_modules";
 			"sync-api-client",
 			node_modules,
 			"@vscode",
-			"sync-api-common",
-		),
+			"sync-api-common"
+		)
 	);
 	ln.softLink(
 		path.join(root, "sync-api-common"),
@@ -32,8 +32,8 @@ const node_modules = "node_modules";
 			"sync-api-service",
 			node_modules,
 			"@vscode",
-			"sync-api-common",
-		),
+			"sync-api-common"
+		)
 	);
 
 	ln.softLink(
@@ -43,8 +43,8 @@ const node_modules = "node_modules";
 			"sync-api-tests",
 			node_modules,
 			"@vscode",
-			"sync-api-common",
-		),
+			"sync-api-common"
+		)
 	);
 	ln.softLink(
 		path.join(root, "sync-api-client"),
@@ -53,8 +53,8 @@ const node_modules = "node_modules";
 			"sync-api-tests",
 			node_modules,
 			"@vscode",
-			"sync-api-client",
-		),
+			"sync-api-client"
+		)
 	);
 	ln.softLink(
 		path.join(root, "sync-api-service"),
@@ -63,13 +63,13 @@ const node_modules = "node_modules";
 			"sync-api-tests",
 			node_modules,
 			"@vscode",
-			"sync-api-service",
-		),
+			"sync-api-service"
+		)
 	);
 
 	ln.softLink(
 		path.join(root, "wasm-wasi"),
-		path.join(root, "testbeds", node_modules, "@vscode", "wasm-wasi"),
+		path.join(root, "testbeds", node_modules, "@vscode", "wasm-wasi")
 	);
 	ln.softLink(
 		path.join(root, "wasm-wasi"),
@@ -79,23 +79,17 @@ const node_modules = "node_modules";
 			"example",
 			node_modules,
 			"@vscode",
-			"wasm-wasi",
-		),
+			"wasm-wasi"
+		)
 	);
 	ln.softLink(
 		path.join(root, "wasm-wasi"),
-		path.join(root, "webshell", node_modules, "@vscode", "wasm-wasi"),
+		path.join(root, "webshell", node_modules, "@vscode", "wasm-wasi")
 	);
 
 	ln.softLink(
 		path.join(root, "wasm-component-model"),
-		path.join(
-			root,
-			"wasi",
-			node_modules,
-			"@vscode",
-			"wasm-component-model",
-		),
+		path.join(root, "wasi", node_modules, "@vscode", "wasm-component-model")
 	);
 	ln.softLink(
 		path.join(root, "wasm-component-model"),
@@ -104,7 +98,7 @@ const node_modules = "node_modules";
 			"wasm-wasi-core",
 			node_modules,
 			"@vscode",
-			"wasm-component-model",
-		),
+			"wasm-component-model"
+		)
 	);
 })();

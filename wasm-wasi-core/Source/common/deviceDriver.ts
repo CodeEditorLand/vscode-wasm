@@ -51,74 +51,74 @@ export interface DeviceDriver {
 		fileDescriptor: FileDescriptor,
 		offset: filesize,
 		length: filesize,
-		advise: advise,
+		advise: advise
 	): Promise<void>;
 	fd_allocate(
 		fileDescriptor: FileDescriptor,
 		offset: filesize,
-		len: filesize,
+		len: filesize
 	): Promise<void>;
 	fd_close(fileDescriptor: FileDescriptor): Promise<void>;
 	fd_datasync(fileDescriptor: FileDescriptor): Promise<void>;
 	fd_fdstat_get(
 		fileDescriptor: FileDescriptor,
-		result: fdstat,
+		result: fdstat
 	): Promise<void>;
 	fd_fdstat_set_flags(
 		fileDescriptor: FileDescriptor,
-		fdflags: fdflags,
+		fdflags: fdflags
 	): Promise<void>;
 	fd_filestat_get(
 		fileDescriptor: FileDescriptor,
-		result: filestat,
+		result: filestat
 	): Promise<void>;
 	fd_filestat_set_size(
 		fileDescriptor: FileDescriptor,
-		size: filesize,
+		size: filesize
 	): Promise<void>;
 	fd_filestat_set_times(
 		fileDescriptor: FileDescriptor,
 		atim: timestamp,
 		mtim: timestamp,
-		fst_flags: fstflags,
+		fst_flags: fstflags
 	): Promise<void>;
 	fd_pread(
 		fileDescriptor: FileDescriptor,
 		offset: filesize,
-		buffers: Uint8Array[],
+		buffers: Uint8Array[]
 	): Promise<size>;
 	fd_pwrite(
 		fileDescriptor: FileDescriptor,
 		offset: filesize,
-		buffers: Uint8Array[],
+		buffers: Uint8Array[]
 	): Promise<size>;
 	fd_read(
 		fileDescriptor: FileDescriptor,
-		buffers: Uint8Array[],
+		buffers: Uint8Array[]
 	): Promise<size>;
 	fd_readdir(fileDescriptor: FileDescriptor): Promise<ReaddirEntry[]>;
 	fd_seek(
 		fileDescriptor: FileDescriptor,
 		offset: filedelta,
-		whence: whence,
+		whence: whence
 	): Promise<bigint>;
 	fd_renumber(fileDescriptor: FileDescriptor, to: fd): Promise<void>;
 	fd_sync(fileDescriptor: FileDescriptor): Promise<void>;
 	fd_tell(fileDescriptor: FileDescriptor): Promise<u64>;
 	fd_write(
 		fileDescriptor: FileDescriptor,
-		buffers: Uint8Array[],
+		buffers: Uint8Array[]
 	): Promise<size>;
 
 	path_create_directory(
 		fileDescriptor: FileDescriptor,
-		path: string,
+		path: string
 	): Promise<void>;
 	path_filestat_get(
 		fileDescriptor: FileDescriptor,
 		flags: lookupflags,
 		path: string,
-		result: filestat,
+		result: filestat
 	): Promise<void>;
 	path_filestat_set_times(
 		fileDescriptor: FileDescriptor,
@@ -126,14 +126,14 @@ export interface DeviceDriver {
 		path: string,
 		atim: timestamp,
 		mtim: timestamp,
-		fst_flags: fstflags,
+		fst_flags: fstflags
 	): Promise<void>;
 	path_link(
 		old_fd: FileDescriptor,
 		old_flags: lookupflags,
 		old_path: string,
 		new_fd: FileDescriptor,
-		new_path: string,
+		new_path: string
 	): Promise<void>;
 	path_open(
 		fileDescriptor: FileDescriptor,
@@ -143,30 +143,30 @@ export interface DeviceDriver {
 		fs_rights_base: rights,
 		fs_rights_inheriting: rights,
 		fdflags: fdflags,
-		fdProvider: FdProvider,
+		fdProvider: FdProvider
 	): Promise<FileDescriptor>;
 	path_readlink(
 		fileDescriptor: FileDescriptor,
-		path: string,
+		path: string
 	): Promise<string>;
 	path_remove_directory(
 		fileDescriptor: FileDescriptor,
-		path: string,
+		path: string
 	): Promise<void>;
 	path_rename(
 		oldFileDescriptor: FileDescriptor,
 		old_path: string,
 		newFileDescriptor: FileDescriptor,
-		new_path: string,
+		new_path: string
 	): Promise<void>;
 	path_symlink(
 		old_path: string,
 		fileDescriptor: FileDescriptor,
-		new_path: string,
+		new_path: string
 	): Promise<void>;
 	path_unlink_file(
 		fileDescriptor: FileDescriptor,
-		path: string,
+		path: string
 	): Promise<void>;
 
 	fd_create_prestat_fd(fd: fd): Promise<FileDescriptor>;
@@ -182,7 +182,7 @@ export interface FileSystemDeviceDriver extends DeviceDriver {
 		oflags: oflags | undefined,
 		fs_rights_base: rights | undefined,
 		fdflags: fdflags | undefined,
-		fd: 0 | 1 | 2,
+		fd: 0 | 1 | 2
 	): Promise<FileDescriptor>;
 }
 

@@ -10,7 +10,7 @@ export type CommandHandler = (
 	args: string[],
 	cwd: string,
 	stdio: Stdio,
-	rootFileSystem: RootFileSystem,
+	rootFileSystem: RootFileSystem
 ) => Promise<number>;
 
 export interface HandlerTarget {

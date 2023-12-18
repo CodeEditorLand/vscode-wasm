@@ -57,7 +57,7 @@ class MainBrowserHostConnection extends BrowserHostConnection {
 }
 
 async function main(
-	port: MessagePort | Worker | DedicatedWorkerGlobalScope,
+	port: MessagePort | Worker | DedicatedWorkerGlobalScope
 ): Promise<void> {
 	const connection = new MainBrowserHostConnection(port);
 	try {
