@@ -63,7 +63,7 @@ namespace TypedArray {
 		} else if (data instanceof BigInt64Array) {
 			new BigInt64Array(sharedArrayBuffer, offset, data.length).set(data);
 		} else {
-			throw new Error(`Unknown type array type`);
+			throw new Error("Unknown type array type");
 		}
 	}
 }
@@ -125,7 +125,6 @@ export type RequestType = MessageType & {
 
 class NoResult {
 	public static readonly kind = 0 as const;
-	constructor() {}
 	get kind() {
 		return NoResult.kind;
 	}
@@ -519,7 +518,7 @@ namespace TypedArrayResult {
 			case VariableResult.kind:
 				// send another request to get the result.
 				throw new Error(
-					`No result array for variable results result type.`,
+					"No result array for variable results result type.",
 				);
 			default:
 				throw new Error(`Unknown result kind ${kind}`);
@@ -833,7 +832,7 @@ export abstract class BaseClientConnection<
 		switch (result) {
 			case "timed-out":
 				return { errno: RPCErrno.TimedOut };
-			case "not-equal":
+			case "not-equal": {
 				const value = Atomics.load(sync, 0);
 				// If the value === 1 the service has already
 				// provided the result. Otherwise we actually
@@ -841,6 +840,7 @@ export abstract class BaseClientConnection<
 				if (value !== 1) {
 					return { errno: RPCErrno.UnknownError };
 				}
+			}
 		}
 
 		const errno: RPCErrno = header[HeaderIndex.errno];
@@ -850,7 +850,7 @@ export abstract class BaseClientConnection<
 			switch (resultType.kind) {
 				case NoResult.kind:
 					return { errno: 0 };
-				case VariableResult.kind:
+				case VariableResult.kind: {
 					const lazyResultLength =
 						header[HeaderIndex.resultByteLength];
 					if (lazyResultLength === 0) {
@@ -896,6 +896,7 @@ export abstract class BaseClientConnection<
 					} else {
 						return { errno: RPCErrno.LazyResultFailed };
 					}
+				}
 				default:
 					return {
 						errno: 0,
@@ -912,7 +913,7 @@ export abstract class BaseClientConnection<
 
 	protected handleMessage(message: Message): void {
 		if (message.method === "$/ready") {
-			this.readyCallbacks!.resolve(message.params as ReadyParams);
+			this.readyCallbacks?.resolve(message.params as ReadyParams);
 		}
 	}
 }
@@ -1066,7 +1067,7 @@ export abstract class BaseServiceConnection<
 			);
 			if (Request.is(message)) {
 				if (message.method === "$/fetchResult") {
-					const resultId: number = message.params!.resultId as number;
+					const resultId: number = message.params?.resultId as number;
 					const result = this.requestResults.get(resultId);
 					this.requestResults.delete(resultId);
 					const resultOffset = header[HeaderIndex.resultOffset];
@@ -1106,7 +1107,7 @@ export abstract class BaseServiceConnection<
 							| Promise<RequestResult>;
 						let requestResult: RequestResult;
 						switch (resultKind) {
-							case NoResult.kind:
+							case NoResult.kind: {
 								handlerResult =
 									message.params !== undefined
 										? handler(message.params)
@@ -1117,7 +1118,8 @@ export abstract class BaseServiceConnection<
 										: handlerResult;
 								header[HeaderIndex.errno] = requestResult.errno;
 								break;
-							case VariableResult.kind:
+							}
+							case VariableResult.kind: {
 								handlerResult =
 									message.params !== undefined
 										? handler(message.params)
@@ -1152,7 +1154,8 @@ export abstract class BaseServiceConnection<
 									}
 								}
 								break;
-							default:
+							}
+							default: {
 								const typedResult =
 									TypedArrayResult.fromByteLength(
 										resultKind,
@@ -1175,6 +1178,7 @@ export abstract class BaseServiceConnection<
 										? await handlerResult
 										: handlerResult;
 								header[HeaderIndex.errno] = requestResult.errno;
+							}
 						}
 					} else {
 						header[HeaderIndex.errno] = RPCErrno.NoHandlerFound;

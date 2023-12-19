@@ -11,9 +11,9 @@ const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
 function updateNextTag() {
 	// read package.json from the current working directory
-	var packageJSON = JSON.parse(fs.readFileSync("package.json").toString());
-	var name = packageJSON.name;
-	var version = packageJSON.version;
+	const packageJSON = JSON.parse(fs.readFileSync("package.json").toString());
+	const name = packageJSON.name;
+	const version = packageJSON.version;
 	if (version.indexOf("next") !== -1) {
 		return;
 	}
@@ -31,7 +31,7 @@ function updateNextTag() {
 	rl.question("Enter OTP token: ", (token) => {
 		const result = cp.spawnSync(
 			npm,
-			["--otp", token, "dist-tags", "add", name + "@" + version, "next"],
+			["--otp", token, "dist-tags", "add", `${name}@${version}`, "next"],
 			opts,
 		);
 

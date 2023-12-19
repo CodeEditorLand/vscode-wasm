@@ -160,7 +160,7 @@ export abstract class BaseFileSystem<
 			switch (current.filetype) {
 				case WasiFiletype.regular_file:
 					return undefined;
-				case WasiFiletype.directory:
+				case WasiFiletype.directory: {
 					current = current.entries.get(parts[i]) as
 						| F
 						| D
@@ -169,6 +169,7 @@ export abstract class BaseFileSystem<
 						return undefined;
 					}
 					break;
+				}
 			}
 		}
 		return current;

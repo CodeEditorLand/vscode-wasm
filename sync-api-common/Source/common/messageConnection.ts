@@ -107,7 +107,7 @@ type _SendRequestSignatures<
 			: (
 					method: R["method"],
 					params: R["params"],
-					transferList?: ReadonlyArray<TLI>,
+					transferList?: readonly TLI[],
 			  ) => Promise<
 					R["result"] extends null | undefined ? void : R["result"]
 			  >;
@@ -167,7 +167,7 @@ type _SendNotificationSignatures<
 			: (
 					method: N["method"],
 					params: N["params"],
-					transferList?: ReadonlyArray<TLI>,
+					transferList?: readonly TLI[],
 			  ) => void;
 	}[keyof MethodKeys<Notifications>]
 >;
@@ -225,7 +225,7 @@ export abstract class BaseMessageConnection<
 	private _sendRequest(
 		method?: string,
 		params?: any,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: readonly TLI[],
 	): Promise<any> {
 		if (method === undefined) {
 			return Promise.resolve();
@@ -266,7 +266,7 @@ export abstract class BaseMessageConnection<
 	private _sendNotification(
 		method?: string,
 		params?: any,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: readonly TLI[],
 	): void {
 		if (method === undefined) {
 			return;
@@ -296,7 +296,7 @@ export abstract class BaseMessageConnection<
 
 	protected abstract postMessage(
 		message: _Message | _Response,
-		transferList?: ReadonlyArray<TLI>,
+		transferList?: readonly TLI[],
 	): void;
 
 	protected async handleMessage(message: _Message): Promise<void> {

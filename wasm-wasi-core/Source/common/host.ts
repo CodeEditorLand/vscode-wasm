@@ -180,7 +180,7 @@ export abstract class HostConnection {
 		switch (result) {
 			case "timed-out":
 				return Errno.timedout;
-			case "not-equal":
+			case "not-equal": {
 				const value = Atomics.load(sync, 0);
 				// If the value === 1 the service has already
 				// provided the result. Otherwise we actually
@@ -188,6 +188,7 @@ export abstract class HostConnection {
 				if (value !== 1) {
 					return Errno.nosys;
 				}
+			}
 		}
 
 		return new Uint16Array(paramBuffer, Offsets.errno_index, 1)[0];
@@ -295,7 +296,7 @@ declare namespace WebAssembly {
 		readonly exports: Record<string, ExportValue>;
 	}
 
-	var Instance: {
+	let Instance: {
 		prototype: Instance;
 		new (): Instance;
 	};
@@ -325,7 +326,7 @@ export namespace WasiHost {
 				$instance.exports.memory === undefined
 			) {
 				throw new Error(
-					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
+					"WASI layer is not initialized. Missing WebAssembly instance or memory module.",
 				);
 			}
 			return ($instance.exports.memory as WebAssembly.Memory).buffer;
@@ -340,7 +341,7 @@ export namespace WasiHost {
 				$instance.exports.memory === undefined
 			) {
 				throw new Error(
-					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
+					"WASI layer is not initialized. Missing WebAssembly instance or memory module.",
 				);
 			}
 			return new DataView(

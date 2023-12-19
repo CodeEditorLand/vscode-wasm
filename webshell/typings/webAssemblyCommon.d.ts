@@ -16,7 +16,7 @@ and limitations under the License.
 declare namespace WebAssembly {
 	type CompileError = Error;
 
-	var CompileError: {
+	let CompileError: {
 		prototype: CompileError;
 		new (message?: string): CompileError;
 		(message?: string): CompileError;
@@ -24,7 +24,7 @@ declare namespace WebAssembly {
 
 	type LinkError = Error;
 
-	var LinkError: {
+	let LinkError: {
 		prototype: LinkError;
 		new (message?: string): LinkError;
 		(message?: string): LinkError;
@@ -41,7 +41,7 @@ declare namespace WebAssembly {
 		grow(delta: number): number;
 	}
 
-	var Memory: {
+	let Memory: {
 		prototype: Memory;
 		new (descriptor: MemoryDescriptor): Memory;
 	};
@@ -50,7 +50,7 @@ declare namespace WebAssembly {
 
 	type RuntimeError = Error;
 
-	var RuntimeError: {
+	let RuntimeError: {
 		prototype: RuntimeError;
 		new (message?: string): RuntimeError;
 		(message?: string): RuntimeError;

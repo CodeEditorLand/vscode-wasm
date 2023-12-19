@@ -23,7 +23,7 @@ const { CompilerOptions } = require("@vscode/tsconfig-gen");
  */
 function createPublishProjectDescription(projectDescription) {
 	const result = Object.assign({}, projectDescription);
-	delete result.references;
+	result.references = undefined;
 	return result;
 }
 

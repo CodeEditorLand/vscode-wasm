@@ -151,7 +151,7 @@ export abstract class WasiProcess {
 	constructor(programName: string, options: ProcessOptions = {}) {
 		this.programName = programName;
 		const opt = Object.assign({}, options);
-		delete opt.trace;
+		opt.trace = undefined;
 		if (options.trace === true) {
 			this.options = Object.assign({}, opt, { trace: channel() });
 		} else {
@@ -246,7 +246,7 @@ export abstract class WasiProcess {
 				if (mountPoint === "/") {
 					if (this.preOpenDirectories.size > 1) {
 						throw new Error(
-							`Cannot mount root directory when other directories are mounted as well.`,
+							"Cannot mount root directory when other directories are mounted as well.",
 						);
 					}
 				} else {
@@ -330,7 +330,7 @@ export abstract class WasiProcess {
 		await this.handlePipes(stdio);
 
 		const noArgsOptions = Object.assign({}, this.options);
-		delete noArgsOptions.args;
+		noArgsOptions.args = undefined;
 		const options: EnvironmentOptions = Object.assign({}, noArgsOptions, {
 			args,
 		});
@@ -554,7 +554,7 @@ export abstract class WasiProcess {
 		for (const entry of preOpened) {
 			const mountPoint = entry[0];
 			if (mountPoint[mountPoint.length - 1] !== "/") {
-				entry[0] = mountPoint + "/";
+				entry[0] = `${mountPoint}/`;
 			}
 		}
 		preOpened.sort((a, b) => b[0].length - a[0].length);

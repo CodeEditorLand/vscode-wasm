@@ -204,8 +204,6 @@ export class FileDescriptors implements FdProvider {
 	private counter: fd = 0;
 	private firstReal: fd = 3;
 
-	constructor() {}
-
 	public get firstRealFileDescriptor(): fd {
 		return this.firstReal;
 	}

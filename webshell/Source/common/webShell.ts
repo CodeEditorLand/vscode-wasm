@@ -38,9 +38,9 @@ export class WebShell {
 		wasm: Wasm,
 		contributions: WebShellContributions,
 	): Promise<void> {
-		this.contributions = contributions;
-		this.commandHandlers = new Map<string, CommandHandler>();
-		this.userBin = await wasm.createMemoryFileSystem();
+		WebShell.contributions = contributions;
+		WebShell.commandHandlers = new Map<string, CommandHandler>();
+		WebShell.userBin = await wasm.createMemoryFileSystem();
 		const fsContributions: ExtensionLocationDescriptor[] =
 			WebShell.contributions.getDirectoryMountPoints().map((entry) => ({
 				kind: "extensionLocation",
@@ -52,21 +52,21 @@ export class WebShell {
 			{ kind: "workspaceFolder" },
 			{
 				kind: "memoryFileSystem",
-				fileSystem: this.userBin,
+				fileSystem: WebShell.userBin,
 				mountPoint: "/usr/bin",
 			},
 			...fsContributions,
 		];
-		this.rootFs = await wasm.createRootFileSystem(mountPoints);
-		for (const contribution of this.contributions.getCommandMountPoints()) {
-			this.registerCommandContribution(contribution);
+		WebShell.rootFs = await wasm.createRootFileSystem(mountPoints);
+		for (const contribution of WebShell.contributions.getCommandMountPoints()) {
+			WebShell.registerCommandContribution(contribution);
 		}
-		this.contributions.onChanged((event) => {
+		WebShell.contributions.onChanged((event) => {
 			for (const add of event.commands.added) {
-				this.registerCommandContribution(add);
+				WebShell.registerCommandContribution(add);
 			}
 			for (const remove of event.commands.removed) {
-				this.unregisterCommandContribution(remove);
+				WebShell.unregisterCommandContribution(remove);
 			}
 		});
 	}
@@ -77,7 +77,7 @@ export class WebShell {
 		const basename = paths.basename(contribution.mountPoint);
 		const dirname = paths.dirname(contribution.mountPoint);
 		if (dirname === "/usr/bin") {
-			this.registerCommandHandler(
+			WebShell.registerCommandHandler(
 				basename,
 				async (
 					command: string,
@@ -104,24 +104,24 @@ export class WebShell {
 		contribution: CommandMountPoint,
 	): void {
 		const basename = paths.basename(contribution.mountPoint);
-		this.unregisterCommandHandler(basename);
+		WebShell.unregisterCommandHandler(basename);
 	}
 
 	public static registerCommandHandler(
 		command: string,
 		handler: CommandHandler,
 	): void {
-		this.userBin.createFile(command, {
+		WebShell.userBin.createFile(command, {
 			size: 0n,
 			reader: () => {
 				throw new Error("No permissions");
 			},
 		});
-		this.commandHandlers.set(command, handler);
+		WebShell.commandHandlers.set(command, handler);
 	}
 
 	public static unregisterCommandHandler(command: string): void {
-		this.commandHandlers.delete(command);
+		WebShell.commandHandlers.delete(command);
 	}
 
 	private readonly wasm: Wasm;
@@ -154,17 +154,20 @@ export class WebShell {
 			}
 			let exitCode: number;
 			switch (command) {
-				case "exit":
+				case "exit": {
 					this.terminal.dispose();
 					return;
-				case "pwd":
+				}
+				case "pwd": {
 					void this.pty.write(`${this.cwd}\r\n`);
 					exitCode = 0;
 					break;
-				case "cd":
+				}
+				case "cd": {
 					exitCode = await this.handleCd(args);
 					break;
-				default:
+				}
+				default: {
 					const handler = WebShell.commandHandlers.get(command);
 					if (handler !== undefined) {
 						try {
@@ -189,6 +192,7 @@ export class WebShell {
 						exitCode = 1;
 					}
 					break;
+				}
 			}
 			await this.pty.write(vscSeq(`E;${line}`)); // Command line
 			await this.pty.write(vscSeq(`D;${exitCode}`)); // Command finished
@@ -197,7 +201,7 @@ export class WebShell {
 
 	private async handleCd(args: string[]): Promise<number> {
 		if (args.length > 1) {
-			void this.pty.write(`-wesh: cd: too many arguments\r\n`);
+			void this.pty.write("-wesh: cd: too many arguments\r\n");
 			return 1;
 		}
 		const path = RAL().path;
@@ -237,13 +241,13 @@ export class WebShell {
 	private getPrompt(): string {
 		return (
 			// Prompt start
-			vscSeq(`A`) +
+			vscSeq("A") +
 			// Cwd property
 			vscSeq(`P;Cwd=${this.cwd}`) +
 			// User-visible prompt
 			`\x1b[01;34m${this.cwd}\x1b[0m ${this.prompt}` +
 			// Command start
-			vscSeq(`B`)
+			vscSeq("B")
 		);
 	}
 }

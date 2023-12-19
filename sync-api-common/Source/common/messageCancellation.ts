@@ -40,7 +40,7 @@ export namespace Cancellation {
 			(message as MessageWithCancellationData).$cancellationData !==
 			undefined
 		) {
-			throw new Error(`Message already has a property $cancellationData`);
+			throw new Error("Message already has a property $cancellationData");
 		}
 		const data = new SharedArrayBuffer(4);
 		const typedArray = new Int32Array(data, 0, 1);

@@ -283,7 +283,7 @@ class ServiceTerminalImpl
 
 	public readline(): Promise<string> {
 		if (this.readlineCallback !== undefined) {
-			throw new Error(`Already in readline mode`);
+			throw new Error("Already in readline mode");
 		}
 		if (this.lines.length > 0) {
 			return Promise.resolve(this.lines.shift()!);
@@ -316,90 +316,115 @@ class ServiceTerminalImpl
 		}
 		const previousCursor = this.lineBuffer.getCursor();
 		switch (data) {
-			case "\x03": // ctrl+C
+			case "\x03": {
+				// ctrl+C
 				this._onDidCtrlC.fire();
 				break;
+			}
 			case "\x06":
 			// ctrl+f
-			case "\x1b[C": // right
+			case "\x1b[C": {
+				// right
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(1),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
+			}
 			case "\x1bf":
 			// alt+f
-			case "\x1b[1;5C": // ctrl+right
+			case "\x1b[1;5C": {
+				// ctrl+right
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordRight(),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
+			}
 			case "\x02":
 			// ctrl+b
-			case "\x1b[D": // left
+			case "\x1b[D": {
+				// left
 				this.adjustCursor(
 					this.lineBuffer.moveCursorRelative(-1),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
+			}
 			case "\x1bb":
 			// alt+b
-			case "\x1b[1;5D": // ctrl+left
+			case "\x1b[1;5D": {
+				// ctrl+left
 				this.adjustCursor(
 					this.lineBuffer.moveCursorWordLeft(),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
+			}
 			case "\x01":
 			// ctrl+a
-			case "\x1b[H": // home
+			case "\x1b[H": {
+				// home
 				this.adjustCursor(
 					this.lineBuffer.moveCursorStartOfLine(),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
+			}
 			case "\x05":
 			// ctrl+e
-			case "\x1b[F": // end
+			case "\x1b[F": {
+				// end
 				this.adjustCursor(
 					this.lineBuffer.moveCursorEndOfLine(),
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
 				break;
-			case "\x1b[A": // up
+			}
+			case "\x1b[A": {
+				// up
 				this.bell();
 				break;
-			case "\x1b[B": // down
+			}
+			case "\x1b[B": {
+				// down
 				this.bell();
 				break;
+			}
 			case "\x08":
 			// shift+backspace
-			case "\x7F": // backspace
+			case "\x7F": {
+				// backspace
 				this.lineBuffer.backspace()
 					? this._onDidWrite.fire("\x1b[D\x1b[P")
 					: this.bell();
 				break;
-			case "\x1b[3~": // delete key
+			}
+			case "\x1b[3~": {
+				// delete key
 				this.lineBuffer.del()
 					? this._onDidWrite.fire("\x1b[P")
 					: this.bell();
 				break;
-			case "\r": // enter
+			}
+			case "\r": {
+				// enter
 				this.handleEnter();
 				break;
-			default:
+			}
+			default: {
 				this.lineBuffer.insert(data);
 				if (!this.lineBuffer.isCursorAtEnd()) {
 					this._onDidWrite.fire("\x1b[@");
 				}
 				this._onDidWrite.fire(data);
+			}
 		}
 	}
 

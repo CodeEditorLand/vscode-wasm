@@ -1978,7 +1978,7 @@ export namespace Iovec {
 			copy: (wasmMemory, from, transferMemory, to) => {
 				if (from !== iovec) {
 					throw new Error(
-						`IovecPtrParam needs to be used as an instance object`,
+						"IovecPtrParam needs to be used as an instance object",
 					);
 				}
 				const forms = new StructArray<iovec>(
@@ -2093,7 +2093,7 @@ export namespace Ciovec {
 			copy: (wasmMemory, from, transferMemory, to) => {
 				if (from !== ciovec) {
 					throw new Error(
-						`CiovecPtrParam needs to be used as an instance object`,
+						"CiovecPtrParam needs to be used as an instance object",
 					);
 				}
 				const forms = new StructArray<ciovec>(

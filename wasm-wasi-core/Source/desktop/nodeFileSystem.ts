@@ -292,8 +292,10 @@ export function create(
 		handle: fs.FileHandle;
 	} {
 		if (
-			!(fileDescriptor instanceof GenericFileDescriptor) &&
-			!(fileDescriptor instanceof DirectoryFileDescriptor)
+			!(
+				fileDescriptor instanceof GenericFileDescriptor ||
+				fileDescriptor instanceof DirectoryFileDescriptor
+			)
 		) {
 			throw new WasiError(Errno.badf);
 		}
@@ -429,11 +431,11 @@ export function create(
 			return undefined;
 		},
 		createStdioFileDescriptor(
-			_dirflags: lookupflags | undefined = Lookupflags.none,
+			_dirflags: lookupflags | undefined,
 			_path: string,
-			_oflags: oflags | undefined = Oflags.none,
+			_oflags: oflags | undefined,
 			_fs_rights_base: rights | undefined,
-			_fdflags: fdflags | undefined = Fdflags.none,
+			_fdflags: fdflags | undefined,
 			_fd: 0 | 1 | 2,
 		): Promise<FileDescriptor> {
 			// The file system shouldn't be used to give WASM processes access to the workspace files, even not on the desktop.
@@ -601,7 +603,7 @@ export function create(
 				const bytesRead = (
 					await handle.readv(buffers, fileDescriptor.cursor)
 				).bytesRead;
-				fileDescriptor.cursor = fileDescriptor.cursor + bytesRead;
+				fileDescriptor.cursor += bytesRead;
 				return bytesRead;
 			} catch (error) {
 				throw handleError(error);
@@ -640,16 +642,19 @@ export function create(
 
 			const offset = BigInts.asNumber(_offset);
 			switch (whence) {
-				case Whence.set:
+				case Whence.set: {
 					fileDescriptor.cursor = offset;
 					break;
-				case Whence.cur:
-					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+				}
+				case Whence.cur: {
+					fileDescriptor.cursor += offset;
 					break;
-				case Whence.end:
+				}
+				case Whence.end: {
 					const size = (await fileDescriptor.handle.stat()).size;
 					fileDescriptor.cursor = Math.max(0, size - offset);
 					break;
+				}
 			}
 			return BigInt(fileDescriptor.cursor);
 		},
@@ -682,7 +687,7 @@ export function create(
 				const bytesWritten = (
 					await handle.writev(buffers, fileDescriptor.cursor)
 				).bytesWritten;
-				fileDescriptor.cursor = fileDescriptor.cursor + bytesWritten;
+				fileDescriptor.cursor += bytesWritten;
 				return bytesWritten;
 			} catch (error) {
 				throw handleError(error);

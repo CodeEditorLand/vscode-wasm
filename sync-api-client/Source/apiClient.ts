@@ -133,7 +133,7 @@ class ByteSourceImpl implements ByteSource {
 		if (RequestResult.hasData(result)) {
 			return result.data;
 		}
-		throw new RPCError(result.errno, `Should never happen`);
+		throw new RPCError(result.errno, "Should never happen");
 	}
 }
 
@@ -153,7 +153,7 @@ class ByteSinkImpl implements ByteSink {
 		if (RequestResult.hasData(result)) {
 			return result.data[0];
 		}
-		throw new RPCError(result.errno, `Should never happen`);
+		throw new RPCError(result.errno, "Should never happen");
 	}
 }
 

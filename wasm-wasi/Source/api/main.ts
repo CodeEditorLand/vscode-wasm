@@ -550,11 +550,11 @@ export namespace Wasm {
 
 	export function api(): Wasm {
 		if ($api === null) {
-			throw new Error(`Unable to activate WASM WASI Core extension`);
+			throw new Error("Unable to activate WASM WASI Core extension");
 		}
 		if ($api === undefined) {
 			throw new Error(
-				`Wasm API not yet loaded. Call await Wasm.load() first.`,
+				"Wasm API not yet loaded. Call await Wasm.load() first.",
 			);
 		}
 		return $api;
@@ -562,14 +562,14 @@ export namespace Wasm {
 
 	export async function load(): Promise<Wasm> {
 		if ($promise === null) {
-			throw new Error(`Unable to activate WASM WASI Core extension`);
+			throw new Error("Unable to activate WASM WASI Core extension");
 		}
 		if ($promise !== undefined) {
 			return $promise;
 		}
 		const wasiCoreExt = Extensions.getExtension("ms-vscode.wasm-wasi-core");
 		if (wasiCoreExt === undefined) {
-			throw new Error(`Unable to load WASM WASI Core extension.`);
+			throw new Error("Unable to load WASM WASI Core extension.");
 		}
 		try {
 			$promise = wasiCoreExt.activate() as Promise<Wasm>;

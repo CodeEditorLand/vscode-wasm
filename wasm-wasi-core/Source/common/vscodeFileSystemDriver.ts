@@ -25,7 +25,6 @@ import {
 	Errno,
 	Fdflags,
 	Filetype,
-	Lookupflags,
 	Oflags,
 	Rights,
 	WasiError,
@@ -381,7 +380,7 @@ class FileSystem {
 			switch (current.kind) {
 				case NodeKind.File:
 					throw new WasiError(Errno.notdir);
-				case NodeKind.Directory:
+				case NodeKind.Directory: {
 					let entry = current.entries.get(parts[i]);
 					if (entry === undefined) {
 						if (i === parts.length - 1) {
@@ -413,6 +412,7 @@ class FileSystem {
 					}
 					current = entry;
 					break;
+				}
 			}
 		}
 		return current;
@@ -447,12 +447,13 @@ class FileSystem {
 			switch (current.kind) {
 				case NodeKind.File:
 					return undefined;
-				case NodeKind.Directory:
+				case NodeKind.Directory: {
 					current = current.entries.get(parts[i]);
 					if (current === undefined) {
 						return undefined;
 					}
 					break;
+				}
 			}
 		}
 		if (current !== undefined) {
@@ -801,11 +802,11 @@ export function create(
 			return Uri.joinPath(baseUri, ...pathSegments);
 		},
 		createStdioFileDescriptor(
-			dirflags: lookupflags | undefined = Lookupflags.none,
+			dirflags: lookupflags | undefined,
 			path: string,
-			_oflags: oflags | undefined = Oflags.none,
+			_oflags: oflags | undefined,
 			_fs_rights_base: rights | undefined,
-			fdflags: fdflags | undefined = Fdflags.none,
+			fdflags: fdflags | undefined,
 			fd: 0 | 1 | 2,
 		): Promise<FileDescriptor> {
 			if (path.length === 0) {
@@ -982,7 +983,7 @@ export function create(
 			);
 			const offset = fileDescriptor.cursor;
 			const totalBytesRead = read(content, offset, buffers);
-			fileDescriptor.cursor = fileDescriptor.cursor + totalBytesRead;
+			fileDescriptor.cursor += totalBytesRead;
 			return totalBytesRead;
 		},
 		async fd_readdir(
@@ -1029,13 +1030,15 @@ export function create(
 
 			const offset = BigInts.asNumber(_offset);
 			switch (whence) {
-				case Whence.set:
+				case Whence.set: {
 					fileDescriptor.cursor = offset;
 					break;
-				case Whence.cur:
-					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+				}
+				case Whence.cur: {
+					fileDescriptor.cursor += offset;
 					break;
-				case Whence.end:
+				}
+				case Whence.end: {
 					const content = await fs.getContent(
 						fs.getNode(fileDescriptor.inode, NodeKind.File),
 						vscode_fs,
@@ -1045,6 +1048,7 @@ export function create(
 						content.byteLength - offset,
 					);
 					break;
+				}
 			}
 			return BigInt(fileDescriptor.cursor);
 		},
@@ -1084,7 +1088,7 @@ export function create(
 				buffers,
 			);
 			await writeContent(inode, newContent);
-			fileDescriptor.cursor = fileDescriptor.cursor + bytesWritten;
+			fileDescriptor.cursor += bytesWritten;
 			return bytesWritten;
 		},
 		async path_create_directory(

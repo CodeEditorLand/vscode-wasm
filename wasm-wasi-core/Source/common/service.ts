@@ -509,12 +509,14 @@ export namespace ClockWasiService {
 					case Clockid.realtime:
 					case Clockid.monotonic:
 					case Clockid.process_cputime_id:
-					case Clockid.thread_cputime_id:
+					case Clockid.thread_cputime_id: {
 						view.setBigUint64(timestamp_ptr, 1n, true);
 						return Promise.resolve(Errno.success);
-					default:
+					}
+					default: {
 						view.setBigUint64(timestamp_ptr, 0n, true);
 						return Promise.resolve(Errno.inval);
+					}
 				}
 			},
 			clock_time_get: (
@@ -1607,22 +1609,25 @@ export namespace DeviceWasiService {
 				);
 				const u = subscription.u;
 				switch (u.type) {
-					case Eventtype.clock:
+					case Eventtype.clock: {
 						const clockResult =
 							handleClockSubscription(subscription);
 						timeout = clockResult.timeout;
 						events.push(clockResult.event);
 						break;
-					case Eventtype.fd_read:
+					}
+					case Eventtype.fd_read: {
 						const readEvent =
 							await handleReadSubscription(subscription);
 						events.push(readEvent);
 						break;
-					case Eventtype.fd_write:
+					}
+					case Eventtype.fd_write: {
 						const writeEvent =
 							handleWriteSubscription(subscription);
 						events.push(writeEvent);
 						break;
+					}
 				}
 				subscription_offset += Subscription.size;
 			}
@@ -1666,10 +1671,11 @@ export namespace DeviceWasiService {
 			try {
 				const fileDescriptor = getFileDescriptor(fd);
 				if (
-					!fileDescriptor.containsBaseRights(
-						Rights.poll_fd_readwrite,
-					) &&
-					!fileDescriptor.containsBaseRights(Rights.fd_read)
+					!(
+						fileDescriptor.containsBaseRights(
+							Rights.poll_fd_readwrite,
+						) || fileDescriptor.containsBaseRights(Rights.fd_read)
+					)
 				) {
 					throw new WasiError(Errno.perm);
 				}
@@ -1707,10 +1713,11 @@ export namespace DeviceWasiService {
 			try {
 				const fileDescriptor = getFileDescriptor(fd);
 				if (
-					!fileDescriptor.containsBaseRights(
-						Rights.poll_fd_readwrite,
-					) &&
-					!fileDescriptor.containsBaseRights(Rights.fd_write)
+					!(
+						fileDescriptor.containsBaseRights(
+							Rights.poll_fd_readwrite,
+						) || fileDescriptor.containsBaseRights(Rights.fd_write)
+					)
 				) {
 					throw new WasiError(Errno.perm);
 				}

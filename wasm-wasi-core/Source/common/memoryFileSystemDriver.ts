@@ -29,7 +29,6 @@ import {
 	Errno,
 	Fdflags,
 	Filetype,
-	Lookupflags,
 	Oflags,
 	Rights,
 	WasiError,
@@ -393,8 +392,10 @@ export function create(
 				CharacterDeviceNode & { writable: WritableStream }
 		  > {
 		if (
-			!(fileDescriptor instanceof fs.FileNodeDescriptor) &&
-			!(fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor)
+			!(
+				fileDescriptor instanceof fs.FileNodeDescriptor ||
+				fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor
+			)
 		) {
 			throw new WasiError(Errno.badf);
 		}
@@ -416,8 +417,10 @@ export function create(
 				CharacterDeviceNode & { readable: ReadableStream }
 		  > {
 		if (
-			!(fileDescriptor instanceof fs.FileNodeDescriptor) &&
-			!(fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor)
+			!(
+				fileDescriptor instanceof fs.FileNodeDescriptor ||
+				fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor
+			)
 		) {
 			throw new WasiError(Errno.badf);
 		}
@@ -446,9 +449,11 @@ export function create(
 		| fs.DirectoryNodeDescriptor<DirectoryNode>
 		| fs.CharacterDeviceNodeDescriptor<CharacterDeviceNode> {
 		if (
-			!(fileDescriptor instanceof fs.FileNodeDescriptor) &&
-			!(fileDescriptor instanceof fs.DirectoryNodeDescriptor) &&
-			!(fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor)
+			!(
+				fileDescriptor instanceof fs.FileNodeDescriptor ||
+				fileDescriptor instanceof fs.DirectoryNodeDescriptor ||
+				fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor
+			)
 		) {
 			throw new WasiError(Errno.badf);
 		}
@@ -485,11 +490,11 @@ export function create(
 			return undefined;
 		},
 		createStdioFileDescriptor(
-			_dirflags: lookupflags | undefined = Lookupflags.none,
+			_dirflags: lookupflags | undefined,
 			_path: string,
-			_oflags: oflags | undefined = Oflags.none,
+			_oflags: oflags | undefined,
 			_fs_rights_base: rights | undefined,
-			_fdflags: fdflags | undefined = Fdflags.none,
+			_fdflags: fdflags | undefined,
 			_fd: 0 | 1 | 2,
 		): Promise<FileDescriptor> {
 			throw new WasiError(Errno.nosys);
@@ -570,8 +575,7 @@ export function create(
 					fileDescriptor.cursor,
 					buffers,
 				);
-				fileDescriptor.cursor =
-					fileDescriptor.cursor + BigInt(totalBytesRead);
+				fileDescriptor.cursor += BigInt(totalBytesRead);
 			} else {
 				totalBytesRead = await $fs.readCharacterDevice(
 					fileDescriptor.node,
@@ -601,16 +605,19 @@ export function create(
 			assertFileDescriptor(fileDescriptor);
 
 			switch (whence) {
-				case Whence.set:
+				case Whence.set: {
 					fileDescriptor.cursor = offset;
 					break;
-				case Whence.cur:
-					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+				}
+				case Whence.cur: {
+					fileDescriptor.cursor += offset;
 					break;
-				case Whence.end:
+				}
+				case Whence.end: {
 					const size = FileNode.size(fileDescriptor.node);
 					fileDescriptor.cursor = BigInts.max(0n, size - offset);
 					break;
+				}
 			}
 			return BigInt(fileDescriptor.cursor);
 		},
@@ -662,8 +669,7 @@ export function create(
 					fileDescriptor.cursor,
 					buffers,
 				);
-				fileDescriptor.cursor =
-					fileDescriptor.cursor + BigInt(bytesWritten);
+				fileDescriptor.cursor += BigInt(bytesWritten);
 			} else {
 				bytesWritten = await $fs.writeCharacterDevice(
 					fileDescriptor.node,
@@ -735,7 +741,7 @@ export function create(
 
 			let descriptor: FileDescriptor;
 			switch (target.filetype) {
-				case Filetype.regular_file:
+				case Filetype.regular_file: {
 					descriptor = new fs.FileNodeDescriptor(
 						deviceId,
 						fdProvider.next(),
@@ -748,7 +754,8 @@ export function create(
 						target,
 					);
 					break;
-				case Filetype.directory:
+				}
+				case Filetype.directory: {
 					descriptor = new fs.DirectoryNodeDescriptor<DirectoryNode>(
 						deviceId,
 						fdProvider.next(),
@@ -762,7 +769,8 @@ export function create(
 						target,
 					);
 					break;
-				case Filetype.character_device:
+				}
+				case Filetype.character_device: {
 					const rights =
 						fileDescriptor.childFileRights(
 							fs_rights_base,
@@ -777,6 +785,7 @@ export function create(
 						target,
 					);
 					break;
+				}
 			}
 			if (descriptor === undefined) {
 				throw new WasiError(Errno.noent);

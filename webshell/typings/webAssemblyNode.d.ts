@@ -61,7 +61,7 @@ declare namespace WebAssembly {
 		set(index: number, value?: any): void;
 	}
 
-	var Table: {
+	let Table: {
 		prototype: Table;
 		new (descriptor: TableDescriptor, value?: any): Table;
 	};
@@ -71,7 +71,7 @@ declare namespace WebAssembly {
 		valueOf(): any;
 	}
 
-	var Global: {
+	let Global: {
 		prototype: Global;
 		new (descriptor: GlobalDescriptor, v?: any): Global;
 	};
@@ -80,12 +80,12 @@ declare namespace WebAssembly {
 		readonly exports: Exports;
 	}
 
-	var Instance: {
+	let Instance: {
 		prototype: Instance;
 		new (module: Module, importObject?: Imports): Instance;
 	};
 
-	var Module: {
+	let Module: {
 		prototype: Module;
 		new (bytes: BufferSource): Module;
 		customSections(

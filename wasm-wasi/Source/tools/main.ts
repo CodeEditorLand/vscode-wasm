@@ -132,7 +132,7 @@ async function run(options: Options): Promise<number> {
 		}
 		return 0;
 	} catch (error) {
-		console.error(`Creating dump failed`, error);
+		console.error("Creating dump failed", error);
 		return 1;
 	}
 }
@@ -147,8 +147,8 @@ export async function main(): Promise<number> {
 			}\nUsage: dir-dump [options] directory`,
 		)
 		.example(
-			`dir-dump --stdout .`,
-			`Create a directory dump for the current directory and print it to stdout.`,
+			"dir-dump --stdout .",
+			"Create a directory dump for the current directory and print it to stdout.",
 		)
 		.version(false)
 		.wrap(Math.min(100, yargs.terminalWidth()))

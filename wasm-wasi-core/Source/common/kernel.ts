@@ -534,7 +534,7 @@ class FileSystems {
 			if (mountPoint === "/") {
 				if (preOpens.size > 1) {
 					throw new Error(
-						`Cannot mount root directory when other directories are mounted as well.`,
+						"Cannot mount root directory when other directories are mounted as well.",
 					);
 				}
 			} else {

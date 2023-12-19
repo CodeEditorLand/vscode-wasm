@@ -23,7 +23,6 @@ import {
 import {
 	Fdflags,
 	Filetype,
-	Lookupflags,
 	Oflags,
 	Whence,
 	fdstat,
@@ -259,12 +258,13 @@ class FileSystem {
 			switch (current.kind) {
 				case NodeKind.File:
 					return undefined;
-				case NodeKind.Directory:
+				case NodeKind.Directory: {
 					current = current.entries.get(parts[i]);
 					if (current === undefined) {
 						return undefined;
 					}
 					break;
+				}
 			}
 		}
 		return current;
@@ -455,8 +455,10 @@ export function create(
 		fileDescriptor: FileDescriptor,
 	): asserts fileDescriptor is FileFileDescriptor | DirectoryFileDescriptor {
 		if (
-			!(fileDescriptor instanceof FileFileDescriptor) &&
-			!(fileDescriptor instanceof DirectoryFileDescriptor)
+			!(
+				fileDescriptor instanceof FileFileDescriptor ||
+				fileDescriptor instanceof DirectoryFileDescriptor
+			)
 		) {
 			throw new WasiError(Errno.badf);
 		}
@@ -502,11 +504,11 @@ export function create(
 			return Uri.joinPath(baseUri, ...pathSegments);
 		},
 		createStdioFileDescriptor(
-			_dirflags: lookupflags | undefined = Lookupflags.none,
+			_dirflags: lookupflags | undefined,
 			_path: string,
-			_oflags: oflags | undefined = Oflags.none,
+			_oflags: oflags | undefined,
 			_fs_rights_base: rights | undefined,
-			_fdflags: fdflags | undefined = Fdflags.none,
+			_fdflags: fdflags | undefined,
 			_fd: 0 | 1 | 2,
 		): Promise<FileDescriptor> {
 			throw new WasiError(Errno.nosys);
@@ -587,8 +589,7 @@ export function create(
 				BigInts.asNumber(offset),
 				buffers,
 			);
-			fileDescriptor.cursor =
-				fileDescriptor.cursor + BigInt(totalBytesRead);
+			fileDescriptor.cursor += BigInt(totalBytesRead);
 			return totalBytesRead;
 		},
 		fd_readdir(fileDescriptor: FileDescriptor): Promise<ReaddirEntry[]> {
@@ -615,16 +616,19 @@ export function create(
 			assertFileDescriptor(fileDescriptor);
 
 			switch (whence) {
-				case Whence.set:
+				case Whence.set: {
 					fileDescriptor.cursor = offset;
 					break;
-				case Whence.cur:
-					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+				}
+				case Whence.cur: {
+					fileDescriptor.cursor += offset;
 					break;
-				case Whence.end:
+				}
+				case Whence.end: {
 					const size = fileDescriptor.node.size;
 					fileDescriptor.cursor = BigInts.max(0n, size - offset);
 					break;
+				}
 			}
 			return BigInt(fileDescriptor.cursor);
 		},

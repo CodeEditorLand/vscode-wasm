@@ -121,7 +121,7 @@ export class Memory {
 	public readString(ptr: ptr, len = -1): string {
 		const length = len === -1 ? this.getStringLength(ptr) : len;
 		if (length === -1) {
-			throw new Error(`No null terminate character found`);
+			throw new Error("No null terminate character found");
 		}
 		return this.decoder.decode(
 			new Uint8Array(this.raw, ptr, length).slice(0),
