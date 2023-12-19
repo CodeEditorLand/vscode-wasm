@@ -73,7 +73,7 @@ jobs:
                           --unsafe-perm=true
                         ]
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -93,7 +93,7 @@ jobs:
             - run: pnpm run test
               working-directory: .
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -121,7 +121,7 @@ jobs:
             - run: pnpm run test
               working-directory: ./sync-api-common
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -141,7 +141,7 @@ jobs:
             - run: pnpm run test
               working-directory: ./sync-api-service
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -150,7 +150,7 @@ jobs:
             - run: pnpm install
               working-directory: ./tools
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -167,7 +167,7 @@ jobs:
                   name: .-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasi/Target
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -187,7 +187,7 @@ jobs:
             - run: pnpm run test
               working-directory: ./wasm-component-model
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -207,7 +207,7 @@ jobs:
             - run: pnpm run test
               working-directory: ./wasm-wasi-core
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -224,7 +224,7 @@ jobs:
                   name: .-wasm-wasi-example-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/example/Target
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
@@ -241,7 +241,7 @@ jobs:
                   name: .-wasm-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/Target
 
-            - uses: actions/setup-node@v4.0.0
+            - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
