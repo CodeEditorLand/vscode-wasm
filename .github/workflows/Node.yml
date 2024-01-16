@@ -85,7 +85,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-Node-${{ matrix.node-version }}-Target
                   path: ./Target
@@ -105,7 +105,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-sync-api-client-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-client/Target
@@ -113,7 +113,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-sync-api-common-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-common/Target
@@ -133,7 +133,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-sync-api-service-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-service/Target
@@ -162,7 +162,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasi/Target
@@ -179,7 +179,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-wasm-component-model-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-component-model/Target
@@ -199,7 +199,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-wasm-wasi-core-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi-core/Target
@@ -219,7 +219,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-wasm-wasi-example-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/example/Target
@@ -236,7 +236,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-wasm-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/Target
@@ -253,7 +253,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.0.0
+            - uses: actions/upload-artifact@v4.1.0
               with:
                   name: .-webshell-Node-${{ matrix.node-version }}-Target
                   path: ./webshell/Target
