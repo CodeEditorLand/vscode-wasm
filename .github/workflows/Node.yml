@@ -145,6 +145,152 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
+                  cache-dependency-path: ./sync-api-tests/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./sync-api-tests
+
+            - run: pnpm run test
+              working-directory: ./sync-api-tests
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-cpp-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/cpp/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/dotnet/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/dotnet
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-dotnet-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/dotnet/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/lsp-rust/client/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/lsp-rust/client
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-lsp-rust-client-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/lsp-rust/client/Target
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-lsp-rust-server-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/lsp-rust/server/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/php/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/php
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-php-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/php/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/python/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/python
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-python-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/python/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/ruby/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/ruby
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-ruby-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/ruby/Target
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-rust-threads-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/rust-threads/Target
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-rust-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/rust/Target
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.1.0
+              with:
+                  name: .-testbeds-threads-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/threads/Target
+
+            - uses: actions/setup-node@v4.0.1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
                   cache-dependency-path: ./tools/pnpm-lock.yaml
 
             - run: pnpm install

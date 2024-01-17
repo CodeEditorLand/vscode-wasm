@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import type { Disposable } from "vscode";
+import type { Disposable } from 'vscode';
 
 interface _TextEncoder {
 	encode(input?: string): Uint8Array;
@@ -14,6 +14,7 @@ interface _TextDecoder {
 }
 
 interface RAL {
+
 	readonly TextEncoder: {
 		create(encoding?: string): _TextEncoder;
 	};
@@ -23,27 +24,16 @@ interface RAL {
 	};
 
 	readonly console: {
-		info(message?: any, ...optionalParams: any[]): void;
-		log(message?: any, ...optionalParams: any[]): void;
-		warn(message?: any, ...optionalParams: any[]): void;
-		error(message?: any, ...optionalParams: any[]): void;
+	    info(message?: any, ...optionalParams: any[]): void;
+	    log(message?: any, ...optionalParams: any[]): void;
+	    warn(message?: any, ...optionalParams: any[]): void;
+	    error(message?: any, ...optionalParams: any[]): void;
 	};
 
 	readonly timer: {
-		setTimeout(
-			callback: (...args: any[]) => void,
-			ms: number,
-			...args: any[]
-		): Disposable;
-		setImmediate(
-			callback: (...args: any[]) => void,
-			...args: any[]
-		): Disposable;
-		setInterval(
-			callback: (...args: any[]) => void,
-			ms: number,
-			...args: any[]
-		): Disposable;
+		setTimeout(callback: (...args: any[]) => void, ms: number, ...args: any[]): Disposable;
+		setImmediate(callback: (...args: any[]) => void, ...args: any[]): Disposable;
+		setInterval(callback: (...args: any[]) => void, ms: number, ...args: any[]): Disposable;
 	};
 
 	readonly clock: {
@@ -70,13 +60,17 @@ interface RAL {
 		normalize(path: string): string;
 		isAbsolute(path: string): boolean;
 	};
+
+	readonly workbench: {
+		readonly hasTrash: boolean;
+	};
 }
 
 let _ral: RAL | undefined;
 
 function RAL(): RAL {
 	if (_ral === undefined) {
-		throw new Error("No runtime abstraction layer installed");
+		throw new Error(`No runtime abstraction layer installed`);
 	}
 	return _ral;
 }
@@ -86,7 +80,7 @@ namespace RAL {
 	export type TextDecoder = _TextDecoder;
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
-			throw new Error("No runtime abstraction layer provided");
+			throw new Error(`No runtime abstraction layer provided`);
 		}
 		_ral = ral;
 	}

@@ -2,25 +2,22 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import RIL from "./ril";
+import RIL from './ril';
 RIL.install();
 
-import { MessagePort, Worker, parentPort } from "worker_threads";
+import { MessagePort, Worker, parentPort } from 'worker_threads';
 
-import {
-	ServiceMessage,
-	StartThreadMessage,
-	WorkerReadyMessage,
-} from "../common/connection";
-import { TraceWasiHost, Tracer, WasiHost } from "../common/host";
-import { CapturedPromise } from "../common/promises";
-import { NodeHostConnection } from "./connection";
+import { TraceWasiHost, Tracer, WasiHost} from '../common/host';
+import { NodeHostConnection } from './connection';
+import { ServiceMessage, StartThreadMessage, WorkerReadyMessage } from '../common/connection';
+import { CapturedPromise } from '../common/promises';
 
 if (parentPort === null) {
-	throw new Error("This file is only intended to be run in a worker thread");
+	throw new Error('This file is only intended to be run in a worker thread');
 }
 
 class ThreadNodeHostConnection extends NodeHostConnection {
+
 	private _done: CapturedPromise<void>;
 
 	constructor(port: MessagePort | Worker) {
@@ -39,19 +36,16 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 			let host = WasiHost.create(this);
 			let tracer: Tracer | undefined;
 			if (message.trace) {
-				tracer = TraceWasiHost.create(this, host);
+				tracer  = TraceWasiHost.create(this, host);
 				host = tracer.tracer;
 			}
 			const instance = await WebAssembly.instantiate(module, {
 				env: { memory: memory },
 				wasi_snapshot_preview1: host,
-				wasi: host,
+				wasi: host
 			});
 			host.initialize(memory ?? instance);
-			(instance.exports.wasi_thread_start as Function)(
-				message.tid,
-				message.start_arg,
-			);
+			(instance.exports.wasi_thread_start as Function)(message.tid, message.start_arg);
 			host.thread_exit(message.tid);
 			if (tracer !== undefined) {
 				tracer.printSummary();
@@ -63,7 +57,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 
 async function main(port: MessagePort | Worker): Promise<void> {
 	const connection = new ThreadNodeHostConnection(port);
-	const ready: WorkerReadyMessage = { method: "workerReady" };
+	const ready: WorkerReadyMessage = { method: 'workerReady' };
 	connection.postMessage(ready);
 	await connection.done();
 	connection.destroy();

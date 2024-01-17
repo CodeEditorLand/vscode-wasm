@@ -3,13 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-	Event,
-	EventEmitter,
-	Extension,
-	Uri,
-	extensions as Extensions,
-} from "vscode";
+import { Event, EventEmitter, Extension, extensions as Extensions, Uri } from 'vscode';
 
 export interface CommandMountPointContribution {
 	mountPoint: string;
@@ -18,11 +12,7 @@ export interface CommandMountPointContribution {
 export namespace CommandMountPointContribution {
 	export function is(value: object): value is CommandMountPointContribution {
 		const candidate = value as CommandMountPointContribution;
-		return (
-			candidate &&
-			typeof candidate.command === "string" &&
-			typeof candidate.mountPoint === "string"
-		);
+		return candidate && typeof candidate.command === 'string' && typeof candidate.mountPoint === 'string';
 	}
 }
 export interface CommandMountPoint extends CommandMountPointContribution {
@@ -34,20 +24,15 @@ export interface DirectoryMountPointContribution {
 	path: string;
 }
 export namespace DirectoryMountPointContribution {
-	export function is(
-		value: object,
-	): value is DirectoryMountPointContribution {
+	export function is(value: object): value is DirectoryMountPointContribution {
 		const candidate = value as DirectoryMountPointContribution;
-		return (
-			candidate &&
-			typeof candidate.path === "string" &&
-			typeof candidate.mountPoint === "string"
-		);
+		return candidate && typeof candidate.path === 'string' && typeof candidate.mountPoint === 'string';
 	}
 }
 export interface DirectoryMountPoint extends DirectoryMountPointContribution {
 	extension: Extension<any>;
 }
+
 
 export interface ChangeEvent {
 	commands: {
@@ -67,6 +52,7 @@ export interface WebShellContributions {
 }
 
 class WebShellContributionsImpl implements WebShellContributions {
+
 	private commandMountPoints: CommandMountPoint[];
 	private directoryMountPoints: DirectoryMountPoint[];
 	private readonly _onChanged: EventEmitter<ChangeEvent>;
@@ -98,27 +84,17 @@ class WebShellContributionsImpl implements WebShellContributions {
 		return this.directoryMountPoints;
 	}
 
-	private parseExtensions(): {
-		commands: CommandMountPoint[];
-		directories: DirectoryMountPoint[];
-	} {
-		const result: {
-			commands: CommandMountPoint[];
-			directories: DirectoryMountPoint[];
-		} = { commands: [], directories: [] };
+	private parseExtensions(): { commands: CommandMountPoint[]; directories: DirectoryMountPoint[] } {
+		const result: { commands: CommandMountPoint[]; directories: DirectoryMountPoint[] } = { commands: [], directories: [] };
 		for (const extension of Extensions.all) {
 			const packageJSON = extension.packageJSON;
 			const mountPoints = packageJSON?.contributes?.webShellMountPoints;
 			if (mountPoints !== undefined) {
 				for (const mountPoint of mountPoints) {
 					if (CommandMountPointContribution.is(mountPoint)) {
-						result.commands.push(
-							Object.assign({ extension }, mountPoint),
-						);
+						result.commands.push(Object.assign({ extension }, mountPoint));
 					} else if (DirectoryMountPointContribution.is(mountPoint)) {
-						result.directories.push(
-							Object.assign({}, mountPoint, { extension }),
-						);
+						result.directories.push(Object.assign({}, mountPoint, { extension }));
 					}
 				}
 			}
@@ -129,15 +105,8 @@ class WebShellContributionsImpl implements WebShellContributions {
 	private handleExtensionsChanged(): void {
 		const { commands, directories } = this.parseExtensions();
 
-		const oldCommands: Map<string, CommandMountPoint> = new Map(
-			this.commandMountPoints.map((command) => [
-				command.command,
-				command,
-			]),
-		);
-		const newCommands: Map<string, CommandMountPoint> = new Map(
-			commands.map((command) => [command.command, command]),
-		);
+		const oldCommands: Map<string, CommandMountPoint> = new Map(this.commandMountPoints.map(command => [command.command, command]));
+		const newCommands: Map<string, CommandMountPoint> = new Map(commands.map(command => [command.command, command]));
 
 		const addedCommands: CommandMountPoint[] = [];
 		const removedCommands: CommandMountPoint[] = [];
@@ -152,24 +121,8 @@ class WebShellContributionsImpl implements WebShellContributions {
 			removedCommands.push(oldCommand);
 		}
 
-		const oldDirectories: Map<string, DirectoryMountPoint> = new Map(
-			this.directoryMountPoints.map((directory) => [
-				Uri.joinPath(
-					directory.extension.extensionUri,
-					directory.path,
-				).toString(),
-				directory,
-			]),
-		);
-		const newDirectories: Map<string, DirectoryMountPoint> = new Map(
-			directories.map((directory) => [
-				Uri.joinPath(
-					directory.extension.extensionUri,
-					directory.path,
-				).toString(),
-				directory,
-			]),
-		);
+		const oldDirectories: Map<string, DirectoryMountPoint> = new Map(this.directoryMountPoints.map(directory => [Uri.joinPath(directory.extension.extensionUri, directory.path).toString(), directory]));
+		const newDirectories: Map<string, DirectoryMountPoint> = new Map(directories.map(directory => [Uri.joinPath(directory.extension.extensionUri, directory.path).toString(), directory]));
 		const addedDirectories: DirectoryMountPoint[] = [];
 		const removedDirectories: DirectoryMountPoint[] = [];
 		for (const [path, newDirectory] of newDirectories) {
@@ -183,13 +136,7 @@ class WebShellContributionsImpl implements WebShellContributions {
 			removedDirectories.push(oldDirectory);
 		}
 
-		this._onChanged.fire({
-			commands: { added: addedCommands, removed: removedCommands },
-			directories: {
-				added: addedDirectories,
-				removed: removedDirectories,
-			},
-		});
+		this._onChanged.fire({ commands: { added: addedCommands, removed: removedCommands }, directories: { added: addedDirectories, removed: removedDirectories } });
 	}
 }
 

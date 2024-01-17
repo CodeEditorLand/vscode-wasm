@@ -3,22 +3,11 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
-import {
-	DTOs,
-	RAL,
-	RPCErrno,
-	Requests,
-	ServiceConnection,
-} from "@vscode/sync-api-common";
+import { RAL, ServiceConnection, Requests, DTOs, RPCErrno } from '@vscode/sync-api-common';
 
-import {
-	CharacterDeviceDriver,
-	FileDescriptorDescription,
-	Sink,
-	Source,
-} from "./device";
+import { CharacterDeviceDriver, Source, Sink, FileDescriptorDescription } from './device';
 
 export namespace ApiServiceConnection {
 	export type ReadyParams = {
@@ -30,10 +19,7 @@ export namespace ApiServiceConnection {
 	};
 }
 
-export type ApiServiceConnection = ServiceConnection<
-	Requests,
-	ApiServiceConnection.ReadyParams
->;
+export type ApiServiceConnection = ServiceConnection<Requests, ApiServiceConnection.ReadyParams>;
 
 export type Options = {
 	/**
@@ -48,6 +34,7 @@ export type Options = {
 };
 
 export class ApiService {
+
 	private readonly connection: ApiServiceConnection;
 	private readonly options: Options | undefined;
 
@@ -60,11 +47,7 @@ export class ApiService {
 		stderr: FileDescriptorDescription;
 	};
 
-	constructor(
-		_id: string,
-		receiver: ApiServiceConnection,
-		options?: Options,
-	) {
+	constructor(_id: string, receiver: ApiServiceConnection, options?: Options) {
 		this.connection = receiver;
 
 		this.byteSources = new Map();
@@ -75,7 +58,7 @@ export class ApiService {
 		this.stdio = {
 			stdin: console.fileDescriptor,
 			stdout: console.fileDescriptor,
-			stderr: console.fileDescriptor,
+			stderr: console.fileDescriptor
 		};
 		this.registerCharacterDeviceDriver(console, false);
 
@@ -84,26 +67,27 @@ export class ApiService {
 				return { errno: this.asFileSystemError(error) };
 			}
 			return { errno: RPCErrno.UnknownError };
+
 		};
 
-		this.connection.onRequest("timer/sleep", async (params) => {
+		this.connection.onRequest('timer/sleep', async (params) => {
 			await new Promise((resolve) => {
 				RAL().timer.setTimeout(resolve, params.ms);
 			});
 			return { errno: 0 };
 		});
 
-		this.connection.onRequest("byteSource/read", async (params) => {
+		this.connection.onRequest('byteSource/read', async (params) => {
 			const uri: vscode.Uri = vscode.Uri.from(params.uri);
 			const source = this.byteSources.get(uri.toString(true));
 			if (source === undefined) {
 				return { errno: RPCErrno.NoHandlerFound };
 			}
 			const contents = await source.read(params.maxBytesToRead);
-			return { errno: 0, data: contents };
+			return {errno: 0, data: contents };
 		});
 
-		this.connection.onRequest("byteSink/write", async (params) => {
+		this.connection.onRequest('byteSink/write', async (params) => {
 			const uri: vscode.Uri = vscode.Uri.from(params.uri);
 			const sink = this.byteSinks.get(uri.toString(true));
 			if (sink === undefined) {
@@ -112,32 +96,28 @@ export class ApiService {
 			const bytesWritten = await sink.write(params.binary);
 			const result = new Uint32Array(1);
 			result[0] = bytesWritten;
-			return { errno: 0, data: result };
+			return { errno: 0, data: result};
 		});
 
-		this.connection.onRequest(
-			"fileSystem/stat",
-			async (params, resultBuffer) => {
-				try {
-					const uri = vscode.Uri.from(params.uri);
-					const vStat: vscode.FileStat =
-						await vscode.workspace.fs.stat(uri);
-					const stat = DTOs.Stat.create(resultBuffer);
-					stat.type = vStat.type;
-					stat.ctime = vStat.mtime;
-					stat.mtime = vStat.mtime;
-					stat.size = vStat.size;
-					if (vStat.permissions !== undefined) {
-						stat.permission = vStat.permissions;
-					}
-					return { errno: 0 };
-				} catch (error) {
-					return handleError(error);
+		this.connection.onRequest('fileSystem/stat', async (params, resultBuffer) => {
+			try {
+				const uri = vscode.Uri.from(params.uri);
+				const vStat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
+				const stat = DTOs.Stat.create(resultBuffer);
+				stat.type = vStat.type;
+				stat.ctime = vStat.mtime;
+				stat.mtime = vStat.mtime;
+				stat.size = vStat.size;
+				if (vStat.permissions !== undefined) {
+					stat.permission = vStat.permissions;
 				}
-			},
-		);
+				return { errno: 0 };
+			} catch (error) {
+				return handleError(error);
+			}
+		});
 
-		this.connection.onRequest("fileSystem/readFile", async (params) => {
+		this.connection.onRequest('fileSystem/readFile', async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
 				const contents = await vscode.workspace.fs.readFile(uri);
@@ -147,7 +127,7 @@ export class ApiService {
 			}
 		});
 
-		this.connection.onRequest("fileSystem/writeFile", async (params) => {
+		this.connection.onRequest('fileSystem/writeFile', async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
 				await vscode.workspace.fs.writeFile(uri, params.binary);
@@ -157,100 +137,69 @@ export class ApiService {
 			}
 		});
 
-		this.connection.onRequest(
-			"fileSystem/readDirectory",
-			async (params) => {
-				try {
-					const uri = vscode.Uri.from(params.uri);
-					const entries =
-						await vscode.workspace.fs.readDirectory(uri);
-					return { errno: 0, data: entries };
-				} catch (error) {
-					return handleError(error);
-				}
-			},
-		);
+		this.connection.onRequest('fileSystem/readDirectory', async (params) => {
+			try {
+				const uri = vscode.Uri.from(params.uri);
+				const entries = await vscode.workspace.fs.readDirectory(uri);
+				return { errno: 0, data: entries };
+			} catch (error) {
+				return handleError(error);
+			}
+		});
 
-		this.connection.onRequest(
-			"fileSystem/createDirectory",
-			async (params) => {
-				try {
-					const uri = vscode.Uri.from(params.uri);
-					await vscode.workspace.fs.createDirectory(uri);
-					return { errno: 0 };
-				} catch (error) {
-					return handleError(error);
-				}
-			},
-		);
+		this.connection.onRequest('fileSystem/createDirectory', async (params) => {
+			try {
+				const uri = vscode.Uri.from(params.uri);
+				await vscode.workspace.fs.createDirectory(uri);
+				return {errno: 0 };
+			} catch (error) {
+				return handleError(error);
+			}
+		});
 
-		this.connection.onRequest("fileSystem/delete", async (params) => {
+		this.connection.onRequest('fileSystem/delete', async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
 				await vscode.workspace.fs.delete(uri, params.options);
-				return { errno: 0 };
+				return {errno: 0 };
 			} catch (error) {
 				return handleError(error);
 			}
 		});
 
-		this.connection.onRequest("fileSystem/rename", async (params) => {
+		this.connection.onRequest('fileSystem/rename', async (params) => {
 			try {
 				const source = vscode.Uri.from(params.source);
 				const target = vscode.Uri.from(params.target);
-				await vscode.workspace.fs.rename(
-					source,
-					target,
-					params.options,
-				);
-				return { errno: 0 };
+				await vscode.workspace.fs.rename(source, target, params.options);
+				return {errno: 0 };
 			} catch (error) {
 				return handleError(error);
 			}
 		});
 
-		this.connection.onRequest("workspace/workspaceFolders", () => {
+		this.connection.onRequest('workspace/workspaceFolders', () => {
 			const folders = vscode.workspace.workspaceFolders ?? [];
-			return {
-				errno: 0,
-				data: folders.map((folder) => {
-					return {
-						uri: folder.uri.toJSON(),
-						name: folder.name,
-						index: folder.index,
-					};
-				}),
-			};
+			return { errno: 0, data: folders.map(folder => { return { uri: folder.uri.toJSON(), name: folder.name, index: folder.index }; } )};
 		});
 
-		this.connection.onRequest("process/proc_exit", (params) => {
+		this.connection.onRequest('process/proc_exit', (params) => {
 			if (this.options?.exitHandler !== undefined) {
 				this.options.exitHandler(params.rval);
 			}
-			return { errno: 0 };
+			return { errno: 0};
 		});
 	}
 
-	public registerCharacterDeviceDriver(
-		deviceDriver: CharacterDeviceDriver,
-		useAsDefaultStdio: boolean,
-	): void {
+	public registerCharacterDeviceDriver(deviceDriver: CharacterDeviceDriver, useAsDefaultStdio: boolean): void {
 		if (useAsDefaultStdio === true) {
-			this.setStdio(
-				deviceDriver.fileDescriptor,
-				deviceDriver.fileDescriptor,
-				deviceDriver.fileDescriptor,
-			);
+			this.setStdio(deviceDriver.fileDescriptor, deviceDriver.fileDescriptor, deviceDriver.fileDescriptor);
 		}
 		this.byteSources.set(deviceDriver.uri.toString(true), deviceDriver);
 		this.byteSinks.set(deviceDriver.uri.toString(true), deviceDriver);
 	}
 
-	public setStdio(
-		stdin: FileDescriptorDescription | undefined,
-		stdout: FileDescriptorDescription | undefined,
-		stderr: FileDescriptorDescription | undefined,
-	): void {
+	public setStdio(stdin: FileDescriptorDescription | undefined, stdout: FileDescriptorDescription | undefined, stderr: FileDescriptorDescription | undefined): void {
 		if (stdin !== undefined) {
 			this.stdio.stdin = stdin;
 		}
@@ -276,58 +225,45 @@ export class ApiService {
 				stdin: this.asFileDescriptorDescription(this.stdio.stdin),
 				stdout: this.asFileDescriptorDescription(this.stdio.stdout),
 				stderr: this.asFileDescriptorDescription(this.stdio.stderr),
-			},
+			}
 		};
 		this.connection.signalReady(p);
 	}
 
-	private asFileSystemError(
-		error: vscode.FileSystemError,
-	): DTOs.FileSystemError {
-		switch (error.code) {
-			case "FileNotFound":
+	private asFileSystemError(error: vscode.FileSystemError): DTOs.FileSystemError {
+		switch(error.code) {
+			case 'FileNotFound':
 				return DTOs.FileSystemError.FileNotFound;
-			case "FileExists":
+			case 'FileExists':
 				return DTOs.FileSystemError.FileExists;
-			case "FileNotADirectory":
+			case 'FileNotADirectory':
 				return DTOs.FileSystemError.FileNotADirectory;
-			case "FileIsADirectory":
+			case 'FileIsADirectory':
 				return DTOs.FileSystemError.FileIsADirectory;
-			case "NoPermissions":
+			case 'NoPermissions':
 				return DTOs.FileSystemError.NoPermissions;
-			case "Unavailable":
+			case 'Unavailable':
 				return DTOs.FileSystemError.Unavailable;
 			default:
 				return RPCErrno.UnknownError;
 		}
 	}
 
-	private asFileDescriptorDescription(
-		fileDescriptor: FileDescriptorDescription,
-	): DTOs.FileDescriptorDescription {
+	private asFileDescriptorDescription(fileDescriptor: FileDescriptorDescription): DTOs.FileDescriptorDescription {
 		switch (fileDescriptor.kind) {
-			case "fileSystem":
-				return {
-					kind: fileDescriptor.kind,
-					uri: fileDescriptor.uri.toJSON(),
-					path: fileDescriptor.path,
-				};
-			case "terminal":
-				return {
-					kind: fileDescriptor.kind,
-					uri: fileDescriptor.uri.toJSON(),
-				};
-			case "console":
-				return {
-					kind: fileDescriptor.kind,
-					uri: fileDescriptor.uri.toJSON(),
-				};
+			case 'fileSystem':
+				return { kind: fileDescriptor.kind, uri: fileDescriptor.uri.toJSON(), path: fileDescriptor.path };
+			case 'terminal':
+				return { kind: fileDescriptor.kind, uri: fileDescriptor.uri.toJSON() };
+			case 'console':
+				return { kind: fileDescriptor.kind, uri: fileDescriptor.uri.toJSON() };
 		}
 	}
 }
 
 class ConsoleTerminal implements CharacterDeviceDriver {
-	private static authority = "global" as const;
+
+	private static authority = 'global' as const;
 
 	private decoder: RAL.TextDecoder;
 	public readonly uri: vscode.Uri;
@@ -335,11 +271,8 @@ class ConsoleTerminal implements CharacterDeviceDriver {
 
 	constructor() {
 		this.decoder = RAL().TextDecoder.create();
-		this.uri = vscode.Uri.from({
-			scheme: "console",
-			authority: ConsoleTerminal.authority,
-		});
-		this.fileDescriptor = { kind: "console", uri: this.uri };
+		this.uri =  vscode.Uri.from({ scheme: 'console', authority: ConsoleTerminal.authority });
+		this.fileDescriptor = { kind: 'console', uri: this.uri };
 	}
 
 	read(): Promise<Uint8Array> {

@@ -36,11 +36,8 @@ export namespace Cancellation {
 	 * @returns A function when called cancels the message.
 	 */
 	export function addData(message: object): () => void {
-		if (
-			(message as MessageWithCancellationData).$cancellationData !==
-			undefined
-		) {
-			throw new Error("Message already has a property $cancellationData");
+		if ((message as MessageWithCancellationData).$cancellationData !== undefined) {
+			throw new Error(`Message already has a property $cancellationData`);
 		}
 		const data = new SharedArrayBuffer(4);
 		const typedArray = new Int32Array(data, 0, 1);

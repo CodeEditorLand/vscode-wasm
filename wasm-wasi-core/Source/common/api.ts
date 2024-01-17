@@ -4,32 +4,27 @@
  *--------------------------------------------------------------------------------------------*/
 /// <reference path="../../typings/webAssemblyCommon.d.ts" />
 
-import {
-	Event,
-	Extension,
-	ExtensionContext,
-	Pseudoterminal,
-	Uri,
-} from "vscode";
+import { Event, Extension, ExtensionContext, Pseudoterminal, Uri } from 'vscode';
 
-import { FileDescriptors } from "./fileDescriptor";
-import { WasmRootFileSystemImpl } from "./fileSystem";
-import WasiKernel from "./kernel";
-import { MemoryFileSystem as MemoryFileSystemImpl } from "./memoryFileSystemDriver";
-import { WasiProcess as InternalWasiProcess } from "./process";
-import { ReadableStream, WritableStream } from "./streams";
-import { WasmPseudoterminalImpl } from "./terminal";
-import version from "./version";
+import { WasmPseudoterminalImpl } from './terminal';
+import { WasiProcess as InternalWasiProcess } from './process';
+import { MemoryFileSystem as MemoryFileSystemImpl } from './memoryFileSystemDriver';
+import WasiKernel from './kernel';
+import { FileDescriptors } from './fileDescriptor';
+import { WritableStream, ReadableStream } from './streams';
+import { WasmRootFileSystemImpl } from './fileSystem';
+import version from './version';
 
 export interface Environment {
 	[key: string]: string;
 }
 
 export interface TerminalOptions {
+
 	/**
 	 * The encoding to use when converting bytes to characters for the terminal.
 	 */
-	encoding?: "utf-8";
+	encoding?: 'utf-8';
 
 	/**
 	 * Enables a history stack for the terminal.
@@ -38,6 +33,7 @@ export interface TerminalOptions {
 }
 
 export enum PseudoterminalState {
+
 	/**
 	 * The pseudoterminal is not in use.
 	 */
@@ -51,7 +47,7 @@ export enum PseudoterminalState {
 	/**
 	 * The pseudoterminal is in use and a process is currently running.
 	 */
-	busy = 3,
+	busy = 3
 }
 
 export interface PseudoterminalStateChangeEvent {
@@ -66,6 +62,7 @@ export interface PseudoterminalStateChangeEvent {
  * interface are available via `Wasm.createPseudoterminal`.
  */
 export interface WasmPseudoterminal extends Pseudoterminal {
+
 	/**
 	 * Fires if Ctrl+C is pressed in the terminal.
 	 */
@@ -120,7 +117,7 @@ export interface WasmPseudoterminal extends Pseudoterminal {
 	 * Reads bytes from the terminal.
 	 * @param maxBytesToRead The maximum number of bytes to read.
 	 */
-	read(maxBytesToRead: number, encoding?: "utf-8"): Promise<Uint8Array>;
+	read(maxBytesToRead: number, encoding?: 'utf-8'): Promise<Uint8Array>;
 
 	/**
 	 * Write a string to the terminal.
@@ -134,7 +131,7 @@ export interface WasmPseudoterminal extends Pseudoterminal {
 	 *
 	 * @param chunk The bytes to write to the terminal.
 	 */
-	write(chunk: Uint8Array, encoding?: "utf-8"): Promise<number>;
+	write(chunk: Uint8Array, encoding?: 'utf-8'): Promise<number>;
 
 	/**
 	 * Write a prompt to the terminal.
@@ -151,6 +148,7 @@ export interface WasmPseudoterminal extends Pseudoterminal {
  * interface are available via `Wasm.createWritable`.
  */
 export interface Writable {
+
 	/**
 	 * Write some data to the stream.
 	 * @param chunk The data to write.
@@ -162,7 +160,7 @@ export interface Writable {
 	 * @param chunk The string to write.
 	 * @param encoding The encoding to use to convert to a binary format.
 	 */
-	write(chunk: string, encoding?: "utf-8"): Promise<void>;
+	write(chunk: string, encoding?: 'utf-8'): Promise<void>;
 }
 
 /**
@@ -225,7 +223,7 @@ export type OpenFlags = number;
  * file system.
  */
 export type StdioFileDescriptor = {
-	kind: "file";
+	kind: 'file';
 	path: string;
 	openFlags?: OpenFlags;
 };
@@ -234,7 +232,7 @@ export type StdioFileDescriptor = {
  * A stdio descriptor denoting a WASM Pseudo terminal.
  */
 export type StdioTerminalDescriptor = {
-	kind: "terminal";
+	kind: 'terminal';
 	terminal: WasmPseudoterminal;
 };
 
@@ -243,7 +241,7 @@ export type StdioTerminalDescriptor = {
  * write to the WASM process.
  */
 export type StdioPipeInDescriptor = {
-	kind: "pipeIn";
+	kind: 'pipeIn';
 	pipe?: Writable;
 };
 
@@ -252,7 +250,7 @@ export type StdioPipeInDescriptor = {
  * read from the WASM process.
  */
 export type StdioPipeOutDescriptor = {
-	kind: "pipeOut";
+	kind: 'pipeOut';
 	pipe?: Readable;
 };
 
@@ -260,7 +258,7 @@ export type StdioPipeOutDescriptor = {
  * A stdio descriptor denoting the console.
  */
 export type StdioConsoleDescriptor = {
-	kind: "console";
+	kind: 'console';
 };
 
 /**
@@ -268,16 +266,8 @@ export type StdioConsoleDescriptor = {
  */
 export type Stdio = {
 	in?: StdioFileDescriptor | StdioTerminalDescriptor | StdioPipeInDescriptor;
-	out?:
-		| StdioFileDescriptor
-		| StdioTerminalDescriptor
-		| StdioConsoleDescriptor
-		| StdioPipeOutDescriptor;
-	err?:
-		| StdioFileDescriptor
-		| StdioTerminalDescriptor
-		| StdioConsoleDescriptor
-		| StdioPipeOutDescriptor;
+	out?: StdioFileDescriptor | StdioTerminalDescriptor | StdioConsoleDescriptor | StdioPipeOutDescriptor;
+	err?: StdioFileDescriptor | StdioTerminalDescriptor | StdioConsoleDescriptor | StdioPipeOutDescriptor;
 };
 
 /**
@@ -285,7 +275,7 @@ export type Stdio = {
  * multi-root workspace each folder is mapped as `/workspaces/folder-name`.
  */
 export type WorkspaceFolderDescriptor = {
-	kind: "workspaceFolder";
+	kind: 'workspaceFolder';
 };
 
 /**
@@ -293,7 +283,7 @@ export type WorkspaceFolderDescriptor = {
  * mount point.
  */
 export type ExtensionLocationDescriptor = {
-	kind: "extensionLocation";
+	kind: 'extensionLocation';
 	extension: ExtensionContext | Extension<any>;
 	path: string;
 	mountPoint: string;
@@ -304,7 +294,7 @@ export type ExtensionLocationDescriptor = {
  * mount point.
  */
 export type VSCodeFileSystemDescriptor = {
-	kind: "vscodeFileSystem";
+	kind: 'vscodeFileSystem';
 	uri: Uri;
 	mountPoint: string;
 };
@@ -314,7 +304,7 @@ export type VSCodeFileSystemDescriptor = {
  * mount point.
  */
 export type MemoryFileSystemDescriptor = {
-	kind: "memoryFileSystem";
+	kind: 'memoryFileSystem';
 	fileSystem: MemoryFileSystem;
 	mountPoint: string;
 };
@@ -322,23 +312,20 @@ export type MemoryFileSystemDescriptor = {
 /**
  * The union of all mount point descriptors.
  */
-export type MountPointDescriptor =
-	| WorkspaceFolderDescriptor
-	| ExtensionLocationDescriptor
-	| VSCodeFileSystemDescriptor
-	| MemoryFileSystemDescriptor;
+export type MountPointDescriptor = WorkspaceFolderDescriptor | ExtensionLocationDescriptor | VSCodeFileSystemDescriptor | MemoryFileSystemDescriptor;
 
 /**
  * Options for a WASM process.
  */
 export type BaseProcessOptions = {
+
 	/**
 	 * The encoding to use when decoding strings from and to the WASM layer.
 	 *
 	 * Currently we only have support for utf-8 since this is the only encoding
 	 * that browsers currently support natively.
 	 */
-	encoding?: "utf-8";
+	encoding?: 'utf-8';
 
 	/**
 	 * Command line arguments accessible in the WASM.
@@ -375,13 +362,13 @@ export type RootFileSystemOptions = {
 	rootFileSystem?: RootFileSystem;
 };
 
-export type ProcessOptions = BaseProcessOptions &
-	(MountPointOptions | RootFileSystemOptions);
+export type ProcessOptions = BaseProcessOptions & (MountPointOptions | RootFileSystemOptions);
 
 /**
  * A WASM process.
  */
 export interface WasmProcess {
+
 	/**
 	 * The stdin of the WASM process or undefined if not available.
 	 */
@@ -405,30 +392,31 @@ export interface WasmProcess {
 	/**
 	 * Terminate the Wasm process.
 	 */
-	terminate(): Promise<number>;
+	 terminate(): Promise<number>;
 }
 
 export enum Filetype {
+
 	/**
 	 * The type of the file descriptor or file is unknown or is different from
 	 * any of the other types specified.
 	 */
-	unknown = 0,
+	unknown,
 
 	/**
 	 * The file descriptor or file refers to a directory inode.
 	 */
-	directory = 1,
+	directory,
 
 	/**
 	 * The file descriptor or file refers to a regular file inode.
 	 */
-	regular_file = 2,
+	regular_file,
 
 	/**
 	 * The file descriptor or file refers to a character device.
 	 */
-	character_device = 3,
+	character_device
 }
 
 /**
@@ -436,21 +424,17 @@ export enum Filetype {
  */
 export interface MemoryFileSystem {
 	createDirectory(path: string): void;
-	createFile(
-		path: string,
-		content:
-			| Uint8Array
-			| { size: bigint; reader: () => Promise<Uint8Array> },
-	): void;
+	createFile(path: string, content: Uint8Array | { size: bigint; reader: () => Promise<Uint8Array> }): void;
 	createReadable(path: string): Readable;
-	createWritable(path: string, encoding?: "utf-8"): Writable;
+	createWritable(path: string, encoding?: 'utf-8'): Writable;
 }
 
 export interface RootFileSystem {
+
 	/**
 	 * Maps a given absolute path in the WASM filesystem back to a VS Code URI.
 	 * Returns undefined if the path cannot be mapped.
-	 *
+     *
 	 * @param path the absolute path (e.g. /workspace/file.txt)
 	 */
 	toVSCode(path: string): Promise<Uri | undefined>;
@@ -472,6 +456,7 @@ export interface RootFileSystem {
 }
 
 export interface Wasm {
+
 	/**
 	 * The version of the WASM API following semver semantics.
 	 */
@@ -492,9 +477,7 @@ export interface Wasm {
 	/**
 	 * Creates a new WASM file system.
 	 */
-	createRootFileSystem(
-		descriptors: MountPointDescriptor[],
-	): Promise<RootFileSystem>;
+	createRootFileSystem(descriptors: MountPointDescriptor[]): Promise<RootFileSystem>;
 
 	/**
 	 * Creates a new readable stream.
@@ -504,7 +487,7 @@ export interface Wasm {
 	/**
 	 * Creates a new writable stream.
 	 */
-	createWritable(encoding?: "utf-8"): Writable;
+	createWritable(encoding?: 'utf-8'): Writable;
 
 	/**
 	 * Creates a new WASM process.
@@ -513,11 +496,7 @@ export interface Wasm {
 	 * @param module The WASM module to run.
 	 * @param options Additional options for the process.
 	 */
-	createProcess(
-		name: string,
-		module: WebAssembly.Module | Promise<WebAssembly.Module>,
-		options?: ProcessOptions,
-	): Promise<WasmProcess>;
+	createProcess(name: string, module: WebAssembly.Module | Promise<WebAssembly.Module>, options?: ProcessOptions): Promise<WasmProcess>;
 
 	/**
 	 * Creates a new WASM process.
@@ -527,12 +506,7 @@ export interface Wasm {
 	 * @param memory The memory descriptor for the WASM module.
 	 * @param options Additional options for the process.
 	 */
-	createProcess(
-		name: string,
-		module: WebAssembly.Module | Promise<WebAssembly.Module>,
-		memory: WebAssembly.MemoryDescriptor | WebAssembly.Memory,
-		options?: ProcessOptions,
-	): Promise<WasmProcess>;
+	createProcess(name: string, module: WebAssembly.Module | Promise<WebAssembly.Module>, memory: WebAssembly.MemoryDescriptor | WebAssembly.Memory, options?: ProcessOptions): Promise<WasmProcess>;
 
 	/**
 	 * Compiles a Webassembly module from the given source. In the Web the
@@ -547,100 +521,54 @@ export interface Wasm {
 namespace MemoryDescriptor {
 	export function is(value: any): value is WebAssembly.MemoryDescriptor {
 		const candidate = value as WebAssembly.MemoryDescriptor;
-		return (
-			candidate &&
-			typeof candidate === "object" &&
-			typeof candidate.initial === "number" &&
-			(typeof candidate.maximum === "number" ||
-				candidate.maximum === undefined) &&
-			(typeof candidate.shared === "boolean" ||
-				candidate.shared === undefined)
-		);
+		return candidate && typeof candidate === 'object'
+			&& typeof candidate.initial === 'number'
+			&& (typeof candidate.maximum === 'number' || candidate.maximum === undefined)
+			&& (typeof candidate.shared === 'boolean' || candidate.shared === undefined);
 	}
 }
 
 export namespace WasiCoreImpl {
 	export function create(
 		context: ExtensionContext,
-		processConstructor: new (
-			baseUri: Uri,
-			programName: string,
-			module: WebAssembly.Module | Promise<WebAssembly.Module>,
-			memory:
-				| WebAssembly.Memory
-				| WebAssembly.MemoryDescriptor
-				| undefined,
-			options: ProcessOptions | undefined,
-		) => InternalWasiProcess,
+		processConstructor: new (baseUri: Uri, programName: string, module: WebAssembly.Module | Promise<WebAssembly.Module>, memory: WebAssembly.Memory | WebAssembly.MemoryDescriptor | undefined, options: ProcessOptions | undefined) => InternalWasiProcess,
 		compile: (source: Uri) => Promise<WebAssembly.Module>,
 	): Wasm {
 		return {
 			version,
-			createPseudoterminal(
-				options?: TerminalOptions,
-			): WasmPseudoterminal {
+			createPseudoterminal(options?: TerminalOptions): WasmPseudoterminal {
 				return new WasmPseudoterminalImpl(options);
 			},
 			createMemoryFileSystem(): Promise<MemoryFileSystem> {
 				return Promise.resolve(new MemoryFileSystemImpl());
 			},
-			async createRootFileSystem(
-				mountDescriptors: MountPointDescriptor[],
-			): Promise<RootFileSystem> {
+			async createRootFileSystem(mountDescriptors: MountPointDescriptor[]): Promise<RootFileSystem> {
 				const fileDescriptors = new FileDescriptors();
-				const info = await WasiKernel.createRootFileSystem(
-					fileDescriptors,
-					mountDescriptors,
-				);
-				const result = new WasmRootFileSystemImpl(
-					info,
-					fileDescriptors,
-				);
+				const info = await WasiKernel.createRootFileSystem(fileDescriptors, mountDescriptors);
+				const result = new WasmRootFileSystemImpl(info, fileDescriptors);
 				await result.initialize();
 				return result;
 			},
 			createReadable() {
 				return new ReadableStream();
 			},
-			createWritable(encoding?: "utf-8") {
+			createWritable(encoding?: 'utf-8') {
 				return new WritableStream(encoding);
 			},
-			async createProcess(
-				name: string,
-				module: WebAssembly.Module | Promise<WebAssembly.Module>,
-				memoryOrOptions?:
-					| WebAssembly.MemoryDescriptor
-					| WebAssembly.Memory
-					| ProcessOptions,
-				optionsOrMapWorkspaceFolders?: ProcessOptions | boolean,
-			): Promise<WasmProcess> {
-				let memory:
-					| WebAssembly.Memory
-					| WebAssembly.MemoryDescriptor
-					| undefined;
+			async createProcess(name: string, module: WebAssembly.Module | Promise<WebAssembly.Module>, memoryOrOptions?: WebAssembly.MemoryDescriptor | WebAssembly.Memory | ProcessOptions, optionsOrMapWorkspaceFolders?: ProcessOptions | boolean): Promise<WasmProcess> {
+				let memory: WebAssembly.Memory | WebAssembly.MemoryDescriptor | undefined;
 				let options: ProcessOptions | undefined;
-				if (
-					memoryOrOptions instanceof WebAssembly.Memory ||
-					MemoryDescriptor.is(memoryOrOptions)
-				) {
+				if (memoryOrOptions instanceof WebAssembly.Memory || MemoryDescriptor.is(memoryOrOptions)) {
 					memory = memoryOrOptions;
-					options = optionsOrMapWorkspaceFolders as
-						| ProcessOptions
-						| undefined;
+					options = optionsOrMapWorkspaceFolders as ProcessOptions | undefined;
 				} else {
 					options = memoryOrOptions;
 				}
-				const result = new processConstructor(
-					context.extensionUri,
-					name,
-					module,
-					memory,
-					options,
-				);
+				const result = new processConstructor(context.extensionUri, name, module, memory, options);
 				await result.initialize();
 				return result;
 			},
-			compile,
+			compile
 		};
 	}
 }

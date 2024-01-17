@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import type { Uri } from "vscode";
+import type { Uri } from 'vscode';
 
 interface _Path {
 	dirname(path: string): string;
@@ -16,6 +16,7 @@ interface _Path {
 	delimiter: string;
 }
 
+
 interface RAL {
 	readonly path: _Path;
 	readonly webAssembly: {
@@ -27,7 +28,7 @@ let _ral: RAL | undefined;
 
 function RAL(): RAL {
 	if (_ral === undefined) {
-		throw new Error("No runtime abstraction layer installed");
+		throw new Error(`No runtime abstraction layer installed`);
 	}
 	return _ral;
 }
@@ -36,7 +37,7 @@ namespace RAL {
 	export type Path = _Path;
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
-			throw new Error("No runtime abstraction layer provided");
+			throw new Error(`No runtime abstraction layer provided`);
 		}
 		_ral = ral;
 	}

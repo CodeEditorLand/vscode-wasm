@@ -18,9 +18,7 @@ export namespace CapturedPromise {
 			_reject = reject;
 		});
 		return {
-			promise,
-			resolve: _resolve,
-			reject: _reject,
+			promise, resolve: _resolve, reject: _reject
 		};
 	}
 }
