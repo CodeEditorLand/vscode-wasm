@@ -1,7 +1,7 @@
 ### Useful setting
 
 ```js
-var ENVIRONMENT = "web,webview,worker,node";
+var ENVIRONMENT = 'web,webview,worker,node';
 var ASYNCIFY = 0;
 
 // Runtime elements that are exported on Module by default. We used to export
@@ -39,59 +39,19 @@ var EXPORTED_RUNTIME_METHODS = [];
 // FIXME: should this just be  0  if we want everything?
 // [link]
 var INCOMING_MODULE_JS_API = [
-	"ENVIRONMENT",
-	"GL_MAX_TEXTURE_IMAGE_UNITS",
-	"SDL_canPlayWithWebAudio",
-	"SDL_numSimultaneouslyQueuedBuffers",
-	"INITIAL_MEMORY",
-	"wasmMemory",
-	"arguments",
-	"buffer",
-	"canvas",
-	"doNotCaptureKeyboard",
-	"dynamicLibraries",
-	"elementPointerLock",
-	"extraStackTrace",
-	"forcedAspectRatio",
-	"instantiateWasm",
-	"keyboardListeningElement",
-	"freePreloadedMediaOnUse",
-	"loadSplitModule",
-	"locateFile",
-	"logReadFiles",
-	"mainScriptUrlOrBlob",
-	"mem",
-	"monitorRunDependencies",
-	"noExitRuntime",
-	"noInitialRun",
-	"onAbort",
-	"onCustomMessage",
-	"onExit",
-	"onFree",
-	"onFullScreen",
-	"onMalloc",
-	"onRealloc",
-	"onRuntimeInitialized",
-	"postMainLoop",
-	"postRun",
-	"preInit",
-	"preMainLoop",
-	"preRun",
-	"preinitializedWebGLContext",
-	"memoryInitializerRequest",
-	"preloadPlugins",
-	"print",
-	"printErr",
-	"quit",
-	"setStatus",
-	"statusMessage",
-	"stderr",
-	"stdin",
-	"stdout",
-	"thisProgram",
-	"wasm",
-	"wasmBinary",
-	"websocket",
+  'ENVIRONMENT', 'GL_MAX_TEXTURE_IMAGE_UNITS', 'SDL_canPlayWithWebAudio',
+  'SDL_numSimultaneouslyQueuedBuffers', 'INITIAL_MEMORY', 'wasmMemory', 'arguments',
+  'buffer', 'canvas', 'doNotCaptureKeyboard', 'dynamicLibraries',
+  'elementPointerLock', 'extraStackTrace', 'forcedAspectRatio',
+  'instantiateWasm', 'keyboardListeningElement', 'freePreloadedMediaOnUse',
+  'loadSplitModule', 'locateFile', 'logReadFiles', 'mainScriptUrlOrBlob', 'mem',
+  'monitorRunDependencies', 'noExitRuntime', 'noInitialRun', 'onAbort',
+  'onCustomMessage', 'onExit', 'onFree', 'onFullScreen', 'onMalloc',
+  'onRealloc', 'onRuntimeInitialized', 'postMainLoop', 'postRun', 'preInit',
+  'preMainLoop', 'preRun',
+  'preinitializedWebGLContext', 'memoryInitializerRequest', 'preloadPlugins',
+  'print', 'printErr', 'quit', 'setStatus', 'statusMessage', 'stderr',
+  'stdin', 'stdout', 'thisProgram', 'wasm', 'wasmBinary', 'websocket'
 ];
 
 // This saves the compiled wasm module in a file with name

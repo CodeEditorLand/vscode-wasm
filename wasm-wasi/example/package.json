@@ -1,19 +1,21 @@
 {
 	"name": "wasm-wasi-c-example",
-	"version": "0.1.0",
 	"private": "true",
-	"description": "C Example",
-	"license": "MIT",
-	"author": "MS",
 	"publisher": "vscode-samples",
+	"version": "0.1.0",
+	"description": "C Example",
+	"author": "MS",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.77.0"
+	},
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
-		"build:wasi": "clang hello.c -o ./hello.wasm",
-		"compile:ts": "tsc -p tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
-	},
+	"activationEvents": [
+	],
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -23,14 +25,16 @@
 			}
 		]
 	},
-	"activationEvents": [],
+	"devDependencies": {
+		"@types/vscode": "1.77.0"
+	},
 	"dependencies": {
 		"@vscode/wasm-wasi": "0.11.0-next.0"
 	},
-	"devDependencies": {
-		"@types/vscode": "1.85.0"
-	},
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core"
-	]
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
+		"compile:ts": "tsc -p tsconfig.json",
+		"build:wasi": "clang hello.c -o ./hello.wasm",
+		"esbuild": "node ./bin/esbuild.js"
+	}
 }

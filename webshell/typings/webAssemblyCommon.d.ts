@@ -14,19 +14,22 @@ and limitations under the License.
 ***************************************************************************** */
 
 declare namespace WebAssembly {
-	type CompileError = Error;
 
-	let CompileError: {
+	interface CompileError extends Error {
+	}
+
+	var CompileError: {
 		prototype: CompileError;
-		new (message?: string): CompileError;
+		new(message?: string): CompileError;
 		(message?: string): CompileError;
 	};
 
-	type LinkError = Error;
+	interface LinkError extends Error {
+	}
 
-	let LinkError: {
+	var LinkError: {
 		prototype: LinkError;
-		new (message?: string): LinkError;
+		new(message?: string): LinkError;
 		(message?: string): LinkError;
 	};
 
@@ -41,18 +44,20 @@ declare namespace WebAssembly {
 		grow(delta: number): number;
 	}
 
-	let Memory: {
+	var Memory: {
 		prototype: Memory;
-		new (descriptor: MemoryDescriptor): Memory;
+		new(descriptor: MemoryDescriptor): Memory;
 	};
 
-	type Module = {};
+	interface Module {
+	}
 
-	type RuntimeError = Error;
+	interface RuntimeError extends Error {
+	}
 
-	let RuntimeError: {
+	var RuntimeError: {
 		prototype: RuntimeError;
-		new (message?: string): RuntimeError;
+		new(message?: string): RuntimeError;
 		(message?: string): RuntimeError;
 	};
 }
