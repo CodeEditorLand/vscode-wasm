@@ -1,32 +1,22 @@
 {
-  "activationEvents": [],
-  "author": "MS",
-  "browser": "./dist/web/extension.js",
+  "name": "wasm-wasi-core",
+  "displayName": "Experimental - WebAssembly Execution Engine",
+  "version": "0.13.2",
+  "private": "true",
+  "description": "Experimental support to execute WebAssemblies on top of the VS Code API.",
+  "homepage": "https://github.com/microsoft/vscode-wasm/blob/main/wasm-wasi-core/README.md",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
-  "dependencies": {
-    "uuid": "9.0.1"
-  },
-  "description": "Experimental support to execute WebAssemblies on top of the VS Code API.",
-  "devDependencies": {
-    "@types/assert": "1.5.9",
-    "@types/uuid": "9.0.7",
-    "@types/vscode": "1.78.0",
-    "assert": "2.1.0",
-    "find-process": "1.4.7"
-  },
-  "displayName": "Experimental - WebAssembly Execution Engine",
-  "homepage": "https://github.com/microsoft/vscode-wasm/blob/main/wasm-wasi-core/README.md",
-  "license": "MIT",
-  "main": "./dist/desktop/extension.js",
-  "name": "wasm-wasi-core",
-  "private": "true",
-  "publisher": "ms-vscode",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
   },
+  "license": "MIT",
+  "author": "MS",
+  "publisher": "ms-vscode",
+  "main": "./dist/desktop/extension.js",
+  "browser": "./dist/web/extension.js",
   "scripts": {
     "build": "npm run compile",
     "clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
@@ -39,5 +29,15 @@
     "vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run update:version && npm run esbuild",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
   },
-  "version": "0.13.2"
+  "activationEvents": [],
+  "dependencies": {
+    "uuid": "9.0.1"
+  },
+  "devDependencies": {
+    "@types/assert": "1.5.9",
+    "@types/uuid": "9.0.7",
+    "@types/vscode": "1.78.0",
+    "assert": "2.1.0",
+    "find-process": "1.4.7"
+  }
 }

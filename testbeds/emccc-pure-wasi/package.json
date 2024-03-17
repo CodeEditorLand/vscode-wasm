@@ -1,10 +1,10 @@
 {
-  "author": "MS",
+  "name": "emccc-pure-wasi",
+  "version": "0.1.0",
   "description": "",
   "license": "MIT",
-  "name": "emccc-pure-wasi",
+  "author": "MS",
   "scripts": {
     "compile": "em++ hello.cpp -o ./out/hello-em.js"
-  },
-  "version": "0.1.0"
+  }
 }

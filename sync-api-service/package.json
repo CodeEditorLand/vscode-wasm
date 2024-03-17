@@ -1,29 +1,19 @@
 {
-  "author": "Visual Studio Code Team",
+  "name": "@vscode/sync-api-service",
+  "version": "0.9.0",
+  "description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
+  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
-  "dependencies": {
-    "@vscode/sync-api-common": "0.9.0",
-    "uuid": "9.0.1",
-    "vscode-uri": "3.0.8"
-  },
-  "description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
-  "devDependencies": {
-    "@types/uuid": "9.0.7",
-    "@types/vscode": "1.71.0"
-  },
-  "enabledApiProposals": [
-    "fsChunks"
-  ],
-  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
-  "license": "MIT",
-  "main": "./lib/main.js",
-  "name": "@vscode/sync-api-service",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
   },
+  "license": "MIT",
+  "author": "Visual Studio Code Team",
+  "main": "./lib/main.js",
+  "typings": "./lib/main.d.ts",
   "scripts": {
     "all": "npm run clean && npm run compile && npm run lint && npm run test",
     "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && cd ../sync-api-tests && npm run all:publish && cd ..",
@@ -34,6 +24,16 @@
     "prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
   },
-  "typings": "./lib/main.d.ts",
-  "version": "0.9.0"
+  "dependencies": {
+    "@vscode/sync-api-common": "0.9.0",
+    "uuid": "9.0.1",
+    "vscode-uri": "3.0.8"
+  },
+  "devDependencies": {
+    "@types/uuid": "9.0.7",
+    "@types/vscode": "1.71.0"
+  },
+  "enabledApiProposals": [
+    "fsChunks"
+  ]
 }

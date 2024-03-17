@@ -1,29 +1,21 @@
 {
-  "author": "Visual Studio Code Team",
-  "bin": {
-    "dir-dump": "./bin/dir-dump"
-  },
+  "name": "@vscode/wasm-wasi",
+  "version": "0.13.0-pre.1",
+  "description": "An API facade for the WASM WASI CORE VS Code extension",
+  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
-  "dependencies": {
-    "semver": "7.5.4",
-    "yargs": "17.7.2"
-  },
-  "description": "An API facade for the WASM WASI CORE VS Code extension",
-  "devDependencies": {
-    "@types/semver": "7.5.5",
-    "@types/vscode": "1.78.0",
-    "@types/yargs": "17.0.31"
-  },
-  "enabledApiProposals": [],
-  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
-  "license": "MIT",
-  "main": "./lib/api/main.js",
-  "name": "@vscode/wasm-wasi",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
+  },
+  "license": "MIT",
+  "author": "Visual Studio Code Team",
+  "main": "./lib/api/main.js",
+  "typings": "./lib/api/main.d.ts",
+  "bin": {
+    "dir-dump": "./bin/dir-dump"
   },
   "scripts": {
     "all": "npm run clean && npm run compile && npm run lint",
@@ -36,6 +28,14 @@
     "update:version": "node ./bin/updateVersion.mjs",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
   },
-  "typings": "./lib/api/main.d.ts",
-  "version": "0.13.0-pre.1"
+  "dependencies": {
+    "semver": "7.5.4",
+    "yargs": "17.7.2"
+  },
+  "devDependencies": {
+    "@types/semver": "7.5.5",
+    "@types/vscode": "1.78.0",
+    "@types/yargs": "17.0.31"
+  },
+  "enabledApiProposals": []
 }

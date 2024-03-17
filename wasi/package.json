@@ -1,21 +1,20 @@
 {
-  "author": "Visual Studio Code Team",
+  "name": "@vscode/wasi",
+  "version": "0.1.0-pre.1",
+  "private": true,
+  "description": "WASI preview 2 interfaces for VS Code",
+  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
-  "dependencies": {},
-  "description": "WASI preview 2 interfaces for VS Code",
-  "devDependencies": {},
-  "enabledApiProposals": [],
-  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
-  "license": "MIT",
-  "main": "./lib/main.js",
-  "name": "@vscode/wasi",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
   },
+  "license": "MIT",
+  "author": "Visual Studio Code Team",
+  "main": "./lib/main.js",
+  "typings": "./lib/main.d.ts",
   "scripts": {
     "all": "npm run clean && npm run compile && npm run lint",
     "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -27,6 +26,7 @@
     "prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
   },
-  "typings": "./lib/main.d.ts",
-  "version": "0.1.0-pre.1"
+  "dependencies": {},
+  "devDependencies": {},
+  "enabledApiProposals": []
 }

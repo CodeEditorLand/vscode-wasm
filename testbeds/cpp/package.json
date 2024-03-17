@@ -1,23 +1,12 @@
 {
-  "activationEvents": [
-    "*"
-  ],
-  "author": "MS",
-  "contributes": {
-    "commands": [
-      {
-        "category": "wasm",
-        "command": "testbed-cpp.run",
-        "title": "Run C++ Program"
-      }
-    ]
-  },
+  "name": "testbed-cpp",
+  "version": "0.0.1",
+  "private": "true",
   "description": "C++ Example",
   "license": "MIT",
-  "main": "./out/extension.js",
-  "name": "testbed-cpp",
-  "private": "true",
+  "author": "MS",
   "publisher": "ms-vscode",
+  "main": "./out/extension.js",
   "scripts": {
     "build": "npm run compile:ts && npm run build:cpp && npm run build:wasi",
     "build:cpp": "../../node_modules/.bin/make-dir ./out && g++ hello.cpp -o ./out/hello",
@@ -27,5 +16,16 @@
     "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
     "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
   },
-  "version": "0.0.1"
+  "contributes": {
+    "commands": [
+      {
+        "category": "wasm",
+        "command": "testbed-cpp.run",
+        "title": "Run C++ Program"
+      }
+    ]
+  },
+  "activationEvents": [
+    "*"
+  ]
 }

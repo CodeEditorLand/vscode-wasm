@@ -1,23 +1,12 @@
 {
-  "activationEvents": [
-    "*"
-  ],
-  "author": "MS",
-  "browser": "./dist/web/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "category": "wasm",
-        "command": "testbed-threads.run",
-        "title": "Run multi-threaded Program"
-      }
-    ]
-  },
+  "name": "testbed-threads",
+  "version": "0.0.1",
   "description": "Thread Example",
   "license": "MIT",
-  "main": "./out/extension.js",
-  "name": "testbed-threads",
+  "author": "MS",
   "publisher": "ms-vscode",
+  "main": "./out/extension.js",
+  "browser": "./dist/web/extension.js",
   "scripts": {
     "build": "npm run compile:ts && npm run build:c && npm run build:wasi",
     "build:c": "../../node_modules/.bin/make-dir ./out && g++ main.c -l pthread -o ./out/main",
@@ -30,5 +19,16 @@
     "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
     "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
   },
-  "version": "0.0.1"
+  "contributes": {
+    "commands": [
+      {
+        "category": "wasm",
+        "command": "testbed-threads.run",
+        "title": "Run multi-threaded Program"
+      }
+    ]
+  },
+  "activationEvents": [
+    "*"
+  ]
 }

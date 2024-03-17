@@ -1,30 +1,25 @@
 {
-  "author": "Visual Studio Code Team",
-  "bin": {
-    "wit2ts": "./bin/wit2ts"
-  },
-  "browser": {
-    "./lib/desktop/main.js": "./lib/web/main.js"
-  },
+  "name": "@vscode/wasm-component-model",
+  "version": "0.1.0-pre.1",
+  "private": true,
+  "description": "A VS Code specific component model implementation",
+  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
-  "dependencies": {
-    "yargs": "17.7.2"
-  },
-  "description": "A VS Code specific component model implementation",
-  "devDependencies": {
-    "@types/yargs": "17.0.31"
-  },
-  "enabledApiProposals": [],
-  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
-  "license": "MIT",
-  "main": "./lib/desktop/main.js",
-  "name": "@vscode/wasm-component-model",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
+  },
+  "license": "MIT",
+  "author": "Visual Studio Code Team",
+  "main": "./lib/desktop/main.js",
+  "browser": {
+    "./lib/desktop/main.js": "./lib/web/main.js"
+  },
+  "typings": "./lib/common/api.d.ts",
+  "bin": {
+    "wit2ts": "./bin/wit2ts"
   },
   "scripts": {
     "all": "npm run clean && npm run compile && npm run lint",
@@ -38,6 +33,11 @@
     "test:desktop": "node ../node_modules/mocha/bin/_mocha",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
   },
-  "typings": "./lib/common/api.d.ts",
-  "version": "0.1.0-pre.1"
+  "dependencies": {
+    "yargs": "17.7.2"
+  },
+  "devDependencies": {
+    "@types/yargs": "17.0.31"
+  },
+  "enabledApiProposals": []
 }

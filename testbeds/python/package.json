@@ -1,9 +1,19 @@
 {
-  "activationEvents": [
-    "onCommand:testbed-python.webshell.python"
-  ],
+  "name": "testbed-python",
+  "version": "0.0.1",
+  "private": "true",
+  "description": "Python Example",
+  "license": "MIT",
   "author": "MS",
+  "publisher": "ms-vscode",
+  "main": "./out/extension.js",
   "browser": "./dist/web/extension.js",
+  "scripts": {
+    "build": "npm run compile",
+    "compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+    "esbuild": "node ./bin/esbuild.js",
+    "watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+  },
   "contributes": {
     "commands": [
       {
@@ -43,21 +53,11 @@
       }
     ]
   },
-  "description": "Python Example",
+  "activationEvents": [
+    "onCommand:testbed-python.webshell.python"
+  ],
   "extensionDependencies": [
     "ms-vscode.wasm-wasi-core",
     "ms-vscode.webshell"
-  ],
-  "license": "MIT",
-  "main": "./out/extension.js",
-  "name": "testbed-python",
-  "private": "true",
-  "publisher": "ms-vscode",
-  "scripts": {
-    "build": "npm run compile",
-    "compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-    "esbuild": "node ./bin/esbuild.js",
-    "watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-  },
-  "version": "0.0.1"
+  ]
 }
