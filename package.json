@@ -1,18 +1,40 @@
 {
-  "name": "vscode-wasi",
-  "version": "0.0.1",
-  "private": true,
-  "description": "A WASI implementation that uses VS Code's extension host as the implementing API",
-  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
+  "author": "MS",
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasi/issues"
   },
+  "description": "A WASI implementation that uses VS Code's extension host as the implementing API",
+  "devDependencies": {
+    "@types/assert": "1.5.9",
+    "@types/glob": "8.1.0",
+    "@types/mocha": "10.0.4",
+    "@types/node": "18.14.6",
+    "@types/path-browserify": "1.0.2",
+    "@vscode/test-electron": "2.3.8",
+    "@vscode/test-web": "0.0.50",
+    "@vscode/tsconfig-gen": "0.1.0",
+    "esbuild": "0.19.5",
+    "glob": "10.3.10",
+    "http-server": "14.1.1",
+    "make-dir-cli": "3.1.0",
+    "mocha": "10.2.0",
+    "node-polyfill-webpack-plugin": "2.0.1",
+    "path-browserify": "1.0.1",
+    "playwright": "1.39.0",
+    "rimraf": "5.0.5",
+    "serve": "14.2.1",
+    "shelljs": "0.8.5",
+    "shx": "0.3.4",
+    "typescript": "5.2.2"
+  },
+  "homepage": "https://github.com/microsoft/vscode-wasi#readme",
+  "license": "MIT",
+  "name": "vscode-wasi",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasi.git"
   },
-  "license": "MIT",
-  "author": "MS",
   "scripts": {
     "build": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
     "clean": "node ./build/bin/all.js run clean",
@@ -28,27 +50,5 @@
     "validate:versions": "node ./tools/lib/validate-versions.js",
     "watch": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.watch.json -w"
   },
-  "devDependencies": {
-    "@types/assert": "^1.5.9",
-    "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.4",
-    "@types/node": "^18.14.6",
-    "@types/path-browserify": "^1.0.2",
-    "@vscode/test-electron": "^2.3.8",
-    "@vscode/test-web": "^0.0.50",
-    "@vscode/tsconfig-gen": "0.1.0",
-    "esbuild": "^0.19.5",
-    "glob": "^10.3.10",
-    "http-server": "^14.1.1",
-    "make-dir-cli": "^3.1.0",
-    "mocha": "^10.2.0",
-    "node-polyfill-webpack-plugin": "^2.0.1",
-    "path-browserify": "^1.0.1",
-    "playwright": "^1.39.0",
-    "rimraf": "^5.0.5",
-    "serve": "^14.2.1",
-    "shelljs": "^0.8.5",
-    "shx": "^0.3.4",
-    "typescript": "^5.2.2"
-  }
+  "version": "0.0.1"
 }

@@ -1,22 +1,20 @@
 {
-  "name": "@vscode/sync-api-common",
-  "version": "0.9.0",
-  "description": "An RPC implementation between Web and NodeJS workers that works sync",
-  "homepage": "https://github.com/microsoft/vscode-wasm/blob/main/sync-api-common/README.md",
+  "author": "Visual Studio Code Team",
+  "browser": {
+    "./lib/node/main.js": "./lib/browser/main.js"
+  },
   "bugs": {
     "url": "https://github.com/microsoft/vscode-wasm/issues"
   },
+  "description": "An RPC implementation between Web and NodeJS workers that works sync",
+  "homepage": "https://github.com/microsoft/vscode-wasm/blob/main/sync-api-common/README.md",
+  "license": "MIT",
+  "main": "./lib/node/main.js",
+  "name": "@vscode/sync-api-common",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/vscode-wasm.git"
   },
-  "license": "MIT",
-  "author": "Visual Studio Code Team",
-  "main": "./lib/node/main.js",
-  "browser": {
-    "./lib/node/main.js": "./lib/browser/main.js"
-  },
-  "typings": "./lib/common/api.d.ts",
   "scripts": {
     "all": "npm run clean && npm run compile && npm run lint && npm run test",
     "all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm run test",
@@ -30,5 +28,7 @@
     "test:node": "node ../node_modules/mocha/bin/_mocha",
     "test:runServer": "npm run esbuild && node ../build/bin/runServer.js",
     "watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
-  }
+  },
+  "typings": "./lib/common/api.d.ts",
+  "version": "0.9.0"
 }
