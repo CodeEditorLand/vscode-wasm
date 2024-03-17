@@ -1,28 +1,31 @@
 {
-  "name": "testbed-rust",
-  "version": "0.0.1",
-  "private": "true",
-  "description": "Rust Example",
-  "license": "MIT",
-  "author": "MS",
-  "publisher": "ms-vscode",
-  "main": "./out/extension.js",
-  "scripts": {
-    "build": "npm run compile:ts && npm run build:rust",
-    "build:rust": "cargo build --target wasm32-wasi",
-    "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-    "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-  },
-  "contributes": {
-    "commands": [
-      {
-        "category": "wasm",
-        "command": "testbed-rust.run",
-        "title": "Run Rust Program"
-      }
-    ]
-  },
-  "activationEvents": [
-    "*"
-  ]
+	"name": "testbed-rust",
+	"version": "0.0.1",
+	"private": "true",
+	"description": "Rust Example",
+	"license": "MIT",
+	"author": "MS",
+	"publisher": "ms-vscode",
+	"main": "./out/extension.js",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasi",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "testbed-rust.run",
+				"category": "wasm",
+				"title": "Run Rust Program"
+			}
+		]
+	},
+	"activationEvents": [
+		"*"
+	],
+	"engines": {
+		"vscode": "^1.67.0"
+	}
 }

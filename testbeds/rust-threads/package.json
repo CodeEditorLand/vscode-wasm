@@ -1,29 +1,32 @@
 {
-  "name": "testbed-rust-threads",
-  "version": "0.0.1",
-  "private": "true",
-  "description": "Rust Threads Example",
-  "license": "MIT",
-  "author": "MS",
-  "publisher": "ms-vscode",
-  "main": "./out/extension.js",
-  "scripts": {
-    "build": "npm run compile:ts && npm run build:rust",
-    "build:rust": "cargo build --target wasm32-wasi-preview1-threads",
-    "compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-    "wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
-    "watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-  },
-  "contributes": {
-    "commands": [
-      {
-        "category": "wasm",
-        "command": "testbed-rust-threads.run",
-        "title": "Run Rust Thread Program"
-      }
-    ]
-  },
-  "activationEvents": [
-    "*"
-  ]
+	"name": "testbed-rust-threads",
+	"version": "0.0.1",
+	"private": "true",
+	"description": "Rust Threads Example",
+	"license": "MIT",
+	"author": "MS",
+	"publisher": "ms-vscode",
+	"main": "./out/extension.js",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasi-preview1-threads",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "testbed-rust-threads.run",
+				"category": "wasm",
+				"title": "Run Rust Thread Program"
+			}
+		]
+	},
+	"activationEvents": [
+		"*"
+	],
+	"engines": {
+		"vscode": "^1.67.0"
+	}
 }
