@@ -31,8 +31,8 @@
 		"@vscode/sync-api-common": "0.9.0"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.71.0",
-		"@types/uuid": "9.0.7"
+		"@types/vscode": "1.87.0",
+		"@types/uuid": "9.0.8"
 	},
 	"scripts": {
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",

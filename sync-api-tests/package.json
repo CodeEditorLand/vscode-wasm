@@ -35,8 +35,8 @@
 		"vscode-uri": "3.0.8"
 	},
 	"devDependencies": {
-		"@types/uuid": "9.0.7",
-		"@types/vscode": "1.71.0",
+		"@types/uuid": "9.0.8",
+		"@types/vscode": "1.87.0",
 		"uuid": "9.0.1",
 		"find-process": "1.4.7"
 	}
