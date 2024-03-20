@@ -1,19 +1,36 @@
 {
 	"name": "lsp-testbed",
+	"version": "0.0.1",
+	"private": false,
 	"description": "LSP Testbed",
-	"version": "0.1.0",
-	"publisher": "vscode",
-	"engines": {
-		"vscode": "1.78.0"
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
 	"main": "./client/out/extension.js",
+	"scripts": {
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+	},
+	"contributes": {},
 	"activationEvents": [
 		"onLanguage:bat"
 	],
-	"enabledApiProposals": [
-	],
-	"contributes": {
+	"devDependencies": {
+		"typescript-esbuild": "latest"
 	},
-	"scripts": {
-	}
+	"publishConfig": {
+		"access": "public"
+	},
+	"enabledApiProposals": []
 }

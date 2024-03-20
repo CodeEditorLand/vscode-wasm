@@ -1,25 +1,40 @@
 {
 	"name": "client",
 	"displayName": "LSP WASM Test client",
-	"version": "0.1.0",
-	"private": true,
-	"author": "Microsoft Corporation",
-	"license": "MIT",
-	"engines": {
-		"vscode": "1.78.0"
+	"version": "0.0.1",
+	"private": false,
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
 	},
 	"activationEvents": [
 		"onLanguage:bat"
 	],
-	"devDependencies": {
-		"@types/vscode": "1.87.0"
-	},
 	"dependencies": {
 		"vscode-languageclient": "9.0.1"
 	},
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	"devDependencies": {
+		"@types/vscode": "1.87.0",
+		"typescript-esbuild": "latest"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

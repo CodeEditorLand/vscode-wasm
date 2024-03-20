@@ -1,10 +1,31 @@
 {
 	"name": "emccc-pure-wasi",
-	"version": "0.1.0",
+	"version": "0.0.1",
+	"private": false,
 	"description": "",
-	"author": "MS",
-	"license": "MIT",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
 	"scripts": {
-		"compile": "em++ hello.cpp -o ./out/hello-em.js"
-  	}
+		"compile": "em++ hello.cpp -o ./out/hello-em.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+	},
+	"devDependencies": {
+		"typescript-esbuild": "latest"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

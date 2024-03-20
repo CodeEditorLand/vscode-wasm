@@ -1,31 +1,47 @@
 {
 	"name": "testbed-rust",
-	"private": "true",
-	"publisher": "ms-vscode",
 	"version": "0.0.1",
+	"private": false,
 	"description": "Rust Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "1.67.0"
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
 	"main": "./out/extension.js",
-	"activationEvents": [
-		"*"
-	],
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasi",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "testbed-rust.run",
 				"category": "wasm",
+				"command": "testbed-rust.run",
 				"title": "Run Rust Program"
 			}
 		]
 	},
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"build:rust": "cargo build --target wasm32-wasi"
+	"activationEvents": [
+		"*"
+	],
+	"devDependencies": {
+		"typescript-esbuild": "latest"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
