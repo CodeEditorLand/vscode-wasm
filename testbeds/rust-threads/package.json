@@ -1,32 +1,7 @@
 {
-	"name": "testbed-rust-threads",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Rust Threads Example",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"build:rust": "cargo build --target wasm32-wasi-preview1-threads",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
+	"activationEvents": [
+		"*"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -36,13 +11,19 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"*"
-	],
+	"description": "Rust Threads Example",
 	"devDependencies": {
 		"typescript-esbuild": "0.4.5"
 	},
-	"publishConfig": {
-		"access": "public"
-	}
+	"main": "./out/extension.js",
+	"name": "testbed-rust-threads",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasi-preview1-threads",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"wasmtime": "wasmtime --wasm-features=threads --wasi-modules=experimental-wasi-threads target/wasm32-wasi-preview1-threads/debug/rust-threads.wasm",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"type": "module"
 }

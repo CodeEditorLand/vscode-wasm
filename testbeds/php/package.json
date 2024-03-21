@@ -1,32 +1,6 @@
 {
-	"name": "testbed-php",
-	"version": "0.0.1",
-	"private": false,
-	"description": "PHP Example",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./dist/desktop/extension.js",
+	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -37,7 +11,7 @@
 			}
 		]
 	},
-	"activationEvents": [],
+	"description": "PHP Example",
 	"devDependencies": {
 		"typescript-esbuild": "0.4.5"
 	},
@@ -45,7 +19,14 @@
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
-	"publishConfig": {
-		"access": "public"
-	}
+	"main": "./dist/desktop/extension.js",
+	"name": "testbed-php",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"type": "module"
 }

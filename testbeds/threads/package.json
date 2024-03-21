@@ -1,25 +1,23 @@
 {
-	"name": "testbed-threads",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Thread Example",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
+	"activationEvents": [
+		"*"
+	],
 	"browser": "./dist/web/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-threads.run",
+				"title": "Run multi-threaded Program"
+			}
+		]
+	},
+	"description": "Thread Example",
+	"devDependencies": {
+		"typescript-esbuild": "0.4.5"
+	},
+	"main": "./out/extension.js",
+	"name": "testbed-threads",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:c && npm run build:wasi",
 		"build:c": "../../node_modules/.bin/make-dir ./out && g++ main.c -l pthread -o ./out/main",
@@ -33,22 +31,5 @@
 		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
 	},
-	"contributes": {
-		"commands": [
-			{
-				"category": "wasm",
-				"command": "testbed-threads.run",
-				"title": "Run multi-threaded Program"
-			}
-		]
-	},
-	"activationEvents": [
-		"*"
-	],
-	"devDependencies": {
-		"typescript-esbuild": "0.4.5"
-	},
-	"publishConfig": {
-		"access": "public"
-	}
+	"type": "module"
 }

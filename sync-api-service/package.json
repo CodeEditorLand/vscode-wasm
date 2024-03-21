@@ -1,25 +1,20 @@
 {
-	"name": "@vscode/sync-api-service",
-	"version": "0.0.1",
-	"private": false,
+	"dependencies": {
+		"@vscode/sync-api-common": "0.9.0",
+		"uuid": "9.0.1",
+		"vscode-uri": "3.0.8"
+	},
 	"description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	"devDependencies": {
+		"@types/uuid": "9.0.8",
+		"@types/vscode": "1.87.0",
+		"typescript-esbuild": "0.4.5"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
+	"enabledApiProposals": [
+		"fsChunks"
+	],
 	"main": "./lib/main.js",
-	"typings": "./lib/main.d.ts",
+	"name": "@vscode/sync-api-service",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint && npm run test",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && cd ../sync-api-tests && npm run all:publish && cd ..",
@@ -30,20 +25,6 @@
 		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
-	"dependencies": {
-		"@vscode/sync-api-common": "0.9.0",
-		"uuid": "9.0.1",
-		"vscode-uri": "3.0.8"
-	},
-	"devDependencies": {
-		"@types/uuid": "9.0.8",
-		"@types/vscode": "1.87.0",
-		"typescript-esbuild": "0.4.5"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"enabledApiProposals": [
-		"fsChunks"
-	]
+	"type": "module",
+	"typings": "./lib/main.d.ts"
 }

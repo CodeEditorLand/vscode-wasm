@@ -1,35 +1,6 @@
 {
-	"name": "webshell",
-	"displayName": "Experimental - A shell for VS Code Web",
-	"version": "0.0.1",
-	"private": false,
-	"description": "A shell for VS Code for the Web - allows executing commands like ls, cat, ...",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./dist/desktop/extension.js",
+	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
-		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run esbuild",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -39,18 +10,28 @@
 			}
 		]
 	},
-	"activationEvents": [],
 	"dependencies": {
 		"@vscode/wasm-wasi": "0.13.0-pre.1"
 	},
+	"description": "A shell for VS Code for the Web - allows executing commands like ls, cat, ...",
 	"devDependencies": {
 		"@types/vscode": "1.87.0",
 		"typescript-esbuild": "0.4.5"
 	},
+	"displayName": "Experimental - A shell for VS Code Web",
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
 	],
-	"publishConfig": {
-		"access": "public"
-	}
+	"main": "./dist/desktop/extension.js",
+	"name": "webshell",
+	"scripts": {
+		"build": "npm run compile",
+		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run esbuild",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"type": "module"
 }

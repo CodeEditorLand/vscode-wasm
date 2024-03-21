@@ -1,30 +1,5 @@
 {
-	"name": "testbed-ruby",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Ruby Example",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
+	"activationEvents": [],
 	"contributes": {
 		"commands": [
 			{
@@ -34,7 +9,7 @@
 			}
 		]
 	},
-	"activationEvents": [],
+	"description": "Ruby Example",
 	"devDependencies": {
 		"typescript-esbuild": "0.4.5"
 	},
@@ -42,7 +17,13 @@
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
-	"publishConfig": {
-		"access": "public"
-	}
+	"main": "./out/extension.js",
+	"name": "testbed-ruby",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"type": "module"
 }

@@ -1,32 +1,8 @@
 {
-	"name": "testbed-python",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Python Example",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Playform",
-		"email": "Hello@Playform.Cloud",
-		"url": "https://playform.cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
+	"activationEvents": [
+		"onCommand:testbed-python.webshell.python"
+	],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -66,9 +42,7 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onCommand:testbed-python.webshell.python"
-	],
+	"description": "Python Example",
 	"devDependencies": {
 		"typescript-esbuild": "0.4.5"
 	},
@@ -76,7 +50,14 @@
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
-	"publishConfig": {
-		"access": "public"
-	}
+	"main": "./out/extension.js",
+	"name": "testbed-python",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"type": "module"
 }
