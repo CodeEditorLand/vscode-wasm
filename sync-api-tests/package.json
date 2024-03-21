@@ -45,7 +45,7 @@
 		"@types/uuid": "9.0.8",
 		"@types/vscode": "1.87.0",
 		"find-process": "1.4.7",
-		"typescript-esbuild": "latest",
+		"typescript-esbuild": "0.4.5",
 		"uuid": "9.0.1"
 	},
 	"publishConfig": {

@@ -44,7 +44,7 @@
 		"@types/vscode": "1.87.0",
 		"assert": "2.1.0",
 		"find-process": "1.4.7",
-		"typescript-esbuild": "latest"
+		"typescript-esbuild": "0.4.5"
 	},
 	"publishConfig": {
 		"access": "public"
