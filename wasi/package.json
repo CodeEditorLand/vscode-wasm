@@ -1,12 +1,25 @@
 {
-	"dependencies": {},
-	"description": "WASI preview 2 interfaces for VS Code",
-	"devDependencies": {
-		"typescript-esbuild": "0.4.5"
-	},
-	"enabledApiProposals": [],
-	"main": "./lib/main.js",
 	"name": "@vscode/wasi",
+	"version": "0.0.1",
+	"private": false,
+	"description": "WASI preview 2 interfaces for VS Code",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./lib/main.js",
+	"typings": "./lib/main.d.ts",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -18,6 +31,12 @@
 		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
-	"type": "module",
-	"typings": "./lib/main.d.ts"
+	"dependencies": {},
+	"devDependencies": {
+		"typescript-esbuild": "0.4.5"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"enabledApiProposals": []
 }

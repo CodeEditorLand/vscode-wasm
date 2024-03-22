@@ -1,6 +1,32 @@
 {
-	"activationEvents": [],
+	"name": "wasm-wasi-c-example",
+	"version": "0.0.1",
+	"private": false,
+	"description": "C Example",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
+		"build:wasi": "clang hello.c -o ./hello.wasm",
+		"compile:ts": "tsc -p tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -10,10 +36,10 @@
 			}
 		]
 	},
+	"activationEvents": [],
 	"dependencies": {
 		"@vscode/wasm-wasi": "0.11.0-next.0"
 	},
-	"description": "C Example",
 	"devDependencies": {
 		"@types/vscode": "1.87.0",
 		"typescript-esbuild": "0.4.5"
@@ -21,14 +47,7 @@
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
 	],
-	"main": "./dist/desktop/extension.js",
-	"name": "wasm-wasi-c-example",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
-		"build:wasi": "clang hello.c -o ./hello.wasm",
-		"compile:ts": "tsc -p tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
-	},
-	"type": "module"
+	"publishConfig": {
+		"access": "public"
+	}
 }

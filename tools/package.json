@@ -1,18 +1,37 @@
 {
-	"dependencies": {
-		"yargs": "17.7.2"
-	},
-	"description": "Tools for this project",
-	"devDependencies": {
-		"peggy": "4.0.2",
-		"typescript-esbuild": "0.4.5"
-	},
 	"name": "@vscode/wasm-tools",
+	"version": "0.0.1",
+	"private": false,
+	"description": "Tools for this project",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
 	"scripts": {
 		"clean": "node ../node_modules/rimraf/bin.js lib",
 		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
 		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
-	"type": "module"
+	"dependencies": {
+		"yargs": "17.7.2"
+	},
+	"devDependencies": {
+		"peggy": "4.0.2",
+		"typescript-esbuild": "0.4.5"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

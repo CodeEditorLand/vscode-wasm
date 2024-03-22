@@ -1,21 +1,28 @@
 {
+	"name": "@vscode/wasm-wasi",
+	"version": "0.0.1",
+	"private": false,
+	"description": "An API facade for the WASM WASI CORE VS Code extension",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./lib/api/main.js",
+	"typings": "./lib/api/main.d.ts",
 	"bin": {
 		"dir-dump": "./bin/dir-dump"
 	},
-	"dependencies": {
-		"semver": "7.6.0",
-		"yargs": "17.7.2"
-	},
-	"description": "An API facade for the WASM WASI CORE VS Code extension",
-	"devDependencies": {
-		"@types/semver": "7.5.8",
-		"@types/vscode": "1.87.0",
-		"@types/yargs": "17.0.32",
-		"typescript-esbuild": "0.4.5"
-	},
-	"enabledApiProposals": [],
-	"main": "./lib/api/main.js",
-	"name": "@vscode/wasm-wasi",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run update:version && npm run compile:publish && npm run lint",
@@ -27,6 +34,18 @@
 		"update:version": "node ./bin/updateVersion.mjs",
 		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w"
 	},
-	"type": "module",
-	"typings": "./lib/api/main.d.ts"
+	"dependencies": {
+		"semver": "7.6.0",
+		"yargs": "17.7.2"
+	},
+	"devDependencies": {
+		"@types/semver": "7.5.8",
+		"@types/vscode": "1.87.0",
+		"@types/yargs": "17.0.32",
+		"typescript-esbuild": "0.4.5"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"enabledApiProposals": []
 }
