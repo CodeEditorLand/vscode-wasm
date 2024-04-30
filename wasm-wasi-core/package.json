@@ -1,54 +1,54 @@
 {
 	"name": "wasm-wasi-core",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.13.3",
 	"displayName": "Experimental - WebAssembly Execution Engine",
+	"version": "0.0.1",
+	"private": false,
 	"description": "Experimental support to execute WebAssemblies on top of the VS Code API.",
-	"author": "MS",
-	"license": "MIT",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
 	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
 	},
-	"homepage": "https://github.com/microsoft/vscode-wasm/blob/main/wasm-wasi-core/README.md",
-	"keywords": [
-		"vscode",
-		"webassembly",
-		"wasm",
-		"wasi"
-	],
-	"engines": {
-		"vscode": "^1.78.0"
-	},
+	"type": "module",
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run compile",
+		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"esbuild:watch": "node ./bin/esbuild.js --watch",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"test:desktop": "node ./lib/desktop/test/runTests.js",
+		"test:web": "npm run esbuild && node ./lib/web/test/runTests.js",
+		"update:version": "node ./bin/updateVersion.mjs"
+	},
 	"activationEvents": [],
 	"dependencies": {
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "1.78.0",
-		"@types/uuid": "^9.0.7",
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
 		"@types/assert": "^1.5.9",
+		"@types/uuid": "^9.0.7",
 		"assert": "^2.1.0",
 		"find-process": "^1.4.7"
 	},
-	"scripts": {
-		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run update:version && npm run esbuild",
-		"build": "npm run compile",
-		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"esbuild": "node ./bin/esbuild.js",
-		"esbuild:watch": "node ./bin/esbuild.js --watch",
-		"test": "npm run test:desktop && npm run test:web",
-		"test:desktop": "node ./lib/desktop/test/runTests.js",
-		"test:web": "npm run esbuild && node ./lib/web/test/runTests.js",
-		"update:version": "node ./bin/updateVersion.mjs"
+	"publishConfig": {
+		"access": "public"
 	}
 }

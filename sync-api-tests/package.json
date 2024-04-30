@@ -1,43 +1,54 @@
 {
 	"name": "@vscode/sync-api-tests",
-	"publisher": "ms-vscode",
-	"private": true,
+	"version": "0.0.1",
+	"private": false,
 	"description": "Test cases for the sync vscode API",
-	"version": "0.9.0",
-	"engines": {
-		"vscode": "^1.71.0"
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
 	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
 	"main": "./extension.js",
 	"browser": "./extension.js",
-	"contributes": {},
 	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test",
 		"clean": "node ../node_modules/rimraf/bin.js lib",
 		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
 		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
 		"esbuild": "node ./bin/esbuild.js",
-		"test": "npm run test:desktop && npm run test:web",
-		"test:desktop": "node lib/desktop/runTests.js",
-		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js",
-		"test:runWebTests": "node lib/web/runTests.js",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
 		"symlink:publish": "node ../build/bin/symlink-sync-api-tests-publish.js",
-		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test"
+		"test:desktop": "node lib/desktop/runTests.js",
+		"test:runWebTests": "node lib/web/runTests.js",
+		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js"
 	},
-	"dependencies": {
-		"@vscode/sync-api-client": "0.9.0",
-		"vscode-uri": "^3.0.8"
-	},
+	"contributes": {},
+	"activationEvents": [
+		"*"
+	],
+	"dependencies": {},
 	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
 		"@types/uuid": "^9.0.7",
-		"@types/vscode": "1.71.0",
-		"uuid": "^9.0.1",
-		"find-process": "^1.4.7"
+		"find-process": "^1.4.7",
+		"uuid": "^9.0.1"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

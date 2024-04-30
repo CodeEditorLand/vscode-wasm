@@ -1,34 +1,46 @@
 {
 	"name": "testbed-python",
-	"private": "true",
-	"publisher": "ms-vscode",
 	"version": "0.0.1",
+	"private": false,
 	"description": "Python Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
 	"main": "./out/extension.js",
 	"browser": "./dist/web/extension.js",
-	"activationEvents": [
-		"onCommand:testbed-python.webshell.python"
-	],
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core",
-		"ms-vscode.webshell"
-	],
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "testbed-python.runFile",
 				"category": "wasm",
-				"title": "Run Python File",
-				"enablement": "editorLangId == python"
+				"command": "testbed-python.runFile",
+				"enablement": "editorLangId == python",
+				"title": "Run Python File"
 			},
 			{
-				"command": "testbed-python.runInteractive",
 				"category": "wasm",
+				"command": "testbed-python.runInteractive",
 				"title": "Run Interactive Python Shell"
 			}
 		],
@@ -36,13 +48,13 @@
 			"editor/title/run": [
 				{
 					"command": "testbed-python.runFile",
-					"when": "resourceLangId == python",
-					"group": "navigation@1"
+					"group": "navigation@1",
+					"when": "resourceLangId == python"
 				},
 				{
 					"command": "testbed-python.runInteractive",
-					"when": "resourceLangId == python",
-					"group": "navigation@2"
+					"group": "navigation@2",
+					"when": "resourceLangId == python"
 				}
 			]
 		},
@@ -52,15 +64,23 @@
 				"path": "wasm/lib"
 			},
 			{
-				"mountPoint": "/usr/bin/python",
-				"command": "testbed-python.webshell.python"
+				"command": "testbed-python.webshell.python",
+				"mountPoint": "/usr/bin/python"
 			}
 		]
 	},
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"esbuild": "node ./bin/esbuild.js"
+	"activationEvents": [
+		"onCommand:testbed-python.webshell.python"
+	],
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core",
+		"ms-vscode.webshell"
+	],
+	"publishConfig": {
+		"access": "public"
 	}
 }

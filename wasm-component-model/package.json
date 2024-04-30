@@ -1,12 +1,26 @@
 {
-	"private": true,
 	"name": "@vscode/wasm-component-model",
-	"version": "0.1.0-pre.1",
+	"version": "0.0.1",
+	"private": false,
 	"description": "A VS Code specific component model implementation",
-	"engines": {
-		"node": ">=16.17.1",
-		"vscode": "^1.78.0"
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
 	"main": "./lib/desktop/main.js",
 	"browser": {
 		"./lib/desktop/main.js": "./lib/web/main.js"
@@ -15,41 +29,28 @@
 	"bin": {
 		"wit2ts": "./bin/wit2ts"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
+		"clean": "node ../node_modules/rimraf/bin.js lib",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
+		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
+		"generate:testCase": "wasm-tools component wit --json ./src/common/test/test-data.wit | node ./lib/tools/main.js --stdin --noMain --resourceStyle module --outDir ./src/common/test",
+		"prepack": "npm run all:publish",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"test:desktop": "node ../node_modules/mocha/bin/_mocha"
 	},
-	"keywords": [
-		"VSCode",
-		"WASM",
-		"Component Model"
-	],
-	"author": "Visual Studio Code Team",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
-	},
-	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
-	"enabledApiProposals": [
-	],
 	"dependencies": {
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
 		"@types/yargs": "^17.0.31"
 	},
-	"scripts": {
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
-		"prepack": "npm run all:publish",
-		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
-		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
-		"clean": "node ../node_modules/rimraf/bin.js lib",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"test": "npm run test:desktop",
-		"test:desktop": "node ../node_modules/mocha/bin/_mocha",
-		"all": "npm run clean && npm run compile && npm run lint",
-		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
-		"generate:testCase": "wasm-tools component wit --json ./src/common/test/test-data.wit | node ./lib/tools/main.js --stdin --noMain --resourceStyle module --outDir ./src/common/test"
-	}
+	"publishConfig": {
+		"access": "public"
+	},
+	"enabledApiProposals": []
 }

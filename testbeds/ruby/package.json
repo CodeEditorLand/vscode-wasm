@@ -1,34 +1,53 @@
 {
 	"name": "testbed-ruby",
-	"private": "true",
-	"publisher": "ms-vscode",
 	"version": "0.0.1",
+	"private": false,
 	"description": "Ruby Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
-	},
-	"main": "./out/extension.js",
-	"activationEvents": [
+	"keywords": [
+		"land"
 	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "./out/extension.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-ruby.runFile",
+				"enablement": "editorLangId == ruby",
+				"title": "Run Ruby File"
+			}
+		]
+	},
+	"activationEvents": [],
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "testbed-ruby.runFile",
-				"category": "wasm",
-				"title": "Run Ruby File",
-				"enablement": "editorLangId == ruby"
-			}
-		]
-	},
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	"publishConfig": {
+		"access": "public"
 	}
 }
