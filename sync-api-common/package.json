@@ -1,35 +1,31 @@
 {
-	"author": {
-		"email": "Land@PlayForm.Cloud",
-		"name": "🌆 — Land —",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"browser": {
-		"./lib/node/main.js": "./lib/browser/main.js"
-	},
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
-	},
+	"name": "@vscode/sync-api-common",
+	"version": "0.0.1",
+	"private": false,
 	"description": "An RPC implementation between Web and NodeJS workers that works sync",
-	"devDependencies": {
-		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6"
-	},
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
 	"keywords": [
 		"land"
 	],
-	"license": "SEE LICENSE IN LICENSE",
-	"main": "./lib/node/main.js",
-	"name": "@vscode/sync-api-common",
-	"private": false,
-	"publishConfig": {
-		"access": "public"
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
 	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "./lib/node/main.js",
+	"browser": {
+		"./lib/node/main.js": "./lib/browser/main.js"
+	},
+	"typings": "./lib/common/api.d.ts",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
 		"all": "npm run clean && npm run compile && npm run lint && npm run test",
@@ -44,7 +40,11 @@
 		"test:node": "node ../node_modules/mocha/bin/_mocha",
 		"test:runServer": "npm run esbuild && node ../build/bin/runServer.js"
 	},
-	"type": "module",
-	"typings": "./lib/common/api.d.ts",
-	"version": "0.0.1"
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }
