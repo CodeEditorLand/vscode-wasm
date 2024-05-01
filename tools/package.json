@@ -28,12 +28,12 @@
 		"prepublishOnly": "Build 'Source/**/*.ts'"
 	},
 	"dependencies": {
-		"yargs": "^17.7.2"
+		"yargs": "17.7.2"
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
-		"peggy": "^3.0.2"
+		"peggy": "4.0.2"
 	},
 	"publishConfig": {
 		"access": "public"
