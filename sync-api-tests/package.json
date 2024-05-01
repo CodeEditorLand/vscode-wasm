@@ -1,28 +1,41 @@
 {
-	"name": "@vscode/sync-api-tests",
-	"version": "0.0.1",
-	"private": false,
+	"activationEvents": [
+		"*"
+	],
+	"author": {
+		"email": "Land@PlayForm.Cloud",
+		"name": "🌆 — Land —",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"browser": "./extension.js",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
+	"contributes": {},
+	"dependencies": {},
 	"description": "Test cases for the sync vscode API",
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
+		"@types/uuid": "9.0.8",
+		"find-process": "1.4.7",
+		"uuid": "9.0.1"
+	},
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
 	"keywords": [
 		"land"
 	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	"license": "SEE LICENSE IN LICENSE",
+	"main": "./extension.js",
+	"name": "@vscode/sync-api-tests",
+	"private": false,
+	"publishConfig": {
+		"access": "public"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
 	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🌆 — Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
-	"main": "./extension.js",
-	"browser": "./extension.js",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
 		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test",
@@ -36,19 +49,6 @@
 		"test:runWebTests": "node lib/web/runTests.js",
 		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js"
 	},
-	"contributes": {},
-	"activationEvents": [
-		"*"
-	],
-	"dependencies": {},
-	"devDependencies": {
-		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
-		"@types/uuid": "9.0.8",
-		"find-process": "1.4.7",
-		"uuid": "9.0.1"
-	},
-	"publishConfig": {
-		"access": "public"
-	}
+	"type": "module",
+	"version": "0.0.1"
 }

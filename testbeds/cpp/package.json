@@ -1,27 +1,44 @@
 {
-	"name": "testbed-cpp",
-	"version": "0.0.1",
-	"private": false,
+	"activationEvents": [
+		"*"
+	],
+	"author": {
+		"email": "Land@PlayForm.Cloud",
+		"name": "🌆 — Land —",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-cpp.run",
+				"title": "Run C++ Program"
+			}
+		]
+	},
 	"description": "C++ Example",
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
 	"keywords": [
 		"land"
 	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	"license": "SEE LICENSE IN LICENSE",
+	"main": "./out/extension.js",
+	"name": "testbed-cpp",
+	"private": false,
+	"publishConfig": {
+		"access": "public"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
 	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🌆 — Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
-	"main": "./out/extension.js",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
 		"build": "npm run compile:ts && npm run build:cpp && npm run build:wasi",
@@ -33,23 +50,6 @@
 		"prepublishOnly": "Build 'Source/**/*.ts'",
 		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
 	},
-	"contributes": {
-		"commands": [
-			{
-				"category": "wasm",
-				"command": "testbed-cpp.run",
-				"title": "Run C++ Program"
-			}
-		]
-	},
-	"activationEvents": [
-		"*"
-	],
-	"devDependencies": {
-		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6"
-	},
-	"publishConfig": {
-		"access": "public"
-	}
+	"type": "module",
+	"version": "0.0.1"
 }

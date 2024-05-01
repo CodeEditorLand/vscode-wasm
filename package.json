@@ -1,41 +1,13 @@
 {
-	"name": "vscode-wasi",
-	"version": "0.0.1",
-	"private": false,
-	"description": "A WASI implementation that uses VS Code's extension host as the implementing API",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"author": {
+		"email": "Land@PlayForm.Cloud",
+		"name": "🌆 — Land —",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
 	"bugs": {
 		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🌆 — Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
-	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"build": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"clean": "node ./build/bin/all.js run clean",
-		"compile": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild:apiTests": "cd sync-api-tests && npm run esbuild && cd ..",
-		"prepublishOnly": "Build 'Source/**/*.ts'",
-		"serve": "serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem -c ./configs/serve.json .",
-		"symlink": "node ./build/bin/symlink",
-		"symlink:desktop": "node ./build/bin/symlink-desktop",
-		"test:apiWebTests": "cd sync-api-tests && npm run test:runWebTests && cd ..",
-		"tsconfig-gen": "tsconfig-gen --file .tsconfigrc.js",
-		"update:lock": "git clean -xfd . && npm install",
-		"validate:versions": "node ./tools/lib/validate-versions.js"
-	},
+	"description": "A WASI implementation that uses VS Code's extension host as the implementing API",
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
@@ -53,7 +25,35 @@
 		"shelljs": "0.8.5",
 		"shx": "0.3.4"
 	},
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"keywords": [
+		"land"
+	],
+	"license": "SEE LICENSE IN LICENSE",
+	"name": "vscode-wasi",
+	"private": false,
 	"publishConfig": {
 		"access": "public"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"clean": "node ./build/bin/all.js run clean",
+		"compile": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild:apiTests": "cd sync-api-tests && npm run esbuild && cd ..",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"serve": "serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem -c ./configs/serve.json .",
+		"symlink": "node ./build/bin/symlink",
+		"symlink:desktop": "node ./build/bin/symlink-desktop",
+		"test:apiWebTests": "cd sync-api-tests && npm run test:runWebTests && cd ..",
+		"tsconfig-gen": "tsconfig-gen --file .tsconfigrc.js",
+		"update:lock": "git clean -xfd . && npm install",
+		"validate:versions": "node ./tools/lib/validate-versions.js"
+	},
+	"type": "module",
+	"version": "0.0.1"
 }
