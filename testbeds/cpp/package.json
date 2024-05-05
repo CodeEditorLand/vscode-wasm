@@ -1,0 +1,55 @@
+{
+	"name": "testbed-cpp",
+	"version": "0.0.1",
+	"private": false,
+	"description": "C++ Example",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "./out/extension.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run compile:ts && npm run build:cpp && npm run build:wasi",
+		"build:cpp": "../../node_modules/.bin/make-dir ./out && g++ hello.cpp -o ./out/hello",
+		"build:em": "../../node_modules/.bin/make-dir ./out && em++ hello.cpp -o ./out/hello-em.js",
+		"build:wasi": "../../node_modules/.bin/make-dir ./out && ~/bin/wasi-sdk/bin/clang++ hello.cpp -o ./out/hello.wasm",
+		"clean": "node ../../node_modules/rimraf/bin.js out",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-cpp.run",
+				"title": "Run C++ Program"
+			}
+		]
+	},
+	"activationEvents": [
+		"*"
+	],
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

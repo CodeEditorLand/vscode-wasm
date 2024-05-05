@@ -1,0 +1,55 @@
+{
+	"name": "wasm-wasi-c-example",
+	"version": "0.0.1",
+	"private": false,
+	"description": "C Example",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "./dist/desktop/extension.js",
+	"browser": "./dist/web/extension.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
+		"build:wasi": "clang hello.c -o ./hello.wasm",
+		"compile:ts": "tsc -p tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "WASM Example",
+				"command": "wasm-wasi-c-example.run",
+				"title": "Run C Hello World"
+			}
+		]
+	},
+	"activationEvents": [],
+	"dependencies": {},
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6"
+	},
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core"
+	],
+	"publishConfig": {
+		"access": "public"
+	}
+}
