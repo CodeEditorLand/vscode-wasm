@@ -9,7 +9,7 @@ import * as esbuild from 'esbuild'
  * @typedef {import('esbuild').BuildOptions} BuildOptions
  */
 
-/** @type BuildOptions */
+
 const sharedBrowserOptions = {
 	bundle: true,
 	external: ['vscode'],
@@ -18,7 +18,7 @@ const sharedBrowserOptions = {
 	sourcemap: true,
 };
 
-/** @type BuildOptions */
+
 const webOptions = {
 	entryPoints: ['extension.ts'],
 	outfile: 'dist/web/extension.js',
@@ -26,7 +26,7 @@ const webOptions = {
 	...sharedBrowserOptions,
 };
 
-/** @type BuildOptions */
+
 const webWorkerOptions = {
 	entryPoints: ['worker.ts'],
 	outfile: 'dist/web/worker.js',

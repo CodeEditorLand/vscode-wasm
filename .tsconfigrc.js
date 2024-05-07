@@ -28,7 +28,7 @@ function createPublishProjectDescription(projectDescription) {
 	return result
 }
 
-/** @type SharableOptions */
+
 const general = {
 	/**
 	 * Even under browser we compile to node and commonjs and
@@ -42,21 +42,21 @@ const general = {
 	}
 };
 
-/** @type SharableOptions */
+
 const testMixin = {
 	compilerOptions: {
 		types: ['mocha']
 	}
 };
 
-/** @type SharableOptions */
+
 const vscodeMixin = {
 	compilerOptions: {
 		types: ['vscode']
 	}
 };
 
-/** @type SharableOptions */
+
 const common = {
 	extends: [ general ],
 	compilerOptions: {
@@ -66,7 +66,7 @@ const common = {
 	include: ['.']
 };
 
-/** @type SharableOptions */
+
 const browser = {
 	extends: [ general ],
 	compilerOptions: {
@@ -77,7 +77,7 @@ const browser = {
 	include: ['.']
 };
 
-/** @type SharableOptions */
+
 const node = {
 	extends: [ general ],
 	compilerOptions: {
@@ -87,21 +87,21 @@ const node = {
 	include: ['.']
 };
 
-/** @type SharableOptions */
+
 const webworker = {
 	compilerOptions: {
 		lib: [ 'webworker' ]
 	}
 }
 
-/** @type SharableOptions */
+
 const referenced = {
 	compilerOptions: {
 		composite: true
 	},
 };
 
-/** @type SharableOptions */
+
 const testbedOptions = {
 	compilerOptions: {
 		rootDir: ".",
@@ -114,7 +114,7 @@ const testbedOptions = {
 	}
 };
 
-/** @type ProjectDescription */
+
 const sync_api_common = {
 	name: 'sync-api-common',
 	path: './sync-api-common',
@@ -158,7 +158,7 @@ const sync_api_common = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const sync_api_client = {
 	name: 'sync-api-client',
 	path: './sync-api-client',
@@ -175,7 +175,7 @@ const sync_api_client = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const sync_api_service = {
 	name: 'sync-api-service',
 	path: './sync-api-service',
@@ -192,7 +192,7 @@ const sync_api_service = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const sync_api_tests = {
 	name: 'sync-api-tests',
 	path: './sync-api-tests',
@@ -209,7 +209,7 @@ const sync_api_tests = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const wasm_component_model = {
 	name: 'wasm-component-model',
 	path: './wasm-component-model',
@@ -252,7 +252,7 @@ const wasm_component_model = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const wasi = {
 	name: 'wasi',
 	path: './wasi',
@@ -272,7 +272,7 @@ const wasi = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const wasm_wasi_core = {
 	name: 'wasm-wasi-core',
 	path: './wasm-wasi-core',
@@ -316,7 +316,7 @@ const wasm_wasi_core = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const wasm_wasi = {
 	name: 'wasm-wasi',
 	path: './wasm-wasi',
@@ -336,7 +336,7 @@ const wasm_wasi = {
 	]
 }
 
-/** @type ProjectDescription */
+
 const webshell = {
 	name: 'webshell',
 	path: './webshell',
@@ -365,7 +365,7 @@ const webshell = {
 	]
 };
 
-/** @type ProjectDescription */
+
 const tools = {
 	name: 'tools',
 	path: './tools',
@@ -379,7 +379,7 @@ const tools = {
 	}
 };
 
-/** @type ProjectDescription */
+
 const testbed_cpp = {
 	name: "cpp",
 	path: './testbeds/cpp',
@@ -389,7 +389,7 @@ const testbed_cpp = {
 	}
 }
 
-/** @type ProjectDescription */
+
 const testbed_python = {
 	name: "python",
 	path: './testbeds/python',
@@ -399,7 +399,7 @@ const testbed_python = {
 	}
 }
 
-/** @type ProjectDescription */
+
 const testbed_rust = {
 	name: "rust",
 	path: './testbeds/rust',
@@ -409,21 +409,21 @@ const testbed_rust = {
 	}
 }
 
-/** @type ProjectDescription */
+
 const testbeds = {
 	name: 'testbeds',
 	path: './testbeds',
 	references: [ testbed_cpp, testbed_python, testbed_rust ]
 }
 
-/** @type ProjectDescription */
+
 const root = {
 	name: 'root',
 	path: './',
 	references: [ sync_api_common, sync_api_client, sync_api_service, sync_api_tests, wasm_component_model, wasm_wasi_core, wasm_wasi, webshell, tools ]
 };
 
-/** @type CompilerOptions */
+
 const defaultCompilerOptions = {
 	strict: true,
 	noImplicitAny: true,
@@ -433,14 +433,14 @@ const defaultCompilerOptions = {
 	stripInternal: true
 };
 
-/** @type CompilerOptions */
+
 const compileCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 	sourceMap: true,
 	noUnusedLocals: true,
 	noUnusedParameters: true,
 });
 
-/** @type ProjectOptions */
+
 const compileProjectOptions = {
 	tags: ['compile'],
 	tsconfig: 'tsconfig.json',
@@ -448,7 +448,7 @@ const compileProjectOptions = {
 	compilerOptions: compileCompilerOptions
 };
 
-/** @type CompilerOptions */
+
 const watchCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 	sourceMap: true,
 	noUnusedLocals: false,
@@ -456,7 +456,7 @@ const watchCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 	assumeChangesOnlyAffectDirectDependencies: true,
 });
 
-/** @type ProjectOptions */
+
 const watchProjectOptions = {
 	tags: ['watch'],
 	tsconfig: 'tsconfig.watch.json',
@@ -464,14 +464,14 @@ const watchProjectOptions = {
 	compilerOptions: watchCompilerOptions
 };
 
-/** @type CompilerOptions */
+
 const publishCompilerOptions = CompilerOptions.assign(defaultCompilerOptions, {
 	sourceMap: false,
 	noUnusedLocals: true,
 	noUnusedParameters: true,
 });
 
-/** @type ProjectOptions */
+
 const publishProjectOptions = {
 	tags: ['publish'],
 	tsconfig: 'tsconfig.publish.json',
@@ -479,7 +479,7 @@ const publishProjectOptions = {
 	compilerOptions: publishCompilerOptions
 };
 
-/** @type Projects */
+
 const projects = [
 	[ sync_api_common, [ compileProjectOptions, watchProjectOptions ] ],
 	[ createPublishProjectDescription(sync_api_common), [ publishProjectOptions] ],
