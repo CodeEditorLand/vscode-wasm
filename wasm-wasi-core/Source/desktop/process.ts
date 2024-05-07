@@ -126,6 +126,7 @@ export class NodeWasiProcess extends WasiProcess {
 		for (const worker of this.threadWorkers.values()) {
 			await worker.terminate();
 		}
+
 		this.threadWorkers.clear();
 	}
 

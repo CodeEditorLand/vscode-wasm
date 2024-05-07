@@ -131,6 +131,7 @@ class Code {
 		for (const from of Array.from(starImports.keys()).reverse()) {
 			this.source.unshift(`import * as ${starImports.get(from)} from '${from}';`);
 		}
+
 		this.source.unshift(`import * as $wcm from '@vscode/wasm-component-model';`);
 		this.source.unshift(' *--------------------------------------------------------------------------------------------*/');
 		this.source.unshift(' *  Licensed under the MIT License. See License.txt in the project root for license information.');

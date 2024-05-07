@@ -195,6 +195,7 @@ export class ApiService {
 		if (useAsDefaultStdio === true) {
 			this.setStdio(deviceDriver.fileDescriptor, deviceDriver.fileDescriptor, deviceDriver.fileDescriptor);
 		}
+
 		this.byteSources.set(deviceDriver.uri.toString(true), deviceDriver);
 		this.byteSinks.set(deviceDriver.uri.toString(true), deviceDriver);
 	}

@@ -149,6 +149,7 @@ class CoerceValueIter implements Iterator<wasmType, wasmType> {
 		if (haveFlatTypes.length < wantFlatTypes.length) {
 			throw new ComponentModelError(`Invalid coercion: have ${haveFlatTypes.length} values, want ${wantFlatTypes.length} values`);
 		}
+
 		this.index = 0;
 	}
 
@@ -1390,6 +1391,7 @@ export class VariantType<T extends JVariantCase, I, V> implements ComponentModel
 			this.case2Index.set(name, i);
 			cases.push(VariantCase.create(i, name, type));
 		}
+
 		this.cases = cases;
 		this.ctor = ctor;
 
@@ -1445,6 +1447,7 @@ export class VariantType<T extends JVariantCase, I, V> implements ComponentModel
 		if (index === undefined) {
 			throw new ComponentModelError(`Variant case ${variantValue.tag} not found`);
 		}
+
 		this.discriminantType.store(memory, ptr, index, options);
 		ptr += this.discriminantType.size;
 		const c = this.cases[index];
@@ -1460,6 +1463,7 @@ export class VariantType<T extends JVariantCase, I, V> implements ComponentModel
 		if (index === undefined) {
 			throw new ComponentModelError(`Variant case ${variantValue.tag} not found`);
 		}
+
 		this.discriminantType.lowerFlat(result, memory, index, options);
 		const c = this.cases[index];
 		// First one is the discriminant type. So skip it.
@@ -1593,6 +1597,7 @@ export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 			const c = cases[i];
 			this.case2index.set(c, i);
 		}
+
 		this.kind = ComponentModelTypeKind.enum;
 		this.size = this.discriminantType.size;
 		this.alignment = this.discriminantType.alignment;
@@ -1615,6 +1620,7 @@ export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 		if (index === undefined) {
 			throw new ComponentModelError('Enumeration value not found');
 		}
+
 		this.discriminantType.store(memory, ptr, index, options);
 	}
 	public lowerFlat(result: wasmType[], memory: Memory, value: T, options: Options): void {
@@ -1622,6 +1628,7 @@ export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 		if (index === undefined) {
 			throw new ComponentModelError('Enumeration value not found');
 		}
+
 		this.discriminantType.lowerFlat(result, memory, index, options);
 	}
 
@@ -1888,6 +1895,7 @@ abstract class AbstractResourceCallable {
 			paramTypes.push(param[1]);
 			paramFlatTypes += param[1].flatTypes.length;
 		}
+
 		this.paramFlatTypes = paramFlatTypes;
 		this.paramTupleType = new TupleType(paramTypes);
 		this.returnFlatTypes = returnType !== undefined ? returnType.flatTypes.length : 0;

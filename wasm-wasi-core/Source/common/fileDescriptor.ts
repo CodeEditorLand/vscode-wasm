@@ -210,6 +210,7 @@ export class FileDescriptors implements FdProvider {
 		if (this.mode === 'running') {
 			throw new WasiError(Errno.inval);
 		}
+
 		this.mode = 'running';
 		this.counter = start;
 		this.firstReal = start;

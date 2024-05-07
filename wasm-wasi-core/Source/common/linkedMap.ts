@@ -116,6 +116,7 @@ export class LinkedMap<K, V> implements Map<K, V> {
 		if (!item) {
 			return undefined;
 		}
+
 		this._map.delete(key);
 		this.removeItem(item);
 		this._size--;
@@ -240,11 +241,13 @@ export class LinkedMap<K, V> implements Map<K, V> {
 			current = current.next;
 			currentSize--;
 		}
+
 		this._head = current;
 		this._size = currentSize;
 		if (current) {
 			current.previous = undefined;
 		}
+
 		this._state++;
 	}
 
@@ -258,6 +261,7 @@ export class LinkedMap<K, V> implements Map<K, V> {
 			item.next = this._head;
 			this._head.previous = item;
 		}
+
 		this._head = item;
 		this._state++;
 	}
@@ -272,6 +276,7 @@ export class LinkedMap<K, V> implements Map<K, V> {
 			item.previous = this._tail;
 			this._tail.next = item;
 		}
+
 		this._tail = item;
 		this._state++;
 	}

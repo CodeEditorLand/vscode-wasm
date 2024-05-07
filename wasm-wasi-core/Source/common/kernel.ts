@@ -75,6 +75,7 @@ class DeviceDriversImpl {
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
+
 		this.devices.delete(id);
 		this.devicesByUri.delete(driver.uri.toString(true));
 	}
@@ -85,6 +86,7 @@ class DeviceDriversImpl {
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
+
 		this.devices.delete(driver.id);
 		this.devicesByUri.delete(key);
 	}
@@ -160,6 +162,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 			this.devicesByUri.delete(driver.uri.toString(true));
 			return;
 		}
+
 		this.nextDrivers.remove(id);
 	}
 
@@ -171,6 +174,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 			this.devicesByUri.delete(key);
 			return;
 		}
+
 		this.nextDrivers.removeByUri(uri);
 	}
 

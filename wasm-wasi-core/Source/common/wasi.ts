@@ -86,6 +86,7 @@ class PointerArray {
 		if (index < 0 || index >= this.len) {
 			throw new WasiError(Errno.inval);
 		}
+
 		this.memory.setUint32(this.ptr + index * 4, value, true);
 	}
 

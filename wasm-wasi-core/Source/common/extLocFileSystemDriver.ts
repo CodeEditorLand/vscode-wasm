@@ -288,6 +288,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 		if (value < 0) {
 			throw new WasiError(Errno.inval);
 		}
+
 		this._cursor = value;
 	}
 }

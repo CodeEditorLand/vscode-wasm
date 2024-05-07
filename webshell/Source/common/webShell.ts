@@ -37,6 +37,7 @@ export class WebShell {
 		for (const contribution of this.contributions.getCommandMountPoints()) {
 			this.registerCommandContribution(contribution);
 		}
+
 		this.contributions.onChanged((event) => {
 			for (const add of event.commands.added) {
 				this.registerCommandContribution(add);

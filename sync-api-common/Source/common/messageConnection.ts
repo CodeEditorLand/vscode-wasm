@@ -142,6 +142,7 @@ export abstract class BaseMessageConnection<Requests extends _RequestType | unde
 		if (method === undefined || handler === undefined) {
 			return;
 		}
+
 		this.requestHandlers.set(method, handler);
 	}
 
@@ -155,6 +156,7 @@ export abstract class BaseMessageConnection<Requests extends _RequestType | unde
 		if (params !== undefined) {
 			notification.params = params;
 		}
+
 		this.postMessage(notification, transferList);
 	}
 
@@ -164,6 +166,7 @@ export abstract class BaseMessageConnection<Requests extends _RequestType | unde
 		if (method === undefined || handler === undefined) {
 			return;
 		}
+
 		this.notificationHandlers.set(method, handler);
 	}
 
