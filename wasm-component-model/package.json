@@ -1,26 +1,6 @@
 {
 	"name": "@vscode/wasm-component-model",
-	"version": "0.0.1",
-	"private": false,
 	"description": "A VS Code specific component model implementation",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./lib/desktop/main.js",
 	"browser": {
 		"./lib/desktop/main.js": "./lib/web/main.js"
@@ -46,11 +26,7 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/yargs": "17.0.32"
-	},
-	"publishConfig": {
-		"access": "public"
 	},
 	"enabledApiProposals": []
 }

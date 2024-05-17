@@ -1,26 +1,6 @@
 {
 	"name": "@vscode/wasm-wasi",
-	"version": "0.0.1",
-	"private": false,
 	"description": "An API facade for the WASM WASI CORE VS Code extension",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandWASM/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandWASM.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./lib/api/main.js",
 	"typings": "./lib/api/main.d.ts",
 	"bin": {
@@ -43,12 +23,8 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/semver": "7.5.8",
 		"@types/yargs": "17.0.32"
-	},
-	"publishConfig": {
-		"access": "public"
 	},
 	"enabledApiProposals": []
 }
