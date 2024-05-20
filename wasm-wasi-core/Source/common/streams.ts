@@ -131,7 +131,6 @@ export abstract class Stream {
 		for (const { promise } of this.awaitForFillLevel) {
 			promise.reject(error);
 		}
-
 		this.awaitForFillLevel = [];
 		for (const promise of this.awaitForData) {
 			promise.reject(error);
@@ -159,7 +158,6 @@ export abstract class Stream {
 		if (this.fillLevel > fillLevel) {
 			return;
 		}
-
 		this.awaitForFillLevel.shift();
 		promise.resolve();
 	}
@@ -234,7 +232,6 @@ export class ReadableStream extends Stream implements Readable {
 				this.emitAll();
 			}
 		}
-
 		this.mode = ReadableStreamMode.paused;
 	}
 

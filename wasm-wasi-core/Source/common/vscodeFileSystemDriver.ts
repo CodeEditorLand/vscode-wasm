@@ -76,7 +76,6 @@ class FileFileDescriptor extends BaseFileDescriptor {
 		if (value < 0) {
 			throw new WasiError(Errno.inval);
 		}
-
 		this._cursor = value;
 	}
 }
@@ -244,7 +243,6 @@ class FileSystem {
 		if (node === undefined) {
 			throw new WasiError(Errno.noent);
 		}
-
 		this.assertNodeKind(node, kind);
 		return node;
 	}
@@ -370,7 +368,6 @@ class FileSystem {
 		if (stat !== undefined) {
 			this.stats.set(node.inode, stat);
 		}
-
 		this.freeNode(node);
 	}
 

@@ -104,7 +104,6 @@ export abstract class WasiProcess {
 		} else {
 			this.options = Object.assign({}, opt, { trace: undefined });
 		}
-
 		this.threadIdCounter = 2;
 		this.localDeviceDrivers = WasiKernel.createLocalDeviceDrivers();
 		this.fileDescriptors = new FileDescriptors();
@@ -448,7 +447,6 @@ export abstract class WasiProcess {
 		if (this._stderr !== undefined) {
 			this.fileDescriptors.add(pipeDevice.createStdioFileDescriptor(2));
 		}
-
 		this.localDeviceDrivers.add(pipeDevice);
 	}
 }

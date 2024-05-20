@@ -197,7 +197,6 @@ export class FileNodeDescriptor<F extends FileNode> extends NodeDescriptor<F> {
 		if (value < 0) {
 			throw new WasiError(Errno.inval);
 		}
-
 		this._cursor = value;
 	}
 }

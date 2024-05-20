@@ -64,7 +64,6 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
-
 		this.content.splice(this.cursor, 1);
 		return true;
 	}
@@ -73,7 +72,6 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
-
 		this.cursor -= 1;
 		this.content.splice(this.cursor, 1);
 		return true;
@@ -84,7 +82,6 @@ class LineBuffer {
 		if (newValue < 0 || newValue > this.content.length) {
 			return false;
 		}
-
 		this.cursor = newValue;
 		return true;
 	}
@@ -93,7 +90,6 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
-
 		this.cursor = 0;
 		return true;
 	}
@@ -102,7 +98,6 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
-
 		this.cursor = this.content.length;
 		return true;
 	}
@@ -138,7 +133,6 @@ class LineBuffer {
 				index--;
 			}
 		}
-
 		this.cursor = index;
 		return true;
 	}
@@ -172,7 +166,6 @@ class LineBuffer {
 				index++;
 			}
 		}
-
 		this.cursor = index;
 		return true;
 	}
@@ -204,7 +197,6 @@ class CommandHistory {
 		if (this.history[this.history.length - 1] === this.history[this.history.length - 2]) {
 			this.history.pop();
 		}
-
 		this.history.push('');
 		this.current = this.history.length - 1;
 	}
