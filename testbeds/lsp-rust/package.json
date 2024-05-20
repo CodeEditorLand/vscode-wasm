@@ -1,17 +1,19 @@
 {
 	"name": "lsp-testbed",
 	"description": "LSP Testbed",
-	"main": "./client/out/extension.js",
-	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"prepublishOnly": "Build 'Source/**/*.ts'"
+	"version": "0.1.0",
+	"publisher": "vscode",
+	"engines": {
+		"vscode": "^1.78.0"
 	},
-	"contributes": {},
+	"main": "./client/out/extension.js",
 	"activationEvents": [
 		"onLanguage:bat"
 	],
-	"devDependencies": {
-		"@playform/build": "0.0.7"
+	"enabledApiProposals": [
+	],
+	"contributes": {
 	},
-	"enabledApiProposals": []
+	"scripts": {
+	}
 }

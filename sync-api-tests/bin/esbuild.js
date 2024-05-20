@@ -7,7 +7,7 @@
 const esbuild = require('esbuild');
 const path_browserify = require.resolve('path-browserify');
 
-
+/** @type esbuild.Plugin */
 const pathResolvePlugin = {
 	name: 'Path Resolve',
 	setup(build) {

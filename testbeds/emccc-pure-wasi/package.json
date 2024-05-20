@@ -1,12 +1,10 @@
 {
 	"name": "emccc-pure-wasi",
+	"version": "0.1.0",
 	"description": "",
+	"author": "MS",
+	"license": "MIT",
 	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"compile": "em++ hello.cpp -o ./out/hello-em.js",
-		"prepublishOnly": "Build 'Source/**/*.ts'"
-	},
-	"devDependencies": {
-		"@playform/build": "0.0.7"
-	}
+		"compile": "em++ hello.cpp -o ./out/hello-em.js"
+  	}
 }

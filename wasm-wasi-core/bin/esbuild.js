@@ -7,7 +7,7 @@ const esbuild = require('esbuild');
 const path = require('path');
 const browser_assert = path.resolve(__dirname, '../node_modules/assert/build/assert.js');
 
-
+/** @type esbuild.Plugin */
 const assertResolvePlugin = {
 	name: 'Assert Resolve',
 	setup(build) {
@@ -25,7 +25,7 @@ const assertResolvePlugin = {
  * @typedef {import('esbuild').BuildOptions} BuildOptions
  */
 
-
+/** @type BuildOptions */
 const sharedWebOptions = {
 	bundle: true,
 	external: ['vscode'],
@@ -34,7 +34,7 @@ const sharedWebOptions = {
 	sourcemap: true,
 };
 
-
+/** @type BuildOptions */
 const webOptions = {
 	entryPoints: ['src/web/extension.ts'],
 	outfile: 'dist/web/extension.js',
@@ -42,7 +42,7 @@ const webOptions = {
 	...sharedWebOptions,
 };
 
-
+/** @type BuildOptions */
 const webMainWorkerOptions = {
 	entryPoints: ['src/web/mainWorker.ts'],
 	outfile: 'dist/web/mainWorker.js',
@@ -50,7 +50,7 @@ const webMainWorkerOptions = {
 	...sharedWebOptions,
 };
 
-
+/** @type BuildOptions */
 const webThreadWorkerOptions = {
 	entryPoints: ['src/web/threadWorker.ts'],
 	outfile: 'dist/web/threadWorker.js',
@@ -58,7 +58,7 @@ const webThreadWorkerOptions = {
 	...sharedWebOptions,
 };
 
-
+/** @type BuildOptions */
 const webTestsIndexOptions = {
 	entryPoints: ['src/web/test/index.ts'],
 	outfile: 'dist/web/test/index.js',
@@ -70,7 +70,7 @@ const webTestsIndexOptions = {
 	...sharedWebOptions
 }
 
-
+/** @type BuildOptions */
 const webTestWorkerOptions = {
 	entryPoints: ['src/web/test/testWorker.ts'],
 	outfile: 'dist/web/test/testWorker.js',
@@ -82,7 +82,7 @@ const webTestWorkerOptions = {
 	...sharedWebOptions
 }
 
-
+/** @type BuildOptions */
 const sharedDesktopOptions = {
 	bundle: true,
 	external: ['vscode'],
@@ -91,7 +91,7 @@ const sharedDesktopOptions = {
 	sourcemap: true,
 };
 
-
+/** @type BuildOptions */
 const desktopOptions = {
 	entryPoints: ['src/desktop/extension.ts'],
 	outfile: 'dist/desktop/extension.js',
@@ -99,7 +99,7 @@ const desktopOptions = {
 	...sharedDesktopOptions,
 };
 
-
+/** @type BuildOptions */
 const desktopMainWorkerOptions = {
 	entryPoints: ['src/desktop/mainWorker.ts'],
 	outfile: 'dist/desktop/mainWorker.js',
@@ -107,7 +107,7 @@ const desktopMainWorkerOptions = {
 	...sharedDesktopOptions,
 };
 
-
+/** @type BuildOptions */
 const desktopThreadWorkerOptions = {
 	entryPoints: ['src/desktop/threadWorker.ts'],
 	outfile: 'dist/desktop/threadWorker.js',

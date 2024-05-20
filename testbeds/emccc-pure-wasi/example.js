@@ -235,9 +235,9 @@ if (ENVIRONMENT_IS_SHELL) {
 
   if (typeof print != 'undefined') {
     // Prefer to use print/printErr where they exist, as they usually work better.
-    if (typeof console == 'undefined') console = ({});
-    console.log =  (print);
-    console.warn = console.error =  (typeof printErr != 'undefined' ? printErr : print);
+    if (typeof console == 'undefined') console = /** @type{!Console} */({});
+    console.log = /** @type{!function(this:Console, ...*): undefined} */ (print);
+    console.warn = console.error = /** @type{!function(this:Console, ...*): undefined} */ (typeof printErr != 'undefined' ? printErr : print);
   }
 
 } else
@@ -285,7 +285,7 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
         xhr.open('GET', url, false);
         xhr.responseType = 'arraybuffer';
         xhr.send(null);
-        return new Uint8Array((xhr.response));
+        return new Uint8Array(/** @type{!ArrayBuffer} */(xhr.response));
     };
   }
 
@@ -520,7 +520,7 @@ var ABORT = false;
 // but only when noExitRuntime is false.
 var EXITSTATUS;
 
-
+/** @type {function(*, string=)} */
 function assert(condition, text) {
   if (!condition) {
     abort('Assertion failed' + (text ? ': ' + text : ''));
@@ -692,23 +692,23 @@ function lengthBytesUTF8(str) {
 // Memory management
 
 var HEAP,
-
+/** @type {!ArrayBuffer} */
   buffer,
-
+/** @type {!Int8Array} */
   HEAP8,
-
+/** @type {!Uint8Array} */
   HEAPU8,
-
+/** @type {!Int16Array} */
   HEAP16,
-
+/** @type {!Uint16Array} */
   HEAPU16,
-
+/** @type {!Int32Array} */
   HEAP32,
-
+/** @type {!Uint32Array} */
   HEAPU32,
-
+/** @type {!Float32Array} */
   HEAPF32,
-
+/** @type {!Float64Array} */
   HEAPF64;
 
 if (ENVIRONMENT_IS_PTHREAD) {
@@ -1008,7 +1008,7 @@ function removeRunDependency(id) {
   }
 }
 
-
+/** @param {string|number=} what */
 function abort(what) {
   // When running on a pthread, none of the incoming parameters on the module
   // object are present.  The `onAbort` handler only exists on the main thread
@@ -1045,7 +1045,7 @@ function abort(what) {
   // defintion for WebAssembly.RuntimeError claims it takes no arguments even
   // though it can.
   // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure gets fixed.
-  
+  /** @suppress {checkTypes} */
   var e = new WebAssembly.RuntimeError(what);
 
   // Throw the error whether or not MODULARIZE is set because abort is used
@@ -1098,7 +1098,7 @@ function isFileURI(filename) {
 }
 
 // end include: URIUtils.js
-
+/** @param {boolean=} fixedasm */
 function createExportWrapper(name, fixedasm) {
   return function() {
     var displayName = name;
@@ -1158,7 +1158,7 @@ function getBinaryPromise() {
       if (readAsync) {
         // fetch is not available or url is file => try XHR (readAsync uses XHR internally)
         return new Promise(function(resolve, reject) {
-          readAsync(wasmBinaryFile, function(response) { resolve(new Uint8Array((response))) }, reject)
+          readAsync(wasmBinaryFile, function(response) { resolve(new Uint8Array(/** @type{!ArrayBuffer} */(response))) }, reject)
         });
       }
     }
@@ -1179,7 +1179,7 @@ function createWasm() {
   // Load the wasm module and create an instance of using native support in the JS engine.
   // handle a generated wasm instance, receiving its exports and
   // performing other necessary setup
-  
+  /** @param {WebAssembly.Module=} module*/
   function receiveInstance(instance, module) {
     var exports = instance.exports;
 
@@ -1257,7 +1257,7 @@ function createWasm() {
         // instantiateStreaming only allows Promise<Repsponse> rather than
         // an actual Response.
         // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure is fixed.
-        
+        /** @suppress {checkTypes} */
         var result = WebAssembly.instantiateStreaming(response, info);
 
         return result.then(
@@ -1308,7 +1308,7 @@ var ASM_CONSTS = {
 
 
 
-  
+  /** @constructor */
   function ExitStatus(status) {
       this.name = 'ExitStatus';
       this.message = 'Program terminated with exit(' + status + ')';
@@ -1407,7 +1407,7 @@ var ASM_CONSTS = {
 
   }
 
-  
+  /** @param {boolean|number=} implicit */
   function exitJS(status, implicit) {
       EXITSTATUS = status;
 
@@ -1972,7 +1972,7 @@ var ASM_CONSTS = {
       HEAPU8.copyWithin(dest, src, src + num);
     }
 
-  
+  /** @type{function(number, (number|boolean), ...(number|boolean))} */
   function _emscripten_proxy_to_main_thread_js(index, sync) {
       // Additional arguments are passed after those two, which are the actual
       // function arguments.
@@ -2209,7 +2209,7 @@ var ASM_CONSTS = {
       // instead of just storing 'func' directly into wasmTableMirror
       wasmTableMirror[idx] = wasmTable.get(idx);
     }
-  
+  /** @param {string=} sig */
   function addFunction(func, sig) {
       assert(typeof func != 'undefined');
 
@@ -2282,7 +2282,7 @@ var ASM_CONSTS = {
       }
     }
 
-  
+  /** @param {boolean=} dontAddNull */
   function writeAsciiToMemory(str, buffer, dontAddNull) {
       for (var i = 0; i < str.length; ++i) {
         assert(str.charCodeAt(i) === (str.charCodeAt(i) & 0xff));
@@ -2429,11 +2429,11 @@ var ASM_CONSTS = {
       return ret;
     }
 
-  
+  /** @deprecated @param {boolean=} dontAddNull */
   function writeStringToMemory(string, buffer, dontAddNull) {
       warnOnce('writeStringToMemory is deprecated and should not be called! Use stringToUTF8() instead!');
 
-      var  end;
+      var /** @type {number} */ lastChar, /** @type {number} */ end;
       if (dontAddNull) {
         // stringToUTF8Array always appends null. If we don't want to do that, remember the
         // character that existed at the location where the null will be placed, and restore
@@ -2447,7 +2447,7 @@ var ASM_CONSTS = {
 
 
 
-  
+  /** @type {function(string, boolean=, number=)} */
   function intArrayFromString(stringy, dontAddNull, length) {
     var len = length > 0 ? length : lengthBytesUTF8(stringy)+1;
     var u8array = new Array(len);
@@ -2583,92 +2583,92 @@ var asmLibraryArg = {
   "memory": wasmMemory
 };
 var asm = createWasm();
-
+/** @type {function(...*):?} */
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__wasm_call_ctors");
 
-
+/** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
 
-
+/** @type {function(...*):?} */
 var __emscripten_tls_init = Module["__emscripten_tls_init"] = createExportWrapper("_emscripten_tls_init");
 
-
+/** @type {function(...*):?} */
 var _pthread_self = Module["_pthread_self"] = createExportWrapper("pthread_self");
 
-
+/** @type {function(...*):?} */
 var ___errno_location = Module["___errno_location"] = createExportWrapper("__errno_location");
 
-
+/** @type {function(...*):?} */
 var __emscripten_thread_init = Module["__emscripten_thread_init"] = createExportWrapper("_emscripten_thread_init");
 
-
+/** @type {function(...*):?} */
 var __emscripten_thread_crashed = Module["__emscripten_thread_crashed"] = createExportWrapper("_emscripten_thread_crashed");
 
-
+/** @type {function(...*):?} */
 var _fflush = Module["_fflush"] = createExportWrapper("fflush");
 
-
+/** @type {function(...*):?} */
 var _emscripten_main_browser_thread_id = Module["_emscripten_main_browser_thread_id"] = createExportWrapper("emscripten_main_browser_thread_id");
 
-
+/** @type {function(...*):?} */
 var _emscripten_main_thread_process_queued_calls = Module["_emscripten_main_thread_process_queued_calls"] = createExportWrapper("emscripten_main_thread_process_queued_calls");
 
-
+/** @type {function(...*):?} */
 var _emscripten_run_in_main_runtime_thread_js = Module["_emscripten_run_in_main_runtime_thread_js"] = createExportWrapper("emscripten_run_in_main_runtime_thread_js");
 
-
+/** @type {function(...*):?} */
 var _emscripten_dispatch_to_thread_ = Module["_emscripten_dispatch_to_thread_"] = createExportWrapper("emscripten_dispatch_to_thread_");
 
-
+/** @type {function(...*):?} */
 var __emscripten_proxy_execute_task_queue = Module["__emscripten_proxy_execute_task_queue"] = createExportWrapper("_emscripten_proxy_execute_task_queue");
 
-
+/** @type {function(...*):?} */
 var __emscripten_thread_free_data = Module["__emscripten_thread_free_data"] = createExportWrapper("_emscripten_thread_free_data");
 
-
+/** @type {function(...*):?} */
 var __emscripten_thread_exit = Module["__emscripten_thread_exit"] = createExportWrapper("_emscripten_thread_exit");
 
-
+/** @type {function(...*):?} */
 var _malloc = Module["_malloc"] = createExportWrapper("malloc");
 
-
+/** @type {function(...*):?} */
 var _free = Module["_free"] = createExportWrapper("free");
 
-
+/** @type {function(...*):?} */
 var _emscripten_stack_get_base = Module["_emscripten_stack_get_base"] = function() {
   return (_emscripten_stack_get_base = Module["_emscripten_stack_get_base"] = Module["asm"]["emscripten_stack_get_base"]).apply(null, arguments);
 };
 
-
+/** @type {function(...*):?} */
 var _emscripten_stack_get_end = Module["_emscripten_stack_get_end"] = function() {
   return (_emscripten_stack_get_end = Module["_emscripten_stack_get_end"] = Module["asm"]["emscripten_stack_get_end"]).apply(null, arguments);
 };
 
-
+/** @type {function(...*):?} */
 var _emscripten_stack_init = Module["_emscripten_stack_init"] = function() {
   return (_emscripten_stack_init = Module["_emscripten_stack_init"] = Module["asm"]["emscripten_stack_init"]).apply(null, arguments);
 };
 
-
+/** @type {function(...*):?} */
 var _emscripten_stack_set_limits = Module["_emscripten_stack_set_limits"] = function() {
   return (_emscripten_stack_set_limits = Module["_emscripten_stack_set_limits"] = Module["asm"]["emscripten_stack_set_limits"]).apply(null, arguments);
 };
 
-
+/** @type {function(...*):?} */
 var _emscripten_stack_get_free = Module["_emscripten_stack_get_free"] = function() {
   return (_emscripten_stack_get_free = Module["_emscripten_stack_get_free"] = Module["asm"]["emscripten_stack_get_free"]).apply(null, arguments);
 };
 
-
+/** @type {function(...*):?} */
 var stackSave = Module["stackSave"] = createExportWrapper("stackSave");
 
-
+/** @type {function(...*):?} */
 var stackRestore = Module["stackRestore"] = createExportWrapper("stackRestore");
 
-
+/** @type {function(...*):?} */
 var stackAlloc = Module["stackAlloc"] = createExportWrapper("stackAlloc");
 
-
+/** @type {function(...*):?} */
 var dynCall_jiji = Module["dynCall_jiji"] = createExportWrapper("dynCall_jiji");
 
 
@@ -3094,7 +3094,7 @@ function stackCheckInit() {
   writeStackCookie();
 }
 
-
+/** @type {function(Array=)} */
 function run(args) {
   args = args || arguments_;
 
