@@ -13,10 +13,10 @@
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
 	"dependencies": {
-		"uuid": "^9.0.1"
+		"uuid": "9.0.1"
 	},
 	"devDependencies": {
-		"@types/uuid": "^9.0.7"
+		"@types/uuid": "9.0.7"
 	},
 	"enabledApiProposals": [
 		"fsChunks"
