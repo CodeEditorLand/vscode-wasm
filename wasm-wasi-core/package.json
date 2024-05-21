@@ -19,8 +19,8 @@
 		"uuid": "9.0.1"
 	},
 	"devDependencies": {
-		"@types/assert": "1.5.9",
-		"@types/uuid": "9.0.7",
+		"@types/assert": "1.5.10",
+		"@types/uuid": "9.0.8",
 		"assert": "2.1.0",
 		"find-process": "1.4.7"
 	}

@@ -15,17 +15,17 @@
 		"validate:versions": "node ./tools/lib/validate-versions.js"
 	},
 	"devDependencies": {
-		"@types/assert": "1.5.9",
+		"@types/assert": "1.5.10",
 		"@types/glob": "8.1.0",
-		"@types/node": "18.14.6",
+		"@types/node": "20.12.12",
 		"@types/path-browserify": "1.0.2",
-		"esbuild": "0.19.5",
-		"glob": "10.3.10",
+		"esbuild": "0.21.3",
+		"glob": "10.3.15",
 		"http-server": "14.1.1",
-		"make-dir-cli": "3.1.0",
+		"make-dir-cli": "4.0.0",
 		"path-browserify": "1.0.1",
-		"rimraf": "5.0.5",
-		"serve": "14.2.1",
+		"rimraf": "5.0.7",
+		"serve": "14.2.3",
 		"shelljs": "0.8.5",
 		"shx": "0.3.4"
 	}

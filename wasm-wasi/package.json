@@ -17,12 +17,12 @@
 		"update:version": "node ./bin/updateVersion.mjs"
 	},
 	"dependencies": {
-		"semver": "7.5.4",
+		"semver": "7.6.2",
 		"yargs": "17.7.2"
 	},
 	"devDependencies": {
-		"@types/semver": "7.5.5",
-		"@types/yargs": "17.0.31"
+		"@types/semver": "7.5.8",
+		"@types/yargs": "17.0.32"
 	},
 	"enabledApiProposals": []
 }
