@@ -20,7 +20,7 @@
 		"@types/node": "20.12.12",
 		"@types/path-browserify": "1.0.2",
 		"esbuild": "0.21.3",
-		"glob": "10.3.15",
+		"glob": "10.3.16",
 		"http-server": "14.1.1",
 		"make-dir-cli": "4.0.0",
 		"path-browserify": "1.0.1",
