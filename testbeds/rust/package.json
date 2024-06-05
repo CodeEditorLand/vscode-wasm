@@ -1,31 +1,23 @@
 {
 	"name": "testbed-rust",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.0.1",
 	"description": "Rust Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
-	},
 	"main": "./out/extension.js",
-	"activationEvents": [
-		"*"
-	],
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasi",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "testbed-rust.run",
 				"category": "wasm",
+				"command": "testbed-rust.run",
 				"title": "Run Rust Program"
 			}
 		]
 	},
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"build:rust": "cargo build --target wasm32-wasi"
-	}
+	"activationEvents": [
+		"*"
+	]
 }
