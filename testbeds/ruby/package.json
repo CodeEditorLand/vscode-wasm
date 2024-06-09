@@ -1,34 +1,24 @@
 {
-	"name": "testbed-ruby",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.0.1",
-	"description": "Ruby Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
+	"activationEvents": [],
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-ruby.runFile",
+				"enablement": "editorLangId == ruby",
+				"title": "Run Ruby File"
+			}
+		]
 	},
-	"main": "./out/extension.js",
-	"activationEvents": [
-	],
+	"description": "Ruby Example",
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "testbed-ruby.runFile",
-				"category": "wasm",
-				"title": "Run Ruby File",
-				"enablement": "editorLangId == ruby"
-			}
-		]
-	},
+	"main": "./out/extension.js",
+	"name": "testbed-ruby",
 	"scripts": {
 		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json"
 	}
 }
