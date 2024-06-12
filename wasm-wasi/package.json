@@ -3,13 +3,13 @@
 		"dir-dump": "./bin/dir-dump"
 	},
 	"dependencies": {
-		"semver": "^7.6.2",
-		"yargs": "^17.7.2"
+		"semver": "7.6.2",
+		"yargs": "17.7.2"
 	},
 	"description": "An API facade for the WASM WASI CORE VS Code extension",
 	"devDependencies": {
-		"@types/semver": "^7.5.8",
-		"@types/yargs": "^17.0.32"
+		"@types/semver": "7.5.8",
+		"@types/yargs": "17.0.32"
 	},
 	"enabledApiProposals": [],
 	"main": "./lib/api/main.js",

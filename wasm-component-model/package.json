@@ -6,11 +6,11 @@
 		"./lib/desktop/main.js": "./lib/web/main.js"
 	},
 	"dependencies": {
-		"yargs": "^17.7.2"
+		"yargs": "17.7.2"
 	},
 	"description": "A VS Code specific component model implementation",
 	"devDependencies": {
-		"@types/yargs": "^17.0.32"
+		"@types/yargs": "17.0.32"
 	},
 	"enabledApiProposals": [],
 	"main": "./lib/desktop/main.js",

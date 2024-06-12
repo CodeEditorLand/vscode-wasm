@@ -2,14 +2,14 @@
 	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
 	"dependencies": {
-		"uuid": "^10.0.0"
+		"uuid": "10.0.0"
 	},
 	"description": "Experimental support to execute WebAssemblies on top of the VS Code API.",
 	"devDependencies": {
-		"@types/assert": "^1.5.10",
-		"@types/uuid": "^9.0.8",
-		"assert": "^2.1.0",
-		"find-process": "^1.4.7"
+		"@types/assert": "1.5.10",
+		"@types/uuid": "9.0.8",
+		"assert": "2.1.0",
+		"find-process": "1.4.7"
 	},
 	"displayName": "Experimental - WebAssembly Execution Engine",
 	"main": "./dist/desktop/extension.js",

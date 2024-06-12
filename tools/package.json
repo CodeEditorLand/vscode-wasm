@@ -1,10 +1,10 @@
 {
 	"dependencies": {
-		"yargs": "^17.7.2"
+		"yargs": "17.7.2"
 	},
 	"description": "Tools for this project",
 	"devDependencies": {
-		"peggy": "^4.0.2"
+		"peggy": "4.0.2"
 	},
 	"name": "@vscode/wasm-tools",
 	"scripts": {

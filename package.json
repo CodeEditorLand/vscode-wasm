@@ -1,19 +1,19 @@
 {
 	"description": "A WASI implementation that uses VS Code's extension host as the implementing API",
 	"devDependencies": {
-		"@types/assert": "^1.5.10",
-		"@types/glob": "^8.1.0",
-		"@types/node": "^20.14.2",
-		"@types/path-browserify": "^1.0.2",
-		"esbuild": "^0.21.5",
-		"glob": "^10.4.1",
-		"http-server": "^14.1.1",
-		"make-dir-cli": "^4.0.0",
-		"path-browserify": "^1.0.1",
-		"rimraf": "^5.0.7",
-		"serve": "^14.2.3",
-		"shelljs": "^0.8.5",
-		"shx": "^0.3.4"
+		"@types/assert": "1.5.10",
+		"@types/glob": "8.1.0",
+		"@types/node": "20.14.2",
+		"@types/path-browserify": "1.0.2",
+		"esbuild": "0.21.5",
+		"glob": "10.4.1",
+		"http-server": "14.1.1",
+		"make-dir-cli": "4.0.0",
+		"path-browserify": "1.0.1",
+		"rimraf": "5.0.7",
+		"serve": "14.2.3",
+		"shelljs": "0.8.5",
+		"shx": "0.3.4"
 	},
 	"name": "vscode-wasi",
 	"scripts": {
