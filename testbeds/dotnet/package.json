@@ -1,33 +1,23 @@
 {
 	"name": "testbed-ruby",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.0.1",
 	"description": "Ruby Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "^1.67.0"
-	},
 	"main": "./out/extension.js",
-	"activationEvents": [
-	],
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core",
-		"ms-vscode.webshell"
-	],
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "testbed-dotnet.runFile",
 				"category": "wasm",
+				"command": "testbed-dotnet.runFile",
 				"title": "Run Dotnet File"
 			}
 		]
 	},
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	}
+	"activationEvents": [],
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core",
+		"ms-vscode.webshell"
+	]
 }

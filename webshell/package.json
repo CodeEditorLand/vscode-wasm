@@ -1,57 +1,28 @@
 {
 	"name": "webshell",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.13.0",
 	"displayName": "Experimental - A shell for VS Code Web",
 	"description": "A shell for VS Code for the Web - allows executing commands like ls, cat, ...",
-	"author": "MS",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
-	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
-	},
-	"homepage": "https://github.com/microsoft/vscode-wasm/blob/main/webshell/README.md",
-	"keywords": [
-		"vscode",
-		"wasm",
-		"wasi",
-		"shell"
-	],
-	"engines": {
-		"vscode": "^1.78.0"
-	},
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core"
-	],
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
-	"activationEvents": [],
+	"scripts": {
+		"build": "npm run compile",
+		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "ms-vscode.webshell.create",
 				"category": "Terminal",
+				"command": "ms-vscode.webshell.create",
 				"title": "Create New Web Shell"
 			}
 		]
 	},
-	"dependencies": {
-		"@vscode/wasm-wasi": "0.13.0-pre.1"
-	},
-	"devDependencies": {
-		"@types/vscode": "1.78.0"
-	},
-	"scripts": {
-		"vscode:prepublish": "git clean -xfd . && npm install && npm run compile && npm run lint && npm run esbuild",
-		"build": "npm run compile",
-		"compile": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
-		"clean": "node ../node_modules/rimraf/bin.js lib && node ../node_modules/rimraf/bin.js dist",
-		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
-		"esbuild": "node ./bin/esbuild.js"
-	}
+	"activationEvents": [],
+	"dependencies": {},
+	"devDependencies": {},
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core"
+	]
 }
