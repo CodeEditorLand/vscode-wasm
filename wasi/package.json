@@ -5,7 +5,7 @@
 	"description": "WASI preview 2 interfaces for VS Code",
 	"engines": {
 		"node": ">=18.15.0",
-		"vscode": "^1.78.0"
+		"vscode": "1.78.0"
 	},
 	"main": "./lib/main.js",
 	"typings": "./lib/main.d.ts",
