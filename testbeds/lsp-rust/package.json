@@ -1,21 +1,30 @@
 {
 	"name": "lsp-testbed",
 	"description": "LSP Testbed",
-	"main": "./client/out/extension.js",
-	"scripts": {
-		"build": "cd client && npm run compile && cd ../server && npm run build && cd .."
+	"version": "0.1.0",
+	"publisher": "vscode",
+	"engines": {
+		"vscode": "^1.78.0"
 	},
+	"main": "./client/out/extension.js",
+	"activationEvents": [
+		"onLanguage:bat"
+	],
+	"enabledApiProposals": [
+	],
 	"contributes": {
 		"commands": [
 			{
-				"category": "Samples",
 				"command": "vscode-samples.wasm-language-server.countFiles",
+				"category": "Samples",
 				"title": "Count Files"
 			}
 		]
 	},
-	"activationEvents": [
-		"onLanguage:bat"
-	],
-	"enabledApiProposals": []
+	"scripts": {
+		"postinstall": "cd client && npm install && cd ..",
+		"vscode:prepublish": "npm run build",
+		"build": "cd client && npm run compile && cd ../server && npm run build && cd ..",
+		"lint": "cd client && npm run lint && cd .."
+	}
 }
