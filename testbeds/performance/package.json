@@ -1,6 +1,11 @@
 {
-	"name": "performance",
-	"description": "",
-	"main": "index.js",
-	"scripts": {}
+  "name": "performance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "MS",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc -p tsconfig.json -w"
+  }
 }
