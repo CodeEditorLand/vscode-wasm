@@ -1,24 +1,34 @@
 {
 	"name": "testbed-python",
+	"private": "true",
+	"publisher": "ms-vscode",
+	"version": "0.0.1",
 	"description": "Python Example",
+	"author": "MS",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.67.0"
+	},
 	"main": "./out/extension.js",
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
-	},
+	"activationEvents": [
+		"onCommand:testbed-python.webshell.python"
+	],
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core",
+		"ms-vscode.webshell"
+	],
 	"contributes": {
 		"commands": [
 			{
-				"category": "wasm",
 				"command": "testbed-python.runFile",
-				"enablement": "editorLangId == python",
-				"title": "Run Python File"
+				"category": "wasm",
+				"title": "Run Python File",
+				"enablement": "editorLangId == python"
 			},
 			{
-				"category": "wasm",
 				"command": "testbed-python.runInteractive",
+				"category": "wasm",
 				"title": "Run Interactive Python Shell"
 			}
 		],
@@ -26,13 +36,13 @@
 			"editor/title/run": [
 				{
 					"command": "testbed-python.runFile",
-					"group": "navigation@1",
-					"when": "resourceLangId == python"
+					"when": "resourceLangId == python",
+					"group": "navigation@1"
 				},
 				{
 					"command": "testbed-python.runInteractive",
-					"group": "navigation@2",
-					"when": "resourceLangId == python"
+					"when": "resourceLangId == python",
+					"group": "navigation@2"
 				}
 			]
 		},
@@ -42,16 +52,15 @@
 				"path": "wasm/lib"
 			},
 			{
-				"command": "testbed-python.webshell.python",
-				"mountPoint": "/usr/bin/python"
+				"mountPoint": "/usr/bin/python",
+				"command": "testbed-python.webshell.python"
 			}
 		]
 	},
-	"activationEvents": [
-		"onCommand:testbed-python.webshell.python"
-	],
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core",
-		"ms-vscode.webshell"
-	]
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
+		"esbuild": "node ./bin/esbuild.js"
+	}
 }
