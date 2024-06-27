@@ -57,7 +57,7 @@ jobs:
                 node-version: [18, 19, 20]
 
         steps:
-            - uses: actions/checkout@v4.1.6
+            - uses: actions/checkout@v4.1.7
 
             - uses: pnpm/action-setup@v4.0.0
               with:
@@ -90,6 +90,23 @@ jobs:
               with:
                   name: .-Node-${{ matrix.node-version }}-Target
                   path: ./Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./rust-api/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./rust-api
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-rust-api-Node-${{ matrix.node-version }}-Target
+                  path: ./rust-api/Target
 
             - uses: actions/setup-node@v4.0.2
               with:
@@ -141,6 +158,91 @@ jobs:
 
             - run: pnpm install
               working-directory: ./sync-api-tests
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/component-model-async/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/component-model-async
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-testbeds-component-model-async-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/component-model-async/Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/component-model-performance/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/component-model-performance
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-testbeds-component-model-performance-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/component-model-performance/Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/component-model-vscode-2/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/component-model-vscode-2
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-testbeds-component-model-vscode-2-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/component-model-vscode-2/Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/component-model-vscode/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/component-model-vscode
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-testbeds-component-model-vscode-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/component-model-vscode/Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./testbeds/component-model/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./testbeds/component-model
+
+            - run: pnpm run build
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-testbeds-component-model-Node-${{ matrix.node-version }}-Target
+                  path: ./testbeds/component-model/Target
 
             - run: pnpm run build
               working-directory: .
@@ -323,6 +425,15 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "pnpm"
+                  cache-dependency-path: ./wasm-kit/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./wasm-kit
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
                   cache-dependency-path: ./wasm-wasi-core/pnpm-lock.yaml
 
             - run: pnpm install
@@ -335,6 +446,23 @@ jobs:
               with:
                   name: .-wasm-wasi-core-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi-core/Target
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+                  cache-dependency-path: ./wasm-wasi-lsp/pnpm-lock.yaml
+
+            - run: pnpm install
+              working-directory: ./wasm-wasi-lsp
+
+            - run: pnpm run prepublishOnly
+              working-directory: .
+
+            - uses: actions/upload-artifact@v4.3.3
+              with:
+                  name: .-wasm-wasi-lsp-Node-${{ matrix.node-version }}-Target
+                  path: ./wasm-wasi-lsp/Target
 
             - uses: actions/setup-node@v4.0.2
               with:

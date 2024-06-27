@@ -24,7 +24,7 @@ jobs:
             id-token: write
 
         steps:
-            - uses: actions/checkout@v4.1.6
+            - uses: actions/checkout@v4.1.7
 
             - uses: actions/setup-node@v4.0.2
               with:
@@ -36,6 +36,14 @@ jobs:
             - name: Publish .
               continue-on-error: true
               working-directory: .
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./rust-api
+              continue-on-error: true
+              working-directory: ./rust-api
               run: |
                   npm publish --legacy-peer-deps --provenance --ignore-scripts
               env:
@@ -60,6 +68,46 @@ jobs:
             - name: Publish ./sync-api-service
               continue-on-error: true
               working-directory: ./sync-api-service
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/component-model-async
+              continue-on-error: true
+              working-directory: ./testbeds/component-model-async
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/component-model-performance
+              continue-on-error: true
+              working-directory: ./testbeds/component-model-performance
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/component-model-vscode-2
+              continue-on-error: true
+              working-directory: ./testbeds/component-model-vscode-2
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/component-model-vscode
+              continue-on-error: true
+              working-directory: ./testbeds/component-model-vscode
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/component-model
+              continue-on-error: true
+              working-directory: ./testbeds/component-model
               run: |
                   npm publish --legacy-peer-deps --provenance --ignore-scripts
               env:
@@ -164,6 +212,14 @@ jobs:
             - name: Publish ./wasm-wasi-core
               continue-on-error: true
               working-directory: ./wasm-wasi-core
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasm-wasi-lsp
+              continue-on-error: true
+              working-directory: ./wasm-wasi-lsp
               run: |
                   npm publish --legacy-peer-deps --provenance --ignore-scripts
               env:

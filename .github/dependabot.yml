@@ -14,6 +14,18 @@ updates:
       versioning-strategy: increase
 
     - package-ecosystem: "npm"
+      directory: "/rust-api"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/rust-api/rust"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
       directory: "/sync-api-client"
       schedule:
           interval: "daily"
@@ -33,6 +45,66 @@ updates:
 
     - package-ecosystem: "npm"
       directory: "/sync-api-tests"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/testbeds/component-model-async"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/component-model-async"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/testbeds/component-model-performance"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/component-model-performance"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/testbeds/component-model-vscode-2"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/component-model-vscode-2"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/testbeds/component-model-vscode"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/component-model-vscode"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "cargo"
+      directory: "/testbeds/component-model"
+      schedule:
+          interval: "daily"
+      versioning-strategy: lockfile-only
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/component-model"
       schedule:
           interval: "daily"
       versioning-strategy: increase
@@ -86,7 +158,19 @@ updates:
       versioning-strategy: increase
 
     - package-ecosystem: "npm"
+      directory: "/testbeds/malloc"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "npm"
       directory: "/testbeds"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "npm"
+      directory: "/testbeds/performance"
       schedule:
           interval: "daily"
       versioning-strategy: increase
@@ -158,7 +242,19 @@ updates:
       versioning-strategy: increase
 
     - package-ecosystem: "npm"
+      directory: "/wasm-kit"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "npm"
       directory: "/wasm-wasi-core"
+      schedule:
+          interval: "daily"
+      versioning-strategy: increase
+
+    - package-ecosystem: "npm"
+      directory: "/wasm-wasi-lsp"
       schedule:
           interval: "daily"
       versioning-strategy: increase
