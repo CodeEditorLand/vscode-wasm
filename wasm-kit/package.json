@@ -25,9 +25,9 @@
 		"test:desktop": "mocha"
 	},
 	"dependencies": {
-		"uuid": "^10.0.0"
+		"uuid": "10.0.0"
 	},
 	"devDependencies": {
-		"@types/uuid": "^10.0.0"
+		"@types/uuid": "10.0.0"
 	}
 }

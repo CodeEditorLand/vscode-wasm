@@ -1,36 +1,26 @@
 {
 	"name": "testbed-php",
-	"private": "true",
-	"publisher": "ms-vscode",
-	"version": "0.0.1",
 	"description": "PHP Example",
-	"author": "MS",
-	"license": "MIT",
-	"engines": {
-		"vscode": "1.67.0"
-	},
 	"main": "./dist/desktop/extension.js",
 	"browser": "./dist/web/extension.js",
-	"activationEvents": [
-	],
-	"extensionDependencies": [
-		"ms-vscode.wasm-wasi-core",
-		"ms-vscode.webshell"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "testbed-php.runFile",
-				"category": "wasm",
-				"title": "Run PHP File",
-				"enablement": "editorLangId == php"
-			}
-		]
-	},
 	"scripts": {
 		"build": "npm run compile",
 		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w",
 		"esbuild": "node ./bin/esbuild.js"
-	}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-php.runFile",
+				"enablement": "editorLangId == php",
+				"title": "Run PHP File"
+			}
+		]
+	},
+	"activationEvents": [],
+	"extensionDependencies": [
+		"ms-vscode.wasm-wasi-core",
+		"ms-vscode.webshell"
+	]
 }
