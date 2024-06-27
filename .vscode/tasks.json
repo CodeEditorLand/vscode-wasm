@@ -1,0 +1,171 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "npm: watch",
+			"type": "npm",
+			"script": "watch",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"isBackground": true,
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc-watch"
+			]
+		},
+		{
+			"label": "npm: esbuild:watch",
+			"type": "npm",
+			"script": "esbuild:watch",
+			"path": "wasm-wasi-core",
+			"group": "build",
+			"isBackground": true,
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			}
+		},
+		{
+			"label": "Build Python Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/python",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build LSP Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/lsp-rust/client",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build C++ Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/cpp",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build Rust Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/rust",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build Rust Threads Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/rust-threads",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build Thread Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/threads",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build PHP Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/php",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build Ruby Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/ruby",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Build CoreUtils Example",
+			"type": "npm",
+			"script": "build",
+			"path": "testbeds/coreutils",
+			"group": "build",
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"type": "npm",
+			"script": "serve",
+			"problemMatcher": [],
+			"isBackground": true,
+			"label": "npm: serve",
+			"detail": "serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem -c ./configs/serve.json"
+		}
+	]
+}

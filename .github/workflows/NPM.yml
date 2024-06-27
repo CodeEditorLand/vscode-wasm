@@ -1,0 +1,194 @@
+name: NPM
+
+concurrency:
+    group: NPM-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    security-events: write
+    contents: write
+    pull-requests: write
+
+on:
+    workflow_dispatch:
+    release:
+        types: [created]
+    workflow_call:
+
+jobs:
+    Publish:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            id-token: write
+
+        steps:
+            - uses: actions/checkout@v4.1.6
+
+            - uses: actions/setup-node@v4.0.2
+              with:
+                  node-version: "18"
+                  registry-url: "https://registry.npmjs.org"
+
+            - run: npm install -g npm
+
+            - name: Publish .
+              continue-on-error: true
+              working-directory: .
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./sync-api-client
+              continue-on-error: true
+              working-directory: ./sync-api-client
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./sync-api-common
+              continue-on-error: true
+              working-directory: ./sync-api-common
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./sync-api-service
+              continue-on-error: true
+              working-directory: ./sync-api-service
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/cpp
+              continue-on-error: true
+              working-directory: ./testbeds/cpp
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/dotnet
+              continue-on-error: true
+              working-directory: ./testbeds/dotnet
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/lsp-rust/client
+              continue-on-error: true
+              working-directory: ./testbeds/lsp-rust/client
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/lsp-rust/server
+              continue-on-error: true
+              working-directory: ./testbeds/lsp-rust/server
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/php
+              continue-on-error: true
+              working-directory: ./testbeds/php
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/python
+              continue-on-error: true
+              working-directory: ./testbeds/python
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/ruby
+              continue-on-error: true
+              working-directory: ./testbeds/ruby
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/rust-threads
+              continue-on-error: true
+              working-directory: ./testbeds/rust-threads
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/rust
+              continue-on-error: true
+              working-directory: ./testbeds/rust
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./testbeds/threads
+              continue-on-error: true
+              working-directory: ./testbeds/threads
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasi
+              continue-on-error: true
+              working-directory: ./wasi
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasm-component-model
+              continue-on-error: true
+              working-directory: ./wasm-component-model
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasm-wasi-core
+              continue-on-error: true
+              working-directory: ./wasm-wasi-core
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasm-wasi/example
+              continue-on-error: true
+              working-directory: ./wasm-wasi/example
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./wasm-wasi
+              continue-on-error: true
+              working-directory: ./wasm-wasi
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish ./webshell
+              continue-on-error: true
+              working-directory: ./webshell
+              run: |
+                  npm publish --legacy-peer-deps --provenance --ignore-scripts
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

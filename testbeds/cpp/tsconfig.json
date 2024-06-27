@@ -3,7 +3,7 @@
         "rootDir": ".",
         "skipLibCheck": true,
         "lib": [
-            "es2022",
+            "es2020",
             "webworker"
         ],
         "types": [
@@ -20,7 +20,6 @@
         "declaration": true,
         "stripInternal": true,
         "sourceMap": true,
-        "declarationMap": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true
     }

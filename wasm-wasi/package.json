@@ -1,35 +1,51 @@
 {
 	"name": "@vscode/wasm-wasi",
+	"version": "0.13.0-pre.1",
 	"description": "An API facade for the WASM WASI CORE VS Code extension",
-	"exports": {
-		".": {
-			"default": "./lib/api/deprecated.js",
-			"types": "./lib/api/deprecated.d.ts"
-		},
-		"./v1": {
-			"default": "./lib/api/v1.js",
-			"types": "./lib/api/v1.d.ts"
-		}
+	"engines": {
+		"node": ">=16.17.1",
+		"vscode": "1.78.0"
 	},
+	"main": "./lib/api/main.js",
+	"typings": "./lib/api/main.d.ts",
 	"bin": {
 		"dir-dump": "./bin/dir-dump"
 	},
-	"scripts": {
-		"all": "npm run clean && npm run compile && npm run lint",
-		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
-		"clean": "rimraf lib",
-		"compile": "tsc -b ./tsconfig.json",
-		"compile:publish": "tsc -b ./tsconfig.publish.json",
-		"prepack": "npm run all:publish",
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/microsoft/vscode-wasm.git"
 	},
+	"keywords": [
+		"VSCode",
+		"API"
+	],
+	"author": "Visual Studio Code Team",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-wasm/issues"
+	},
+	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
+	"enabledApiProposals": [
+	],
 	"dependencies": {
-		"semver": "^7.6.2",
-		"yargs": "^17.7.2"
+		"yargs": "17.7.2",
+		"semver": "7.6.2"
 	},
 	"devDependencies": {
-		"@types/semver": "^7.5.8",
-		"@types/yargs": "^17.0.32"
+		"@types/vscode": "1.90.0",
+		"@types/yargs": "17.0.32",
+		"@types/semver": "7.5.8"
 	},
-	"enabledApiProposals": []
+	"scripts": {
+		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"prepack": "npm run all:publish",
+		"compile": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.json",
+		"compile:publish": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.publish.json",
+		"watch": "node ../node_modules/typescript/lib/tsc.js -b ./tsconfig.watch.json -w",
+		"clean": "node ../node_modules/rimraf/bin.js lib",
+		"lint": "node ../node_modules/eslint/bin/eslint.js --ext ts src",
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run update:version && npm run compile:publish && npm run lint",
+		"update:version": "node ./bin/updateVersion.mjs"
+	}
 }

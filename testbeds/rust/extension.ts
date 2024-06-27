@@ -6,8 +6,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { ProcessOptions, Wasm } from '@vscode/wasm-wasi';
-import { ExtensionContext, commands, window } from 'vscode';
+import { commands, ExtensionContext, window } from 'vscode';
+import { Wasm } from '@vscode/wasm-wasi';
 
 
 export async function activate(_context: ExtensionContext) {
@@ -16,11 +16,11 @@ export async function activate(_context: ExtensionContext) {
 		const pty = wasm.createPseudoterminal();
 		const terminal = window.createTerminal({ name: 'Rust', pty, isTransient: true });
 		terminal.show(true);
-		const options: ProcessOptions = {
+		const options = {
 			stdio: pty.stdio,
-			mountPoints: [ { kind: 'workspaceFolder'} ]
+			mapDir: true
 		};
-		const module = await WebAssembly.compile(await fs.readFile(path.join(__dirname, '..', 'target', 'wasm32-wasip1', 'debug', 'rust-example.wasm')));
+		const module = await WebAssembly.compile(await fs.readFile(path.join(__dirname, '..', 'target', 'wasm32-wasi', 'debug', 'rust-example.wasm')));
 		const process = await wasm.createProcess('test-rust', module, options);
 		process.run().catch(err => {
 			void window.showErrorMessage(err.message);

@@ -1,5 +1,5 @@
 {
-	"spec": ["lib/node/test"],
+	"spec": ["lib/desktop/test"],
 	"extension": ["js"],
 	"recursive": false,
 	"ui": "tdd"

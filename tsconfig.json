@@ -21,12 +21,6 @@
             "path": "./wasm-component-model/tsconfig.json"
         },
         {
-            "path": "./wasm-kit/tsconfig.json"
-        },
-        {
-            "path": "./rust-api/tsconfig.json"
-        },
-        {
             "path": "./wasm-wasi-core/tsconfig.json"
         },
         {
@@ -34,9 +28,6 @@
         },
         {
             "path": "./webshell/tsconfig.json"
-        },
-        {
-            "path": "./wasm-wasi-lsp/tsconfig.json"
         },
         {
             "path": "./tools/tsconfig.json"
