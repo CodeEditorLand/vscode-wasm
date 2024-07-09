@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 /// <reference path="../../typings/webAssemblyNode.d.ts" />
-import path from 'node:path';
+import path from 'path';
 
 import { Uri, workspace } from 'vscode';
 

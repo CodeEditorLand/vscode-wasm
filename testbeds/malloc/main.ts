@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { Worker } from 'node:worker_threads';
+import fs from 'fs/promises';
+import path from 'path';
+import { Worker } from 'worker_threads';
 
 
 async function main(): Promise<void> {

@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import fs from 'node:fs/promises';
+import fs from 'fs/promises';
 import yargs from 'yargs';
 
 type Options = {

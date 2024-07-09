@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { BigIntStats, Dir } from 'node:fs';
-import fs from 'node:fs/promises';
-import paths from 'node:path';
+import { BigIntStats, Dir } from 'fs';
+import fs from 'fs/promises';
+import paths from 'path';
 
 import RAL from '../common/ral';
 import { u64, size } from '../common/baseTypes';
@@ -15,7 +15,7 @@ import {
 import { BigInts } from '../common/converter';
 import { BaseFileDescriptor, FdProvider, FileDescriptor } from '../common/fileDescriptor';
 import { NoSysDeviceDriver, ReaddirEntry, FileSystemDeviceDriver, DeviceId, DeviceDriverKind } from '../common/deviceDriver';
-import { Dirent } from 'node:fs';
+import { Dirent } from 'fs';
 import { Uri } from 'vscode';
 import { WritePermDeniedDeviceDriver } from '../common/deviceDriver';
 

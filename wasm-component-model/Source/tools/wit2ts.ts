@@ -3,8 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { ResolvedOptions } from './options';
 import {
@@ -2441,7 +2441,7 @@ class TypeReferenceEmitter extends InterfaceMemberEmitter {
 					code.imports.add(referencePackagedName, `./${referencePackagedName}`);
 					return `${referencePackagedName}.${referencedTypeName}`;
 				} else {
-					throw new Error(`Cannot compute qualifier to import $import { type } from 'node:os';
+					throw new Error(`Cannot compute qualifier to import $import { type } from 'os';
 {JSON.stringify(reference)} into scope  ${JSON.stringify(scope)}.`);
 				}
 			}

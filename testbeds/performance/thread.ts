@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { parentPort } from 'node:worker_threads';
+import { parentPort } from 'worker_threads';
 
 const memory = new SharedArrayBuffer(4096);
 const view = new DataView(memory);

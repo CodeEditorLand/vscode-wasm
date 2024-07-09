@@ -51,6 +51,7 @@ jobs:
             STNOUPGRADE: 1
             STRIPE_CLI_TELEMETRY_OPTOUT: 1
             TELEMETRY_DISABLED: 1
+            TERRAFORM_TELEMETRY: 0
 
         strategy:
             matrix:
@@ -86,7 +87,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-Node-${{ matrix.node-version }}-Target
                   path: ./Target
@@ -103,7 +104,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-rust-api-Node-${{ matrix.node-version }}-Target
                   path: ./rust-api/Target
@@ -120,7 +121,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-sync-api-client-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-client/Target
@@ -128,7 +129,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-sync-api-common-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-common/Target
@@ -145,7 +146,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-sync-api-service-Node-${{ matrix.node-version }}-Target
                   path: ./sync-api-service/Target
@@ -171,7 +172,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-component-model-async-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/component-model-async/Target
@@ -188,7 +189,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-component-model-performance-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/component-model-performance/Target
@@ -205,7 +206,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-component-model-vscode-2-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/component-model-vscode-2/Target
@@ -222,7 +223,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-component-model-vscode-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/component-model-vscode/Target
@@ -239,7 +240,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-component-model-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/component-model/Target
@@ -247,7 +248,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-cpp-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/cpp/Target
@@ -264,7 +265,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-dotnet-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/dotnet/Target
@@ -281,7 +282,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-lsp-rust-client-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/lsp-rust/client/Target
@@ -289,7 +290,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-lsp-rust-server-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/lsp-rust/server/Target
@@ -315,7 +316,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-php-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/php/Target
@@ -332,7 +333,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-python-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/python/Target
@@ -349,7 +350,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-ruby-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/ruby/Target
@@ -357,7 +358,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-rust-threads-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/rust-threads/Target
@@ -365,7 +366,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-rust-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/rust/Target
@@ -373,7 +374,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-testbeds-threads-Node-${{ matrix.node-version }}-Target
                   path: ./testbeds/threads/Target
@@ -399,7 +400,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasi/Target
@@ -416,7 +417,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasm-component-model-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-component-model/Target
@@ -442,7 +443,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasm-wasi-core-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi-core/Target
@@ -459,7 +460,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasm-wasi-lsp-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi-lsp/Target
@@ -476,7 +477,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasm-wasi-example-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/example/Target
@@ -493,7 +494,7 @@ jobs:
             - run: pnpm run prepublishOnly
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-wasm-wasi-Node-${{ matrix.node-version }}-Target
                   path: ./wasm-wasi/Target
@@ -510,7 +511,7 @@ jobs:
             - run: pnpm run build
               working-directory: .
 
-            - uses: actions/upload-artifact@v4.3.3
+            - uses: actions/upload-artifact@v4.3.4
               with:
                   name: .-webshell-Node-${{ matrix.node-version }}-Target
                   path: ./webshell/Target

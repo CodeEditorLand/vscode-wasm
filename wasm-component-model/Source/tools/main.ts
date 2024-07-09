@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as fs from 'node:fs/promises';
+import * as fs from 'fs/promises';
 
 import * as yargs from 'yargs';
 

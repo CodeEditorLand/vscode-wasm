@@ -1,4 +1,4 @@
-import { parentPort } from 'node:worker_threads';
+import { parentPort } from 'worker_threads';
 
 interface Memory {
 	malloc(size: number): number;

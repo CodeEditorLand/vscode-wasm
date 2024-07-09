@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 /* eslint-disable no-console */
 
-import { BigIntStats, Dir } from 'node:fs';
-import * as paths from 'node:path';
-import * as fs from 'node:fs/promises';
+import { BigIntStats, Dir } from 'fs';
+import * as paths from 'path';
+import * as fs from 'fs/promises';
 
 import * as yargs from 'yargs';
 

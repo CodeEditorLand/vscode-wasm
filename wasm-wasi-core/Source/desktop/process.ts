@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 /// <reference path="../../typings/webAssemblyNode.d.ts" />
 
-import { MessagePort, Worker } from 'node:worker_threads';
+import { MessagePort, Worker } from 'worker_threads';
 
 import { LogOutputChannel, Uri } from 'vscode';
 

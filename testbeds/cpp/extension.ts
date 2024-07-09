@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import fs from 'fs/promises';
+import path from 'path';
 
 import { commands, ExtensionContext, window } from 'vscode';
 import { ProcessOptions, Wasm } from '@vscode/wasm-wasi';
