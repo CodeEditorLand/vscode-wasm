@@ -1,3 +1,0 @@
-[submodule "dependencies/wasmtime"]
-	path = dependencies/wasmtime
-	url = https://github.com/bytecodealliance/wasmtime.git
