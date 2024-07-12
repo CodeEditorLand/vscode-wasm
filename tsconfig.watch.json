@@ -1,0 +1,45 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "composite": true
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./sync-api-common/tsconfig.watch.json"
+        },
+        {
+            "path": "./sync-api-client/tsconfig.watch.json"
+        },
+        {
+            "path": "./sync-api-service/tsconfig.watch.json"
+        },
+        {
+            "path": "./sync-api-tests/tsconfig.watch.json"
+        },
+        {
+            "path": "./wasm-component-model/tsconfig.watch.json"
+        },
+        {
+            "path": "./wasm-kit/tsconfig.watch.json"
+        },
+        {
+            "path": "./rust-api/tsconfig.watch.json"
+        },
+        {
+            "path": "./wasm-wasi-core/tsconfig.watch.json"
+        },
+        {
+            "path": "./wasm-wasi/tsconfig.watch.json"
+        },
+        {
+            "path": "./webshell/tsconfig.watch.json"
+        },
+        {
+            "path": "./wasm-wasi-lsp/tsconfig.watch.json"
+        },
+        {
+            "path": "./tools/tsconfig.watch.json"
+        }
+    ]
+}
