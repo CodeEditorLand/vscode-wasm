@@ -1,13 +1,6 @@
 {
-	"name": "testbed-php",
-	"description": "PHP Example",
-	"main": "./dist/desktop/extension.js",
+	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -18,9 +11,16 @@
 			}
 		]
 	},
-	"activationEvents": [],
+	"description": "PHP Example",
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
-	]
+	],
+	"main": "./dist/desktop/extension.js",
+	"name": "testbed-php",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js"
+	}
 }

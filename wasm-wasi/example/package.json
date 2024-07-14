@@ -1,14 +1,6 @@
 {
-	"name": "wasm-wasi-c-example",
-	"description": "C Example",
-	"main": "./dist/desktop/extension.js",
+	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
-		"build:wasi": "clang hello.c -o ./hello.wasm",
-		"compile:ts": "tsc -p tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -18,10 +10,18 @@
 			}
 		]
 	},
-	"activationEvents": [],
 	"dependencies": {},
+	"description": "C Example",
 	"devDependencies": {},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
-	]
+	],
+	"main": "./dist/desktop/extension.js",
+	"name": "wasm-wasi-c-example",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:wasi && npm run esbuild",
+		"build:wasi": "clang hello.c -o ./hello.wasm",
+		"compile:ts": "tsc -p tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js"
+	}
 }

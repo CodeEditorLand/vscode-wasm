@@ -1,6 +1,6 @@
 {
-	"name": "performance",
 	"description": "",
 	"main": "index.js",
+	"name": "performance",
 	"scripts": {}
 }
