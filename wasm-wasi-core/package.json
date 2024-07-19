@@ -15,11 +15,11 @@
 	},
 	"activationEvents": [],
 	"dependencies": {
-		"uuid": "10.0.0"
+		"uuid": "9.0.1"
 	},
 	"devDependencies": {
 		"@types/assert": "1.5.10",
-		"@types/uuid": "10.0.0",
+		"@types/uuid": "9.0.8",
 		"assert": "2.1.0",
 		"find-process": "1.4.7"
 	}

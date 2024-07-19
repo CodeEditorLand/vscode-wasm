@@ -17,15 +17,15 @@
 	"devDependencies": {
 		"@types/assert": "1.5.10",
 		"@types/glob": "8.1.0",
-		"@types/node": "20.14.11",
+		"@types/node": "18.14.6",
 		"@types/path-browserify": "1.0.2",
-		"esbuild": "0.23.0",
-		"glob": "11.0.0",
+		"esbuild": "0.20.2",
+		"glob": "10.3.12",
 		"http-server": "14.1.1",
-		"make-dir-cli": "4.0.0",
+		"make-dir-cli": "3.1.0",
 		"path-browserify": "1.0.1",
-		"rimraf": "6.0.1",
-		"serve": "14.2.3",
+		"rimraf": "5.0.5",
+		"serve": "14.2.1",
 		"shelljs": "0.8.5",
 		"shx": "0.3.4"
 	}
