@@ -24,7 +24,7 @@
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
 	"dependencies": {
-		"semver": "7.6.2",
+		"semver": "7.6.3",
 		"yargs": "17.7.2"
 	},
 	"devDependencies": {
