@@ -4,5 +4,7 @@
 	"name": "wasm-testbeds",
 	"scripts": {
 		"clean": ""
-	}
+	},
+	"dependencies": {},
+	"devDependencies": {}
 }

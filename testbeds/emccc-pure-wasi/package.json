@@ -1,6 +1,6 @@
 {
-	"description": "",
 	"name": "emccc-pure-wasi",
+	"description": "",
 	"scripts": {
 		"compile": "em++ hello.cpp -o ./out/hello-em.js"
 	}

@@ -1,20 +1,8 @@
 {
-	"activationEvents": [
-		"*"
-	],
-	"browser": "./dist/web/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"category": "wasm",
-				"command": "testbed-threads.run",
-				"title": "Run multi-threaded Program"
-			}
-		]
-	},
+	"name": "testbed-threads",
 	"description": "Thread Example",
 	"main": "./out/extension.js",
-	"name": "testbed-threads",
+	"browser": "./dist/web/extension.js",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:c && npm run build:wasi",
 		"build:c": "../../node_modules/.bin/make-dir ./out && g++ main.c -l pthread -o ./out/main",
@@ -26,5 +14,17 @@
 		"clean": "node ../../node_modules/.bin/rimraf out",
 		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
 		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-threads.run",
+				"title": "Run multi-threaded Program"
+			}
+		]
+	},
+	"activationEvents": [
+		"*"
+	]
 }
