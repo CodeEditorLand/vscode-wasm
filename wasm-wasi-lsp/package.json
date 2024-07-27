@@ -1,6 +1,6 @@
 {
+	"name": "@vscode/wasm-wasi-lsp",
 	"description": "A npm package to ease implementing language servers in WebAssembly with WASI.",
-	"devDependencies": {},
 	"exports": {
 		".": {
 			"browser": "./lib/main.js",
@@ -8,7 +8,6 @@
 			"types": "./lib/main.d.ts"
 		}
 	},
-	"name": "@vscode/wasm-wasi-lsp",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -17,5 +16,6 @@
 		"compile:publish": "tsc -b ./tsconfig.publish.json",
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
-	}
+	},
+	"devDependencies": {}
 }

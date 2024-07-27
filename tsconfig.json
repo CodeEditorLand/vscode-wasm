@@ -1,45 +1,45 @@
 {
-    "compilerOptions": {
-        "incremental": true,
-        "composite": true
-    },
-    "files": [],
-    "references": [
-        {
-            "path": "./sync-api-common/tsconfig.json"
-        },
-        {
-            "path": "./sync-api-client/tsconfig.json"
-        },
-        {
-            "path": "./sync-api-service/tsconfig.json"
-        },
-        {
-            "path": "./sync-api-tests/tsconfig.json"
-        },
-        {
-            "path": "./wasm-component-model/tsconfig.json"
-        },
-        {
-            "path": "./wasm-kit/tsconfig.json"
-        },
-        {
-            "path": "./rust-api/tsconfig.json"
-        },
-        {
-            "path": "./wasm-wasi-core/tsconfig.json"
-        },
-        {
-            "path": "./wasm-wasi/tsconfig.json"
-        },
-        {
-            "path": "./webshell/tsconfig.json"
-        },
-        {
-            "path": "./wasm-wasi-lsp/tsconfig.json"
-        },
-        {
-            "path": "./tools/tsconfig.json"
-        }
-    ]
+	"compilerOptions": {
+		"incremental": true,
+		"composite": true
+	},
+	"files": [],
+	"references": [
+		{
+			"path": "./sync-api-common/tsconfig.json"
+		},
+		{
+			"path": "./sync-api-client/tsconfig.json"
+		},
+		{
+			"path": "./sync-api-service/tsconfig.json"
+		},
+		{
+			"path": "./sync-api-tests/tsconfig.json"
+		},
+		{
+			"path": "./wasm-component-model/tsconfig.json"
+		},
+		{
+			"path": "./wasm-kit/tsconfig.json"
+		},
+		{
+			"path": "./rust-api/tsconfig.json"
+		},
+		{
+			"path": "./wasm-wasi-core/tsconfig.json"
+		},
+		{
+			"path": "./wasm-wasi/tsconfig.json"
+		},
+		{
+			"path": "./webshell/tsconfig.json"
+		},
+		{
+			"path": "./wasm-wasi-lsp/tsconfig.json"
+		},
+		{
+			"path": "./tools/tsconfig.json"
+		}
+	]
 }
