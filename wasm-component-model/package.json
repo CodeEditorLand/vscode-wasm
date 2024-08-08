@@ -11,7 +11,7 @@
 	"devDependencies": {
 		"@types/semver": "7.5.8",
 		"@types/uuid": "10.0.0",
-		"@types/yargs": "17.0.32"
+		"@types/yargs": "17.0.33"
 	},
 	"enabledApiProposals": [],
 	"exports": {
