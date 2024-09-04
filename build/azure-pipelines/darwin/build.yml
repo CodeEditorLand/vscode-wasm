@@ -1,0 +1,29 @@
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.15.1'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'Install Dependencies'
+
+- script: |
+    npm run compile
+  displayName: 'Compile'
+
+- script: |
+    npm run lint
+  displayName: 'Hygiene Checks'
+
+- script: |
+    npm run esbuild:apiTests
+  displayName: 'ESBuild API Test'
+
+- script: |
+    npm run test:apiWebTests
+  displayName: 'Run API Tests'
+
+- script: |
+    npm run test
+  displayName: 'Unit Tests'
