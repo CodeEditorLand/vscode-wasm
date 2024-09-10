@@ -1,32 +1,14 @@
 {
-	"name": "@vscode/wasm-tools",
-	"private": true,
-	"version": "0.1.0",
-	"author": "MS",
-	"license": "MIT",
-	"publisher": "ms-vscode",
-	"description": "Tools for this project",
-	"categories": [
-		"Other"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
-	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
-	},
-	"homepage": "https://github.com/microsoft/vscode-wasm#readme",
-	"scripts": {
-		"clean": "rimraf lib",
-		"compile": "tsc -b ./tsconfig.json",
-		"watch": "tsc -b ./tsconfig.watch.json -w",
-		"lint": "eslint --ext ts src"
-	},
 	"dependencies": {
 		"yargs": "^17.7.2"
 	},
+	"description": "Tools for this project",
 	"devDependencies": {
 		"@types/yargs": "^17.0.32"
+	},
+	"name": "@vscode/wasm-tools",
+	"scripts": {
+		"clean": "rimraf lib",
+		"compile": "tsc -b ./tsconfig.json"
 	}
 }
