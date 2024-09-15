@@ -1,67 +1,44 @@
 {
-	"name": "@vscode/wasm-component-model",
-	"version": "1.0.0",
-	"description": "A VS Code specific component model implementation",
-	"author": "Visual Studio Code Team",
-	"license": "MIT",
-	"keywords": [
-		"VSCode",
-		"WASM",
-		"Component Model"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
-	},
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
-	},
-	"homepage": "https://github.com/microsoft/vscode-wasm#readme",
-	"engines": {
-		"node": ">=18.18.2"
-	},
-	"exports": {
-		".": {
-			"types": "./lib/common/api.d.ts",
-			"node": "./lib/node/main.js",
-			"browser": "./lib/browser/main.js"
-		},
-		"./node": {
-			"types": "./lib/node/main.d.ts",
-			"node": "./lib/node/main.js"
-		},
-		"./browser": {
-			"types": "./lib/browser/main.d.ts",
-			"browser": "./lib/browser/main.js"
-		}
-	},
 	"bin": {
 		"wit2ts": "./bin/wit2ts"
 	},
-	"enabledApiProposals": [
-	],
 	"dependencies": {
-		"yargs": "^17.7.2",
 		"semver": "^7.6.0",
-		"uuid": "^9.0.1"
+		"uuid": "^9.0.1",
+		"yargs": "^17.7.2"
 	},
+	"description": "A VS Code specific component model implementation",
 	"devDependencies": {
-		"@types/yargs": "^17.0.31",
 		"@types/semver": "^7.5.8",
-		"@types/uuid": "^9.0.8"
+		"@types/uuid": "^9.0.8",
+		"@types/yargs": "^17.0.31"
 	},
+	"enabledApiProposals": [],
+	"exports": {
+		".": {
+			"browser": "./lib/browser/main.js",
+			"node": "./lib/node/main.js",
+			"types": "./lib/common/api.d.ts"
+		},
+		"./browser": {
+			"browser": "./lib/browser/main.js",
+			"types": "./lib/browser/main.d.ts"
+		},
+		"./node": {
+			"node": "./lib/node/main.js",
+			"types": "./lib/node/main.d.ts"
+		}
+	},
+	"name": "@vscode/wasm-component-model",
 	"scripts": {
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
-		"prepack": "npm run all:publish",
-		"compile": "tsc -b ./tsconfig.json",
-		"compile:publish": "tsc -b ./tsconfig.publish.json",
-		"watch": "tsc -b ./tsconfig.watch.json -w",
-		"clean": "rimraf lib",
-		"lint": "eslint --ext ts src",
-		"test": "npm run test:desktop",
-		"test:desktop": "mocha",
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm test",
-		"generate:testCase": "wasm-tools component wit --json ./src/common/test/test-data.wit | node ./lib/tools/main.js --stdin --outDir ./src/common/test"
+		"clean": "rimraf lib",
+		"compile": "tsc -b ./tsconfig.json",
+		"compile:publish": "tsc -b ./tsconfig.publish.json",
+		"generate:testCase": "wasm-tools component wit --json ./src/common/test/test-data.wit | node ./lib/tools/main.js --stdin --outDir ./src/common/test",
+		"prepack": "npm run all:publish",
+		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
+		"test:desktop": "mocha"
 	}
 }
