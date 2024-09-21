@@ -4,9 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 use std::cell::RefCell;
 mod calculator;
-use calculator::exports::vscode::example::reverse_notation;
-use calculator::exports::vscode::example::reverse_notation::{ GuestEngine, Operation};
-use calculator::vscode::example::types;
+use calculator::{
+	exports::vscode::example::{
+		reverse_notation,
+		reverse_notation::{GuestEngine, Operation},
+	},
+	vscode::example::types,
+};
 
 struct EngineImpl {
 	left: Option<u32>,
@@ -15,10 +19,7 @@ struct EngineImpl {
 
 impl EngineImpl {
 	fn new() -> Self {
-		EngineImpl {
-			left: None,
-			right: None,
-		}
+		EngineImpl { left: None, right: None }
 	}
 
 	fn push_operand(&mut self, operand: u32) {
@@ -30,9 +31,9 @@ impl EngineImpl {
 	}
 
 	fn push_operation(&mut self, operation: Operation) {
-        let left = self.left.unwrap();
-        let right = self.right.unwrap();
-        self.left = Some(match operation {
+		let left = self.left.unwrap();
+		let right = self.right.unwrap();
+		self.left = Some(match operation {
 			Operation::Add => left + right,
 			Operation::Sub => left - right,
 			Operation::Mul => left * right,
@@ -50,11 +51,8 @@ struct CalcEngine {
 }
 
 impl GuestEngine for CalcEngine {
-
 	fn new() -> Self {
-		CalcEngine {
-			stack: RefCell::new(EngineImpl::new())
-		}
+		CalcEngine { stack: RefCell::new(EngineImpl::new()) }
 	}
 
 	fn push_operand(&self, operand: u32) {
@@ -76,7 +74,7 @@ impl reverse_notation::Guest for Implementation {
 }
 
 impl calculator::Guest for Implementation {
-    fn calc(op: types::Operation) -> u32 {
+	fn calc(op: types::Operation) -> u32 {
 		calculator::log(&format!("Starting calculation: {:?}", op));
 		let result = match op {
 			types::Operation::Add(operands) => operands.left + operands.right,

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-use std::collections::HashMap;
 use once_cell::sync::Lazy;
+use std::collections::HashMap;
 
 use crate::host::api::commands;
 
@@ -19,10 +19,8 @@ where
 	}
 	commands::register_command(command);
 	let unregister = command.to_string();
-	return move || {
-		unsafe {
-			HANDLERS.remove(&unregister);
-		}
+	return move || unsafe {
+		HANDLERS.remove(&unregister);
 	};
 }
 
