@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-use crate::host::api::commands;
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
+use once_cell::sync::Lazy;
+use crate::host::api::commands;
 
 static mut HANDLERS: Lazy<HashMap<String, Box<dyn Fn()>>> = Lazy::new(|| HashMap::new());
 

@@ -8,9 +8,10 @@ wit_bindgen::generate!({
 struct MyType;
 
 impl Guest for MyType {
+
 	fn run() {
 		let resource = vscode::example::window::create_test_resource();
-		for i in 1..1000000 {
+		for i in 1 .. 1000000 {
 			resource.call(i);
 		}
 	}
