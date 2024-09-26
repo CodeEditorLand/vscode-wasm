@@ -1,6 +1,17 @@
 {
-	"name": "@vscode/wasm-wasi",
+	"bin": {
+		"dir-dump": "./bin/dir-dump"
+	},
+	"dependencies": {
+		"semver": "7.6.3",
+		"yargs": "17.7.2"
+	},
 	"description": "An API facade for the WASM WASI CORE VS Code extension",
+	"devDependencies": {
+		"@types/semver": "7.5.8",
+		"@types/yargs": "17.0.33"
+	},
+	"enabledApiProposals": [],
 	"exports": {
 		".": {
 			"default": "./lib/api/deprecated.js",
@@ -11,9 +22,7 @@
 			"types": "./lib/api/v1.d.ts"
 		}
 	},
-	"bin": {
-		"dir-dump": "./bin/dir-dump"
-	},
+	"name": "@vscode/wasm-wasi",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -22,14 +31,5 @@
 		"compile:publish": "tsc -b ./tsconfig.publish.json",
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
-	},
-	"dependencies": {
-		"semver": "7.6.3",
-		"yargs": "17.7.2"
-	},
-	"devDependencies": {
-		"@types/semver": "7.5.8",
-		"@types/yargs": "17.0.33"
-	},
-	"enabledApiProposals": []
+	}
 }
