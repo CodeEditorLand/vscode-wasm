@@ -1,13 +1,8 @@
 {
-	"name": "testbed-python",
-	"description": "Python Example",
-	"main": "./out/extension.js",
+	"activationEvents": [
+		"onCommand:testbed-python.webshell.python"
+	],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"esbuild": "node ./bin/esbuild.js"
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -47,11 +42,16 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onCommand:testbed-python.webshell.python"
-	],
+	"description": "Python Example",
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
-	]
+	],
+	"main": "./out/extension.js",
+	"name": "testbed-python",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"esbuild": "node ./bin/esbuild.js"
+	}
 }
