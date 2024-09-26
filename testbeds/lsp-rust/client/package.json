@@ -1,13 +1,13 @@
 {
+	"name": "client",
+	"displayName": "LSP WASM Test client",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "tsc -b tsconfig.json"
+	},
 	"activationEvents": [
 		"onLanguage:bat"
 	],
 	"dependencies": {},
-	"devDependencies": {},
-	"displayName": "LSP WASM Test client",
-	"name": "client",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "tsc -b tsconfig.json"
-	}
+	"devDependencies": {}
 }
