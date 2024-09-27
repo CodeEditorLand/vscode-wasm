@@ -78,6 +78,7 @@ impl reverse_notation::Guest for Implementation {
 impl calculator::Guest for Implementation {
     fn calc(op: types::Operation) -> u32 {
 		calculator::log(&format!("Starting calculation: {:?}", op));
+
 		let result = match op {
 			types::Operation::Add(operands) => operands.left + operands.right,
 			types::Operation::Sub(operands) => operands.left - operands.right,

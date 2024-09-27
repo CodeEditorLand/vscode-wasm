@@ -37,6 +37,7 @@ impl<T> EventEmitter<T> where T: Debug + 'static {
         self.listeners.borrow_mut().insert(id, Box::new(listener));
 
         let listeners = self.listeners.clone();
+
 		let unhook = self.unhook.clone();
 
         return move || {
