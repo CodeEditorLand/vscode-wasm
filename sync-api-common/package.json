@@ -1,11 +1,10 @@
 {
-	"name": "@vscode/sync-api-common",
-	"description": "An RPC implementation between Web and NodeJS workers that works sync",
-	"main": "./lib/node/main.js",
 	"browser": {
 		"./lib/node/main.js": "./lib/browser/main.js"
 	},
-	"typings": "./lib/common/api.d.ts",
+	"description": "An RPC implementation between Web and NodeJS workers that works sync",
+	"main": "./lib/node/main.js",
+	"name": "@vscode/sync-api-common",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint && npm run test",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm run test",
@@ -18,5 +17,6 @@
 		"test:browser": "npm run esbuild && node ../build/bin/runBrowserTests.js  http://127.0.0.1:8080/sync-api-common/src/browser/test/",
 		"test:node": "node ../node_modules/mocha/bin/_mocha",
 		"test:runServer": "npm run esbuild && node ../build/bin/runServer.js"
-	}
+	},
+	"typings": "./lib/common/api.d.ts"
 }

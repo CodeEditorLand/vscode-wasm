@@ -1,6 +1,19 @@
 {
-	"name": "@vscode/wasm-component-model",
+	"bin": {
+		"wit2ts": "./bin/wit2ts"
+	},
+	"dependencies": {
+		"semver": "7.6.3",
+		"uuid": "10.0.0",
+		"yargs": "17.7.2"
+	},
 	"description": "A VS Code specific component model implementation",
+	"devDependencies": {
+		"@types/semver": "7.5.8",
+		"@types/uuid": "10.0.0",
+		"@types/yargs": "17.0.33"
+	},
+	"enabledApiProposals": [],
 	"exports": {
 		".": {
 			"browser": "./lib/browser/main.js",
@@ -16,9 +29,7 @@
 			"types": "./lib/node/main.d.ts"
 		}
 	},
-	"bin": {
-		"wit2ts": "./bin/wit2ts"
-	},
+	"name": "@vscode/wasm-component-model",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm test",
@@ -29,16 +40,5 @@
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
 		"test:desktop": "mocha"
-	},
-	"dependencies": {
-		"semver": "7.6.3",
-		"uuid": "10.0.0",
-		"yargs": "17.7.2"
-	},
-	"devDependencies": {
-		"@types/semver": "7.5.8",
-		"@types/uuid": "10.0.0",
-		"@types/yargs": "17.0.33"
-	},
-	"enabledApiProposals": []
+	}
 }

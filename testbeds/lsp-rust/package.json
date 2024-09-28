@@ -1,10 +1,7 @@
 {
-	"name": "lsp-testbed",
-	"description": "LSP Testbed",
-	"main": "./client/out/extension.js",
-	"scripts": {
-		"build": "cd client && npm run compile && cd ../server && npm run build && cd .."
-	},
+	"activationEvents": [
+		"onLanguage:bat"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -14,8 +11,11 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onLanguage:bat"
-	],
-	"enabledApiProposals": []
+	"description": "LSP Testbed",
+	"enabledApiProposals": [],
+	"main": "./client/out/extension.js",
+	"name": "lsp-testbed",
+	"scripts": {
+		"build": "cd client && npm run compile && cd ../server && npm run build && cd .."
+	}
 }
