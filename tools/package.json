@@ -1,14 +1,14 @@
 {
-	"dependencies": {
-		"yargs": "17.7.2"
-	},
-	"description": "Tools for this project",
-	"devDependencies": {
-		"@types/yargs": "17.0.33"
-	},
 	"name": "@vscode/wasm-tools",
+	"description": "Tools for this project",
 	"scripts": {
 		"clean": "rimraf lib",
 		"compile": "tsc -b ./tsconfig.json"
+	},
+	"dependencies": {
+		"yargs": "17.7.2"
+	},
+	"devDependencies": {
+		"@types/yargs": "17.0.33"
 	}
 }
