@@ -1,3 +1,3 @@
 [submodule "dependencies/wasmtime"]
 path = dependencies/wasmtime
-url = ssh://git@github.com/bytecodealliance/WASMTime.git
+url = ssh://git@github.com/CodeEditorLand/WASMTime.git
