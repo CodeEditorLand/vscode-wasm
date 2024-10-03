@@ -1,58 +1,35 @@
 {
-	"name": "@vscode/wasm-wasi",
-	"version": "1.0.1",
-	"description": "An API facade for the WASM WASI CORE VS Code extension",
-	"engines": {
-		"node": ">=20.9.0",
-		"vscode": "^1.88.0"
-	},
-	"exports": {
-		".": {
-			"types": "./lib/api/deprecated.d.ts",
-			"default": "./lib/api/deprecated.js"
-		},
-		"./v1": {
-			"types": "./lib/api/v1.d.ts",
-			"default": "./lib/api/v1.js"
-		}
-	},
 	"bin": {
 		"dir-dump": "./bin/dir-dump"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/microsoft/vscode-wasm.git"
-	},
-	"keywords": [
-		"VSCode",
-		"API"
-	],
-	"author": "Visual Studio Code Team",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/microsoft/vscode-wasm/issues"
-	},
-	"homepage": "https://github.com/microsoft/vscode-wasi#readme",
-	"enabledApiProposals": [
-	],
 	"dependencies": {
-		"yargs": "^17.7.2",
-		"semver": "^7.6.2"
+		"semver": "7.6.3",
+		"yargs": "17.7.2"
 	},
+	"description": "An API facade for the WASM WASI CORE VS Code extension",
 	"devDependencies": {
-		"@types/vscode": "1.88.0",
-		"@types/yargs": "^17.0.32",
-		"@types/semver": "^7.5.8"
+		"@types/semver": "7.5.8",
+		"@types/yargs": "17.0.33"
 	},
+	"enabledApiProposals": [],
+	"exports": {
+		".": {
+			"default": "./lib/api/deprecated.js",
+			"types": "./lib/api/deprecated.d.ts"
+		},
+		"./v1": {
+			"default": "./lib/api/v1.js",
+			"types": "./lib/api/v1.d.ts"
+		}
+	},
+	"name": "@vscode/wasm-wasi",
 	"scripts": {
-		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail",
-		"prepack": "npm run all:publish",
+		"all": "npm run clean && npm run compile && npm run lint",
+		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
+		"clean": "rimraf lib",
 		"compile": "tsc -b ./tsconfig.json",
 		"compile:publish": "tsc -b ./tsconfig.publish.json",
-		"watch": "tsc -b ./tsconfig.watch.json -w",
-		"clean": "rimraf lib",
-		"lint": "eslint --ext ts src",
-		"all": "npm run clean && npm run compile && npm run lint",
-		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint"
+		"prepack": "npm run all:publish",
+		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	}
 }
