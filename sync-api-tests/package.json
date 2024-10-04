@@ -7,9 +7,9 @@
 	"dependencies": {},
 	"description": "Test cases for the sync vscode API",
 	"devDependencies": {
-		"@types/uuid": "^9.0.7",
+		"@types/uuid": "^10.0.0",
 		"find-process": "^1.4.7",
-		"uuid": "^9.0.1"
+		"uuid": "^10.0.0"
 	},
 	"main": "./extension.js",
 	"name": "@vscode/sync-api-tests",
