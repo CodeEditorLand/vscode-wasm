@@ -2,12 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import RIL from './ril';
-RIL.install();
+import { ExtensionContext, workspace } from "vscode";
 
-import { ExtensionContext, workspace } from 'vscode';
-import { APILoader } from '../common/api';
-import { NodeWasiProcess } from './process';
+import { APILoader } from "../common/api";
+import { NodeWasiProcess } from "./process";
+import RIL from "./ril";
+
+RIL.install();
 
 export async function activate(context: ExtensionContext) {
 	return new APILoader(context, NodeWasiProcess, async (source) => {
@@ -16,5 +17,4 @@ export async function activate(context: ExtensionContext) {
 	});
 }
 
-export function deactivate() {
-}
+export function deactivate() {}

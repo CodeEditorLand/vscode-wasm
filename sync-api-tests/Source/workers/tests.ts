@@ -3,16 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AssertionError } from 'assert';
+import { AssertionError } from "assert";
+import {
+	ApiClient,
+	ApiClientConnection,
+	RAL,
+	Requests,
+	WorkspaceFolder,
+} from "@vscode/sync-api-client";
 
-import { ApiClient, ApiClientConnection, Requests, WorkspaceFolder, RAL } from '@vscode/sync-api-client';
-
-import { TestRequests } from '../tests';
+import { TestRequests } from "../tests";
 
 export type AllRequests = Requests | TestRequests;
 
-export default async function runSingle(test: (client: ApiClient, folder: WorkspaceFolder) => void): Promise<void> {
-	const connection = RAL().$testing.ClientConnection.create<AllRequests, ApiClientConnection.ReadyParams>();
+export default async function runSingle(
+	test: (client: ApiClient, folder: WorkspaceFolder) => void,
+): Promise<void> {
+	const connection = RAL().$testing.ClientConnection.create<
+		AllRequests,
+		ApiClientConnection.ReadyParams
+	>();
 	const client = new ApiClient(connection);
 	await client.serviceReady();
 	const workspaceFolders = client.vscode.workspace.workspaceFolders;
@@ -22,21 +32,21 @@ export default async function runSingle(test: (client: ApiClient, folder: Worksp
 		client.process.procExit(0);
 	} catch (error) {
 		if (error instanceof AssertionError) {
-			connection.sendRequest('testing/assertionError', {
+			connection.sendRequest("testing/assertionError", {
 				message: error.message,
 				actual: error.actual,
 				expected: error.expected,
 				operator: error.operator,
 				generatedMessage: error.generatedMessage,
-				code: error.code
+				code: error.code,
 			});
 		} else if (error instanceof Error) {
-			connection.sendRequest('testing/error', {
-				message: error.message
+			connection.sendRequest("testing/error", {
+				message: error.message,
 			});
 		} else {
-			connection.sendRequest('testing/error', {
-				message: `Unknown error occurred during test execution`
+			connection.sendRequest("testing/error", {
+				message: `Unknown error occurred during test execution`,
 			});
 		}
 		client.process.procExit(1);

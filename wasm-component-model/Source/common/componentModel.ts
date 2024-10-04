@@ -2,8 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as uuid from 'uuid';
-import RAL from './ral';
+import * as uuid from "uuid";
+
+import RAL from "./ral";
 
 // Type arrays are stored either little or big endian depending on the platform.
 // The component model requires little endian so we throw for now if the platform
@@ -12,7 +13,7 @@ import RAL from './ral';
 
 const isLittleEndian = new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
 if (!isLittleEndian) {
-	throw new Error('Big endian platforms are currently not supported.');
+	throw new Error("Big endian platforms are currently not supported.");
 }
 
 export class ComponentModelTrap extends Error {
@@ -25,27 +26,27 @@ namespace BigInts {
 	const MAX_VALUE_AS_BIGINT = BigInt(Number.MAX_VALUE);
 	export function asNumber(value: bigint): number {
 		if (value > MAX_VALUE_AS_BIGINT) {
-			throw new ComponentModelTrap('Value too big for number');
+			throw new ComponentModelTrap("Value too big for number");
 		}
 		return Number(value);
 	}
 	export function max(...args: bigint[]): bigint {
-		return args.reduce((m, e) => e > m ? e : m);
+		return args.reduce((m, e) => (e > m ? e : m));
 	}
 
 	export function min(...args: bigint[]): bigint {
-		return args.reduce((m, e) => e < m ? e : m);
+		return args.reduce((m, e) => (e < m ? e : m));
 	}
 }
 
-const utf8Decoder = RAL().TextDecoder.create('utf-8');
-const utf8Encoder = RAL().TextEncoder.create('utf-8');
+const utf8Decoder = RAL().TextDecoder.create("utf-8");
+const utf8Encoder = RAL().TextEncoder.create("utf-8");
 
 export enum Alignment {
 	byte = 1,
 	halfWord = 2,
 	word = 4,
-	doubleWord = 8
+	doubleWord = 8,
 }
 export namespace Alignment {
 	export function align(ptr: ptr, alignment: Alignment): size {
@@ -82,12 +83,20 @@ export class MemoryError extends ComponentModelTrap {
 	}
 }
 
-type ArrayClazz<T extends ArrayLike<number> & { set(array: ArrayLike<number>, offset?: number): void }> = {
+type ArrayClazz<
+	T extends ArrayLike<number> & {
+		set(array: ArrayLike<number>, offset?: number): void;
+	},
+> = {
 	new (buffer: ArrayBuffer, byteOffset: number, length: number): T;
 	new (length: number): T;
 	BYTES_PER_ELEMENT: number;
 };
-type BigArrayClazz<T extends ArrayLike<bigint> & { set(array: ArrayLike<bigint>, offset?: number): void }> = {
+type BigArrayClazz<
+	T extends ArrayLike<bigint> & {
+		set(array: ArrayLike<bigint>, offset?: number): void;
+	},
+> = {
 	new (buffer: ArrayBuffer, byteOffset: number, length: number): T;
 	new (length: number): T;
 	BYTES_PER_ELEMENT: number;
@@ -95,7 +104,6 @@ type BigArrayClazz<T extends ArrayLike<bigint> & { set(array: ArrayLike<bigint>,
 
 export type offset<_T = undefined> = u32;
 export abstract class BaseMemoryRange {
-
 	protected readonly _memory: Memory;
 	private readonly _ptr: ptr;
 	private readonly _size: size;
@@ -127,8 +135,15 @@ export abstract class BaseMemoryRange {
 	}
 
 	protected get view(): DataView {
-		if (this._view === undefined || this._view.buffer !== this._memory.buffer) {
-			this._view = new DataView(this._memory.buffer, this._ptr, this._size);
+		if (
+			this._view === undefined ||
+			this._view.buffer !== this._memory.buffer
+		) {
+			this._view = new DataView(
+				this._memory.buffer,
+				this._ptr,
+				this._size,
+			);
 		}
 		return this._view;
 	}
@@ -186,7 +201,10 @@ export abstract class BaseMemoryRange {
 		return this.view.getUint32(offset, true);
 	}
 
-	public getUint8Array(offset: offset, length?: size | undefined): Uint8Array {
+	public getUint8Array(
+		offset: offset,
+		length?: size | undefined,
+	): Uint8Array {
 		return this.getArray(offset, length, Uint8Array);
 	}
 
@@ -194,98 +212,158 @@ export abstract class BaseMemoryRange {
 		return this.getArray(offset, length, Int8Array);
 	}
 
-	public getUint16Array(byteOffset: offset, length?: size | undefined): Uint16Array {
+	public getUint16Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Uint16Array {
 		return this.getArray(byteOffset, length, Uint16Array);
 	}
 
-	public getInt16Array(byteOffset: offset, length?: size | undefined): Int16Array {
+	public getInt16Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Int16Array {
 		return this.getArray(byteOffset, length, Int16Array);
 	}
 
-	public getUint32Array(byteOffset: offset, length?: size | undefined): Uint32Array {
+	public getUint32Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Uint32Array {
 		return this.getArray(byteOffset, length, Uint32Array);
 	}
 
-	public getInt32Array(byteOffset: offset, length?: size | undefined): Int32Array {
+	public getInt32Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Int32Array {
 		return this.getArray(byteOffset, length, Int32Array);
 	}
 
-	public getUint64Array(byteOffset: offset, length?: size | undefined): BigUint64Array {
+	public getUint64Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): BigUint64Array {
 		return this.getBigArray(byteOffset, length, BigUint64Array);
 	}
 
-	public getInt64Array(byteOffset: offset, length?: size | undefined): BigInt64Array {
+	public getInt64Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): BigInt64Array {
 		return this.getBigArray(byteOffset, length, BigInt64Array);
 	}
 
-	public getFloat32Array(byteOffset: offset, length?: size | undefined): Float32Array {
+	public getFloat32Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Float32Array {
 		return this.getArray(byteOffset, length, Float32Array);
 	}
 
-	public getFloat64Array(byteOffset: offset, length?: size | undefined): Float64Array {
+	public getFloat64Array(
+		byteOffset: offset,
+		length?: size | undefined,
+	): Float64Array {
 		return this.getArray(byteOffset, length, Float64Array);
 	}
 
-	public copyBytes(offset: offset, length: size, into: MemoryRange, into_offset: size): void {
+	public copyBytes(
+		offset: offset,
+		length: size,
+		into: MemoryRange,
+		into_offset: size,
+	): void {
 		if (offset + length > this.size) {
-			throw new MemoryError(`Memory access is out of bounds. Accessing [${offset}, ${length}], allocated[${this.ptr}, ${this.size}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Accessing [${offset}, ${length}], allocated[${this.ptr}, ${this.size}]`,
+			);
 		}
 		const target = into.getUint8View(into_offset, length);
-		target.set(new Uint8Array(this._memory.buffer, this.ptr + offset, length));
+		target.set(
+			new Uint8Array(this._memory.buffer, this.ptr + offset, length),
+		);
 	}
 
 	public assertAlignment(offset: offset, alignment: Alignment): void {
 		if (alignment > this.alignment || offset % alignment !== 0) {
-			throw new MemoryError(`Memory location is not aligned to ${alignment}. Allocated[${this.ptr},${this.size}]`);
+			throw new MemoryError(
+				`Memory location is not aligned to ${alignment}. Allocated[${this.ptr},${this.size}]`,
+			);
 		}
 	}
 
-	public getArray<T extends ArrayLike<number> & { set(array: ArrayLike<number>, offset?: number): void }>(byteOffset: offset, length: size | undefined, clazz: ArrayClazz<T>): T {
+	public getArray<
+		T extends ArrayLike<number> & {
+			set(array: ArrayLike<number>, offset?: number): void;
+		},
+	>(byteOffset: offset, length: size | undefined, clazz: ArrayClazz<T>): T {
 		length = length ?? (this.size - byteOffset) / clazz.BYTES_PER_ELEMENT;
 		if (!Number.isInteger(length)) {
-			throw new MemoryError(`Length must be an integer value. Got ${length}.`);
+			throw new MemoryError(
+				`Length must be an integer value. Got ${length}.`,
+			);
 		}
 		const result = new clazz(length);
-		result.set(new clazz(this._memory.buffer, this.ptr + byteOffset, length));
+		result.set(
+			new clazz(this._memory.buffer, this.ptr + byteOffset, length),
+		);
 		return result;
 	}
 
-	public getBigArray<T extends ArrayLike<bigint> & { set(array: ArrayLike<bigint>, offset?: number): void }>(byteOffset: offset, length: size | undefined, clazz: BigArrayClazz<T>): T {
+	public getBigArray<
+		T extends ArrayLike<bigint> & {
+			set(array: ArrayLike<bigint>, offset?: number): void;
+		},
+	>(
+		byteOffset: offset,
+		length: size | undefined,
+		clazz: BigArrayClazz<T>,
+	): T {
 		length = length ?? (this.size - byteOffset) / clazz.BYTES_PER_ELEMENT;
 		if (!Number.isInteger(length)) {
-			throw new MemoryError(`Length must be an integer value. Got ${length}.`);
+			throw new MemoryError(
+				`Length must be an integer value. Got ${length}.`,
+			);
 		}
 		const result = new clazz(length);
-		result.set(new clazz(this._memory.buffer, this.ptr + byteOffset, length));
+		result.set(
+			new clazz(this._memory.buffer, this.ptr + byteOffset, length),
+		);
 		return result;
 	}
 }
 
 export class ReadonlyMemoryRange extends BaseMemoryRange {
-
 	constructor(memory: Memory, ptr: ptr, size: size) {
 		super(memory, ptr, size);
 	}
 
 	public range(offset: offset, size: size): ReadonlyMemoryRange {
 		if (offset + size > this.size) {
-			throw new MemoryError(`Memory access is out of bounds. Accessing [${offset}, ${size}], allocated[${this.ptr}, ${this.size}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Accessing [${offset}, ${size}], allocated[${this.ptr}, ${this.size}]`,
+			);
 		}
 		return new ReadonlyMemoryRange(this._memory, this.ptr + offset, size);
 	}
 }
 
 export class MemoryRange extends BaseMemoryRange {
-
 	public readonly isAllocated: boolean;
 
-	constructor(memory: Memory, ptr: ptr, size: size, isPreallocated: boolean = false) {
+	constructor(
+		memory: Memory,
+		ptr: ptr,
+		size: size,
+		isPreallocated: boolean = false,
+	) {
 		super(memory, ptr, size);
 		this.isAllocated = isPreallocated!;
 	}
 
 	public free(): void {
-		if (typeof this._memory.free !== 'function') {
+		if (typeof this._memory.free !== "function") {
 			throw new MemoryError(`Memory doesn't support free`);
 		}
 		this._memory.free(this);
@@ -293,7 +371,9 @@ export class MemoryRange extends BaseMemoryRange {
 
 	public range(offset: offset, size: size): MemoryRange {
 		if (offset + size > this.size) {
-			throw new MemoryError(`Memory access is out of bounds. Accessing [${offset}, ${size}], allocated[${this.ptr}, ${this.size}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Accessing [${offset}, ${size}], allocated[${this.ptr}, ${this.size}]`,
+			);
 		}
 		return new MemoryRange(this._memory, this.ptr + offset, size);
 	}
@@ -359,7 +439,10 @@ export class MemoryRange extends BaseMemoryRange {
 		return this.getArrayView(offset, length, Int8Array);
 	}
 
-	public getUint16View(offset: offset, length?: size | undefined): Uint16Array {
+	public getUint16View(
+		offset: offset,
+		length?: size | undefined,
+	): Uint16Array {
 		return this.getArrayView(offset, length, Uint16Array);
 	}
 
@@ -367,7 +450,10 @@ export class MemoryRange extends BaseMemoryRange {
 		return this.getArrayView(offset, length, Int16Array);
 	}
 
-	public getUint32View(offset: offset, length?: size | undefined): Uint32Array {
+	public getUint32View(
+		offset: offset,
+		length?: size | undefined,
+	): Uint32Array {
 		return this.getArrayView(offset, length, Uint32Array);
 	}
 
@@ -375,19 +461,31 @@ export class MemoryRange extends BaseMemoryRange {
 		return this.getArrayView(offset, length, Int32Array);
 	}
 
-	public getUint64View(offset: offset, length?: size | undefined): BigUint64Array {
+	public getUint64View(
+		offset: offset,
+		length?: size | undefined,
+	): BigUint64Array {
 		return this.getBigArrayView(offset, length, BigUint64Array);
 	}
 
-	public getInt64View(offset: offset, length?: size | undefined): BigInt64Array {
+	public getInt64View(
+		offset: offset,
+		length?: size | undefined,
+	): BigInt64Array {
 		return this.getBigArrayView(offset, length, BigInt64Array);
 	}
 
-	public getFloat32View(offset: offset, length?: size | undefined): Float32Array {
+	public getFloat32View(
+		offset: offset,
+		length?: size | undefined,
+	): Float32Array {
 		return this.getArrayView(offset, length, Float32Array);
 	}
 
-	public getFloat64View(offset: offset, length?: size | undefined): Float64Array {
+	public getFloat64View(
+		offset: offset,
+		length?: size | undefined,
+	): Float64Array {
 		return this.getArrayView(offset, length, Float64Array);
 	}
 
@@ -431,28 +529,56 @@ export class MemoryRange extends BaseMemoryRange {
 		this.setArray(offset, bytes, Float64Array);
 	}
 
-	private getArrayView<T extends ArrayLike<number> & { set(array: ArrayLike<number>, offset?: number): void }>(byteOffset: offset, length: size | undefined, clazz: ArrayClazz<T>): T {
+	private getArrayView<
+		T extends ArrayLike<number> & {
+			set(array: ArrayLike<number>, offset?: number): void;
+		},
+	>(byteOffset: offset, length: size | undefined, clazz: ArrayClazz<T>): T {
 		length = length ?? (this.size - byteOffset) / clazz.BYTES_PER_ELEMENT;
 		if (!Number.isInteger(length)) {
-			throw new MemoryError(`Length must be an integer value. Got ${length}.`);
+			throw new MemoryError(
+				`Length must be an integer value. Got ${length}.`,
+			);
 		}
 		return new clazz(this._memory.buffer, this.ptr + byteOffset, length);
 	}
 
-	private getBigArrayView<T extends ArrayLike<bigint> & { set(array: ArrayLike<bigint>, offset?: number): void }>(byteOffset: offset, length: size | undefined, clazz: BigArrayClazz<T>): T {
+	private getBigArrayView<
+		T extends ArrayLike<bigint> & {
+			set(array: ArrayLike<bigint>, offset?: number): void;
+		},
+	>(
+		byteOffset: offset,
+		length: size | undefined,
+		clazz: BigArrayClazz<T>,
+	): T {
 		length = length ?? (this.size - byteOffset) / clazz.BYTES_PER_ELEMENT;
 		if (!Number.isInteger(length)) {
-			throw new MemoryError(`Length must be an integer value. Got ${length}.`);
+			throw new MemoryError(
+				`Length must be an integer value. Got ${length}.`,
+			);
 		}
 		return new clazz(this._memory.buffer, this.ptr + byteOffset, length);
 	}
 
-	private setArray<T extends ArrayLike<number> & { set(array: ArrayLike<number>, offset?: number): void }>(byteOffset: offset, bytes: T, clazz: ArrayClazz<T>): void {
-		new clazz(this._memory.buffer, this.ptr + byteOffset, bytes.length).set(bytes);
+	private setArray<
+		T extends ArrayLike<number> & {
+			set(array: ArrayLike<number>, offset?: number): void;
+		},
+	>(byteOffset: offset, bytes: T, clazz: ArrayClazz<T>): void {
+		new clazz(this._memory.buffer, this.ptr + byteOffset, bytes.length).set(
+			bytes,
+		);
 	}
 
-	private setBigArray<T extends ArrayLike<bigint> & { set(array: ArrayLike<bigint>, offset?: number): void }>(byteOffset: offset, bytes: T, clazz: BigArrayClazz<T>): void {
-		new clazz(this._memory.buffer, this.ptr + byteOffset, bytes.length).set(bytes);
+	private setBigArray<
+		T extends ArrayLike<bigint> & {
+			set(array: ArrayLike<bigint>, offset?: number): void;
+		},
+	>(byteOffset: offset, bytes: T, clazz: BigArrayClazz<T>): void {
+		new clazz(this._memory.buffer, this.ptr + byteOffset, bytes.length).set(
+			bytes,
+		);
 	}
 }
 
@@ -460,42 +586,55 @@ export class MemoryRange extends BaseMemoryRange {
  * A memory of size 0. Doesn't allow any kind of operation on it.
  */
 class NullMemory implements Memory {
-	readonly id: string = 'b60336d2-c856-4767-af3b-f66e1ab6c507';
+	readonly id: string = "b60336d2-c856-4767-af3b-f66e1ab6c507";
 	readonly buffer: ArrayBuffer = new ArrayBuffer(0);
 	alloc(): MemoryRange {
-		throw new MemoryError('Cannot allocate memory on a null memory.');
+		throw new MemoryError("Cannot allocate memory on a null memory.");
 	}
 	realloc(): MemoryRange {
-		throw new MemoryError('Cannot re-allocate memory on a null memory.');
+		throw new MemoryError("Cannot re-allocate memory on a null memory.");
 	}
 	preAllocated(): MemoryRange {
-		throw new MemoryError('Cannot point to pre-allocate memory on a null memory.');
+		throw new MemoryError(
+			"Cannot point to pre-allocate memory on a null memory.",
+		);
 	}
 	readonly(): ReadonlyMemoryRange {
-		throw new MemoryError('Cannot point to readonly memory on a null memory.');
+		throw new MemoryError(
+			"Cannot point to readonly memory on a null memory.",
+		);
 	}
 	free(): void {
-		throw new MemoryError('Cannot free memory on a null memory.');
+		throw new MemoryError("Cannot free memory on a null memory.");
 	}
 }
 
 export type MemoryExports = {
 	memory: { buffer: ArrayBuffer };
-	cabi_realloc: (orig: ptr, orig_size: size, orig_align: size, new_size: size) => ptr;
+	cabi_realloc: (
+		orig: ptr,
+		orig_size: size,
+		orig_align: size,
+		new_size: size,
+	) => ptr;
 };
 
 export namespace Memory {
 	export const Null = new NullMemory();
 
 	export class Default implements Memory {
-
 		public readonly id: string;
-		private readonly memory: MemoryExports['memory'];
-		private readonly cabi_realloc: MemoryExports['cabi_realloc'];
+		private readonly memory: MemoryExports["memory"];
+		private readonly cabi_realloc: MemoryExports["cabi_realloc"];
 
 		constructor(exports: Record<string, any>, id?: string) {
-			if (exports.memory === undefined || exports.cabi_realloc === undefined) {
-				throw new MemoryError('The exports object must contain a memory object and a cabi_realloc function.');
+			if (
+				exports.memory === undefined ||
+				exports.cabi_realloc === undefined
+			) {
+				throw new MemoryError(
+					"The exports object must contain a memory object and a cabi_realloc function.",
+				);
 			}
 			this.id = id ?? uuid.v4();
 			this.memory = exports.memory;
@@ -512,7 +651,12 @@ export namespace Memory {
 		}
 
 		realloc(range: MemoryRange, newSize: size): MemoryRange {
-			const ptr = this.cabi_realloc(range.ptr, range.size, range.alignment, newSize);
+			const ptr = this.cabi_realloc(
+				range.ptr,
+				range.size,
+				range.alignment,
+				newSize,
+			);
 			return new MemoryRange(this, ptr, newSize);
 		}
 
@@ -525,7 +669,7 @@ export namespace Memory {
 	}
 }
 
-export type Encodings = 'utf-8' | 'utf-16' | 'latin1+utf-16';
+export type Encodings = "utf-8" | "utf-16" | "latin1+utf-16";
 export interface Options {
 	encoding: Encodings;
 	keepOption?: boolean;
@@ -533,15 +677,20 @@ export interface Options {
 export namespace Options {
 	export function is(value: any): value is Options {
 		const candidate = value as Options;
-		return candidate && typeof candidate.encoding === 'string' && (candidate.keepOption === undefined || typeof candidate.keepOption === 'boolean');
+		return (
+			candidate &&
+			typeof candidate.encoding === "string" &&
+			(candidate.keepOption === undefined ||
+				typeof candidate.keepOption === "boolean")
+		);
 	}
 }
 
 export enum FlatTypeKind {
-	i32 = 'i32',
-	i64 = 'i64',
-	f32 = 'f32',
-	f64 = 'f64'
+	i32 = "i32",
+	i64 = "i64",
+	f32 = "f32",
+	f64 = "f64",
 }
 // Internally flat types integers are always store as unsigned ints.
 export interface FlatType<F extends i32 | i64 | f32 | f64> {
@@ -553,7 +702,12 @@ export interface FlatType<F extends i32 | i64 | f32 | f64> {
 	// Stores a flat value directly into the memory buffer
 	store(memory: MemoryRange, offset: offset, value: F): void;
 	// copy a flat value from one memory to another
-	copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset): void;
+	copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+	): void;
 }
 
 export type i32 = number;
@@ -562,13 +716,25 @@ namespace $i32 {
 	export const size = 4;
 	export const alignment: Alignment = Alignment.word;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<i32>): i32 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<i32>,
+	): i32 {
 		return memory.getUint32(offset);
 	}
-	export function store(memory: MemoryRange, offset: offset<i32>, value: i32): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<i32>,
+		value: i32,
+	): void {
 		memory.setUint32(offset, value);
 	}
-	export function copy(dest: MemoryRange, dest_offset: offset<i32>, src: ReadonlyMemoryRange, src_offset: offset<i32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<i32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<i32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
@@ -582,13 +748,25 @@ namespace $i64 {
 	export const size = 8;
 	export const alignment: Alignment = Alignment.doubleWord;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<i64>): i64 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<i64>,
+	): i64 {
 		return memory.getUint64(offset);
 	}
-	export function store(memory: MemoryRange, offset: offset<i64>, value: i64): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<i64>,
+		value: i64,
+	): void {
 		memory.setUint64(offset, value);
 	}
-	export function copy(dest: MemoryRange, dest_offset: offset<i64>, src: ReadonlyMemoryRange, src_offset: offset<i64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<i64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<i64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
@@ -600,15 +778,27 @@ export type f32 = number;
 namespace $f32 {
 	export const kind: FlatTypeKind = FlatTypeKind.f32;
 	export const size = 4;
-	export const alignment:Alignment = Alignment.word;
+	export const alignment: Alignment = Alignment.word;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<f32>): f32 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<f32>,
+	): f32 {
 		return memory.getFloat32(offset);
 	}
-	export function store(memory: MemoryRange, offset: offset<f32>, value: f32): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<f32>,
+		value: f32,
+	): void {
 		memory.setFloat32(offset, value);
 	}
-	export function copy(dest: MemoryRange, dest_offset: offset<f32>, src: ReadonlyMemoryRange, src_offset: offset<f32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<f32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<f32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
@@ -622,13 +812,25 @@ namespace $f64 {
 	export const size = 8;
 	export const alignment: Alignment = Alignment.doubleWord;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<f64>): f64 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<f64>,
+	): f64 {
 		return memory.getFloat64(offset);
 	}
-	export function store(memory: MemoryRange, offset: offset<f64>, value: f64): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<f64>,
+		value: f64,
+	): void {
 		memory.setFloat64(offset, value);
 	}
-	export function copy(dest: MemoryRange, dest_offset: offset<f64>, src: ReadonlyMemoryRange, src_offset: offset<f64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<f64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<f64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
@@ -640,7 +842,6 @@ export type WasmType = i32 | i64 | f32 | f64;
 type GenericFlatType = FlatType<WasmType>;
 
 export class FlatTuple {
-
 	private readonly types: readonly GenericFlatType[];
 
 	public readonly alignment: Alignment;
@@ -652,7 +853,10 @@ export class FlatTuple {
 		this.size = FlatTuple.size(types, this.alignment);
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: size): readonly WasmType[] {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: size,
+	): readonly WasmType[] {
 		memory.assertAlignment(offset, this.alignment);
 		const result: WasmType[] = [];
 		for (const type of this.types) {
@@ -667,7 +871,11 @@ export class FlatTuple {
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: size, values: readonly WasmType[]): void {
+	public store(
+		memory: MemoryRange,
+		offset: size,
+		values: readonly WasmType[],
+	): void {
 		memory.assertAlignment(offset, this.alignment);
 		for (const [index, type] of this.types.entries()) {
 			const value = values[index];
@@ -677,7 +885,12 @@ export class FlatTuple {
 		}
 	}
 
-	public copy(dest: MemoryRange, dest_offset: size, src: ReadonlyMemoryRange, src_offset: size): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: size,
+		src: ReadonlyMemoryRange,
+		src_offset: size,
+	): void {
 		dest.assertAlignment(dest_offset, this.alignment);
 		src.assertAlignment(src_offset, this.alignment);
 		src.copyBytes(src_offset, this.size, dest, dest_offset);
@@ -691,7 +904,10 @@ export class FlatTuple {
 		return result;
 	}
 
-	private static size(types: readonly GenericFlatType[], tupleAlignment: Alignment): size {
+	private static size(
+		types: readonly GenericFlatType[],
+		tupleAlignment: Alignment,
+	): size {
 		let result: size = 0;
 		for (const type of types) {
 			result = align(result, type.alignment);
@@ -702,7 +918,6 @@ export class FlatTuple {
 }
 
 namespace WasmTypes {
-
 	const $32 = new DataView(new ArrayBuffer(4));
 	const $64 = new DataView(new ArrayBuffer(8));
 
@@ -748,12 +963,17 @@ namespace WasmTypes {
 export type FlatValuesIter = Iterator<WasmType, WasmType>;
 
 class CoerceValueIter implements Iterator<WasmType, WasmType> {
-
 	private index: number;
 
-	constructor(private readonly values: FlatValuesIter, private haveFlatTypes: readonly GenericFlatType[], private wantFlatTypes: readonly GenericFlatType[]) {
+	constructor(
+		private readonly values: FlatValuesIter,
+		private haveFlatTypes: readonly GenericFlatType[],
+		private wantFlatTypes: readonly GenericFlatType[],
+	) {
 		if (haveFlatTypes.length < wantFlatTypes.length) {
-			throw new ComponentModelTrap(`Invalid coercion: have ${haveFlatTypes.length} values, want ${wantFlatTypes.length} values`);
+			throw new ComponentModelTrap(
+				`Invalid coercion: have ${haveFlatTypes.length} values, want ${wantFlatTypes.length} values`,
+			);
 		}
 		this.index = 0;
 	}
@@ -767,13 +987,25 @@ class CoerceValueIter implements Iterator<WasmType, WasmType> {
 		const wantType = this.wantFlatTypes[this.index++];
 
 		if (haveType === $i32 && wantType === $f32) {
-			return { done: false, value: WasmTypes.reinterpret_i32_as_f32(value.value as i32) };
+			return {
+				done: false,
+				value: WasmTypes.reinterpret_i32_as_f32(value.value as i32),
+			};
 		} else if (haveType === $i64 && wantType === $i32) {
-			return { done: false, value: WasmTypes.convert_i64_to_i32(value.value as i64) };
+			return {
+				done: false,
+				value: WasmTypes.convert_i64_to_i32(value.value as i64),
+			};
 		} else if (haveType === $i64 && wantType === $f32) {
-			return { done: false, value: WasmTypes.reinterpret_i64_as_f32(value.value as i64) };
+			return {
+				done: false,
+				value: WasmTypes.reinterpret_i64_as_f32(value.value as i64),
+			};
 		} else if (haveType === $i64 && wantType === $f64) {
-			return { done: false, value: WasmTypes.reinterpret_i64_as_f64(value.value as i64) };
+			return {
+				done: false,
+				value: WasmTypes.reinterpret_i64_as_f64(value.value as i64),
+			};
 		} else {
 			return value;
 		}
@@ -781,31 +1013,31 @@ class CoerceValueIter implements Iterator<WasmType, WasmType> {
 }
 
 export enum ComponentModelTypeKind {
-	bool = 'bool',
-	u8 = 'u8',
-	u16 = 'u16',
-	u32 = 'u32',
-	u64 = 'u64',
-	s8 = 's8',
-	s16 = 's16',
-	s32 = 's32',
-	s64 = 's64',
-	float32 = 'float32',
-	float64 = 'float64',
-	char = 'char',
-	string = 'string',
-	list = 'list',
-	record = 'record',
-	tuple = 'tuple',
-	variant = 'variant',
-	enum = 'enum',
-	flags = 'flags',
-	option = 'option',
-	result = 'result',
-	resource = 'resource',
-	resourceHandle = 'resourceHandle',
-	borrow = 'borrow',
-	own = 'own'
+	bool = "bool",
+	u8 = "u8",
+	u16 = "u16",
+	u32 = "u32",
+	u64 = "u64",
+	s8 = "s8",
+	s16 = "s16",
+	s32 = "s32",
+	s64 = "s64",
+	float32 = "float32",
+	float64 = "float64",
+	char = "char",
+	string = "string",
+	list = "list",
+	record = "record",
+	tuple = "tuple",
+	variant = "variant",
+	enum = "enum",
+	flags = "flags",
+	option = "option",
+	result = "result",
+	resource = "resource",
+	resourceHandle = "resourceHandle",
+	borrow = "borrow",
+	own = "own",
 }
 
 export interface ComponentModelContext {
@@ -815,32 +1047,68 @@ export interface ComponentModelContext {
 export namespace ComponentModelContext {
 	export function is(value: any): value is ComponentModelContext {
 		const candidate = value as ComponentModelContext;
-		return candidate && Options.is(candidate.options) && ResourceManagers.is(candidate.resources);
+		return (
+			candidate &&
+			Options.is(candidate.options) &&
+			ResourceManagers.is(candidate.resources)
+		);
 	}
 }
 
 export interface ComponentModelType<J> {
-	readonly kind : ComponentModelTypeKind;
+	readonly kind: ComponentModelTypeKind;
 	readonly size: number;
 	readonly alignment: Alignment;
 	readonly flatTypes: ReadonlyArray<GenericFlatType>;
 	// Loads a component model value directly from the memory buffer
-	load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): J;
+	load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): J;
 	// Loads a component model value from a flattened array
-	liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): J;
+	liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): J;
 	// Allocates a new component model value in the memory buffer
 	alloc(memory: Memory): MemoryRange;
 	// Stores a component model value directly into the memory buffer
-	store(memory: MemoryRange, offset: offset, value: J, context: ComponentModelContext): void;
+	store(
+		memory: MemoryRange,
+		offset: offset,
+		value: J,
+		context: ComponentModelContext,
+	): void;
 	// Stores a component model value into a flattened array
-	lowerFlat(result: WasmType[], memory: Memory, value: J, context: ComponentModelContext): void;
+	lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: J,
+		context: ComponentModelContext,
+	): void;
 	// copy a component model value from one memory to another
-	copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void;
+	copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void;
 	// copy a component model value from a flattened array to another
-	copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void;
+	copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void;
 }
 namespace ComponentModelType {
-	export function satisfies<T extends JType>(_value: ComponentModelType<T> & { Error: ResultErrorConstructor<T> }): void {
+	export function satisfies<T extends JType>(
+		_value: ComponentModelType<T> & { Error: ResultErrorConstructor<T> },
+	): void {
 		// This is for pure Type checking.
 	}
 }
@@ -849,12 +1117,12 @@ export type AnyComponentModelType = ComponentModelType<JType>;
 export class ResultError<V extends JType> extends Error {
 	public readonly cause: V;
 	constructor(message: string, cause: V) {
-		super(message, { cause: cause});
+		super(message, { cause: cause });
 		this.cause = cause;
 	}
 }
 interface ResultErrorConstructor<V extends JType> {
-	new(value: V): ResultError<V>;
+	new (value: V): ResultError<V>;
 }
 
 export type bool = number;
@@ -864,7 +1132,10 @@ export namespace bool {
 	export const alignment: Alignment = Alignment.byte;
 	export const flatTypes: ReadonlyArray<GenericFlatType> = [$i32];
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<bool>): boolean {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<bool>,
+	): boolean {
 		return memory.getUint8(offset) !== 0;
 	}
 
@@ -880,19 +1151,37 @@ export namespace bool {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<bool>, value: boolean): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<bool>,
+		value: boolean,
+	): void {
 		memory.setUint8(offset, value ? 1 : 0);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: boolean): void {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: boolean,
+	): void {
 		result.push(value ? 1 : 0);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<bool>, src: ReadonlyMemoryRange, src_offset: offset<bool>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<bool>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<bool>,
+	): void {
 		src.copyBytes(src_offset, bool.size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -920,7 +1209,11 @@ export namespace u8 {
 
 	export function liftFlat(_memory: Memory, values: FlatValuesIter): u8 {
 		const value = values.next().value;
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u8 value ${value}`);
 		}
 		return value as u8;
@@ -930,22 +1223,44 @@ export namespace u8 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<u8>, value: u8): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<u8>,
+		value: u8,
+	): void {
 		memory.setUint8(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: u8): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: u8,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u8 value ${value}`);
 		}
 		result.push(value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u8>, src: ReadonlyMemoryRange, src_offset: offset<u8>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u8>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u8>,
+	): void {
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -967,13 +1282,20 @@ export namespace u16 {
 	export const LOW_VALUE = 0;
 	export const HIGH_VALUE = 65535;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<u16>): u16 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<u16>,
+	): u16 {
 		return memory.getUint16(offset);
 	}
 
-	export function liftFlat(_memory: Memory, values:FlatValuesIter): u16 {
+	export function liftFlat(_memory: Memory, values: FlatValuesIter): u16 {
 		const value = values.next().value;
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u16 value ${value}`);
 		}
 		return value as u16;
@@ -983,23 +1305,45 @@ export namespace u16 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<u16>, value: u16): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<u16>,
+		value: u16,
+	): void {
 		memory.setUint16(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u16 value ${value}`);
 		}
 		result.push(value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u16>, src: ReadonlyMemoryRange, src_offset: offset<u16>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u16>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u16>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1022,16 +1366,25 @@ export namespace u32 {
 	export const HIGH_VALUE = 4294967295; // 2 ^ 32 - 1
 
 	export function valid(value: u32): boolean {
-		return value >= LOW_VALUE && value <= HIGH_VALUE && Number.isInteger(value);
+		return (
+			value >= LOW_VALUE && value <= HIGH_VALUE && Number.isInteger(value)
+		);
 	}
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<u32>): u32 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<u32>,
+	): u32 {
 		return memory.getUint32(offset);
 	}
 
 	export function liftFlat(_memory: Memory, values: FlatValuesIter): u32 {
 		const value = values.next().value;
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u32 value ${value}`);
 		}
 		return value as u32;
@@ -1041,24 +1394,46 @@ export namespace u32 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<u32>, value: u32): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<u32>,
+		value: u32,
+	): void {
 		memory.setUint32(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid u32 value ${value}`);
 		}
 		result.push(value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u32>, src: ReadonlyMemoryRange, src_offset: offset<u32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1080,7 +1455,10 @@ export namespace u64 {
 	export const LOW_VALUE = 0n;
 	export const HIGH_VALUE = 18446744073709551615n; // 2 ^ 64 - 1
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<u64>): u64 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<u64>,
+	): u64 {
 		return memory.getUint64(offset);
 	}
 
@@ -1096,24 +1474,42 @@ export namespace u64 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<u64>, value: u64): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<u64>,
+		value: u64,
+	): void {
 		memory.setUint64(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: bigint): void {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: bigint,
+	): void {
 		if (value < LOW_VALUE) {
 			throw new ComponentModelTrap(`Invalid u64 value ${value}`);
 		}
 		result.push(value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u64>, src: ReadonlyMemoryRange, src_offset: offset<u64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1159,24 +1555,46 @@ export namespace s8 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<s8>, value: s8): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<s8>,
+		value: s8,
+	): void {
 		memory.setInt8(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid s8 value ${value}`);
 		}
-		result.push((value < 0) ? (value + 256) : value);
+		result.push(value < 0 ? value + 256 : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u64>, src: ReadonlyMemoryRange, src_offset: offset<u64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1221,24 +1639,46 @@ export namespace s16 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<s16>, value: s16): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<s16>,
+		value: s16,
+	): void {
 		memory.setInt16(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid s16 value ${value}`);
 		}
-		result.push((value < 0) ? (value + 65536) : value);
+		result.push(value < 0 ? value + 65536 : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<s16>, src: ReadonlyMemoryRange, src_offset: offset<s16>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<s16>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<s16>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1283,24 +1723,46 @@ export namespace s32 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<32>, value: s32): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<32>,
+		value: s32,
+	): void {
 		memory.setInt32(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
-		if (value < LOW_VALUE || value > HIGH_VALUE || !Number.isInteger(value)) {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
+		if (
+			value < LOW_VALUE ||
+			value > HIGH_VALUE ||
+			!Number.isInteger(value)
+		) {
 			throw new ComponentModelTrap(`Invalid s32 value ${value}`);
 		}
-		result.push((value < 0) ? (value + 4294967296) : value);
+		result.push(value < 0 ? value + 4294967296 : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<s32>, src: ReadonlyMemoryRange, src_offset: offset<s32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<s32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<s32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1322,13 +1784,16 @@ export namespace s64 {
 	const LOW_VALUE = -9223372036854775808n; // -2 ^ 63
 	const HIGH_VALUE = 9223372036854775807n; // 2 ^ 63 - 1
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<s64>): s64 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<s64>,
+	): s64 {
 		return memory.getInt64(offset);
 	}
 
 	export function liftFlat(_memory: Memory, values: FlatValuesIter): s64 {
 		let value = values.next().value;
-		if (typeof value !== 'bigint') {
+		if (typeof value !== "bigint") {
 			throw new ComponentModelTrap(`Invalid s64 value ${value}`);
 		}
 		// See comment in s8.liftFlat
@@ -1345,24 +1810,42 @@ export namespace s64 {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<s64>, value: s64): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<s64>,
+		value: s64,
+	): void {
 		memory.setInt64(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: bigint): void {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: bigint,
+	): void {
 		if (value < LOW_VALUE || value > HIGH_VALUE) {
 			throw new ComponentModelTrap(`Invalid s64 value ${value}`);
 		}
-		result.push((value < 0) ? (value + 18446744073709551616n) : value);
+		result.push(value < 0 ? value + 18446744073709551616n : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<s64>, src: ReadonlyMemoryRange, src_offset: offset<s64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<s64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<s64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1378,14 +1861,17 @@ export type float32 = number;
 export namespace float32 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.float32;
 	export const size = 4;
-	export const alignment:Alignment = Alignment.word;
+	export const alignment: Alignment = Alignment.word;
 	export const flatTypes: ReadonlyArray<GenericFlatType> = [$f32];
 
-	const LOW_VALUE = -3.4028234663852886e+38;
-	const HIGH_VALUE = 3.4028234663852886e+38;
+	const LOW_VALUE = -3.4028234663852886e38;
+	const HIGH_VALUE = 3.4028234663852886e38;
 	const NAN = 0x7fc00000;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<float32>): float32 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<float32>,
+	): float32 {
 		return memory.getFloat32(offset);
 	}
 
@@ -1394,31 +1880,49 @@ export namespace float32 {
 		if (value < LOW_VALUE || value > HIGH_VALUE) {
 			throw new ComponentModelTrap(`Invalid float32 value ${value}`);
 		}
-		return value === NAN ? Number.NaN : value as float32;
+		return value === NAN ? Number.NaN : (value as float32);
 	}
 
 	export function alloc(memory: Memory): MemoryRange {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<float32>, value: float32): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<float32>,
+		value: float32,
+	): void {
 		memory.setFloat32(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
 		if (value < LOW_VALUE || value > HIGH_VALUE) {
 			throw new ComponentModelTrap(`Invalid float32 value ${value}`);
 		}
 		result.push(Number.isNaN(value) ? NAN : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<float32>, src: ReadonlyMemoryRange, src_offset: offset<float32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<float32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<float32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1441,7 +1945,10 @@ export namespace float64 {
 	const HIGH_VALUE = Number.MAX_VALUE;
 	const NAN = 0x7ff8000000000000;
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<float64>): float64 {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<float64>,
+	): float64 {
 		return memory.getFloat64(offset);
 	}
 
@@ -1450,31 +1957,49 @@ export namespace float64 {
 		if (value < LOW_VALUE || value > HIGH_VALUE) {
 			throw new ComponentModelTrap(`Invalid float64 value ${value}`);
 		}
-		return value === NAN ? Number.NaN : value as float64;
+		return value === NAN ? Number.NaN : (value as float64);
 	}
 
 	export function alloc(memory: Memory): MemoryRange {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<float64>, value: float64): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<float64>,
+		value: float64,
+	): void {
 		memory.setFloat64(offset, value);
 	}
 
-	export function lowerFlat(result: WasmType[], _memory: Memory, value: number): void {
+	export function lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		value: number,
+	): void {
 		if (value < LOW_VALUE || value > HIGH_VALUE) {
 			throw new ComponentModelTrap(`Invalid float64 value ${value}`);
 		}
 		result.push(Number.isNaN(value) ? NAN : value);
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<float64>, src: ReadonlyMemoryRange, src_offset: offset<float64>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<float64>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<float64>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
@@ -1499,7 +2024,7 @@ export const byte: ComponentModelType<byte> = {
 	store: u8.store,
 	lowerFlat: u8.lowerFlat,
 	copy: u8.copy,
-	copyFlat: u8.copyFlat
+	copyFlat: u8.copyFlat,
 };
 
 export type size = u32;
@@ -1515,7 +2040,7 @@ export const size: ComponentModelType<size> = {
 	store: u32.store,
 	lowerFlat: u32.lowerFlat,
 	copy: u32.copy,
-	copyFlat: u32.copyFlat
+	copyFlat: u32.copyFlat,
 };
 
 export type ptr<_type = ArrayBuffer> = u32;
@@ -1531,7 +2056,7 @@ export const ptr: ComponentModelType<size> = {
 	store: u32.store,
 	lowerFlat: u32.lowerFlat,
 	copy: u32.copy,
-	copyFlat: u32.copyFlat
+	copyFlat: u32.copyFlat,
 };
 
 export namespace char {
@@ -1540,11 +2065,19 @@ export namespace char {
 	export const alignment: Alignment = Alignment.word;
 	export const flatTypes: ReadonlyArray<GenericFlatType> = [$i32];
 
-	export function load(memory: ReadonlyMemoryRange, offset: offset<u32>, _context: ComponentModelContext): string {
+	export function load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<u32>,
+		_context: ComponentModelContext,
+	): string {
 		return fromCodePoint(u32.load(memory, offset));
 	}
 
-	export function liftFlat(memory: Memory, values: FlatValuesIter, _context: ComponentModelContext): string {
+	export function liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		_context: ComponentModelContext,
+	): string {
 		return fromCodePoint(u32.liftFlat(memory, values));
 	}
 
@@ -1552,38 +2085,58 @@ export namespace char {
 		return u32.alloc(memory);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<u32>, value: string, _context: ComponentModelContext): void {
+	export function store(
+		memory: MemoryRange,
+		offset: offset<u32>,
+		value: string,
+		_context: ComponentModelContext,
+	): void {
 		u32.store(memory, offset, asCodePoint(value));
 	}
 
-	export function lowerFlat(result: WasmType[], memory: Memory, value: string, _context: ComponentModelContext): void {
+	export function lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: string,
+		_context: ComponentModelContext,
+	): void {
 		u32.lowerFlat(result, memory, asCodePoint(value));
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<u32>, src: ReadonlyMemoryRange, src_offset: offset<u32>): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<u32>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<u32>,
+	): void {
 		dest.assertAlignment(dest_offset, alignment);
 		src.assertAlignment(src_offset, alignment);
 		src.copyBytes(src_offset, size, dest, dest_offset);
 	}
 
-	export function copyFlat(result: WasmType[], _dest: Memory, values: FlatValuesIter, _src: Memory): void {
+	export function copyFlat(
+		result: WasmType[],
+		_dest: Memory,
+		values: FlatValuesIter,
+		_src: Memory,
+	): void {
 		result.push(values.next().value);
 	}
 
 	function fromCodePoint(code: u32): string {
-		if (code >= 0x110000 || (0xD800 <= code && code <= 0xDFFF)) {
-			throw new ComponentModelTrap('Invalid code point');
+		if (code >= 0x110000 || (0xd800 <= code && code <= 0xdfff)) {
+			throw new ComponentModelTrap("Invalid code point");
 		}
 		return String.fromCodePoint(code);
 	}
 
 	function asCodePoint(str: string): u32 {
 		if (str.length !== 1) {
-			throw new ComponentModelTrap('String length must be 1');
+			throw new ComponentModelTrap("String length must be 1");
 		}
 		const code = str.codePointAt(0)!;
-		if (!(code <= 0xD7FF || (0xD800 <= code && code <= 0x10FFFF))) {
-			throw new ComponentModelTrap('Invalid code point');
+		if (!(code <= 0xd7ff || (0xd800 <= code && code <= 0x10ffff))) {
+			throw new ComponentModelTrap("Invalid code point");
 		}
 		return code;
 	}
@@ -1597,10 +2150,9 @@ export namespace char {
 ComponentModelType.satisfies(char);
 
 export namespace wstring {
-
 	const offsets = {
 		data: 0,
-		codeUnits: 4
+		codeUnits: 4,
 	};
 
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.string;
@@ -1608,13 +2160,26 @@ export namespace wstring {
 	export const alignment: Alignment = Alignment.word;
 	export const flatTypes: ReadonlyArray<GenericFlatType> = [$i32, $i32];
 
-	export function load(memRange: ReadonlyMemoryRange, offset: offset<[u32, u32]>, context: ComponentModelContext): string {
-		const dataPtr: ptr =  memRange.getUint32(offset + offsets.data);
+	export function load(
+		memRange: ReadonlyMemoryRange,
+		offset: offset<[u32, u32]>,
+		context: ComponentModelContext,
+	): string {
+		const dataPtr: ptr = memRange.getUint32(offset + offsets.data);
 		const codeUnits: u32 = memRange.getUint32(offset + offsets.codeUnits);
-		return loadFromRange(memRange.memory, dataPtr, codeUnits, context.options);
+		return loadFromRange(
+			memRange.memory,
+			dataPtr,
+			codeUnits,
+			context.options,
+		);
 	}
 
-	export function liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): string {
+	export function liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): string {
 		const dataPtr: ptr = values.next().value as ptr;
 		const codeUnits: u32 = values.next().value as u32;
 		return loadFromRange(memory, dataPtr, codeUnits, context.options);
@@ -1624,24 +2189,47 @@ export namespace wstring {
 		return memory.alloc(alignment, size);
 	}
 
-	export function store(memory: MemoryRange, offset: offset<[u32, u32]>, str: string, context: ComponentModelContext): void {
-		const [ptr, codeUnits] = storeIntoRange(memory.memory, str, context.options);
+	export function store(
+		memory: MemoryRange,
+		offset: offset<[u32, u32]>,
+		str: string,
+		context: ComponentModelContext,
+	): void {
+		const [ptr, codeUnits] = storeIntoRange(
+			memory.memory,
+			str,
+			context.options,
+		);
 		memory.setUint32(offset + offsets.data, ptr);
 		memory.setUint32(offset + offsets.codeUnits, codeUnits);
 	}
 
-	export function lowerFlat(result: WasmType[], memory: Memory, str: string, context: ComponentModelContext): void {
+	export function lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		str: string,
+		context: ComponentModelContext,
+	): void {
 		result.push(...storeIntoRange(memory, str, context.options));
 	}
 
-	export function copy(dest: MemoryRange, dest_offset: offset<[u32, u32]>, src: ReadonlyMemoryRange, src_offset: offset<[u32, u32]>, context: ComponentModelContext): void {
+	export function copy(
+		dest: MemoryRange,
+		dest_offset: offset<[u32, u32]>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<[u32, u32]>,
+		context: ComponentModelContext,
+	): void {
 		dest.assertAlignment(dest_offset, wstring.alignment);
 		src.assertAlignment(src_offset, wstring.alignment);
 
 		// Copy the actual string data
 		const data = src.getUint32(src_offset + offsets.data);
 		const codeUnits = src.getUint32(src_offset + offsets.codeUnits);
-		const [alignment, byteLength] = getAlignmentAndByteLength(codeUnits, context.options);
+		const [alignment, byteLength] = getAlignmentAndByteLength(
+			codeUnits,
+			context.options,
+		);
 		const srcReader = src.memory.readonly(data, byteLength);
 		const destWriter = dest.memory.alloc(alignment, byteLength);
 		srcReader.copyBytes(0, byteLength, destWriter, 0);
@@ -1651,11 +2239,20 @@ export namespace wstring {
 		dest.setUint32(dest_offset + offsets.codeUnits, codeUnits);
 	}
 
-	export function copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	export function copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		const data = values.next().value as ptr;
 		const codeUnits = values.next().value as u32;
 		// Copy the actual string data
-		const [alignment, byteLength] = getAlignmentAndByteLength(codeUnits, context.options);
+		const [alignment, byteLength] = getAlignmentAndByteLength(
+			codeUnits,
+			context.options,
+		);
 		const srcReader = src.readonly(data, byteLength);
 		const destWriter = dest.alloc(alignment, byteLength);
 		srcReader.copyBytes(0, byteLength, destWriter, 0);
@@ -1663,48 +2260,68 @@ export namespace wstring {
 		result.push(destWriter.ptr, codeUnits);
 	}
 
-	export function getAlignmentAndByteLength(codeUnits: u32, options: Options): [Alignment, number] {
+	export function getAlignmentAndByteLength(
+		codeUnits: u32,
+		options: Options,
+	): [Alignment, number] {
 		const encoding = options.encoding;
-		if (encoding === 'latin1+utf-16') {
-			throw new ComponentModelTrap('latin1+utf-16 encoding not yet supported');
+		if (encoding === "latin1+utf-16") {
+			throw new ComponentModelTrap(
+				"latin1+utf-16 encoding not yet supported",
+			);
 		}
-		if (encoding === 'utf-8') {
+		if (encoding === "utf-8") {
 			return [u8.alignment, codeUnits];
-		} else if (encoding === 'utf-16') {
+		} else if (encoding === "utf-16") {
 			return [u16.alignment, codeUnits * 2];
 		} else {
-			throw new ComponentModelTrap('Unsupported encoding');
+			throw new ComponentModelTrap("Unsupported encoding");
 		}
 	}
 
-	function loadFromRange(memory: Memory, data: ptr, codeUnits: u32, options: Options): string {
+	function loadFromRange(
+		memory: Memory,
+		data: ptr,
+		codeUnits: u32,
+		options: Options,
+	): string {
 		const encoding = options.encoding;
-		if (encoding === 'latin1+utf-16') {
-			throw new ComponentModelTrap('latin1+utf-16 encoding not yet supported');
+		if (encoding === "latin1+utf-16") {
+			throw new ComponentModelTrap(
+				"latin1+utf-16 encoding not yet supported",
+			);
 		}
-		if (encoding === 'utf-8') {
+		if (encoding === "utf-8") {
 			const byteLength = codeUnits;
 			const reader = memory.readonly(data, byteLength);
 			return utf8Decoder.decode(reader.getUint8Array(0, byteLength));
-		} else if (encoding === 'utf-16') {
+		} else if (encoding === "utf-16") {
 			const reader = memory.readonly(data, codeUnits * 2);
-			return String.fromCharCode(...reader.getUint16Array(data, codeUnits));
+			return String.fromCharCode(
+				...reader.getUint16Array(data, codeUnits),
+			);
 		} else {
-			throw new ComponentModelTrap('Unsupported encoding');
+			throw new ComponentModelTrap("Unsupported encoding");
 		}
 	}
 
-	function storeIntoRange(memory: Memory, str: string, options: Options): [ptr, size] {
+	function storeIntoRange(
+		memory: Memory,
+		str: string,
+		options: Options,
+	): [ptr, size] {
 		const { encoding } = options;
-		if (encoding === 'latin1+utf-16') {
-			throw new ComponentModelTrap('latin1+utf-16 encoding not yet supported');
+		if (encoding === "latin1+utf-16") {
+			throw new ComponentModelTrap(
+				"latin1+utf-16 encoding not yet supported",
+			);
 		}
-		if (encoding === 'utf-8') {
+		if (encoding === "utf-8") {
 			const data = utf8Encoder.encode(str);
 			const writer = memory.alloc(u8.alignment, data.length);
 			writer.setUint8Array(0, data);
 			return [writer.ptr, data.length];
-		} else if (encoding === 'utf-16') {
+		} else if (encoding === "utf-16") {
 			const writer = memory.alloc(u16.alignment, str.length * 2);
 			const data = writer.getUint16View(0);
 			for (let i = 0; i < str.length; i++) {
@@ -1712,7 +2329,7 @@ export namespace wstring {
 			}
 			return [writer.ptr, data.length];
 		} else {
-			throw new ComponentModelTrap('Unsupported encoding');
+			throw new ComponentModelTrap("Unsupported encoding");
 		}
 	}
 
@@ -1726,10 +2343,9 @@ ComponentModelType.satisfies(wstring);
 
 export type JArray = JType[];
 export class ListType<T> implements ComponentModelType<T[]> {
-
 	private static readonly offsets = {
 		data: 0,
-		length: 4
+		length: 4,
 	};
 
 	public readonly elementType: ComponentModelType<T>;
@@ -1747,38 +2363,75 @@ export class ListType<T> implements ComponentModelType<T[]> {
 		this.flatTypes = [$i32, $i32];
 	}
 
-	public load(memRange: ReadonlyMemoryRange, offset: offset<[u32, u32]>, context: ComponentModelContext): T[] {
+	public load(
+		memRange: ReadonlyMemoryRange,
+		offset: offset<[u32, u32]>,
+		context: ComponentModelContext,
+	): T[] {
 		const offsets = ListType.offsets;
-		const dataPtr: ptr =  memRange.getUint32(offset + offsets.data);
+		const dataPtr: ptr = memRange.getUint32(offset + offsets.data);
 		const length: u32 = memRange.getUint32(offset + offsets.length);
-		return this.loadFromRange(memRange.memory.readonly(dataPtr, length * this.elementType.size), length, context);
+		return this.loadFromRange(
+			memRange.memory.readonly(dataPtr, length * this.elementType.size),
+			length,
+			context,
+		);
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T[] {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T[] {
 		const dataPtr: ptr = values.next().value as size;
 		const length: u32 = values.next().value as u32;
-		return this.loadFromRange(memory.readonly(dataPtr, length * this.elementType.size), length, context);
+		return this.loadFromRange(
+			memory.readonly(dataPtr, length * this.elementType.size),
+			length,
+			context,
+		);
 	}
 
 	public alloc(memory: Memory): MemoryRange {
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memRange: MemoryRange, offset: offset<[u32, u32]>, values: T[], context: ComponentModelContext): void {
-		const elementMemory = memRange.memory.alloc(this.elementType.alignment, this.elementType.size * values.length);
+	public store(
+		memRange: MemoryRange,
+		offset: offset<[u32, u32]>,
+		values: T[],
+		context: ComponentModelContext,
+	): void {
+		const elementMemory = memRange.memory.alloc(
+			this.elementType.alignment,
+			this.elementType.size * values.length,
+		);
 		this.storeIntoRange(elementMemory, values, context);
 		const offsets = ListType.offsets;
 		memRange.setUint32(offset + offsets.data, elementMemory.ptr);
 		memRange.setUint32(offset + offsets.length, values.length);
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, values: T[], context: ComponentModelContext): void {
-		const elementMemory = memory.alloc(this.elementType.alignment, this.elementType.size * values.length);
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		values: T[],
+		context: ComponentModelContext,
+	): void {
+		const elementMemory = memory.alloc(
+			this.elementType.alignment,
+			this.elementType.size * values.length,
+		);
 		this.storeIntoRange(elementMemory, values, context);
 		result.push(elementMemory.ptr, values.length);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset<[u32, u32]>, src: ReadonlyMemoryRange, src_offset: offset<[u32, u32]>): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset<[u32, u32]>,
+		src: ReadonlyMemoryRange,
+		src_offset: offset<[u32, u32]>,
+	): void {
 		dest.assertAlignment(dest_offset, this.alignment);
 		src.assertAlignment(src_offset, this.alignment);
 		const offsets = ListType.offsets;
@@ -1786,14 +2439,23 @@ export class ListType<T> implements ComponentModelType<T[]> {
 		const length = src.getUint32(src_offset + offsets.length);
 		const byteLength = length * this.elementType.size;
 		const srcReader = src.memory.readonly(data, byteLength);
-		const destWriter = dest.memory.alloc(this.elementType.alignment, byteLength);
+		const destWriter = dest.memory.alloc(
+			this.elementType.alignment,
+			byteLength,
+		);
 		srcReader.copyBytes(0, byteLength, destWriter, 0);
 
 		dest.setUint32(dest_offset + offsets.data, destWriter.ptr);
 		dest.setUint32(dest_offset + offsets.length, length);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, _context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		_context: ComponentModelContext,
+	): void {
 		const data = values.next().value as ptr;
 		const length = values.next().value as u32;
 		const byteLength = length * this.elementType.size;
@@ -1803,7 +2465,11 @@ export class ListType<T> implements ComponentModelType<T[]> {
 		result.push(destWriter.ptr, length);
 	}
 
-	private loadFromRange(memory: ReadonlyMemoryRange, length: u32, context: ComponentModelContext): T[] {
+	private loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: u32,
+		context: ComponentModelContext,
+	): T[] {
 		const result: T[] = [];
 		let offset = 0;
 		for (let i = 0; i < length; i++) {
@@ -1813,7 +2479,11 @@ export class ListType<T> implements ComponentModelType<T[]> {
 		return result;
 	}
 
-	private storeIntoRange(memory: MemoryRange, values: T[], context: ComponentModelContext): void {
+	private storeIntoRange(
+		memory: MemoryRange,
+		values: T[],
+		context: ComponentModelContext,
+	): void {
 		let offset = 0;
 		for (const item of values) {
 			this.elementType.store(memory, offset, item, context);
@@ -1829,11 +2499,14 @@ export namespace list {
 	}
 }
 
-abstract class TypeArrayType<T extends { length: number; byteLength: number }, ET> implements ComponentModelType<T> {
-
+abstract class TypeArrayType<
+	T extends { length: number; byteLength: number },
+	ET,
+> implements ComponentModelType<T>
+{
 	private static readonly offsets = {
 		data: 0,
-		length: 4
+		length: 4,
 	};
 
 	public readonly kind: ComponentModelTypeKind;
@@ -1853,15 +2526,21 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 
 	public load(memRange: ReadonlyMemoryRange, offset: offset): T {
 		const offsets = TypeArrayType.offsets;
-		const dataPtr: ptr =  memRange.getUint32(offset + offsets.data);
+		const dataPtr: ptr = memRange.getUint32(offset + offsets.data);
 		const length: u32 = memRange.getUint32(offset + offsets.length);
-		return this.loadFromRange(memRange.memory.readonly(dataPtr, length * this.elementType.size), length);
+		return this.loadFromRange(
+			memRange.memory.readonly(dataPtr, length * this.elementType.size),
+			length,
+		);
 	}
 
 	public liftFlat(memory: Memory, values: FlatValuesIter): T {
 		const dataPtr: ptr = values.next().value as size;
 		const length: u32 = values.next().value as u32;
-		return this.loadFromRange(memory.readonly(dataPtr, length * this.elementType.size), length);
+		return this.loadFromRange(
+			memory.readonly(dataPtr, length * this.elementType.size),
+			length,
+		);
 	}
 
 	public alloc(memory: Memory): MemoryRange {
@@ -1869,7 +2548,10 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 	}
 
 	public store(memRange: MemoryRange, offset: offset, value: T): void {
-		const writer = memRange.memory.alloc(this.elementType.alignment, value.byteLength);
+		const writer = memRange.memory.alloc(
+			this.elementType.alignment,
+			value.byteLength,
+		);
 		this.storeIntoRange(writer, value);
 		const offsets = TypeArrayType.offsets;
 		memRange.setUint32(offset + offsets.data, writer.ptr);
@@ -1877,12 +2559,20 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 	}
 
 	public lowerFlat(result: WasmType[], memory: Memory, value: T): void {
-		const writer = memory.alloc(this.elementType.alignment, value.byteLength);
+		const writer = memory.alloc(
+			this.elementType.alignment,
+			value.byteLength,
+		);
 		this.storeIntoRange(writer, value);
 		result.push(writer.ptr, value.length);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: ptr<u8>, src: ReadonlyMemoryRange, src_offset: ptr<u8>): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: ptr<u8>,
+		src: ReadonlyMemoryRange,
+		src_offset: ptr<u8>,
+	): void {
 		dest.assertAlignment(dest_offset, this.alignment);
 		src.assertAlignment(src_offset, this.alignment);
 		const offsets = TypeArrayType.offsets;
@@ -1892,7 +2582,10 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 		const byteLength = length * this.elementType.size;
 		const srcReader = src.memory.readonly(data, byteLength);
 		// Allocate space in dest for the data
-		const destWriter = dest.memory.alloc(this.elementType.alignment, byteLength);
+		const destWriter = dest.memory.alloc(
+			this.elementType.alignment,
+			byteLength,
+		);
 		// Copy the byes over
 		srcReader.copyBytes(0, byteLength, destWriter, 0);
 		// Store the new data pointer and length in dest
@@ -1900,7 +2593,13 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 		dest.setUint32(dest_offset + offsets.length, length);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, _context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		_context: ComponentModelContext,
+	): void {
 		const data = values.next().value as ptr;
 		const length = values.next().value as u32;
 		const byteLength = length * this.elementType.size;
@@ -1910,7 +2609,10 @@ abstract class TypeArrayType<T extends { length: number; byteLength: number }, E
 		result.push(destWriter.ptr, length);
 	}
 
-	protected abstract loadFromRange(memory: ReadonlyMemoryRange, length: number): T;
+	protected abstract loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): T;
 	protected abstract storeIntoRange(memory: MemoryRange, value: T): void;
 }
 
@@ -1918,7 +2620,10 @@ export class Int8ArrayType extends TypeArrayType<Int8Array, s8> {
 	constructor() {
 		super(s8);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Int8Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Int8Array {
 		return memory.getInt8Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Int8Array): void {
@@ -1937,7 +2642,10 @@ export class Int16ArrayType extends TypeArrayType<Int16Array, s16> {
 	constructor() {
 		super(s16);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Int16Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Int16Array {
 		return memory.getInt16Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Int16Array): void {
@@ -1956,7 +2664,10 @@ export class Int32ArrayType extends TypeArrayType<Int32Array, s32> {
 	constructor() {
 		super(s32);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Int32Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Int32Array {
 		return memory.getInt32Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Int32Array): void {
@@ -1975,7 +2686,10 @@ export class BigInt64ArrayType extends TypeArrayType<BigInt64Array, s64> {
 	constructor() {
 		super(s64);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): BigInt64Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): BigInt64Array {
 		return memory.getInt64Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: BigInt64Array): void {
@@ -1994,7 +2708,10 @@ export class Uint8ArrayType extends TypeArrayType<Uint8Array, u8> {
 	constructor() {
 		super(u8);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Uint8Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Uint8Array {
 		return memory.getUint8Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Uint8Array): void {
@@ -2013,7 +2730,10 @@ export class Uint16ArrayType extends TypeArrayType<Uint16Array, u16> {
 	constructor() {
 		super(u16);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Uint16Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Uint16Array {
 		return memory.getUint16Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Uint16Array): void {
@@ -2032,7 +2752,10 @@ export class Uint32ArrayType extends TypeArrayType<Uint32Array, u32> {
 	constructor() {
 		super(u32);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Uint32Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Uint32Array {
 		return memory.getUint32Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Uint32Array): void {
@@ -2051,7 +2774,10 @@ export class BigUint64ArrayType extends TypeArrayType<BigUint64Array, u64> {
 	constructor() {
 		super(u64);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): BigUint64Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): BigUint64Array {
 		return memory.getUint64Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: BigUint64Array): void {
@@ -2070,7 +2796,10 @@ export class Float32ArrayType extends TypeArrayType<Float32Array, float32> {
 	constructor() {
 		super(float32);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Float32Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Float32Array {
 		return memory.getFloat32Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Float32Array): void {
@@ -2089,7 +2818,10 @@ export class Float64ArrayType extends TypeArrayType<Float64Array, float64> {
 	constructor() {
 		super(float64);
 	}
-	protected loadFromRange(memory: ReadonlyMemoryRange, length: number): Float64Array {
+	protected loadFromRange(
+		memory: ReadonlyMemoryRange,
+		length: number,
+	): Float64Array {
 		return memory.getFloat64Array(0, length);
 	}
 	protected storeIntoRange(memory: MemoryRange, value: Float64Array): void {
@@ -2114,8 +2846,9 @@ interface JRecord {
 
 type JTuple = JType[];
 
-abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> implements ComponentModelType<T> {
-
+abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField>
+	implements ComponentModelType<T>
+{
 	public fields: F[];
 
 	public kind: ComponentModelTypeKind;
@@ -2123,7 +2856,10 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 	public readonly alignment: Alignment;
 	public readonly flatTypes: ReadonlyArray<GenericFlatType>;
 
-	constructor(fields: F[], kind: ComponentModelTypeKind.record | ComponentModelTypeKind.tuple) {
+	constructor(
+		fields: F[],
+		kind: ComponentModelTypeKind.record | ComponentModelTypeKind.tuple,
+	) {
 		this.fields = fields;
 
 		this.kind = kind;
@@ -2132,7 +2868,11 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		this.flatTypes = BaseRecordType.flatTypes(fields);
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T {
 		memory.assertAlignment(offset, this.alignment);
 		const result: JType[] = [];
 		for (const field of this.fields) {
@@ -2143,8 +2883,11 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		return this.create(this.fields, result);
 	}
 
-
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T {
 		const result: JType[] = [];
 		for (const field of this.fields) {
 			result.push(field.type.liftFlat(memory, values, context));
@@ -2156,7 +2899,12 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: offset, record: T, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		record: T,
+		context: ComponentModelContext,
+	): void {
 		memory.assertAlignment(offset, this.alignment);
 		const values = this.elements(record, this.fields);
 		for (let i = 0; i < this.fields.length; i++) {
@@ -2168,7 +2916,12 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		}
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, record: T, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		record: T,
+		context: ComponentModelContext,
+	): void {
 		const values = this.elements(record, this.fields);
 		for (let i = 0; i < this.fields.length; i++) {
 			const field = this.fields[i];
@@ -2177,7 +2930,13 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		}
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		for (const field of this.fields) {
 			dest_offset = align(dest_offset, field.type.alignment);
 			src_offset = align(src_offset, field.type.alignment);
@@ -2187,7 +2946,13 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		}
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		for (const field of this.fields) {
 			field.type.copyFlat(result, dest, values, src, context);
 		}
@@ -2196,7 +2961,10 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 	protected abstract create(fields: F[], values: JType[]): T;
 	protected abstract elements(record: T, fields: F[]): JType[];
 
-	private static size(fields: TypedField[], recordAlignment: Alignment): size {
+	private static size(
+		fields: TypedField[],
+		recordAlignment: Alignment,
+	): size {
 		let result: size = 0;
 		for (const field of fields) {
 			result = align(result, field.type.alignment);
@@ -2213,7 +2981,9 @@ abstract class BaseRecordType<T extends JRecord | JTuple, F extends TypedField> 
 		return result;
 	}
 
-	private static flatTypes(fields: TypedField[]): ReadonlyArray<GenericFlatType> {
+	private static flatTypes(
+		fields: TypedField[],
+	): ReadonlyArray<GenericFlatType> {
 		const result: GenericFlatType[] = [];
 		for (const field of fields) {
 			result.push(...field.type.flatTypes);
@@ -2227,13 +2997,18 @@ interface RecordField extends TypedField {
 }
 
 namespace RecordField {
-	export function create(name: string, type: AnyComponentModelType): RecordField {
+	export function create(
+		name: string,
+		type: AnyComponentModelType,
+	): RecordField {
 		return { name, type };
 	}
 }
 
-export class RecordType<T extends JRecord> extends BaseRecordType<T, RecordField> {
-
+export class RecordType<T extends JRecord> extends BaseRecordType<
+	T,
+	RecordField
+> {
 	constructor(fields: [string, AnyComponentModelType][]) {
 		const recordFields: RecordField[] = [];
 		for (const [name, type] of fields) {
@@ -2262,8 +3037,7 @@ export class RecordType<T extends JRecord> extends BaseRecordType<T, RecordField
 	}
 }
 
-interface TupleField extends TypedField {
-}
+interface TupleField extends TypedField {}
 namespace TupleField {
 	export function create(type: AnyComponentModelType): TupleField {
 		return { type };
@@ -2271,7 +3045,6 @@ namespace TupleField {
 }
 
 export class TupleType<T extends JTuple> extends BaseRecordType<T, TupleField> {
-
 	constructor(fields: AnyComponentModelType[]) {
 		const tupleFields: TupleField[] = [];
 		for (const type of fields) {
@@ -2297,7 +3070,6 @@ export namespace tuple {
 }
 
 export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
-
 	public readonly type: AnyComponentModelType | undefined;
 	private readonly arraySize: number;
 
@@ -2315,16 +3087,32 @@ export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
 		this.arraySize = FlagsType.num32Flags(numberOfFlags);
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset<u8 | u16 | u32 | u32[]>, context: ComponentModelContext): u32 | bigint {
-		return this.type === undefined ? 0 : this.loadFrom(this.type.load(memory, offset, context) as (u32 | u32[]));
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset<u8 | u16 | u32 | u32[]>,
+		context: ComponentModelContext,
+	): u32 | bigint {
+		return this.type === undefined
+			? 0
+			: this.loadFrom(
+					this.type.load(memory, offset, context) as u32 | u32[],
+				);
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): u32 | bigint {
-		return this.type === undefined ? 0 : this.loadFrom(this.type.liftFlat(memory, values, context) as (u32 | u32[]));
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): u32 | bigint {
+		return this.type === undefined
+			? 0
+			: this.loadFrom(
+					this.type.liftFlat(memory, values, context) as u32 | u32[],
+				);
 	}
 
 	private loadFrom(value: u32 | u32[]): u32 | bigint {
-		if (typeof value === 'number') {
+		if (typeof value === "number") {
 			return value;
 		} else {
 			let result = 0n;
@@ -2340,37 +3128,70 @@ export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: offset<u8 | u16 | u32 | u32[]>, flags: u32 | bigint, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset<u8 | u16 | u32 | u32[]>,
+		flags: u32 | bigint,
+		context: ComponentModelContext,
+	): void {
 		if (this.type !== undefined) {
 			this.type.store(memory, offset, this.storeInto(flags), context);
 		}
 	}
 
-	public lowerFlat(result: WasmType[], _memory: Memory, flags: u32 | bigint, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		_memory: Memory,
+		flags: u32 | bigint,
+		context: ComponentModelContext,
+	): void {
 		if (this.type !== undefined) {
-			this.type.lowerFlat(result, _memory, this.storeInto(flags), context);
+			this.type.lowerFlat(
+				result,
+				_memory,
+				this.storeInto(flags),
+				context,
+			);
 		}
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		if (this.type !== undefined) {
 			this.type.copy(dest, dest_offset, src, src_offset, context);
 		}
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		if (this.type !== undefined) {
 			this.type.copyFlat(result, dest, values, src, context);
 		}
 	}
 
 	private storeInto(value: number | bigint): u32 | u32[] {
-		if (typeof value === 'number') {
+		if (typeof value === "number") {
 			return value;
 		} else {
 			const result: u32[] = new Array(this.arraySize).fill(0);
-			for (let f = 0, i = result.length - 1; f < result.length; f++, i--) {
-				const bits = Number((value >> BigInt(f * 32)) & BigInt(0xffffffff));
+			for (
+				let f = 0, i = result.length - 1;
+				f < result.length;
+				f++, i--
+			) {
+				const bits = Number(
+					(value >> BigInt(f * 32)) & BigInt(0xffffffff),
+				);
 				result[i] = bits;
 			}
 			return result;
@@ -2399,7 +3220,9 @@ export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
 		}
 	}
 
-	private static getType(numberOfFlags: number): typeof u8 | typeof u16 | typeof u32 | TupleType<any> | undefined {
+	private static getType(
+		numberOfFlags: number,
+	): typeof u8 | typeof u16 | typeof u32 | TupleType<any> | undefined {
 		if (numberOfFlags === 0) {
 			return undefined;
 		} else if (numberOfFlags <= 8) {
@@ -2409,12 +3232,18 @@ export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
 		} else if (numberOfFlags <= 32) {
 			return u32;
 		} else {
-			return new TupleType(new Array(this.num32Flags(numberOfFlags)).fill(u32));
+			return new TupleType(
+				new Array(this.num32Flags(numberOfFlags)).fill(u32),
+			);
 		}
 	}
 
-	private static flatTypes(numberOfFlags: number): ReadonlyArray<GenericFlatType> {
-		return new Array<GenericFlatType>(this.num32Flags(numberOfFlags)).fill($i32);
+	private static flatTypes(
+		numberOfFlags: number,
+	): ReadonlyArray<GenericFlatType> {
+		return new Array<GenericFlatType>(this.num32Flags(numberOfFlags)).fill(
+			$i32,
+		);
 	}
 
 	private static num32Flags(numberOfFlags: number): number {
@@ -2430,8 +3259,17 @@ interface VariantCase {
 }
 
 namespace VariantCase {
-	export function create(index: number, tag: string, type: AnyComponentModelType | undefined): VariantCase {
-		return { index, tag, type, wantFlatTypes: type !== undefined ? [] : undefined };
+	export function create(
+		index: number,
+		tag: string,
+		type: AnyComponentModelType | undefined,
+	): VariantCase {
+		return {
+			index,
+			tag,
+			type,
+			wantFlatTypes: type !== undefined ? [] : undefined,
+		};
 	}
 }
 
@@ -2440,8 +3278,9 @@ interface JVariantCase {
 	readonly value?: JType | undefined | void;
 }
 
-export class VariantType<T extends JVariantCase, I, V extends JType> implements ComponentModelType<T> {
-
+export class VariantType<T extends JVariantCase, I, V extends JType>
+	implements ComponentModelType<T>
+{
 	public readonly cases: VariantCase[];
 	private readonly case2Index: Map<string, u32>;
 	private readonly ctor: (caseIndex: I, value: V) => T;
@@ -2453,7 +3292,13 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 	public readonly alignment: Alignment;
 	public readonly flatTypes: ReadonlyArray<GenericFlatType>;
 
-	constructor(variants: [string, (AnyComponentModelType | undefined)][], ctor: (caseIndex: I, value: V) => T, kind: ComponentModelTypeKind.variant | ComponentModelTypeKind.result = ComponentModelTypeKind.variant) {
+	constructor(
+		variants: [string, AnyComponentModelType | undefined][],
+		ctor: (caseIndex: I, value: V) => T,
+		kind:
+			| ComponentModelTypeKind.variant
+			| ComponentModelTypeKind.result = ComponentModelTypeKind.variant,
+	) {
 		const cases: VariantCase[] = [];
 		this.case2Index = new Map();
 		for (let i = 0; i < variants.length; i++) {
@@ -2473,7 +3318,11 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		this.flatTypes = VariantType.flatTypes(this.discriminantType, cases);
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T {
 		const caseIndex = this.discriminantType.load(memory, offset);
 		const caseVariant = this.cases[caseIndex];
 		if (caseVariant.type === undefined) {
@@ -2486,7 +3335,11 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		}
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T {
 		// First one is the discriminant type. So skip it.
 		let valuesToReadOver = this.flatTypes.length - 1;
 		const caseIndex = this.discriminantType.liftFlat(memory, values);
@@ -2497,7 +3350,11 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		} else {
 			// The first flat type is the discriminant type. So skip it.
 			const wantFlatTypes = caseVariant.wantFlatTypes!;
-			const iter = new CoerceValueIter(values, this.flatTypes.slice(1), wantFlatTypes);
+			const iter = new CoerceValueIter(
+				values,
+				this.flatTypes.slice(1),
+				wantFlatTypes,
+			);
 			const value = caseVariant.type.liftFlat(memory, iter, context);
 			result = this.ctor(caseVariant.tag as I, value as V);
 			valuesToReadOver = valuesToReadOver - wantFlatTypes.length;
@@ -2512,10 +3369,17 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: offset, variantValue: T, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		variantValue: T,
+		context: ComponentModelContext,
+	): void {
 		const index = this.case2Index.get(variantValue.tag);
 		if (index === undefined) {
-			throw new ComponentModelTrap(`Variant case ${variantValue.tag} not found`);
+			throw new ComponentModelTrap(
+				`Variant case ${variantValue.tag} not found`,
+			);
 		}
 		this.discriminantType.store(memory, offset, index);
 		offset += this.discriminantType.size;
@@ -2526,11 +3390,18 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		}
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, variantValue: T, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		variantValue: T,
+		context: ComponentModelContext,
+	): void {
 		const flatTypes = this.flatTypes;
 		const index = this.case2Index.get(variantValue.tag);
 		if (index === undefined) {
-			throw new ComponentModelTrap(`Variant case ${variantValue.tag} not found`);
+			throw new ComponentModelTrap(
+				`Variant case ${variantValue.tag} not found`,
+			);
 		}
 		this.discriminantType.lowerFlat(result, memory, index);
 		const c = this.cases[index];
@@ -2543,25 +3414,37 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 			const wantTypes = flatTypes.slice(1);
 			const haveTypes = c.wantFlatTypes!;
 			if (payload.length !== haveTypes.length) {
-				throw new ComponentModelTrap('Mismatched flat types');
+				throw new ComponentModelTrap("Mismatched flat types");
 			}
 			for (let i = 0; i < wantTypes.length; i++) {
 				const have: GenericFlatType = haveTypes[i];
 				const want: GenericFlatType = wantTypes[i];
 				if (have === $f32 && want === $i32) {
-					payload[i] = WasmTypes.reinterpret_f32_as_i32(payload[i] as number);
+					payload[i] = WasmTypes.reinterpret_f32_as_i32(
+						payload[i] as number,
+					);
 				} else if (have === $i32 && want === $i64) {
-					payload[i] = WasmTypes.convert_i32_to_i64(payload[i] as number);
+					payload[i] = WasmTypes.convert_i32_to_i64(
+						payload[i] as number,
+					);
 				} else if (have === $f32 && want === $i64) {
-					payload[i] = WasmTypes.reinterpret_f32_as_i64(payload[i] as number);
+					payload[i] = WasmTypes.reinterpret_f32_as_i64(
+						payload[i] as number,
+					);
 				} else if (have === $f64 && want === $i64) {
-					payload[i] = WasmTypes.reinterpret_f64_as_i64(payload[i] as number);
+					payload[i] = WasmTypes.reinterpret_f64_as_i64(
+						payload[i] as number,
+					);
 				}
 			}
 			valuesToFill = valuesToFill - payload.length;
 			result.push(...payload);
 		}
-		for(let i = flatTypes.length - valuesToFill; i < flatTypes.length; i++) {
+		for (
+			let i = flatTypes.length - valuesToFill;
+			i < flatTypes.length;
+			i++
+		) {
 			const type = flatTypes[i];
 			if (type === $i64) {
 				result.push(0n);
@@ -2571,7 +3454,13 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		}
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		this.discriminantType.copy(dest, dest_offset, src, src_offset);
 		const caseIndex = this.discriminantType.load(src, src_offset);
 		const caseVariant = this.cases[caseIndex];
@@ -2585,7 +3474,13 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		caseVariant.type.copy(dest, dest_offset, src, src_offset, context);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		let valuesToCopy = this.flatTypes.length - 1;
 		this.discriminantType.copyFlat(result, dest, values, src);
 		const caseIndex = result[result.length - 1] as number;
@@ -2593,7 +3488,11 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		if (caseVariant.type !== undefined) {
 			const wantFlatTypes = caseVariant.wantFlatTypes!;
 			// The first flat type is the discriminant type. So skip it.
-			const iter = new CoerceValueIter(values, this.flatTypes.slice(1), wantFlatTypes);
+			const iter = new CoerceValueIter(
+				values,
+				this.flatTypes.slice(1),
+				wantFlatTypes,
+			);
 			caseVariant.type.copyFlat(result, dest, iter, src, context);
 			valuesToCopy = valuesToCopy - wantFlatTypes.length;
 		}
@@ -2602,17 +3501,29 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		}
 	}
 
-	private static size(discriminantType: AnyComponentModelType, cases: VariantCase[]): size {
+	private static size(
+		discriminantType: AnyComponentModelType,
+		cases: VariantCase[],
+	): size {
 		let result = discriminantType.size;
 		result = align(result, this.maxCaseAlignment(cases));
 		return result + this.maxCaseSize(cases);
 	}
 
-	private static alignment(discriminantType: AnyComponentModelType, cases: VariantCase[]): Alignment {
-		return Math.max(discriminantType.alignment, this.maxCaseAlignment(cases)) as Alignment;
+	private static alignment(
+		discriminantType: AnyComponentModelType,
+		cases: VariantCase[],
+	): Alignment {
+		return Math.max(
+			discriminantType.alignment,
+			this.maxCaseAlignment(cases),
+		) as Alignment;
 	}
 
-	private static flatTypes(discriminantType: AnyComponentModelType, cases: VariantCase[]): ReadonlyArray<GenericFlatType> {
+	private static flatTypes(
+		discriminantType: AnyComponentModelType,
+		cases: VariantCase[],
+	): ReadonlyArray<GenericFlatType> {
 		const flat: GenericFlatType[] = [];
 		for (const c of cases) {
 			if (c.type === undefined) {
@@ -2634,12 +3545,18 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		return [...discriminantType.flatTypes, ...flat];
 	}
 
-	private static discriminantType(cases: number): typeof u8 | typeof u16 | typeof u32 {
+	private static discriminantType(
+		cases: number,
+	): typeof u8 | typeof u16 | typeof u32 {
 		switch (Math.ceil(Math.log2(cases) / 8)) {
-			case 0: return u8;
-			case 1: return u8;
-			case 2: return u16;
-			case 3: return u32;
+			case 0:
+				return u8;
+			case 1:
+				return u8;
+			case 2:
+				return u16;
+			case 3:
+				return u32;
 		}
 		throw new ComponentModelTrap(`Too many cases: ${cases}`);
 	}
@@ -2664,7 +3581,10 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 		return result;
 	}
 
-	private static joinFlatType(a: GenericFlatType, b:GenericFlatType) : GenericFlatType {
+	private static joinFlatType(
+		a: GenericFlatType,
+		b: GenericFlatType,
+	): GenericFlatType {
 		if (a === b) {
 			return a;
 		}
@@ -2677,8 +3597,10 @@ export class VariantType<T extends JVariantCase, I, V extends JType> implements 
 
 export type JEnum = string;
 export class EnumType<T extends JEnum> implements ComponentModelType<T> {
-
-	private readonly discriminantType: ComponentModelType<u8> | ComponentModelType<u16> | ComponentModelType<u32>;
+	private readonly discriminantType:
+		| ComponentModelType<u8>
+		| ComponentModelType<u16>
+		| ComponentModelType<u32>;
 	private readonly cases: string[];
 	private readonly case2index: Map<string, number>;
 
@@ -2701,13 +3623,25 @@ export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 		this.flatTypes = this.discriminantType.flatTypes;
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T {
-		const index = this.assertRange(this.discriminantType.load(memory, offset, context));
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T {
+		const index = this.assertRange(
+			this.discriminantType.load(memory, offset, context),
+		);
 		return this.cases[index] as T;
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T {
-		const index = this.assertRange(this.discriminantType.liftFlat(memory, values, context));
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T {
+		const index = this.assertRange(
+			this.discriminantType.liftFlat(memory, values, context),
+		);
 		return this.cases[index] as T;
 	}
 
@@ -2715,72 +3649,109 @@ export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: offset, value: T, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		value: T,
+		context: ComponentModelContext,
+	): void {
 		const index = this.case2index.get(value);
 		if (index === undefined) {
-			throw new ComponentModelTrap('Enumeration value not found');
+			throw new ComponentModelTrap("Enumeration value not found");
 		}
 		this.discriminantType.store(memory, offset, index, context);
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, value: T, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: T,
+		context: ComponentModelContext,
+	): void {
 		const index = this.case2index.get(value);
 		if (index === undefined) {
-			throw new ComponentModelTrap('Enumeration value not found');
+			throw new ComponentModelTrap("Enumeration value not found");
 		}
 		this.discriminantType.lowerFlat(result, memory, index, context);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		this.discriminantType.copy(dest, dest_offset, src, src_offset, context);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		this.discriminantType.copyFlat(result, dest, values, src, context);
 	}
 
 	private assertRange(value: number): number {
 		if (value < 0 || value > this.cases.length) {
-			throw new ComponentModelTrap('Enumeration value out of range');
+			throw new ComponentModelTrap("Enumeration value out of range");
 		}
 		return value;
 	}
 
-	private static discriminantType(cases: number): ComponentModelType<u8> | ComponentModelType<u16> | ComponentModelType<u32> {
+	private static discriminantType(
+		cases: number,
+	):
+		| ComponentModelType<u8>
+		| ComponentModelType<u16>
+		| ComponentModelType<u32> {
 		switch (Math.ceil(Math.log2(cases) / 8)) {
-			case 0: return u8;
-			case 1: return u8;
-			case 2: return u16;
-			case 3: return u32;
+			case 0:
+				return u8;
+			case 1:
+				return u8;
+			case 2:
+				return u16;
+			case 3:
+				return u32;
 		}
 		throw new ComponentModelTrap(`Too many cases: ${cases}`);
 	}
 }
 
 export namespace option {
-	export const none = 'none' as const;
-	export type None<T extends JType> = { readonly tag: typeof none } & _common<T>;
+	export const none = "none" as const;
+	export type None<T extends JType> = {
+		readonly tag: typeof none;
+	} & _common<T>;
 	export function None<T extends JType>(): None<T> {
 		return new OptionImpl<T>(none, undefined) as None<T>;
 	}
 
-	export const some = 'some' as const;
-	export type Some<T extends JType> = { readonly tag: typeof some; readonly value: T } & _common<T>;
+	export const some = "some" as const;
+	export type Some<T extends JType> = {
+		readonly tag: typeof some;
+		readonly value: T;
+	} & _common<T>;
 	export function Some<T extends JType>(value: T): Some<T> {
-		return new OptionImpl<T>(some, value ) as Some<T>;
+		return new OptionImpl<T>(some, value) as Some<T>;
 	}
 
 	export type _tt = typeof none | typeof some;
 	export type _vt<T extends JType> = undefined | T;
 
-	type _common<T extends JType> = Omit<OptionImpl<T>, 'case' | 'value'>;
-
+	type _common<T extends JType> = Omit<OptionImpl<T>, "case" | "value">;
 
 	export function _ctor<T extends JType>(c: _tt, v: _vt<T>): option<T> {
 		return new OptionImpl(c, v) as option<T>;
 	}
 
-	export function isOption<T extends JType>(value: T | option<T>): value is option<T> {
+	export function isOption<T extends JType>(
+		value: T | option<T>,
+	): value is option<T> {
 		return value instanceof OptionImpl;
 	}
 
@@ -2788,12 +3759,15 @@ export namespace option {
 		private readonly _tag: _tt;
 		private readonly _value?: _vt<T>;
 
-		constructor(tag: typeof option.none | typeof option.some, value: undefined | T) {
+		constructor(
+			tag: typeof option.none | typeof option.some,
+			value: undefined | T,
+		) {
 			this._tag = tag;
 			this._value = value;
 		}
 
-		get tag():  typeof option.none | typeof option.some {
+		get tag(): typeof option.none | typeof option.some {
 			return this._tag;
 		}
 
@@ -2808,7 +3782,6 @@ export namespace option {
 		public isSome(): this is Some<T> {
 			return this._tag === option.some;
 		}
-
 	}
 
 	export class Error extends ResultError<JType> {
@@ -2818,15 +3791,15 @@ export namespace option {
 	}
 }
 export type option<T extends JType> = option.None<T> | option.Some<T>;
-export class OptionType<T extends JType> implements ComponentModelType<T | option<T> | undefined> {
-
+export class OptionType<T extends JType>
+	implements ComponentModelType<T | option<T> | undefined>
+{
 	public readonly valueType: AnyComponentModelType;
 
 	public readonly kind: ComponentModelTypeKind;
 	public readonly size: size;
 	public readonly alignment: Alignment;
 	public readonly flatTypes: readonly GenericFlatType[];
-
 
 	constructor(valueType: AnyComponentModelType) {
 		this.valueType = valueType;
@@ -2836,30 +3809,52 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		this.flatTypes = this.computeFlatTypes();
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T | option<T> | undefined {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T | option<T> | undefined {
 		const caseIndex = u8.load(memory, offset);
-		if (caseIndex === 0) { // index 0 is none
-			return context.options.keepOption ? option._ctor<T>(option.none, undefined) : undefined;
+		if (caseIndex === 0) {
+			// index 0 is none
+			return context.options.keepOption
+				? option._ctor<T>(option.none, undefined)
+				: undefined;
 		} else {
 			offset += u8.size;
 			offset = align(offset, this.alignment);
 			const value = this.valueType.load(memory, offset, context);
-			return (context.options.keepOption ? option._ctor(option.some, value) : value) as T | option<T> | undefined;
+			return (
+				context.options.keepOption
+					? option._ctor(option.some, value)
+					: value
+			) as T | option<T> | undefined;
 		}
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T | option<T> | undefined {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T | option<T> | undefined {
 		// First one is the discriminant type. So skip it.
 		const caseIndex = u8.liftFlat(memory, values);
-		if (caseIndex === 0) { // Index 0 is none
+		if (caseIndex === 0) {
+			// Index 0 is none
 			// Read over the value params
 			for (let i = 0; i < this.valueType.flatTypes.length; i++) {
 				values.next();
 			}
-			return context.options.keepOption ? option._ctor<T>(option.none, undefined) : undefined;
+			return context.options.keepOption
+				? option._ctor<T>(option.none, undefined)
+				: undefined;
 		} else {
 			const value = this.valueType.liftFlat(memory, values, context);
-			return (context.options.keepOption ? option._ctor(option.some, value) : value) as T | option<T> | undefined;
+			return (
+				context.options.keepOption
+					? option._ctor(option.some, value)
+					: value
+			) as T | option<T> | undefined;
 		}
 	}
 
@@ -2867,7 +3862,12 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		return memory.alloc(this.alignment, this.size);
 	}
 
-	public store(memory: MemoryRange, offset: offset, value: T | option<T> | undefined, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		value: T | option<T> | undefined,
+		context: ComponentModelContext,
+	): void {
 		const optValue = this.asOptionValue(value, context.options);
 		const index = optValue.tag === option.none ? 0 : 1;
 		u8.store(memory, offset, index);
@@ -2878,7 +3878,12 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		}
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, value: T | option<T> | undefined, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: T | option<T> | undefined,
+		context: ComponentModelContext,
+	): void {
 		const optValue = this.asOptionValue(value, context.options);
 		const index = optValue.tag === option.none ? 0 : 1;
 		u8.lowerFlat(result, memory, index);
@@ -2895,7 +3900,13 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		}
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		u8.copy(dest, dest_offset, src, src_offset);
 		const caseIndex = u8.load(src, src_offset);
 		if (caseIndex === 0) {
@@ -2909,7 +3920,13 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		}
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		u8.copyFlat(result, dest, values, src);
 		const caseIndex = result[result.length - 1] as number;
 		if (caseIndex === 0) {
@@ -2921,17 +3938,26 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 		}
 	}
 
-	private asOptionValue(value: T | option<T> | undefined, options: Options): option<T> {
+	private asOptionValue(
+		value: T | option<T> | undefined,
+		options: Options,
+	): option<T> {
 		if (option.isOption(value)) {
 			if (!options.keepOption) {
-				throw new ComponentModelTrap('Received an option value although options should be unpacked.');
+				throw new ComponentModelTrap(
+					"Received an option value although options should be unpacked.",
+				);
 			}
 			return value as option<T>;
 		} else {
 			if (options.keepOption) {
-				throw new ComponentModelTrap('Received a unpacked option value although options should NOT be unpacked.');
+				throw new ComponentModelTrap(
+					"Received a unpacked option value although options should NOT be unpacked.",
+				);
 			}
-			return value === undefined ? option._ctor<T>(option.none, undefined) : option._ctor(option.some, value);
+			return value === undefined
+				? option._ctor<T>(option.none, undefined)
+				: option._ctor(option.some, value);
 		}
 	}
 
@@ -2951,28 +3977,43 @@ export class OptionType<T extends JType> implements ComponentModelType<T | optio
 }
 
 export namespace result {
-	export const ok = 'ok' as const;
-	export type Ok<O extends JType, E extends JType> = { readonly tag: typeof ok; readonly value: O } & _common<O, E>;
+	export const ok = "ok" as const;
+	export type Ok<O extends JType, E extends JType> = {
+		readonly tag: typeof ok;
+		readonly value: O;
+	} & _common<O, E>;
 	export function Ok<O extends JType, E extends JType>(value: O): Ok<O, E> {
 		return new ResultImpl<O, E>(ok, value) as Ok<O, E>;
 	}
 
-	export const error = 'error' as const;
-	export type Error<O extends JType, E extends JType> = { readonly tag: typeof error; readonly value: E } & _common<O, E>;
-	export function Error<O extends JType, E extends JType>(value: E): Error<O, E> {
+	export const error = "error" as const;
+	export type Error<O extends JType, E extends JType> = {
+		readonly tag: typeof error;
+		readonly value: E;
+	} & _common<O, E>;
+	export function Error<O extends JType, E extends JType>(
+		value: E,
+	): Error<O, E> {
 		return new ResultImpl<O, E>(error, value) as Error<O, E>;
 	}
 
 	export type _tt = typeof ok | typeof error;
 	export type _vt<O extends JType, E extends JType> = O | E;
-	type _common<O extends JType, E extends JType> = Omit<ResultImpl<O, E>, 'tag' | 'value'>;
+	type _common<O extends JType, E extends JType> = Omit<
+		ResultImpl<O, E>,
+		"tag" | "value"
+	>;
 
-	export function _ctor<O extends JType, E extends JType>(c: _tt, v: _vt<O, E>): result<O, E> {
+	export function _ctor<O extends JType, E extends JType>(
+		c: _tt,
+		v: _vt<O, E>,
+	): result<O, E> {
 		return new ResultImpl<O, E>(c, v) as result<O, E>;
 	}
 
-	export class ResultImpl<O extends JType, E extends JType> implements JVariantCase {
-
+	export class ResultImpl<O extends JType, E extends JType>
+		implements JVariantCase
+	{
 		private readonly _tag: _tt;
 		private readonly _value: _vt<O, E>;
 
@@ -2999,13 +4040,28 @@ export namespace result {
 	}
 }
 
-export type result<O extends JType, E extends JType = void> = result.Ok<O, E> | result.Error<O, E>;
-export class ResultType<O extends JType, E extends JType = void> extends VariantType<result<O, E>, 'ok' | 'error', O | E> {
-
+export type result<O extends JType, E extends JType = void> =
+	| result.Ok<O, E>
+	| result.Error<O, E>;
+export class ResultType<
+	O extends JType,
+	E extends JType = void,
+> extends VariantType<result<O, E>, "ok" | "error", O | E> {
 	private readonly _errorClass: ResultErrorConstructor<E> | undefined;
 
-	constructor(okType: AnyComponentModelType | undefined, errorType: AnyComponentModelType | undefined, errorClass?: ResultErrorConstructor<E>) {
-		super([['ok', okType], ['error', errorType]], result._ctor<O, E>, ComponentModelTypeKind.result);
+	constructor(
+		okType: AnyComponentModelType | undefined,
+		errorType: AnyComponentModelType | undefined,
+		errorClass?: ResultErrorConstructor<E>,
+	) {
+		super(
+			[
+				["ok", okType],
+				["error", errorType],
+			],
+			result._ctor<O, E>,
+			ComponentModelTypeKind.result,
+		);
 		this._errorClass = errorClass;
 	}
 
@@ -3019,15 +4075,13 @@ export interface Resource {
 }
 
 export namespace Resource {
-
 	export class Default implements Resource {
-
 		private _handle: ResourceHandle<this>;
 
 		constructor(handle: ResourceHandle);
 		constructor(manager: ResourceManager);
 		constructor(handleOrManager: ResourceHandle | ResourceManager) {
-			if (typeof handleOrManager === 'number') {
+			if (typeof handleOrManager === "number") {
 				this._handle = handleOrManager;
 			} else {
 				this._handle = handleOrManager.registerResource(this);
@@ -3039,8 +4093,12 @@ export namespace Resource {
 		}
 	}
 
-	export function getRepresentation(resource: Resource & { $rep?(): ResourceRepresentation }): ResourceRepresentation | undefined {
-		return typeof resource.$rep === 'function' ? resource.$rep() : undefined;
+	export function getRepresentation(
+		resource: Resource & { $rep?(): ResourceRepresentation },
+	): ResourceRepresentation | undefined {
+		return typeof resource.$rep === "function"
+			? resource.$rep()
+			: undefined;
 	}
 }
 
@@ -3056,10 +4114,20 @@ export interface ResourceManager<T extends Resource = Resource> {
 	dropHandle(handle: ResourceHandle<T>): ResourceRepresentation;
 
 	// Resource management
-	setProxyInfo(ctor: (new (handleTag: symbol, handle: ResourceHandle<T>, rep: ResourceRepresentation) => T), dtor: (self: ResourceHandle<T>) => void): void;
+	setProxyInfo(
+		ctor: new (
+			handleTag: symbol,
+			handle: ResourceHandle<T>,
+			rep: ResourceRepresentation,
+		) => T,
+		dtor: (self: ResourceHandle<T>) => void,
+	): void;
 	hasResource(handle: ResourceHandle<T>): boolean;
 	getResource(handle: ResourceHandle<T>): T;
-	registerResource(resource: T, handle?: ResourceHandle<T>): ResourceHandle<T>;
+	registerResource(
+		resource: T,
+		handle?: ResourceHandle<T>,
+	): ResourceHandle<T>;
 	registerProxy(proxy: T): void;
 	removeResource(value: ResourceHandle<T> | T): void;
 
@@ -3069,46 +4137,59 @@ export interface ResourceManager<T extends Resource = Resource> {
 }
 
 export namespace ResourceManager {
-	export const handleTag: symbol = Symbol('handleTag');
+	export const handleTag: symbol = Symbol("handleTag");
 
-	type FinalizationRegistryData = { handle: ResourceHandle; rep: ResourceRepresentation };
-	export class Default<T extends Resource = Resource> implements ResourceManager<T> {
-
-
+	type FinalizationRegistryData = {
+		handle: ResourceHandle;
+		rep: ResourceRepresentation;
+	};
+	export class Default<T extends Resource = Resource>
+		implements ResourceManager<T>
+	{
 		private handleCounter: ResourceHandle;
 		private handleTable: Map<ResourceHandle<T>, ResourceRepresentation>;
 		private h2r: Map<ResourceHandle<T>, WeakRef<T> | T | undefined>;
 		private finalizer: FinalizationRegistry<FinalizationRegistryData>;
-		private ctor: (new (handleTag: symbol, handle: ResourceHandle<T>, rep: ResourceRepresentation) => T) | undefined;
+		private ctor:
+			| (new (
+					handleTag: symbol,
+					handle: ResourceHandle<T>,
+					rep: ResourceRepresentation,
+			  ) => T)
+			| undefined;
 		private dtor: ((self: ResourceHandle<T>) => void) | undefined;
 
 		// We only need the representation counter for the loop implementation.
 		// To make them distinguishable from handles or normal representations we
 		// start with MaxValue and decrement it for each new representation.
 		private representationCounter: ResourceRepresentation;
-		private loopTable: undefined | Map<ResourceRepresentation, ResourceHandle<T>>;
+		private loopTable:
+			| undefined
+			| Map<ResourceRepresentation, ResourceHandle<T>>;
 
 		constructor() {
 			this.handleCounter = 1;
 			this.handleTable = new Map();
 			this.h2r = new Map();
-			this.finalizer = new FinalizationRegistry((value: FinalizationRegistryData) => {
-				const { handle, rep } = value;
-				// A proxy was collected, remove the resource.
-				try {
-					this.dtor!(rep);
-				} catch (error) {
-					// Log the error.
-					RAL().console.error(error);
-				}
+			this.finalizer = new FinalizationRegistry(
+				(value: FinalizationRegistryData) => {
+					const { handle, rep } = value;
+					// A proxy was collected, remove the resource.
+					try {
+						this.dtor!(rep);
+					} catch (error) {
+						// Log the error.
+						RAL().console.error(error);
+					}
 
-				// Clean up tables
-				this.h2r.delete(handle);
-				this.handleTable.delete(handle);
+					// Clean up tables
+					this.h2r.delete(handle);
+					this.handleTable.delete(handle);
 
-				// Also remove the representation from the loop if existed
-				this.loopTable?.delete(rep);
-			});
+					// Also remove the representation from the loop if existed
+					this.loopTable?.delete(rep);
+				},
+			);
 			this.representationCounter = Number.MAX_VALUE;
 			this.loopTable = undefined;
 		}
@@ -3119,10 +4200,14 @@ export namespace ResourceManager {
 			return handle;
 		}
 
-		public getRepresentation(handle: ResourceHandle<T>): ResourceRepresentation {
+		public getRepresentation(
+			handle: ResourceHandle<T>,
+		): ResourceRepresentation {
 			const rep = this.handleTable.get(handle);
 			if (rep === undefined) {
-				throw new ComponentModelTrap(`No representation registered for resource handle ${handle}`);
+				throw new ComponentModelTrap(
+					`No representation registered for resource handle ${handle}`,
+				);
 			}
 			return rep;
 		}
@@ -3130,7 +4215,9 @@ export namespace ResourceManager {
 		public dropHandle(handle: ResourceHandle<T>): ResourceRepresentation {
 			const rep = this.handleTable.get(handle);
 			if (rep === undefined) {
-				throw new ComponentModelTrap(`Unknown resource handle ${handle}`);
+				throw new ComponentModelTrap(
+					`Unknown resource handle ${handle}`,
+				);
 			}
 			if (this.dtor !== undefined) {
 				this.dtor(rep);
@@ -3139,7 +4226,14 @@ export namespace ResourceManager {
 			return rep;
 		}
 
-		public setProxyInfo(ctor: (new (handleTag: symbol, handle: ResourceHandle<T>, rep: ResourceRepresentation) => T), dtor: (self: ResourceHandle<T>) => void): void {
+		public setProxyInfo(
+			ctor: new (
+				handleTag: symbol,
+				handle: ResourceHandle<T>,
+				rep: ResourceRepresentation,
+			) => T,
+			dtor: (self: ResourceHandle<T>) => void,
+		): void {
 			this.ctor = ctor;
 			this.dtor = dtor;
 		}
@@ -3154,7 +4248,9 @@ export namespace ResourceManager {
 				if (value instanceof WeakRef) {
 					const unwrapped = value.deref();
 					if (unwrapped === undefined) {
-						throw new ComponentModelTrap(`Resource for handle ${handle} has been collected.`);
+						throw new ComponentModelTrap(
+							`Resource for handle ${handle} has been collected.`,
+						);
 					}
 					return unwrapped;
 				} else {
@@ -3173,20 +4269,31 @@ export namespace ResourceManager {
 				this.setProxy(handle, rep, proxy);
 				return proxy;
 			} else {
-				throw new ComponentModelTrap(`Unknown resource handle ${handle}`);
+				throw new ComponentModelTrap(
+					`Unknown resource handle ${handle}`,
+				);
 			}
 		}
 
-		public registerResource(resource: T, handle?: ResourceHandle<T>): ResourceHandle<T> {
+		public registerResource(
+			resource: T,
+			handle?: ResourceHandle<T>,
+		): ResourceHandle<T> {
 			if (handle !== undefined) {
 				if (handle >= this.handleCounter) {
-					throw new ComponentModelTrap(`Handle ${handle} is out of bounds. Current handle counter is ${this.handleCounter}.`);
+					throw new ComponentModelTrap(
+						`Handle ${handle} is out of bounds. Current handle counter is ${this.handleCounter}.`,
+					);
 				}
 				if (this.h2r.has(handle)) {
-					throw new ComponentModelTrap(`Handle ${handle} is already registered.`);
+					throw new ComponentModelTrap(
+						`Handle ${handle} is already registered.`,
+					);
 				}
 				if (this.handleTable.has(handle)) {
-					throw new ComponentModelTrap(`Handle ${handle} is already in use as a proxy handle.`);
+					throw new ComponentModelTrap(
+						`Handle ${handle} is already in use as a proxy handle.`,
+					);
 				}
 			} else {
 				handle = this.handleCounter++;
@@ -3197,7 +4304,9 @@ export namespace ResourceManager {
 
 		public registerProxy(proxy: T): void {
 			const handle = proxy.$handle();
-			const rep =  Resource.getRepresentation(proxy) ?? this.handleTable.get(handle);
+			const rep =
+				Resource.getRepresentation(proxy) ??
+				this.handleTable.get(handle);
 			if (rep === undefined) {
 				throw new ComponentModelTrap(`Unknown proxy handle ${handle}`);
 			}
@@ -3205,13 +4314,17 @@ export namespace ResourceManager {
 		}
 
 		public removeResource(value: ResourceHandle<T> | T): void {
-			const handle = typeof value === 'number' ? value : value.$handle();
+			const handle = typeof value === "number" ? value : value.$handle();
 			const resource = this.h2r.get(handle);
 			if (resource === undefined) {
-				throw new ComponentModelTrap(`Unknown resource handle ${handle}.`);
+				throw new ComponentModelTrap(
+					`Unknown resource handle ${handle}.`,
+				);
 			}
 			if (resource instanceof WeakRef) {
-				throw new ComponentModelTrap(`Proxy resources should not be removed manually. They are removed via the GC.`);
+				throw new ComponentModelTrap(
+					`Proxy resources should not be removed manually. They are removed via the GC.`,
+				);
 			}
 			this.h2r.delete(handle);
 		}
@@ -3232,25 +4345,35 @@ export namespace ResourceManager {
 		public getLoop(rep: ResourceRepresentation): ResourceHandle<T> {
 			const result = this.loopTable?.get(rep);
 			if (result === undefined) {
-				throw new ComponentModelTrap(`Unknown loop handle for representation ${rep}`);
+				throw new ComponentModelTrap(
+					`Unknown loop handle for representation ${rep}`,
+				);
 			}
 			return result;
 		}
 
-		private setProxy(handle: ResourceHandle, rep: ResourceRepresentation, proxy: T): void {
+		private setProxy(
+			handle: ResourceHandle,
+			rep: ResourceRepresentation,
+			proxy: T,
+		): void {
 			if (this.dtor === undefined) {
 				throw new ComponentModelTrap(`No proxy destructor set`);
 			}
 			this.h2r.set(handle, new WeakRef(proxy));
-			this.finalizer.register(proxy, { handle, rep } , proxy);
+			this.finalizer.register(proxy, { handle, rep }, proxy);
 		}
 	}
 
-	export function from<T extends Resource = Resource>(obj: any | undefined): ResourceManager<T> | undefined {
+	export function from<T extends Resource = Resource>(
+		obj: any | undefined,
+	): ResourceManager<T> | undefined {
 		if (obj === undefined) {
 			return undefined;
 		}
-		return (obj.$resources ?? obj.$resourceManager ?? obj.$manager) as ResourceManager<T>;
+		return (obj.$resources ??
+			obj.$resourceManager ??
+			obj.$manager) as ResourceManager<T>;
 	}
 }
 
@@ -3258,12 +4381,13 @@ export interface ResourceManagers {
 	has(id: string): boolean;
 	set(id: string, manager: ResourceManager): void;
 	ensure<T extends Resource = Resource>(id: string): ResourceManager<T>;
-	get<T extends Resource = Resource>(id: string): ResourceManager<T> | undefined;
+	get<T extends Resource = Resource>(
+		id: string,
+	): ResourceManager<T> | undefined;
 }
 
 export namespace ResourceManagers {
 	export class Default implements ResourceManagers {
-
 		private readonly managers: Map<string, ResourceManager>;
 
 		constructor() {
@@ -3276,33 +4400,74 @@ export namespace ResourceManagers {
 
 		public set(id: string, manager: ResourceManager): void {
 			if (this.managers.has(id)) {
-				throw new ComponentModelTrap(`Resource manager ${id} already registered.`);
+				throw new ComponentModelTrap(
+					`Resource manager ${id} already registered.`,
+				);
 			}
 			this.managers.set(id, manager);
 		}
 
-		public ensure<T extends Resource = Resource>(id: string): ResourceManager<T> {
+		public ensure<T extends Resource = Resource>(
+			id: string,
+		): ResourceManager<T> {
 			const manager = this.managers.get(id);
 			if (manager === undefined) {
-				throw new ComponentModelTrap(`Resource manager ${id} not found.`);
+				throw new ComponentModelTrap(
+					`Resource manager ${id} not found.`,
+				);
 			}
 			return manager as unknown as ResourceManager<T>;
 		}
 
-		public get<T extends Resource = Resource>(id: string): ResourceManager<T> | undefined {
+		public get<T extends Resource = Resource>(
+			id: string,
+		): ResourceManager<T> | undefined {
 			return this.managers.get(id) as unknown as ResourceManager<T>;
 		}
 	}
 
 	export function is(value: any): value is ResourceManagers {
 		const candidate = value as ResourceManagers;
-		return candidate && typeof candidate.has === 'function' && typeof candidate.ensure === 'function' && typeof candidate.get === 'function' && typeof candidate.set === 'function';
+		return (
+			candidate &&
+			typeof candidate.has === "function" &&
+			typeof candidate.ensure === "function" &&
+			typeof candidate.get === "function" &&
+			typeof candidate.set === "function"
+		);
 	}
 }
 
-export type JType = number | bigint | string | boolean | JArray | JRecord | JVariantCase | JTuple | JEnum | Resource | option<any> | undefined | void | result<any, any> | Int8Array | Int16Array | Int32Array | BigInt64Array | Uint8Array | Uint16Array | Uint32Array | BigUint64Array | Float32Array | Float64Array;
+export type JType =
+	| number
+	| bigint
+	| string
+	| boolean
+	| JArray
+	| JRecord
+	| JVariantCase
+	| JTuple
+	| JEnum
+	| Resource
+	| option<any>
+	| undefined
+	| void
+	| result<any, any>
+	| Int8Array
+	| Int16Array
+	| Int32Array
+	| BigInt64Array
+	| Uint8Array
+	| Uint16Array
+	| Uint32Array
+	| BigUint64Array
+	| Float32Array
+	| Float64Array;
 
-export type CallableParameter = [/* name */string, /* type */AnyComponentModelType];
+export type CallableParameter = [
+	/* name */ string,
+	/* type */ AnyComponentModelType,
+];
 
 export type JFunction = (...params: JType[]) => JType;
 export type JClass = {
@@ -3321,28 +4486,44 @@ export type WasmFunction = (...params: WasmType[]) => WasmType | void;
 export interface WorkerConnection {
 	dispose(): void;
 	getMemory(): Memory;
-	on(id: string, callback: (memory: Memory, params: WasmType[]) => WasmType | void): void;
+	on(
+		id: string,
+		callback: (memory: Memory, params: WasmType[]) => WasmType | void,
+	): void;
 	prepareCall(): void;
 	callMain(name: string, params: ReadonlyArray<WasmType>): WasmType | void;
 	listen(): void;
 }
 
-export type Code = WebAssembly_.Module | { module: WebAssembly_.Module; memory?: WebAssembly_.Memory };
+export type Code =
+	| WebAssembly_.Module
+	| { module: WebAssembly_.Module; memory?: WebAssembly_.Memory };
 export interface MainConnection {
 	initialize(code: Code, options: Options): Promise<void>;
 	dispose(): void;
 	getMemory(): Memory;
-	on(id: string, callback: (memory: Memory, params: WasmType[]) => WasmType | void | Promise<WasmType | void>): void;
+	on(
+		id: string,
+		callback: (
+			memory: Memory,
+			params: WasmType[],
+		) => WasmType | void | Promise<WasmType | void>,
+	): void;
 	prepareCall(): void;
 	lock(thunk: () => Promise<JType>): Promise<JType>;
-	callWorker(name: string, params: ReadonlyArray<WasmType>): Promise<WasmType | void>;
+	callWorker(
+		name: string,
+		params: ReadonlyArray<WasmType>,
+	): Promise<WasmType | void>;
 	listen(): void;
 }
 
 class Callable {
-
-	private static readonly EMPTY_JTYPE: ReadonlyArray<JType> = Object.freeze([]);
-	private static readonly EMPTY_WASM_TYPE: ReadonlyArray<WasmType> = Object.freeze([]);
+	private static readonly EMPTY_JTYPE: ReadonlyArray<JType> = Object.freeze(
+		[],
+	);
+	private static readonly EMPTY_WASM_TYPE: ReadonlyArray<WasmType> =
+		Object.freeze([]);
 
 	public static readonly MAX_FLAT_PARAMS = 16;
 	public static readonly MAX_FLAT_RESULTS = 1;
@@ -3353,9 +4534,13 @@ class Callable {
 
 	public readonly paramType: AnyComponentModelType | undefined;
 	protected readonly isSingleParam: boolean;
-	protected readonly mode: 'lift' | 'lower';
+	protected readonly mode: "lift" | "lower";
 
-	constructor(witName: string, params: CallableParameter[], returnType?: AnyComponentModelType) {
+	constructor(
+		witName: string,
+		params: CallableParameter[],
+		returnType?: AnyComponentModelType,
+	) {
 		this.witName = witName;
 		this.params = params;
 		this.returnType = returnType;
@@ -3369,13 +4554,17 @@ class Callable {
 				this.isSingleParam = true;
 				break;
 			default:
-				this.paramType = new TupleType(params.map(p => p[1]));
+				this.paramType = new TupleType(params.map((p) => p[1]));
 				this.isSingleParam = false;
 		}
-		this.mode = 'lower';
+		this.mode = "lower";
 	}
 
-	protected liftParamValues(wasmValues: WasmType[], memory: Memory, context: ComponentModelContext): ReadonlyArray<JType> {
+	protected liftParamValues(
+		wasmValues: WasmType[],
+		memory: Memory,
+		context: ComponentModelContext,
+	): ReadonlyArray<JType> {
 		if (this.paramType === undefined) {
 			return Callable.EMPTY_JTYPE;
 		}
@@ -3383,21 +4572,35 @@ class Callable {
 		if (this.paramType.flatTypes.length > Callable.MAX_FLAT_PARAMS) {
 			const p0 = wasmValues[0];
 			if (!Number.isInteger(p0)) {
-				throw new ComponentModelTrap('Invalid pointer');
+				throw new ComponentModelTrap("Invalid pointer");
 			}
-			result = this.paramType.load(memory.readonly(p0 as ptr, this.paramType.size), 0, context);
+			result = this.paramType.load(
+				memory.readonly(p0 as ptr, this.paramType.size),
+				0,
+				context,
+			);
 		} else {
-			result = this.paramType.liftFlat(memory, wasmValues.values(), context);
+			result = this.paramType.liftFlat(
+				memory,
+				wasmValues.values(),
+				context,
+			);
 		}
-		return this.isSingleParam ? [result] : result as JType[];
+		return this.isSingleParam ? [result] : (result as JType[]);
 	}
 
-	protected lowerParamValues(values: JType[], memory: Memory, context: ComponentModelContext): ReadonlyArray<WasmType> {
+	protected lowerParamValues(
+		values: JType[],
+		memory: Memory,
+		context: ComponentModelContext,
+	): ReadonlyArray<WasmType> {
 		if (this.paramType === undefined) {
 			return Callable.EMPTY_WASM_TYPE;
 		}
 		if (this.isSingleParam && values.length !== 1) {
-			throw new ComponentModelTrap(`Expected a single parameter, but got ${values.length}`);
+			throw new ComponentModelTrap(
+				`Expected a single parameter, but got ${values.length}`,
+			);
 		}
 		const toLower = this.isSingleParam ? values[0] : values;
 		if (this.paramType.flatTypes.length > Callable.MAX_FLAT_PARAMS) {
@@ -3411,9 +4614,21 @@ class Callable {
 		}
 	}
 
-	protected copyParamValues(result: WasmType[], dest: Memory, wasmValues: WasmType[], src: Memory, context: ComponentModelContext): { originalResult: MemoryRange; transferResult: MemoryRange } | undefined {
-		const flatReturnTypes = this.returnType !== undefined ? this.returnType.flatTypes.length : 0;
-		const flatParamTypes = this.paramType !== undefined ? this.paramType.flatTypes.length : 0;
+	protected copyParamValues(
+		result: WasmType[],
+		dest: Memory,
+		wasmValues: WasmType[],
+		src: Memory,
+		context: ComponentModelContext,
+	):
+		| { originalResult: MemoryRange; transferResult: MemoryRange }
+		| undefined {
+		const flatReturnTypes =
+			this.returnType !== undefined
+				? this.returnType.flatTypes.length
+				: 0;
+		const flatParamTypes =
+			this.paramType !== undefined ? this.paramType.flatTypes.length : 0;
 
 		let out: ptr | undefined = undefined;
 		if (flatReturnTypes > Callable.MAX_FLAT_RESULTS) {
@@ -3421,37 +4636,64 @@ class Callable {
 			if (wasmValues.length === flatParamTypes + 1) {
 				const last = wasmValues[flatParamTypes];
 				if (!Number.isInteger(last)) {
-					throw new ComponentModelTrap(`Expected a pointer as return parameter, but got ${last}`);
+					throw new ComponentModelTrap(
+						`Expected a pointer as return parameter, but got ${last}`,
+					);
 				}
 				out = last as ptr;
 			}
 		}
 
 		if (this.paramType === undefined) {
-			if ((out === undefined && wasmValues.length !== 0) || (out !== undefined && wasmValues.length !== 1)) {
-				throw new ComponentModelTrap(`Expected no parameters, but got ${wasmValues.length}`);
+			if (
+				(out === undefined && wasmValues.length !== 0) ||
+				(out !== undefined && wasmValues.length !== 1)
+			) {
+				throw new ComponentModelTrap(
+					`Expected no parameters, but got ${wasmValues.length}`,
+				);
 			}
 		} else if (this.paramType.flatTypes.length > Callable.MAX_FLAT_PARAMS) {
 			const p0 = wasmValues[0];
 			if (!Number.isInteger(p0)) {
-				throw new ComponentModelTrap('Invalid pointer');
+				throw new ComponentModelTrap("Invalid pointer");
 			}
 			const srcReader = src.readonly(p0 as ptr, this.paramType.size);
-			this.paramType.copy(this.paramType.alloc(dest), 0, srcReader, 0, context);
+			this.paramType.copy(
+				this.paramType.alloc(dest),
+				0,
+				srcReader,
+				0,
+				context,
+			);
 		} else {
-			this.paramType.copyFlat(result, dest, wasmValues.values(), src, context);
+			this.paramType.copyFlat(
+				result,
+				dest,
+				wasmValues.values(),
+				src,
+				context,
+			);
 		}
 		// Allocate space for the result in dest and add it to the end of the flat values.
 		if (out !== undefined && this.returnType !== undefined) {
 			const destResult = this.returnType.alloc(dest);
 			result.push(destResult.ptr);
-			return { transferResult: destResult, originalResult: src.preAllocated(out, this.returnType.size) };
+			return {
+				transferResult: destResult,
+				originalResult: src.preAllocated(out, this.returnType.size),
+			};
 		} else {
 			return undefined;
 		}
 	}
 
-	protected lowerReturnValue(value: JType | void, memory: Memory, context: ComponentModelContext, out: ptr | undefined): WasmType | void {
+	protected lowerReturnValue(
+		value: JType | void,
+		memory: Memory,
+		context: ComponentModelContext,
+		out: ptr | undefined,
+	): WasmType | void {
 		if (this.returnType === undefined) {
 			return;
 		}
@@ -3460,44 +4702,86 @@ class Callable {
 			const result: WasmType[] = [];
 			this.returnType.lowerFlat(result, memory, value, context);
 			if (result.length !== this.returnType.flatTypes.length) {
-				throw new ComponentModelTrap(`Expected flat result of length ${this.returnType.flatTypes.length}, but got ${JSON.stringify(result, undefined, undefined)}`);
+				throw new ComponentModelTrap(
+					`Expected flat result of length ${this.returnType.flatTypes.length}, but got ${JSON.stringify(result, undefined, undefined)}`,
+				);
 			}
 			return result[0];
 		} else {
-			const writer = out !== undefined ? memory.preAllocated(out, this.returnType.size) : this.returnType.alloc(memory);
+			const writer =
+				out !== undefined
+					? memory.preAllocated(out, this.returnType.size)
+					: this.returnType.alloc(memory);
 			this.returnType.store(writer, 0, value, context);
 			return out !== undefined ? undefined : writer.ptr;
 		}
 	}
 
-	protected handleError(error: any, memory: Memory, context: ComponentModelContext, out: ptr | undefined): WasmType | void {
-		if (!(this.returnType instanceof ResultType) || this.returnType.errorClass === undefined || !(error instanceof this.returnType.errorClass)) {
+	protected handleError(
+		error: any,
+		memory: Memory,
+		context: ComponentModelContext,
+		out: ptr | undefined,
+	): WasmType | void {
+		if (
+			!(this.returnType instanceof ResultType) ||
+			this.returnType.errorClass === undefined ||
+			!(error instanceof this.returnType.errorClass)
+		) {
 			throw error;
 		}
 		const value = result.Error(error.cause);
 		return this.lowerReturnValue(value, memory, context, out);
 	}
 
-	protected copyReturnValue(resultStorage: { originalResult: MemoryRange; transferResult: MemoryRange } | undefined, dest: Memory, src: Memory, value: WasmType | undefined | void, context: ComponentModelContext): WasmType | undefined {
+	protected copyReturnValue(
+		resultStorage:
+			| { originalResult: MemoryRange; transferResult: MemoryRange }
+			| undefined,
+		dest: Memory,
+		src: Memory,
+		value: WasmType | undefined | void,
+		context: ComponentModelContext,
+	): WasmType | undefined {
 		if (resultStorage !== undefined) {
 			if (this.returnType === undefined) {
-				throw new ComponentModelTrap(`Result storage should not be set if there is no return type.`);
+				throw new ComponentModelTrap(
+					`Result storage should not be set if there is no return type.`,
+				);
 			}
 			if (value !== undefined) {
-				throw new ComponentModelTrap(`Can't use both result storage and result value ${value}.`);
+				throw new ComponentModelTrap(
+					`Can't use both result storage and result value ${value}.`,
+				);
 			}
-			this.returnType.copy(resultStorage.originalResult, 0, resultStorage.transferResult, 0, context);
+			this.returnType.copy(
+				resultStorage.originalResult,
+				0,
+				resultStorage.transferResult,
+				0,
+				context,
+			);
 			return undefined;
 		} else if (value !== undefined) {
 			if (this.returnType === undefined) {
-				throw new ComponentModelTrap(`Expected no return value, but got ${value}`);
+				throw new ComponentModelTrap(
+					`Expected no return value, but got ${value}`,
+				);
 			}
 			if (this.returnType.flatTypes.length > Callable.MAX_FLAT_RESULTS) {
 				if (!Number.isInteger(value)) {
-					throw new ComponentModelTrap(`Expected a pointer as return value, but got ${value}`);
+					throw new ComponentModelTrap(
+						`Expected a pointer as return value, but got ${value}`,
+					);
 				}
 				const destWriter = this.returnType.alloc(dest);
-				this.returnType.copy(destWriter, 0, src.preAllocated(value as ptr, this.returnType.size), 0, context);
+				this.returnType.copy(
+					destWriter,
+					0,
+					src.preAllocated(value as ptr, this.returnType.size),
+					0,
+					context,
+				);
 				return destWriter.ptr;
 			} else {
 				return value;
@@ -3510,7 +4794,11 @@ class Callable {
 	/**
 	 * Calls a function inside a wasm module.
 	 */
-	public callWasm(params: JType[], wasmFunction: WasmFunction, context: WasmContext): JType {
+	public callWasm(
+		params: JType[],
+		wasmFunction: WasmFunction,
+		context: WasmContext,
+	): JType {
 		const memory = context.getMemory();
 		const wasmValues = this.lowerParamValues(params, memory, context);
 		const result: WasmType | void = wasmFunction(...wasmValues);
@@ -3520,7 +4808,12 @@ class Callable {
 	/**
 	 * Calls a resource method inside a wasm module.
 	 */
-	public callWasmMethod(obj: Resource & { $rep(): ResourceRepresentation}, params: JType[], wasmFunction: WasmFunction, context: WasmContext): JType {
+	public callWasmMethod(
+		obj: Resource & { $rep(): ResourceRepresentation },
+		params: JType[],
+		wasmFunction: WasmFunction,
+		context: WasmContext,
+	): JType {
 		const memory = context.getMemory();
 		const handle = obj.$rep();
 		const wasmValues = this.lowerParamValues(params, memory, context);
@@ -3531,47 +4824,111 @@ class Callable {
 	/**
 	 * Call a host function on the main thread from a wasm module.
 	 */
-	public callMain(connection: WorkerConnection, qualifier: string, params: WasmType[], context: WasmContext): WasmType | void {
+	public callMain(
+		connection: WorkerConnection,
+		qualifier: string,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
 		connection.prepareCall();
 		const newParams: WasmType[] = [];
-		const resultStorage =  this.copyParamValues(newParams, connection.getMemory(), params, context.getMemory(), context);
-		const result = connection.callMain(`${qualifier}#${this.witName}`, newParams);
-		return this.copyReturnValue(resultStorage, context.getMemory(), connection.getMemory(), result, context);
+		const resultStorage = this.copyParamValues(
+			newParams,
+			connection.getMemory(),
+			params,
+			context.getMemory(),
+			context,
+		);
+		const result = connection.callMain(
+			`${qualifier}#${this.witName}`,
+			newParams,
+		);
+		return this.copyReturnValue(
+			resultStorage,
+			context.getMemory(),
+			connection.getMemory(),
+			result,
+			context,
+		);
 	}
 
 	/**
 	 * Call a wasm function from a worker thread.
 	 */
-	public callWasmFromWorker(transferMemory: Memory, func: WasmFunction, params: WasmType[], context: WasmContext): WasmType | void {
+	public callWasmFromWorker(
+		transferMemory: Memory,
+		func: WasmFunction,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
 		const newParams: WasmType[] = [];
-		const resultStorage = this.copyParamValues(newParams, context.getMemory(), params, transferMemory, context);
+		const resultStorage = this.copyParamValues(
+			newParams,
+			context.getMemory(),
+			params,
+			transferMemory,
+			context,
+		);
 		const result = func(...newParams);
-		return this.copyReturnValue(resultStorage, transferMemory, context.getMemory(), result, context);
+		return this.copyReturnValue(
+			resultStorage,
+			transferMemory,
+			context.getMemory(),
+			result,
+			context,
+		);
 	}
 
 	/**
 	 * Call a wasm method from a worker thread.
 	 */
-	public callWasmMethodFromWorker(transferMemory: Memory, func: WasmFunction, params: WasmType[], context: WasmContext): WasmType | void {
+	public callWasmMethodFromWorker(
+		transferMemory: Memory,
+		func: WasmFunction,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
 		const handle = params[0];
-		if (typeof handle !== 'number') {
-			throw new ComponentModelTrap(`Expected a number as handle, but got ${handle}`);
+		if (typeof handle !== "number") {
+			throw new ComponentModelTrap(
+				`Expected a number as handle, but got ${handle}`,
+			);
 		}
 		const newParams: WasmType[] = [];
-		const resultStorage = this.copyParamValues(newParams, context.getMemory(), params.slice(1), transferMemory, context);
+		const resultStorage = this.copyParamValues(
+			newParams,
+			context.getMemory(),
+			params.slice(1),
+			transferMemory,
+			context,
+		);
 		const result = func(handle, ...newParams);
-		return this.copyReturnValue(resultStorage, transferMemory, context.getMemory(), result, context);
+		return this.copyReturnValue(
+			resultStorage,
+			transferMemory,
+			context.getMemory(),
+			result,
+			context,
+		);
 	}
 
 	/**
 	 * Call the wasm function from the main thread.
 	 */
-	public async callWorker(connection: MainConnection, qualifier: string, params: JType[], context: ComponentModelContext): Promise<JType | void> {
+	public async callWorker(
+		connection: MainConnection,
+		qualifier: string,
+		params: JType[],
+		context: ComponentModelContext,
+	): Promise<JType | void> {
 		return connection.lock(async () => {
 			connection.prepareCall();
 			const memory = connection.getMemory();
 			const wasmValues = this.lowerParamValues(params, memory, context);
-			let result: WasmType | void = await connection.callWorker(`${qualifier}#${this.witName}`, wasmValues);
+			let result: WasmType | void = await connection.callWorker(
+				`${qualifier}#${this.witName}`,
+				wasmValues,
+			);
 			return this.liftReturnValue(result, memory, context);
 		});
 	}
@@ -3579,20 +4936,40 @@ class Callable {
 	/**
 	 * Call a resource method inside a wasm module.
 	 */
-	public async callWorkerMethod(connection: MainConnection, qualifier: string, obj: Resource & { $rep(): ResourceRepresentation}, params: JType[], context: ComponentModelContext): Promise<JType> {
+	public async callWorkerMethod(
+		connection: MainConnection,
+		qualifier: string,
+		obj: Resource & { $rep(): ResourceRepresentation },
+		params: JType[],
+		context: ComponentModelContext,
+	): Promise<JType> {
 		return connection.lock(async () => {
 			connection.prepareCall();
 			const memory = connection.getMemory();
 			const handle = obj.$rep();
-			const wasmValues = this.lowerParamValues(params, memory, context).slice();
+			const wasmValues = this.lowerParamValues(
+				params,
+				memory,
+				context,
+			).slice();
 			wasmValues.unshift(handle);
-			const result: WasmType | void = await connection.callWorker(`${qualifier}#${this.witName}`, wasmValues);
+			const result: WasmType | void = await connection.callWorker(
+				`${qualifier}#${this.witName}`,
+				wasmValues,
+			);
 			return this.liftReturnValue(result, memory, context);
 		});
 	}
 
-	protected getParamValuesForHostCall(params: WasmType[], memory: Memory, context: ComponentModelContext): [ReadonlyArray<JType>, ptr | undefined] {
-		const returnFlatTypes = this.returnType === undefined ? 0 : this.returnType.flatTypes.length;
+	protected getParamValuesForHostCall(
+		params: WasmType[],
+		memory: Memory,
+		context: ComponentModelContext,
+	): [ReadonlyArray<JType>, ptr | undefined] {
+		const returnFlatTypes =
+			this.returnType === undefined
+				? 0
+				: this.returnType.flatTypes.length;
 		// We currently only support 'lower' mode for results > MAX_FLAT_RESULTS. From the spec:
 		// As an optimization, when lowering the return value of an imported function (via canon lower),
 		// the caller can have already allocated space for the return value (e.g., efficiently on the stack),
@@ -3600,12 +4977,17 @@ class Callable {
 		// See https://github.com/WebAssembly/component-model/blob/main/design/mvp/CanonicalABI.md#flattening
 		let out: number | undefined;
 		if (returnFlatTypes > FunctionType.MAX_FLAT_RESULTS) {
-			const paramFlatTypes = this.paramType !== undefined ? this.paramType.flatTypes.length : 0;
+			const paramFlatTypes =
+				this.paramType !== undefined
+					? this.paramType.flatTypes.length
+					: 0;
 			// The caller allocated the memory. We just need to pass the pointer.
 			if (params.length === paramFlatTypes + 1) {
 				const last = params[paramFlatTypes];
-				if (typeof last !== 'number') {
-					throw new ComponentModelTrap(`Result pointer must be a number (u32), but got ${out}.`);
+				if (typeof last !== "number") {
+					throw new ComponentModelTrap(
+						`Result pointer must be a number (u32), but got ${out}.`,
+					);
 				}
 				out = last as number;
 			}
@@ -3613,22 +4995,35 @@ class Callable {
 		return [this.liftParamValues(params, memory, context), out];
 	}
 
-
-	protected liftReturnValue(value: WasmType | void, memory: Memory, context: ComponentModelContext): JType {
+	protected liftReturnValue(
+		value: WasmType | void,
+		memory: Memory,
+		context: ComponentModelContext,
+	): JType {
 		if (this.returnType === undefined) {
 			return;
 		}
 		let result: JType;
 		if (this.returnType.flatTypes.length <= Callable.MAX_FLAT_RESULTS) {
-			result = this.returnType.liftFlat(memory, [value!].values(), context);
+			result = this.returnType.liftFlat(
+				memory,
+				[value!].values(),
+				context,
+			);
 		} else {
-			result = this.returnType.load(memory.readonly(value as ptr, this.returnType.size), 0, context);
+			result = this.returnType.load(
+				memory.readonly(value as ptr, this.returnType.size),
+				0,
+				context,
+			);
 		}
 		if (this.returnType instanceof ResultType) {
 			const resultValue = result as result<JType, JType>;
 			if (resultValue.isError()) {
 				if (this.returnType.errorClass === undefined) {
-					throw new ComponentModelTrap(`Received an error result, but no error class is defined.`);
+					throw new ComponentModelTrap(
+						`Received an error result, but no error class is defined.`,
+					);
 				}
 				throw new this.returnType.errorClass(resultValue.value);
 			} else {
@@ -3640,27 +5035,52 @@ class Callable {
 	}
 }
 
-export class FunctionType<_T extends Function = Function> extends Callable  {
-
-	constructor(witName: string, params: CallableParameter[], returnType?: AnyComponentModelType) {
+export class FunctionType<_T extends Function = Function> extends Callable {
+	constructor(
+		witName: string,
+		params: CallableParameter[],
+		returnType?: AnyComponentModelType,
+	) {
 		super(witName, params, returnType);
 	}
 
 	/**
 	 * Calls a service function from a wasm module.
 	 */
-	public callService(func: JFunction, params: WasmType[], context: WasmContext): WasmType | void {
-		const [jParams, out] = this.getParamValuesForHostCall(params, context.getMemory(), context);
+	public callService(
+		func: JFunction,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			context.getMemory(),
+			context,
+		);
 		try {
 			const result: JType = func(...jParams);
-			return this.lowerReturnValue(result, context.getMemory(), context, out);
+			return this.lowerReturnValue(
+				result,
+				context.getMemory(),
+				context,
+				out,
+			);
 		} catch (error) {
 			return this.handleError(error, context.getMemory(), context, out);
 		}
 	}
 
-	public async callServiceAsync(memory: Memory, func: JFunctionAsync, params: WasmType[], context: ComponentModelContext): Promise<WasmType | void> {
-		const [jParams, out] = this.getParamValuesForHostCall(params, memory, context);
+	public async callServiceAsync(
+		memory: Memory,
+		func: JFunctionAsync,
+		params: WasmType[],
+		context: ComponentModelContext,
+	): Promise<WasmType | void> {
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			memory,
+			context,
+		);
 		try {
 			const result: JType = await func(...jParams);
 			return this.lowerReturnValue(result, memory, context, out);
@@ -3671,99 +5091,170 @@ export class FunctionType<_T extends Function = Function> extends Callable  {
 }
 
 export class ConstructorType<_T extends Function = Function> extends Callable {
-
-	constructor(witName: string, params: CallableParameter[], returnType: AnyComponentModelType) {
+	constructor(
+		witName: string,
+		params: CallableParameter[],
+		returnType: AnyComponentModelType,
+	) {
 		super(witName, params, returnType);
 	}
 
-	public callService(clazz: JClass, params: WasmType[], context: WasmContext): WasmType | void {
+	public callService(
+		clazz: JClass,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
 		// We currently only support 'lower' mode for results > MAX_FLAT_RESULTS.
-		const returnFlatTypes = this.returnType === undefined ? 0 : this.returnType.flatTypes.length;
+		const returnFlatTypes =
+			this.returnType === undefined
+				? 0
+				: this.returnType.flatTypes.length;
 		if (returnFlatTypes !== 1) {
-			throw new ComponentModelTrap(`Expected exactly one return type, but got ${returnFlatTypes}.`);
+			throw new ComponentModelTrap(
+				`Expected exactly one return type, but got ${returnFlatTypes}.`,
+			);
 		}
-		const memory  = context.getMemory();
+		const memory = context.getMemory();
 		const jParams = this.liftParamValues(params, memory, context);
 		const obj: Resource = new clazz(...jParams);
 		return obj.$handle();
 	}
 
-	public async callServiceAsync(memory: Memory, clazz: JClassAsync, params: WasmType[], context: ComponentModelContext): Promise<WasmType | void> {
+	public async callServiceAsync(
+		memory: Memory,
+		clazz: JClassAsync,
+		params: WasmType[],
+		context: ComponentModelContext,
+	): Promise<WasmType | void> {
 		// We currently only support 'lower' mode for results > MAX_FLAT_RESULTS.
-		const returnFlatTypes = this.returnType === undefined ? 0 : this.returnType.flatTypes.length;
+		const returnFlatTypes =
+			this.returnType === undefined
+				? 0
+				: this.returnType.flatTypes.length;
 		if (returnFlatTypes !== 1) {
-			throw new ComponentModelTrap(`Expected exactly one return type, but got ${returnFlatTypes}.`);
+			throw new ComponentModelTrap(
+				`Expected exactly one return type, but got ${returnFlatTypes}.`,
+			);
 		}
 		const jParams = this.liftParamValues(params, memory, context);
 		const obj: Resource = await clazz.$new(...jParams);
 		return obj.$handle();
 	}
 
-	public callWasmConstructor(params: JType[], wasmFunction: WasmFunction, context: WasmContext): number {
+	public callWasmConstructor(
+		params: JType[],
+		wasmFunction: WasmFunction,
+		context: WasmContext,
+	): number {
 		const memory = context.getMemory();
 		const wasmValues = this.lowerParamValues(params, memory, context);
 		const result: WasmType | void = wasmFunction(...wasmValues);
-		if (typeof result !== 'number') {
-			throw new ComponentModelTrap(`Expected a number (u32) as return value, but got ${result}.`);
+		if (typeof result !== "number") {
+			throw new ComponentModelTrap(
+				`Expected a number (u32) as return value, but got ${result}.`,
+			);
 		}
 		return result;
 	}
 
-	public callWasmConstructorAsync(connection: MainConnection, qualifier: string, params: JType[], context: ComponentModelContext): Promise<ResourceHandle> {
+	public callWasmConstructorAsync(
+		connection: MainConnection,
+		qualifier: string,
+		params: JType[],
+		context: ComponentModelContext,
+	): Promise<ResourceHandle> {
 		return connection.lock(async () => {
 			connection.prepareCall();
 			const memory = connection.getMemory();
 			const wasmValues = this.lowerParamValues(params, memory, context);
-			return connection.callWorker(`${qualifier}#${this.witName}`, wasmValues);
+			return connection.callWorker(
+				`${qualifier}#${this.witName}`,
+				wasmValues,
+			);
 		}) as Promise<ResourceHandle>;
 	}
 }
 
 export class DestructorType<_T extends Function = Function> extends Callable {
-
 	constructor(witName: string, params: CallableParameter[]) {
 		super(witName, params);
 	}
 
-	public callService(params: WasmType[], resourceManager: ResourceManager): void {
+	public callService(
+		params: WasmType[],
+		resourceManager: ResourceManager,
+	): void {
 		const handle = params[0];
-		if (typeof handle === 'bigint' || !u32.valid(handle)) {
-			throw new ComponentModelTrap(`Object handle must be a number (u32), but got ${handle}.`);
+		if (typeof handle === "bigint" || !u32.valid(handle)) {
+			throw new ComponentModelTrap(
+				`Object handle must be a number (u32), but got ${handle}.`,
+			);
 		}
 		const resource: any = resourceManager.getResource(handle);
-		resource['$drop'] !== undefined && resource['$drop']();
+		resource["$drop"] !== undefined && resource["$drop"]();
 		resourceManager.removeResource(handle);
 	}
 
-	public async callServiceAsync(_memory: Memory, params: WasmType[], resourceManager: ResourceManager): Promise<void> {
+	public async callServiceAsync(
+		_memory: Memory,
+		params: WasmType[],
+		resourceManager: ResourceManager,
+	): Promise<void> {
 		const handle = params[0];
-		if (typeof handle === 'bigint' || !u32.valid(handle)) {
-			throw new ComponentModelTrap(`Object handle must be a number (u32), but got ${handle}.`);
+		if (typeof handle === "bigint" || !u32.valid(handle)) {
+			throw new ComponentModelTrap(
+				`Object handle must be a number (u32), but got ${handle}.`,
+			);
 		}
 		const resource: any = resourceManager.getResource(handle);
-		resource['$drop'] !== undefined && await resource['$drop']();
+		resource["$drop"] !== undefined && (await resource["$drop"]());
 		resourceManager.removeResource(handle);
 	}
 }
 
 export class StaticMethodType<_T extends Function = Function> extends Callable {
-
-	constructor(witName: string, params: CallableParameter[], returnType?: AnyComponentModelType) {
+	constructor(
+		witName: string,
+		params: CallableParameter[],
+		returnType?: AnyComponentModelType,
+	) {
 		super(witName, params, returnType);
 	}
 
-	public callService(func: JFunction, params: WasmType[], context: WasmContext): WasmType | void {
-		const [jParams, out] = this.getParamValuesForHostCall(params, context.getMemory(), context);
+	public callService(
+		func: JFunction,
+		params: WasmType[],
+		context: WasmContext,
+	): WasmType | void {
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			context.getMemory(),
+			context,
+		);
 		try {
 			const result: JType = func(...jParams);
-			return this.lowerReturnValue(result, context.getMemory(), context, out);
+			return this.lowerReturnValue(
+				result,
+				context.getMemory(),
+				context,
+				out,
+			);
 		} catch (error) {
 			return this.handleError(error, context.getMemory(), context, out);
 		}
 	}
 
-	public async callServiceAsync(memory: Memory, func: JFunctionAsync, params: WasmType[], context: ComponentModelContext): Promise<WasmType | void> {
-		const [jParams, out] = this.getParamValuesForHostCall(params, memory, context);
+	public async callServiceAsync(
+		memory: Memory,
+		func: JFunctionAsync,
+		params: WasmType[],
+		context: ComponentModelContext,
+	): Promise<WasmType | void> {
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			memory,
+			context,
+		);
 		try {
 			const result: JType = await func(...jParams);
 			return this.lowerReturnValue(result, memory, context, out);
@@ -3774,23 +5265,39 @@ export class StaticMethodType<_T extends Function = Function> extends Callable {
 }
 
 export class MethodType<_T extends Function = Function> extends Callable {
-
-	constructor(witName: string, params: CallableParameter[], returnType?: AnyComponentModelType) {
+	constructor(
+		witName: string,
+		params: CallableParameter[],
+		returnType?: AnyComponentModelType,
+	) {
 		super(witName, params, returnType);
 	}
 
-	public callService(methodName: string, params: WasmType[], resourceManager: ResourceManager, context: WasmContext): WasmType | void {
+	public callService(
+		methodName: string,
+		params: WasmType[],
+		resourceManager: ResourceManager,
+		context: WasmContext,
+	): WasmType | void {
 		if (params.length === 0) {
-			throw new ComponentModelTrap(`Method calls must have at least one parameter (the object pointer).`);
+			throw new ComponentModelTrap(
+				`Method calls must have at least one parameter (the object pointer).`,
+			);
 		}
 		// We need to cut off the first parameter (the object handle).
 		const handle = params.shift();
-		if (typeof handle !== 'number') {
-			throw new ComponentModelTrap(`Object handle must be a number (u32), but got ${handle}.`);
+		if (typeof handle !== "number") {
+			throw new ComponentModelTrap(
+				`Object handle must be a number (u32), but got ${handle}.`,
+			);
 		}
-		const [jParams, out] = this.getParamValuesForHostCall(params, context.getMemory(), context);
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			context.getMemory(),
+			context,
+		);
 		const resource = resourceManager.getResource(handle);
-		const memory  = context.getMemory();
+		const memory = context.getMemory();
 		try {
 			const result: JType = (resource as any)[methodName](...jParams);
 			return this.lowerReturnValue(result, memory, context, out);
@@ -3799,19 +5306,35 @@ export class MethodType<_T extends Function = Function> extends Callable {
 		}
 	}
 
-	public async callServiceAsync(memory: Memory, methodName: string, params: WasmType[], resourceManager: ResourceManager, context: ComponentModelContext): Promise<WasmType | void> {
+	public async callServiceAsync(
+		memory: Memory,
+		methodName: string,
+		params: WasmType[],
+		resourceManager: ResourceManager,
+		context: ComponentModelContext,
+	): Promise<WasmType | void> {
 		if (params.length === 0) {
-			throw new ComponentModelTrap(`Method calls must have at least one parameter (the object pointer).`);
+			throw new ComponentModelTrap(
+				`Method calls must have at least one parameter (the object pointer).`,
+			);
 		}
 		// We need to cut off the first parameter (the object handle).
 		const handle = params.shift();
-		if (typeof handle !== 'number') {
-			throw new ComponentModelTrap(`Object handle must be a number (u32), but got ${handle}.`);
+		if (typeof handle !== "number") {
+			throw new ComponentModelTrap(
+				`Object handle must be a number (u32), but got ${handle}.`,
+			);
 		}
-		const [jParams, out] = this.getParamValuesForHostCall(params, memory, context);
+		const [jParams, out] = this.getParamValuesForHostCall(
+			params,
+			memory,
+			context,
+		);
 		const resource = resourceManager.getResource(handle);
 		try {
-			const result: JType = await (resource as any)[methodName](...jParams);
+			const result: JType = await (resource as any)[methodName](
+				...jParams,
+			);
 			return this.lowerReturnValue(result, memory, context, out);
 		} catch (error) {
 			return this.handleError(error, memory, context, out);
@@ -3819,11 +5342,14 @@ export class MethodType<_T extends Function = Function> extends Callable {
 	}
 }
 
-export type ResourceCallable<T extends JFunction = JFunction> = MethodType<T> | StaticMethodType<T> | ConstructorType<T> | DestructorType;
+export type ResourceCallable<T extends JFunction = JFunction> =
+	| MethodType<T>
+	| StaticMethodType<T>
+	| ConstructorType<T>
+	| DestructorType;
 
 export type ResourceHandle<_T extends Resource = Resource> = u32;
 export class ResourceHandleType implements ComponentModelType<ResourceHandle> {
-
 	public readonly kind: ComponentModelTypeKind;
 	public readonly size: size;
 	public readonly alignment: Alignment;
@@ -3851,30 +5377,48 @@ export class ResourceHandleType implements ComponentModelType<ResourceHandle> {
 		return u32.alloc(memory);
 	}
 
-	public store(memory: MemoryRange, offset: offset, value: ResourceHandle): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		value: ResourceHandle,
+	): void {
 		u32.store(memory, offset, value);
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, value: ResourceHandle): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: ResourceHandle,
+	): void {
 		u32.lowerFlat(result, memory, value);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+	): void {
 		u32.copy(dest, dest_offset, src, src_offset);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+	): void {
 		u32.copyFlat(result, dest, values, src);
 	}
 }
 
-export class ResourceType<T extends Resource = Resource> implements ComponentModelType<T> {
-
+export class ResourceType<T extends Resource = Resource>
+	implements ComponentModelType<T>
+{
 	public readonly kind: ComponentModelTypeKind;
 	public readonly size: size;
 	public readonly alignment: Alignment;
 	public readonly flatTypes: readonly GenericFlatType[];
-
 
 	public readonly witName: string;
 	public readonly id: string;
@@ -3909,17 +5453,27 @@ export class ResourceType<T extends Resource = Resource> implements ComponentMod
 	public getCallable(jsName: string): ResourceCallable {
 		const result = this.callables.get(jsName);
 		if (result === undefined) {
-			throw new ComponentModelTrap(`Method '${jsName}' not found on resource '${this.witName}'.`);
+			throw new ComponentModelTrap(
+				`Method '${jsName}' not found on resource '${this.witName}'.`,
+			);
 		}
 		return result;
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T {
 		const handle = u32.load(memory, offset);
 		return context.resources.ensure(this.id).getResource(handle) as T;
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T {
 		const handle = u32.liftFlat(memory, values);
 		return context.resources.ensure(this.id).getResource(handle) as T;
 	}
@@ -3938,17 +5492,28 @@ export class ResourceType<T extends Resource = Resource> implements ComponentMod
 		u32.lowerFlat(result, memory, handle);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+	): void {
 		u32.copy(dest, dest_offset, src, src_offset);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+	): void {
 		u32.copyFlat(result, dest, values, src);
 	}
 }
 
-class AbstractWrapperType<T extends  NonNullable<JType>> implements ComponentModelType<T> {
-
+class AbstractWrapperType<T extends NonNullable<JType>>
+	implements ComponentModelType<T>
+{
 	public readonly kind: ComponentModelTypeKind;
 	public readonly size: size;
 	public readonly alignment: Alignment;
@@ -3964,11 +5529,19 @@ class AbstractWrapperType<T extends  NonNullable<JType>> implements ComponentMod
 		this.flatTypes = u32.flatTypes;
 	}
 
-	public load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T {
+	public load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T {
 		return this.wrapped.load(memory, offset, context);
 	}
 
-	public liftFlat(memory: Memory, values: FlatValuesIter, context: ComponentModelContext): T {
+	public liftFlat(
+		memory: Memory,
+		values: FlatValuesIter,
+		context: ComponentModelContext,
+	): T {
 		return this.wrapped.liftFlat(memory, values, context);
 	}
 
@@ -3976,32 +5549,58 @@ class AbstractWrapperType<T extends  NonNullable<JType>> implements ComponentMod
 		return u32.alloc(memory);
 	}
 
-	public store(memory: MemoryRange, offset: offset, value: T, context: ComponentModelContext): void {
+	public store(
+		memory: MemoryRange,
+		offset: offset,
+		value: T,
+		context: ComponentModelContext,
+	): void {
 		return this.wrapped.store(memory, offset, value, context);
 	}
 
-	public lowerFlat(result: WasmType[], memory: Memory, value: T, context: ComponentModelContext): void {
+	public lowerFlat(
+		result: WasmType[],
+		memory: Memory,
+		value: T,
+		context: ComponentModelContext,
+	): void {
 		return this.wrapped.lowerFlat(result, memory, value, context);
 	}
 
-	public copy(dest: MemoryRange, dest_offset: offset, src: ReadonlyMemoryRange, src_offset: offset, context: ComponentModelContext): void {
+	public copy(
+		dest: MemoryRange,
+		dest_offset: offset,
+		src: ReadonlyMemoryRange,
+		src_offset: offset,
+		context: ComponentModelContext,
+	): void {
 		return this.wrapped.copy(dest, dest_offset, src, src_offset, context);
 	}
 
-	public copyFlat(result: WasmType[], dest: Memory, values: FlatValuesIter, src: Memory, context: ComponentModelContext): void {
+	public copyFlat(
+		result: WasmType[],
+		dest: Memory,
+		values: FlatValuesIter,
+		src: Memory,
+		context: ComponentModelContext,
+	): void {
 		return this.wrapped.copyFlat(result, dest, values, src, context);
 	}
 }
 
 export type borrow<T extends NonNullable<JType>> = T;
-export class BorrowType<T extends NonNullable<JType>> extends AbstractWrapperType<T> {
+export class BorrowType<
+	T extends NonNullable<JType>,
+> extends AbstractWrapperType<T> {
 	constructor(type: ComponentModelType<T>) {
 		super(ComponentModelTypeKind.borrow, type);
 	}
 }
 
-export type own<T extends  NonNullable<JType>> = T;
-export class OwnType<T extends  NonNullable<JType>> extends  AbstractWrapperType<T> {
+export type own<T extends NonNullable<JType>> = T;
+export class OwnType<
+	T extends NonNullable<JType>,
+> extends AbstractWrapperType<T> {
 	constructor(type: ComponentModelType<T>) {
 		super(ComponentModelTypeKind.own, type);
 	}
@@ -4016,8 +5615,14 @@ export type InterfaceType = {
 };
 export namespace InterfaceType {
 	export function is(value: any): value is InterfaceType {
-		return typeof value === 'object' && typeof value.id === 'string' && typeof value.witName === 'string'
-			&& value.types instanceof Map && value.functions instanceof Map && value.resources instanceof Map;
+		return (
+			typeof value === "object" &&
+			typeof value.id === "string" &&
+			typeof value.witName === "string" &&
+			value.types instanceof Map &&
+			value.functions instanceof Map &&
+			value.resources instanceof Map
+		);
 	}
 }
 
@@ -4026,14 +5631,37 @@ export type WasmImports = Record<string, WasmModuleImports>;
 export type WasmExports = Record<string, Function>;
 
 export type ServiceInterface = Record<string, JFunction | JClass>;
-export type WorldServiceInterface = Record<string, JFunction | ServiceInterface>;
-export type ServiceInterfaceAsync = Record<string, JFunctionAsync | JClassAsync>;
-export type WorldServiceInterfaceAsync = Record<string, JFunction | ServiceInterfaceAsync>;
+export type WorldServiceInterface = Record<
+	string,
+	JFunction | ServiceInterface
+>;
+export type ServiceInterfaceAsync = Record<
+	string,
+	JFunctionAsync | JClassAsync
+>;
+export type WorldServiceInterfaceAsync = Record<
+	string,
+	JFunction | ServiceInterfaceAsync
+>;
 
-type ServiceInterfaceImplementation = Record<string, Function | Record<string, Function> | { new (...params: any): Resource }>;
-type WorldServiceInterfaceImplementation = Record<string, Function | ServiceInterfaceImplementation>;
-type ServiceInterfaceImplementationAsync = Record<string, Function | Record<string, Function> | { $new(...params: any): Resource | Promise<Resource> }>;
-type WorldServiceInterfaceImplementationAsync = Record<string, Function | ServiceInterfaceImplementationAsync>;
+type ServiceInterfaceImplementation = Record<
+	string,
+	Function | Record<string, Function> | { new (...params: any): Resource }
+>;
+type WorldServiceInterfaceImplementation = Record<
+	string,
+	Function | ServiceInterfaceImplementation
+>;
+type ServiceInterfaceImplementationAsync = Record<
+	string,
+	| Function
+	| Record<string, Function>
+	| { $new(...params: any): Resource | Promise<Resource> }
+>;
+type WorldServiceInterfaceImplementationAsync = Record<
+	string,
+	Function | ServiceInterfaceImplementationAsync
+>;
 
 export type WorldType = {
 	readonly id: string;
@@ -4049,8 +5677,17 @@ export type WorldType = {
 		readonly interfaces?: Map<string, InterfaceType>;
 		bind?(service: any, context: WasmContext): any;
 	};
-	bind?(service: any, code: Code, context?: ComponentModelContext): Promise<any>;
-	bind?(service: any, code: Code, port: RAL.ConnectionPort, context?: ComponentModelContext): Promise<any>;
+	bind?(
+		service: any,
+		code: Code,
+		context?: ComponentModelContext,
+	): Promise<any>;
+	bind?(
+		service: any,
+		code: Code,
+		port: RAL.ConnectionPort,
+		context?: ComponentModelContext,
+	): Promise<any>;
 };
 
 export type PackageType = {
@@ -4061,8 +5698,12 @@ export type PackageType = {
 };
 export namespace PackageType {
 	export function is(value: any): value is PackageType {
-		return typeof value === 'object' && typeof value.id === 'string' && typeof value.witName === 'string'
-			&& value.interfaces instanceof Map;
+		return (
+			typeof value === "object" &&
+			typeof value.id === "string" &&
+			typeof value.witName === "string" &&
+			value.interfaces instanceof Map
+		);
 	}
 }
 
@@ -4072,13 +5713,12 @@ export interface WasmContext extends ComponentModelContext {
 
 export namespace WasmContext {
 	export class Default implements WasmContext {
-
 		private memory: Memory | undefined;
 		public readonly options: Options;
 		public readonly resources: ResourceManagers;
 
 		constructor(options?: Options, resources?: ResourceManagers) {
-			this.options = options ?? { encoding: 'utf-8' };
+			this.options = options ?? { encoding: "utf-8" };
 			this.resources = resources ?? new ResourceManagers.Default();
 		}
 
@@ -4098,16 +5738,26 @@ export namespace WasmContext {
 	}
 	export function is(value: any): value is WasmContext {
 		const candidate = value as WasmContext;
-		return candidate && typeof candidate.getMemory === 'function' && Options.is(candidate.options) && ResourceManagers.is(candidate.resources);
+		return (
+			candidate &&
+			typeof candidate.getMemory === "function" &&
+			Options.is(candidate.options) &&
+			ResourceManagers.is(candidate.resources)
+		);
 	}
 }
 
-function getResourceManager(resource: ResourceType, clazz: JClass | JClassAsync| undefined, context: ComponentModelContext): ResourceManager {
+function getResourceManager(
+	resource: ResourceType,
+	clazz: JClass | JClassAsync | undefined,
+	context: ComponentModelContext,
+): ResourceManager {
 	let resourceManager: ResourceManager;
 	if (context.resources.has(resource.id)) {
 		resourceManager = context.resources.ensure(resource.id);
 	} else {
-		resourceManager = ResourceManager.from(clazz) ?? new ResourceManager.Default();
+		resourceManager =
+			ResourceManager.from(clazz) ?? new ResourceManager.Default();
 		context.resources.set(resource.id, resourceManager);
 	}
 	return resourceManager;
@@ -4120,11 +5770,11 @@ export namespace $imports {
 			? T[K]
 			: T[K] extends object
 				? _Required<T[K]>
-				: T[K]
+				: T[K];
 	};
 	type _Promisify<T> = {
 		[K in keyof T]: T[K] extends (...args: infer A) => infer R
-			? K extends '$handle'
+			? K extends "$handle"
 				? T[K]
 				: (...args: A) => Promise<R> | R
 			: T[K] extends object
@@ -4133,17 +5783,31 @@ export namespace $imports {
 	};
 	export type Promisify<T> = _Promisify<_Required<T>>;
 
-	export function create<R>(world: WorldType, service: WorldServiceInterfaceImplementation, context: WasmContext): R {
-		const packageName = world.id.substring(0, world.id.indexOf('/'));
+	export function create<R>(
+		world: WorldType,
+		service: WorldServiceInterfaceImplementation,
+		context: WasmContext,
+	): R {
+		const packageName = world.id.substring(0, world.id.indexOf("/"));
 		const result: WasmImports = Object.create(null);
 		if (world.imports !== undefined) {
 			if (world.imports.functions !== undefined) {
-				result['$root'] = doCreate(world.imports.functions, undefined, service as ServiceInterfaceImplementation, context);
+				result["$root"] = doCreate(
+					world.imports.functions,
+					undefined,
+					service as ServiceInterfaceImplementation,
+					context,
+				);
 			}
 			if (world.imports.interfaces !== undefined) {
 				for (const [name, iface] of world.imports.interfaces) {
 					const propName = `${name[0].toLowerCase()}${name.substring(1)}`;
-					result[`${packageName}/${iface.witName}`] = doCreate(iface.functions, iface.resources, service[propName] as ServiceInterfaceImplementation, context);
+					result[`${packageName}/${iface.witName}`] = doCreate(
+						iface.functions,
+						iface.resources,
+						service[propName] as ServiceInterfaceImplementation,
+						context,
+					);
 				}
 			}
 		}
@@ -4154,12 +5818,23 @@ export namespace $imports {
 						continue;
 					}
 					for (const resource of iface.resources.values()) {
-						const manager = getResourceManager(resource, undefined, context);
+						const manager = getResourceManager(
+							resource,
+							undefined,
+							context,
+						);
 						const exports = Object.create(null);
-						exports[`[resource-new]${resource.witName}`] = (rep: u32) => manager.newHandle(rep);
-						exports[`[resource-rep]${resource.witName}`] = (handle: u32) => manager.getRepresentation(handle);
-						exports[`[resource-drop]${resource.witName}`] = (handle: u32) => manager.dropHandle(handle);
-						result[`[export]${packageName}/${iface.witName}`] = exports;
+						exports[`[resource-new]${resource.witName}`] = (
+							rep: u32,
+						) => manager.newHandle(rep);
+						exports[`[resource-rep]${resource.witName}`] = (
+							handle: u32,
+						) => manager.getRepresentation(handle);
+						exports[`[resource-drop]${resource.witName}`] = (
+							handle: u32,
+						) => manager.dropHandle(handle);
+						result[`[export]${packageName}/${iface.witName}`] =
+							exports;
 					}
 				}
 			}
@@ -4167,59 +5842,93 @@ export namespace $imports {
 		return result as unknown as R;
 	}
 
-	export function loop<R>(world: WorldType, service: WorldServiceInterfaceImplementation, context: WasmContext): R {
+	export function loop<R>(
+		world: WorldType,
+		service: WorldServiceInterfaceImplementation,
+		context: WasmContext,
+	): R {
 		const imports = create<WasmImports>(world, service, context);
 		const wasmExports = asExports(imports, context);
 		const loop: WorldType = {
 			id: world.id,
 			witName: world.witName,
-			imports: world.exports !== undefined ? {
-				functions: world.exports.functions,
-				interfaces: world.exports.interfaces,
-			} : undefined,
-			exports: world.imports !== undefined ? {
-				functions: world.imports.functions,
-				interfaces: world.imports.interfaces,
-			} : undefined,
+			imports:
+				world.exports !== undefined
+					? {
+							functions: world.exports.functions,
+							interfaces: world.exports.interfaces,
+						}
+					: undefined,
+			exports:
+				world.imports !== undefined
+					? {
+							functions: world.imports.functions,
+							interfaces: world.imports.interfaces,
+						}
+					: undefined,
 		};
 		return $exports.bind(loop, wasmExports, context) as unknown as R;
 	}
 
-	function asExports(imports: WasmImports, context: WasmContext): WasmModuleImports {
+	function asExports(
+		imports: WasmImports,
+		context: WasmContext,
+	): WasmModuleImports {
 		const result: WasmModuleImports = Object.create(null);
 		const keys = Object.keys(imports);
 		for (const ifaceName of keys) {
 			const iface = imports[ifaceName];
-			if (ifaceName.startsWith('[export]')) {
+			if (ifaceName.startsWith("[export]")) {
 				continue;
-			} else  if (ifaceName === '$root') {
+			} else if (ifaceName === "$root") {
 				for (const funcName of Object.keys(iface)) {
 					result[funcName] = iface[funcName];
 				}
 			} else {
 				const qualifier = `${ifaceName}#`;
 				for (const funcName of Object.keys(iface)) {
-					if (funcName.startsWith('[constructor]')) {
+					if (funcName.startsWith("[constructor]")) {
 						const managerId = `${ifaceName}/${funcName.substring(13 /* length of [constructor] */)}`;
-						const resourceManager = context.resources.ensure(managerId);
-						result[`${qualifier}${funcName}`] = (...args: any[]) => {
-							const handle = (iface[funcName] as WasmFunction)(...args) as ResourceHandle;
+						const resourceManager =
+							context.resources.ensure(managerId);
+						result[`${qualifier}${funcName}`] = (
+							...args: any[]
+						) => {
+							const handle = (iface[funcName] as WasmFunction)(
+								...args,
+							) as ResourceHandle;
 							return resourceManager.registerLoop(handle);
 						};
-					} else if (funcName.startsWith('[method]')) {
-						let resourceName = funcName.substring(8 /* length of [method] */);
-						if (resourceName.indexOf('.') !== -1) {
-							resourceName = resourceName.substring(0, resourceName.indexOf('.'));
+					} else if (funcName.startsWith("[method]")) {
+						let resourceName = funcName.substring(
+							8 /* length of [method] */,
+						);
+						if (resourceName.indexOf(".") !== -1) {
+							resourceName = resourceName.substring(
+								0,
+								resourceName.indexOf("."),
+							);
 						}
 						const managerId = `${ifaceName}/${resourceName}`;
-						const resourceManager = context.resources.ensure(managerId);
-						result[`${qualifier}${funcName}`] = ((rep: ResourceRepresentation, ...args: any[]): any => {
-							return (iface[funcName] as WasmFunction)(resourceManager.getLoop(rep), ...args);
+						const resourceManager =
+							context.resources.ensure(managerId);
+						result[`${qualifier}${funcName}`] = ((
+							rep: ResourceRepresentation,
+							...args: any[]
+						): any => {
+							return (iface[funcName] as WasmFunction)(
+								resourceManager.getLoop(rep),
+								...args,
+							);
 						}) as WasmFunction;
-					} else if (funcName.startsWith('[resource-drop]')) {
-						result[`${qualifier}[dtor]${funcName.substring(15 /* length of [resource-drop] */)}`] = iface[funcName];
+					} else if (funcName.startsWith("[resource-drop]")) {
+						result[
+							`${qualifier}[dtor]${funcName.substring(15 /* length of [resource-drop] */)}`
+						] = iface[funcName];
 					} else {
-						result[`${qualifier}${funcName}`] = iface[funcName] as WasmFunction;
+						result[`${qualifier}${funcName}`] = iface[
+							funcName
+						] as WasmFunction;
 					}
 				}
 			}
@@ -4227,26 +5936,55 @@ export namespace $imports {
 		return result;
 	}
 
-	function doCreate(functions: Map<string, FunctionType<JFunction>> | undefined, resources: Map<string, ResourceType> | undefined, service: ServiceInterfaceImplementation, context: WasmContext): WasmModuleImports {
-		const result: WasmModuleImports  = Object.create(null);
+	function doCreate(
+		functions: Map<string, FunctionType<JFunction>> | undefined,
+		resources: Map<string, ResourceType> | undefined,
+		service: ServiceInterfaceImplementation,
+		context: WasmContext,
+	): WasmModuleImports {
+		const result: WasmModuleImports = Object.create(null);
 		if (functions !== undefined) {
 			for (const [funcName, func] of functions) {
-				result[func.witName] = createFunction(func, service[funcName] as JFunction, context);
+				result[func.witName] = createFunction(
+					func,
+					service[funcName] as JFunction,
+					context,
+				);
 			}
 		}
 		if (resources !== undefined) {
-			for (const [resourceName, resource ] of resources) {
+			for (const [resourceName, resource] of resources) {
 				const clazz = service[resourceName] as JClass;
-				const resourceManager: ResourceManager = getResourceManager(resource, clazz, context);
+				const resourceManager: ResourceManager = getResourceManager(
+					resource,
+					clazz,
+					context,
+				);
 				for (const [callableName, callable] of resource.callables) {
 					if (callable instanceof ConstructorType) {
-						result[callable.witName] = createConstructorFunction(callable, clazz, context);
+						result[callable.witName] = createConstructorFunction(
+							callable,
+							clazz,
+							context,
+						);
 					} else if (callable instanceof StaticMethodType) {
-						result[callable.witName] = createStaticMethodFunction(callable, (service[resourceName] as JClass)[callableName], context);
+						result[callable.witName] = createStaticMethodFunction(
+							callable,
+							(service[resourceName] as JClass)[callableName],
+							context,
+						);
 					} else if (callable instanceof MethodType) {
-						result[callable.witName] = createMethodFunction(callableName, callable, resourceManager, context);
+						result[callable.witName] = createMethodFunction(
+							callableName,
+							callable,
+							resourceManager,
+							context,
+						);
 					} else if (callable instanceof DestructorType) {
-						result[callable.witName] = createDestructorFunction(callable, resourceManager);
+						result[callable.witName] = createDestructorFunction(
+							callable,
+							resourceManager,
+						);
 					}
 				}
 			}
@@ -4254,48 +5992,99 @@ export namespace $imports {
 		return result;
 	}
 
-	function createFunction(callable: FunctionType<JFunction>, serviceFunction: JFunction, context: WasmContext): WasmFunction {
-		return function (this: void, ...params: WasmType[]): number | bigint | void {
+	function createFunction(
+		callable: FunctionType<JFunction>,
+		serviceFunction: JFunction,
+		context: WasmContext,
+	): WasmFunction {
+		return function (
+			this: void,
+			...params: WasmType[]
+		): number | bigint | void {
 			return callable.callService(serviceFunction, params, context);
 		};
 	}
 
-	function createConstructorFunction(callable: ConstructorType, clazz: JClass, context: WasmContext): WasmFunction {
-		return function (this: void, ...params: WasmType[]): number | bigint | void {
+	function createConstructorFunction(
+		callable: ConstructorType,
+		clazz: JClass,
+		context: WasmContext,
+	): WasmFunction {
+		return function (
+			this: void,
+			...params: WasmType[]
+		): number | bigint | void {
 			return callable.callService(clazz, params, context);
 		};
 	}
 
-	function createDestructorFunction(callable: DestructorType, manager: ResourceManager): WasmFunction {
-		return function (this: void, ...params: WasmType[]): number | bigint | void {
+	function createDestructorFunction(
+		callable: DestructorType,
+		manager: ResourceManager,
+	): WasmFunction {
+		return function (
+			this: void,
+			...params: WasmType[]
+		): number | bigint | void {
 			return callable.callService(params, manager);
 		};
 	}
 
-	function createStaticMethodFunction(callable: StaticMethodType, func: JFunction, context: WasmContext): WasmFunction {
-		return function (this: void, ...params: WasmType[]): number | bigint | void {
+	function createStaticMethodFunction(
+		callable: StaticMethodType,
+		func: JFunction,
+		context: WasmContext,
+	): WasmFunction {
+		return function (
+			this: void,
+			...params: WasmType[]
+		): number | bigint | void {
 			return callable.callService(func, params, context);
 		};
 	}
 
-	function createMethodFunction(name: string, callable: MethodType, manager: ResourceManager, context: WasmContext): WasmFunction {
-		return function (this: void, ...params: WasmType[]): number | bigint | void {
+	function createMethodFunction(
+		name: string,
+		callable: MethodType,
+		manager: ResourceManager,
+		context: WasmContext,
+	): WasmFunction {
+		return function (
+			this: void,
+			...params: WasmType[]
+		): number | bigint | void {
 			return callable.callService(name, params, manager, context);
 		};
 	}
 
 	export namespace worker {
-		export function create(connection: WorkerConnection, world: WorldType, context: WasmContext): WasmImports {
-			const packageName = world.id.substring(0, world.id.indexOf('/'));
-			const result: WasmImports  = Object.create(null);
+		export function create(
+			connection: WorkerConnection,
+			world: WorldType,
+			context: WasmContext,
+		): WasmImports {
+			const packageName = world.id.substring(0, world.id.indexOf("/"));
+			const result: WasmImports = Object.create(null);
 			if (world.imports !== undefined) {
 				if (world.imports.functions !== undefined) {
-					result['$root'] = doCreate(connection, '$root', world.imports.functions, undefined, context);
+					result["$root"] = doCreate(
+						connection,
+						"$root",
+						world.imports.functions,
+						undefined,
+						context,
+					);
 				}
 				if (world.imports.interfaces !== undefined) {
 					for (const iface of world.imports.interfaces.values()) {
 						const qualifier = `${packageName}/${iface.witName}`;
-						result[qualifier] = doCreate(connection, qualifier, iface.functions, iface.resources, context);
+						result[qualifier] = doCreate(
+							connection,
+							qualifier,
+							iface.functions,
+							iface.resources,
+							context,
+						);
 					}
 				}
 			}
@@ -4309,11 +6098,21 @@ export namespace $imports {
 							const exports = Object.create(null);
 							const qualifier = `[export]${packageName}/${iface.witName}`;
 							const newName = `[resource-new]${resource.witName}`;
-							exports[newName] = (rep: u32) => connection.callMain(`${qualifier}#${newName}`, [rep]);
+							exports[newName] = (rep: u32) =>
+								connection.callMain(`${qualifier}#${newName}`, [
+									rep,
+								]);
 							const repName = `[resource-rep]${resource.witName}`;
-							exports[repName] = (handle: u32) => connection.callMain(`${qualifier}#${repName}`, [handle]);
+							exports[repName] = (handle: u32) =>
+								connection.callMain(`${qualifier}#${repName}`, [
+									handle,
+								]);
 							const dropName = `[resource-drop]${resource.witName}`;
-							exports[dropName] = (handle: u32) => connection.callMain(`${qualifier}#${dropName}`, [handle]);
+							exports[dropName] = (handle: u32) =>
+								connection.callMain(
+									`${qualifier}#${dropName}`,
+									[handle],
+								);
 							result[qualifier] = exports;
 						}
 					}
@@ -4322,20 +6121,42 @@ export namespace $imports {
 			return result;
 		}
 
-		function doCreate(connection: WorkerConnection, qualifier: string, functions: Map<string, FunctionType<JFunction>> | undefined, resources: Map<string, ResourceType> | undefined, context: WasmContext): WasmModuleImports {
-			const result: WasmModuleImports  = Object.create(null);
+		function doCreate(
+			connection: WorkerConnection,
+			qualifier: string,
+			functions: Map<string, FunctionType<JFunction>> | undefined,
+			resources: Map<string, ResourceType> | undefined,
+			context: WasmContext,
+		): WasmModuleImports {
+			const result: WasmModuleImports = Object.create(null);
 			if (functions !== undefined) {
 				for (const [, func] of functions) {
-					result[func.witName] = function(this: void, ...params: WasmType[]): number | bigint | void {
-						return func.callMain(connection, qualifier, params, context);
+					result[func.witName] = function (
+						this: void,
+						...params: WasmType[]
+					): number | bigint | void {
+						return func.callMain(
+							connection,
+							qualifier,
+							params,
+							context,
+						);
 					};
 				}
 			}
 			if (resources !== undefined) {
 				for (const resource of resources.values()) {
 					for (const callable of resource.callables.values()) {
-						result[callable.witName] = function(this: void, ...params: WasmType[]): number | bigint | void {
-							return callable.callMain(connection, qualifier, params, context);
+						result[callable.witName] = function (
+							this: void,
+							...params: WasmType[]
+						): number | bigint | void {
+							return callable.callMain(
+								connection,
+								qualifier,
+								params,
+								context,
+							);
 						};
 					}
 				}
@@ -4352,11 +6173,11 @@ export namespace $exports {
 			? T[K]
 			: T[K] extends object
 				? _Required<T[K]>
-				: T[K]
+				: T[K];
 	};
 	type _Promisify<T> = {
 		[K in keyof T]: T[K] extends (...args: infer A) => infer R
-			? K extends '$new'
+			? K extends "$new"
 				? (...arg: A) => Promise<_Promisify<R>>
 				: (...args: A) => Promise<R>
 			: T[K] extends object
@@ -4365,28 +6186,42 @@ export namespace $exports {
 	};
 	export type Promisify<T> = _Promisify<_Required<T>>;
 
-	export function bind<R>(world: WorldType, exports: WasmExports, context: WasmContext): R {
+	export function bind<R>(
+		world: WorldType,
+		exports: WasmExports,
+		context: WasmContext,
+	): R {
 		const [root, scoped] = partition(exports);
 		const result: WorldServiceInterface = Object.create(null);
 		if (world.exports !== undefined) {
 			if (world.exports.functions !== undefined) {
-				Object.assign(result, doBind(world.exports.functions, undefined, root, context));
+				Object.assign(
+					result,
+					doBind(world.exports.functions, undefined, root, context),
+				);
 			}
 			if (world.exports.interfaces !== undefined) {
 				for (const [name, iface] of world.exports.interfaces) {
 					const propName = `${name[0].toLowerCase()}${name.substring(1)}`;
-					result[propName] = doBind(iface.functions, iface.resources, scoped[iface.id], context);
+					result[propName] = doBind(
+						iface.functions,
+						iface.resources,
+						scoped[iface.id],
+						context,
+					);
 				}
 			}
 		}
 		return result as unknown as R;
 	}
 
-	function partition(exports: WasmExports): [WasmExports, Record<string, WasmExports>] {
+	function partition(
+		exports: WasmExports,
+	): [WasmExports, Record<string, WasmExports>] {
 		const root: WasmExports = Object.create(null);
 		const scoped: Record<string, WasmExports> = Object.create(null);
 		for (const [key, value] of Object.entries(exports)) {
-			const parts = key.split('#');
+			const parts = key.split("#");
 			if (parts.length === 1) {
 				root[key] = value;
 			} else {
@@ -4400,63 +6235,140 @@ export namespace $exports {
 		return [root, scoped];
 	}
 
-	function doBind(functions: Map<string, FunctionType> | undefined, resources: Map<string, ResourceType> | undefined, wasm: Record<string, Function>, context: WasmContext): ServiceInterface {
+	function doBind(
+		functions: Map<string, FunctionType> | undefined,
+		resources: Map<string, ResourceType> | undefined,
+		wasm: Record<string, Function>,
+		context: WasmContext,
+	): ServiceInterface {
 		const result: ServiceInterface = Object.create(null);
 		if (functions !== undefined) {
 			for (const [name, func] of functions) {
-				result[name] = createFunction(func, wasm[func.witName] as WasmFunction, context);
+				result[name] = createFunction(
+					func,
+					wasm[func.witName] as WasmFunction,
+					context,
+				);
 			}
 		}
 		if (resources !== undefined) {
 			for (const [name, resource] of resources) {
-				const resourceManager = getResourceManager(resource, undefined, context);
-				const cl =  clazz.create(resource, wasm, context);
-				resourceManager.setProxyInfo(cl, wasm[`[dtor]${resource.witName}`] as (self: number) => void);
+				const resourceManager = getResourceManager(
+					resource,
+					undefined,
+					context,
+				);
+				const cl = clazz.create(resource, wasm, context);
+				resourceManager.setProxyInfo(
+					cl,
+					wasm[`[dtor]${resource.witName}`] as (self: number) => void,
+				);
 				result[name] = cl as unknown as JClass;
 			}
 		}
 		return result;
 	}
 
-	function createFunction(func: FunctionType<JFunction>, wasmFunction: WasmFunction, context: WasmContext): JFunction {
+	function createFunction(
+		func: FunctionType<JFunction>,
+		wasmFunction: WasmFunction,
+		context: WasmContext,
+	): JFunction {
 		return (...params: JType[]): JType => {
 			return func.callWasm(params, wasmFunction, context);
 		};
 	}
 
 	export namespace worker {
-		export function bind(connection: WorkerConnection, world: WorldType, exports: WasmExports, context: WasmContext): void {
-			const packageName = world.id.substring(0, world.id.indexOf('/'));
+		export function bind(
+			connection: WorkerConnection,
+			world: WorldType,
+			exports: WasmExports,
+			context: WasmContext,
+		): void {
+			const packageName = world.id.substring(0, world.id.indexOf("/"));
 			const [root, scoped] = partition(exports);
 			if (world.exports !== undefined) {
-				doBind(connection, packageName, world.exports.functions, undefined, root, context);
+				doBind(
+					connection,
+					packageName,
+					world.exports.functions,
+					undefined,
+					root,
+					context,
+				);
 				if (world.exports.interfaces !== undefined) {
 					for (const iface of world.exports.interfaces.values()) {
-						doBind(connection, `${packageName}/${iface.witName}`, iface.functions, iface.resources, scoped[iface.id], context);
+						doBind(
+							connection,
+							`${packageName}/${iface.witName}`,
+							iface.functions,
+							iface.resources,
+							scoped[iface.id],
+							context,
+						);
 					}
 				}
 			}
 		}
 
-		function doBind(connection: WorkerConnection, qualifier: string, functions: Map<string, FunctionType> | undefined, resources: Map<string, ResourceType> | undefined, exports: WasmExports, context: WasmContext) : void {
+		function doBind(
+			connection: WorkerConnection,
+			qualifier: string,
+			functions: Map<string, FunctionType> | undefined,
+			resources: Map<string, ResourceType> | undefined,
+			exports: WasmExports,
+			context: WasmContext,
+		): void {
 			if (functions !== undefined) {
 				for (const func of functions.values()) {
-					connection.on(`${qualifier}#${func.witName}`, (memory: Memory, params: WasmType[]) => {
-						return func.callWasmFromWorker(memory, exports[func.witName] as WasmFunction, params, context);
-					});
+					connection.on(
+						`${qualifier}#${func.witName}`,
+						(memory: Memory, params: WasmType[]) => {
+							return func.callWasmFromWorker(
+								memory,
+								exports[func.witName] as WasmFunction,
+								params,
+								context,
+							);
+						},
+					);
 				}
 			}
 			if (resources !== undefined) {
 				for (const resource of resources.values()) {
 					for (const callable of resource.callables.values()) {
-						if (callable instanceof ConstructorType || callable instanceof StaticMethodType) {
-							connection.on(`${qualifier}#${callable.witName}`, (memory, params: WasmType[]) => {
-								return callable.callWasmFromWorker(memory, exports[callable.witName] as WasmFunction, params, context);
-							});
+						if (
+							callable instanceof ConstructorType ||
+							callable instanceof StaticMethodType
+						) {
+							connection.on(
+								`${qualifier}#${callable.witName}`,
+								(memory, params: WasmType[]) => {
+									return callable.callWasmFromWorker(
+										memory,
+										exports[
+											callable.witName
+										] as WasmFunction,
+										params,
+										context,
+									);
+								},
+							);
 						} else {
-							connection.on(`${qualifier}#${callable.witName}`, (memory, params: WasmType[]) => {
-								return callable.callWasmMethodFromWorker(memory, exports[callable.witName] as WasmFunction, params, context);
-							});
+							connection.on(
+								`${qualifier}#${callable.witName}`,
+								(memory, params: WasmType[]) => {
+									return callable.callWasmMethodFromWorker(
+										memory,
+										exports[
+											callable.witName
+										] as WasmFunction,
+										params,
+										context,
+									);
+								},
+							);
 						}
 					}
 				}
@@ -4467,10 +6379,18 @@ export namespace $exports {
 
 namespace clazz {
 	interface AnyProxyClass {
-		new (handleTag: symbol, handle: ResourceHandle<any>, rep: ResourceRepresentation): any;
+		new (
+			handleTag: symbol,
+			handle: ResourceHandle<any>,
+			rep: ResourceRepresentation,
+		): any;
 		new (...args: any[]): any;
 	}
-	export function create(resource: ResourceType, wasm: WasmExports, context: WasmContext): AnyProxyClass {
+	export function create(
+		resource: ResourceType,
+		wasm: WasmExports,
+		context: WasmContext,
+	): AnyProxyClass {
 		let resourceManager: ResourceManager;
 		if (context.resources.has(resource.id)) {
 			resourceManager = context.resources.ensure(resource.id);
@@ -4480,18 +6400,30 @@ namespace clazz {
 		}
 		const clazz = class extends Resource.Default {
 			private readonly _rep: ResourceRepresentation;
-			constructor(handleTag: symbol, handle: ResourceHandle, rep: ResourceRepresentation);
+			constructor(
+				handleTag: symbol,
+				handle: ResourceHandle,
+				rep: ResourceRepresentation,
+			);
 			constructor(...args: any[]);
 			constructor(...args: any[]) {
 				if (args[0] === ResourceManager.handleTag) {
 					const handle = args[1] as ResourceHandle;
 					super(handle);
-					this._rep = (args[2] as ResourceRepresentation);
+					this._rep = args[2] as ResourceRepresentation;
 				} else {
-					const ctor = resource.getCallable('constructor') as ConstructorType;
-					const handle = ctor.callWasmConstructor(args, wasm[ctor.witName] as WasmFunction, context);
+					const ctor = resource.getCallable(
+						"constructor",
+					) as ConstructorType;
+					const handle = ctor.callWasmConstructor(
+						args,
+						wasm[ctor.witName] as WasmFunction,
+						context,
+					);
 					super(handle);
-					this._rep = resourceManager.getRepresentation(this.$handle());
+					this._rep = resourceManager.getRepresentation(
+						this.$handle(),
+					);
 				}
 			}
 			public $rep(): ResourceRepresentation {
@@ -4500,16 +6432,34 @@ namespace clazz {
 		};
 		for (const [name, callable] of resource.callables) {
 			if (callable instanceof MethodType) {
-				(clazz.prototype as any)[name] = function (...params: JType[]): JType {
-					return callable.callWasmMethod(this, params, wasm[callable.witName] as WasmFunction, context);
+				(clazz.prototype as any)[name] = function (
+					...params: JType[]
+				): JType {
+					return callable.callWasmMethod(
+						this,
+						params,
+						wasm[callable.witName] as WasmFunction,
+						context,
+					);
 				};
 			} else if (callable instanceof DestructorType) {
-				(clazz.prototype as any)[name] = function (...params: JType[]): JType {
-					return callable.callWasmMethod(this, params, wasm[callable.witName] as WasmFunction, context);
+				(clazz.prototype as any)[name] = function (
+					...params: JType[]
+				): JType {
+					return callable.callWasmMethod(
+						this,
+						params,
+						wasm[callable.witName] as WasmFunction,
+						context,
+					);
 				};
 			} else if (callable instanceof StaticMethodType) {
 				(clazz as any)[name] = (...params: JType[]): JType => {
-					return callable.callWasm(params,  wasm[callable.witName] as WasmFunction, context);
+					return callable.callWasm(
+						params,
+						wasm[callable.witName] as WasmFunction,
+						context,
+					);
 				};
 			}
 		}
@@ -4517,10 +6467,19 @@ namespace clazz {
 	}
 
 	interface AnyPromiseProxyClass {
-		new (handleTag: symbol, handle: ResourceHandle<any>, rep: ResourceRepresentation): any;
+		new (
+			handleTag: symbol,
+			handle: ResourceHandle<any>,
+			rep: ResourceRepresentation,
+		): any;
 		$new(...args: JType[]): any;
 	}
-	export function createPromise(connection: MainConnection, qualifier: string, resource: ResourceType, context: ComponentModelContext): AnyPromiseProxyClass {
+	export function createPromise(
+		connection: MainConnection,
+		qualifier: string,
+		resource: ResourceType,
+		context: ComponentModelContext,
+	): AnyPromiseProxyClass {
 		let resourceManager: ResourceManager;
 		if (context.resources.has(resource.id)) {
 			resourceManager = context.resources.ensure(resource.id);
@@ -4532,11 +6491,26 @@ namespace clazz {
 			private readonly _rep: ResourceRepresentation;
 
 			public static async $new(...args: JType[]): Promise<any> {
-				const ctor = resource.getCallable('constructor') as ConstructorType;
-				const result = await ctor.callWasmConstructorAsync(connection, qualifier, args, context);
-				return new clazz(ResourceManager.handleTag, result, resourceManager.getRepresentation(result)) as unknown as AnyProxyClass;
+				const ctor = resource.getCallable(
+					"constructor",
+				) as ConstructorType;
+				const result = await ctor.callWasmConstructorAsync(
+					connection,
+					qualifier,
+					args,
+					context,
+				);
+				return new clazz(
+					ResourceManager.handleTag,
+					result,
+					resourceManager.getRepresentation(result),
+				) as unknown as AnyProxyClass;
 			}
-			constructor(_handleTag: symbol, handle: ResourceHandle, rep: ResourceRepresentation) {
+			constructor(
+				_handleTag: symbol,
+				handle: ResourceHandle,
+				rep: ResourceRepresentation,
+			) {
 				super(handle);
 				this._rep = rep;
 			}
@@ -4546,16 +6520,37 @@ namespace clazz {
 		};
 		for (const [name, callable] of resource.callables) {
 			if (callable instanceof MethodType) {
-				(clazz.prototype as any)[name] = function (...params: JType[]): Promise<JType> {
-					return callable.callWorkerMethod(connection, qualifier, this, params, context);
+				(clazz.prototype as any)[name] = function (
+					...params: JType[]
+				): Promise<JType> {
+					return callable.callWorkerMethod(
+						connection,
+						qualifier,
+						this,
+						params,
+						context,
+					);
 				};
 			} else if (callable instanceof DestructorType) {
-				(clazz.prototype as any)[name] = function (...params: JType[]): Promise<JType> {
-					return callable.callWorkerMethod(connection, qualifier, this, params, context);
+				(clazz.prototype as any)[name] = function (
+					...params: JType[]
+				): Promise<JType> {
+					return callable.callWorkerMethod(
+						connection,
+						qualifier,
+						this,
+						params,
+						context,
+					);
 				};
 			} else if (callable instanceof StaticMethodType) {
 				(clazz as any)[name] = (...params: JType[]): Promise<JType> => {
-					return callable.callWorker(connection, qualifier, params, context);
+					return callable.callWorker(
+						connection,
+						qualifier,
+						params,
+						context,
+					);
 				};
 			}
 		}
@@ -4564,19 +6559,57 @@ namespace clazz {
 }
 
 export namespace $main {
-	export function bind(world: WorldType, service: WorldServiceInterfaceImplementation | WorldServiceInterfaceImplementationAsync, code: Code, portOrContext?: ComponentModelContext | RAL.ConnectionPort, context?: ComponentModelContext): Promise<any> {
+	export function bind(
+		world: WorldType,
+		service:
+			| WorldServiceInterfaceImplementation
+			| WorldServiceInterfaceImplementationAsync,
+		code: Code,
+		portOrContext?: ComponentModelContext | RAL.ConnectionPort,
+		context?: ComponentModelContext,
+	): Promise<any> {
 		if (portOrContext === undefined) {
-			return bindSync(world, service as WorldServiceInterfaceImplementation, code, new WasmContext.Default());
+			return bindSync(
+				world,
+				service as WorldServiceInterfaceImplementation,
+				code,
+				new WasmContext.Default(),
+			);
 		} else if (ComponentModelContext.is(portOrContext)) {
-			return bindSync(world, service as WorldServiceInterfaceImplementation, code, portOrContext);
+			return bindSync(
+				world,
+				service as WorldServiceInterfaceImplementation,
+				code,
+				portOrContext,
+			);
 		} else {
-			return bindAsync(world, service, code, portOrContext, context ?? { options: { encoding: 'utf-8' }, resources: new ResourceManagers.Default() });
+			return bindAsync(
+				world,
+				service,
+				code,
+				portOrContext,
+				context ?? {
+					options: { encoding: "utf-8" },
+					resources: new ResourceManagers.Default(),
+				},
+			);
 		}
 	}
 
-	async function bindSync(world: WorldType, service: WorldServiceInterfaceImplementation, code: Code, context: ComponentModelContext | undefined): Promise<any> {
-		const wasmContext = context !== undefined ? new WasmContext.Default(context.options, context.resources) : new WasmContext.Default();
-		type literal = { module: WebAssembly_.Module; memory?: WebAssembly_.Memory };
+	async function bindSync(
+		world: WorldType,
+		service: WorldServiceInterfaceImplementation,
+		code: Code,
+		context: ComponentModelContext | undefined,
+	): Promise<any> {
+		const wasmContext =
+			context !== undefined
+				? new WasmContext.Default(context.options, context.resources)
+				: new WasmContext.Default();
+		type literal = {
+			module: WebAssembly_.Module;
+			memory?: WebAssembly_.Memory;
+		};
 		let module: WebAssembly_.Module;
 		let memory: WebAssembly_.Memory | undefined = undefined;
 		if ((code as literal).module !== undefined) {
@@ -4585,16 +6618,30 @@ export namespace $main {
 		} else {
 			module = code;
 		}
-		const imports = $imports.create<WasmImports>(world, service, wasmContext);
+		const imports = $imports.create<WasmImports>(
+			world,
+			service,
+			wasmContext,
+		);
 		if (memory !== undefined) {
 			(imports as any).env.memory = memory;
 		}
 		const instance = await RAL().WebAssembly.instantiate(module, imports);
 		wasmContext.initialize(new Memory.Default(instance.exports));
-		return $exports.bind(world, instance.exports as WasmExports, wasmContext);
+		return $exports.bind(
+			world,
+			instance.exports as WasmExports,
+			wasmContext,
+		);
 	}
 
-	async function bindAsync(world: WorldType, service: WorldServiceInterfaceImplementationAsync, code: Code, port: RAL.ConnectionPort, context: ComponentModelContext): Promise<WorldServiceInterfaceAsync> {
+	async function bindAsync(
+		world: WorldType,
+		service: WorldServiceInterfaceImplementationAsync,
+		code: Code,
+		port: RAL.ConnectionPort,
+		context: ComponentModelContext,
+	): Promise<WorldServiceInterfaceAsync> {
 		const connection = await RAL().Connection.createMain(port);
 		connection.listen();
 		await connection.initialize(code, context.options);
@@ -4603,16 +6650,37 @@ export namespace $main {
 		return bindApi(connection, world, context);
 	}
 
-	function bindServiceAsync(connection: MainConnection, world: WorldType, service: WorldServiceInterfaceImplementationAsync, context: ComponentModelContext): void {
-		const packageName = world.id.substring(0, world.id.indexOf('/'));
+	function bindServiceAsync(
+		connection: MainConnection,
+		world: WorldType,
+		service: WorldServiceInterfaceImplementationAsync,
+		context: ComponentModelContext,
+	): void {
+		const packageName = world.id.substring(0, world.id.indexOf("/"));
 		if (world.imports !== undefined) {
 			if (world.imports.functions !== undefined) {
-				doBindServiceAsync(connection, '$root', world.imports.functions, undefined, service, context);
+				doBindServiceAsync(
+					connection,
+					"$root",
+					world.imports.functions,
+					undefined,
+					service,
+					context,
+				);
 			}
 			if (world.imports.interfaces !== undefined) {
 				for (const [name, iface] of world.imports.interfaces) {
 					const propName = `${name[0].toLowerCase()}${name.substring(1)}`;
-					doBindServiceAsync(connection, `${packageName}/${iface.witName}`, iface.functions, iface.resources, service[propName] as ServiceInterfaceImplementationAsync, context);
+					doBindServiceAsync(
+						connection,
+						`${packageName}/${iface.witName}`,
+						iface.functions,
+						iface.resources,
+						service[
+							propName
+						] as ServiceInterfaceImplementationAsync,
+						context,
+					);
 				}
 			}
 		}
@@ -4624,85 +6692,198 @@ export namespace $main {
 					}
 					const qualifier = `[export]${packageName}/${iface.witName}`;
 					for (const resource of iface.resources.values()) {
-						const manager = getResourceManager(resource, undefined, context);
-						connection.on(`${qualifier}#[resource-new]${resource.witName}`, (_memory: Memory, params: WasmType[]) => manager.newHandle(params[0] as u32));
-						connection.on(`${qualifier}#[resource-rep]${resource.witName}`, (_memory: Memory, params: WasmType[]) => manager.getRepresentation(params[0] as u32));
-						connection.on(`${qualifier}#[resource-drop]${resource.witName}`, (_memory: Memory, params: WasmType[]) => manager.dropHandle(params[0] as u32));
+						const manager = getResourceManager(
+							resource,
+							undefined,
+							context,
+						);
+						connection.on(
+							`${qualifier}#[resource-new]${resource.witName}`,
+							(_memory: Memory, params: WasmType[]) =>
+								manager.newHandle(params[0] as u32),
+						);
+						connection.on(
+							`${qualifier}#[resource-rep]${resource.witName}`,
+							(_memory: Memory, params: WasmType[]) =>
+								manager.getRepresentation(params[0] as u32),
+						);
+						connection.on(
+							`${qualifier}#[resource-drop]${resource.witName}`,
+							(_memory: Memory, params: WasmType[]) =>
+								manager.dropHandle(params[0] as u32),
+						);
 					}
 				}
 			}
 		}
 	}
 
-	function doBindServiceAsync(connection: MainConnection, qualifier: string, functions: Map<string, FunctionType> | undefined, resources: Map<string, ResourceType> | undefined, service: WorldServiceInterfaceImplementationAsync, context: ComponentModelContext): void {
+	function doBindServiceAsync(
+		connection: MainConnection,
+		qualifier: string,
+		functions: Map<string, FunctionType> | undefined,
+		resources: Map<string, ResourceType> | undefined,
+		service: WorldServiceInterfaceImplementationAsync,
+		context: ComponentModelContext,
+	): void {
 		if (functions !== undefined) {
 			for (const [funcName, func] of functions) {
-				connection.on(`${qualifier}#${func.witName}`, (memory: Memory, params: WasmType[]) => {
-					return func.callServiceAsync(memory, service[funcName] as JFunctionAsync, params, context);
-				});
+				connection.on(
+					`${qualifier}#${func.witName}`,
+					(memory: Memory, params: WasmType[]) => {
+						return func.callServiceAsync(
+							memory,
+							service[funcName] as JFunctionAsync,
+							params,
+							context,
+						);
+					},
+				);
 			}
 		}
 		if (resources !== undefined) {
 			for (const [resourceName, resource] of resources) {
 				const clazz = service[resourceName] as JClassAsync;
-				const resourceManager: ResourceManager = getResourceManager(resource, clazz, context);
+				const resourceManager: ResourceManager = getResourceManager(
+					resource,
+					clazz,
+					context,
+				);
 				for (const [callableName, callable] of resource.callables) {
 					if (callable instanceof ConstructorType) {
-						connection.on(`${qualifier}#${callable.witName}`, (memory: Memory, params: WasmType[]) => {
-							return callable.callServiceAsync(memory, clazz, params, context);
-						});
+						connection.on(
+							`${qualifier}#${callable.witName}`,
+							(memory: Memory, params: WasmType[]) => {
+								return callable.callServiceAsync(
+									memory,
+									clazz,
+									params,
+									context,
+								);
+							},
+						);
 					} else if (callable instanceof StaticMethodType) {
-						connection.on(`${qualifier}#${callable.witName}`, (memory: Memory, params: WasmType[]) => {
-							return callable.callServiceAsync(memory, (service[resourceName] as JClassAsync)[callableName], params, context);
-						});
+						connection.on(
+							`${qualifier}#${callable.witName}`,
+							(memory: Memory, params: WasmType[]) => {
+								return callable.callServiceAsync(
+									memory,
+									(service[resourceName] as JClassAsync)[
+										callableName
+									],
+									params,
+									context,
+								);
+							},
+						);
 					} else if (callable instanceof MethodType) {
-						connection.on(`${qualifier}#${callable.witName}`, (memory: Memory, params: WasmType[]) => {
-							return callable.callServiceAsync(memory, callableName, params, resourceManager, context);
-						});
+						connection.on(
+							`${qualifier}#${callable.witName}`,
+							(memory: Memory, params: WasmType[]) => {
+								return callable.callServiceAsync(
+									memory,
+									callableName,
+									params,
+									resourceManager,
+									context,
+								);
+							},
+						);
 					} else if (callable instanceof DestructorType) {
-						connection.on(`${qualifier}#${callable.witName}`, (memory: Memory, params: WasmType[]) => {
-							return callable.callServiceAsync(memory, params, resourceManager);
-						});
+						connection.on(
+							`${qualifier}#${callable.witName}`,
+							(memory: Memory, params: WasmType[]) => {
+								return callable.callServiceAsync(
+									memory,
+									params,
+									resourceManager,
+								);
+							},
+						);
 					}
 				}
 			}
 		}
 	}
 
-	function bindApi(connection: MainConnection, world: WorldType, context: ComponentModelContext): any {
-		const packageName = world.id.substring(0, world.id.indexOf('/'));
+	function bindApi(
+		connection: MainConnection,
+		world: WorldType,
+		context: ComponentModelContext,
+	): any {
+		const packageName = world.id.substring(0, world.id.indexOf("/"));
 		const result = Object.create(null);
 		if (world.exports !== undefined) {
 			if (world.exports.functions !== undefined) {
-				Object.assign(result, doBindApi(connection, packageName, world.exports.functions, undefined, context));
+				Object.assign(
+					result,
+					doBindApi(
+						connection,
+						packageName,
+						world.exports.functions,
+						undefined,
+						context,
+					),
+				);
 			}
 			if (world.exports.interfaces !== undefined) {
 				for (const [name, iface] of world.exports.interfaces) {
 					const propName = `${name[0].toLowerCase()}${name.substring(1)}`;
-					result[propName] = doBindApi(connection, `${packageName}/${iface.witName}`, iface.functions, iface.resources, context);
+					result[propName] = doBindApi(
+						connection,
+						`${packageName}/${iface.witName}`,
+						iface.functions,
+						iface.resources,
+						context,
+					);
 				}
 			}
 		}
 		return result;
 	}
 
-	function doBindApi(connection: MainConnection, qualifier: string, functions: Map<string, FunctionType> | undefined, resources: Map<string, ResourceType> | undefined, context: ComponentModelContext): any {
+	function doBindApi(
+		connection: MainConnection,
+		qualifier: string,
+		functions: Map<string, FunctionType> | undefined,
+		resources: Map<string, ResourceType> | undefined,
+		context: ComponentModelContext,
+	): any {
 		const result = Object.create(null);
 		if (functions !== undefined) {
 			for (const [name, func] of functions) {
 				result[name] = (...params: JType[]) => {
-					return func.callWorker(connection, qualifier, params, context);
+					return func.callWorker(
+						connection,
+						qualifier,
+						params,
+						context,
+					);
 				};
 			}
 		}
 		if (resources !== undefined) {
 			for (const [name, resource] of resources) {
-				const resourceManager = getResourceManager(resource, undefined, context);
-				const cl =  clazz.createPromise(connection, qualifier, resource, context);
+				const resourceManager = getResourceManager(
+					resource,
+					undefined,
+					context,
+				);
+				const cl = clazz.createPromise(
+					connection,
+					qualifier,
+					resource,
+					context,
+				);
 				resourceManager.setProxyInfo(cl, (self: number) => {
-					connection.callWorker(`${qualifier}#[dtor]${resource.witName}`, [self]).
-						catch(() => {
-							RAL().console.error(`Failed to call destructor for ${resource.witName}`);
+					connection
+						.callWorker(`${qualifier}#[dtor]${resource.witName}`, [
+							self,
+						])
+						.catch(() => {
+							RAL().console.error(
+								`Failed to call destructor for ${resource.witName}`,
+							);
 						});
 				});
 				result[name] = cl;

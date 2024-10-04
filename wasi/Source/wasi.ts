@@ -3,23 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 /* eslint-disable @typescript-eslint/ban-types */
-import * as $wcm from '@vscode/wasm-component-model';
+import * as $wcm from "@vscode/wasm-component-model";
 
-import { io } from './io';
-import { clocks } from './clocks';
-import { filesystem } from './filesystem';
-import { sockets } from './sockets';
-import { random } from './random';
-import { cli } from './cli';
+import { cli } from "./cli";
+import { clocks } from "./clocks";
+import { filesystem } from "./filesystem";
+import { io } from "./io";
+import { random } from "./random";
+import { sockets } from "./sockets";
 
 namespace wasi._ {
-	export const packages: Map<string, $wcm.PackageType> =  new Map<string, $wcm.PackageType>([
-		['io', io._],
-		['clocks', clocks._],
-		['filesystem', filesystem._],
-		['sockets', sockets._],
-		['random', random._],
-		['cli', cli._],
+	export const packages: Map<string, $wcm.PackageType> = new Map<
+		string,
+		$wcm.PackageType
+	>([
+		["io", io._],
+		["clocks", clocks._],
+		["filesystem", filesystem._],
+		["sockets", sockets._],
+		["random", random._],
+		["cli", cli._],
 	]);
 }
 export { io, clocks, filesystem, sockets, random, cli };

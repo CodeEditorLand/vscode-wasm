@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 /// <reference path="../../typings/webAssemblyCommon.d.ts" preserve="true" />
 
-import { ptr, u32 } from './baseTypes';
+import { ptr, u32 } from "./baseTypes";
 
 export namespace Offsets {
 	export const lock_size = 4;
@@ -21,7 +21,7 @@ export namespace Offsets {
 }
 
 export interface StartMainMessage {
-	readonly method: 'startMain';
+	readonly method: "startMain";
 	readonly module: WebAssembly.Module;
 	readonly memory?: WebAssembly.Memory;
 	readonly trace?: boolean;
@@ -29,12 +29,12 @@ export interface StartMainMessage {
 export namespace StartMainMessage {
 	export function is(message: ServiceMessage): message is StartMainMessage {
 		const candidate = message as StartMainMessage;
-		return candidate && candidate.method === 'startMain';
+		return candidate && candidate.method === "startMain";
 	}
 }
 
 export interface StartThreadMessage {
-	readonly method: 'startThread';
+	readonly method: "startThread";
 	readonly module: WebAssembly.Module;
 	readonly memory: WebAssembly.Memory;
 	readonly tid: u32;
@@ -44,60 +44,74 @@ export interface StartThreadMessage {
 export namespace StartThreadMessage {
 	export function is(message: ServiceMessage): message is StartThreadMessage {
 		const candidate = message as StartThreadMessage;
-		return candidate && candidate.method === 'startThread';
+		return candidate && candidate.method === "startThread";
 	}
 }
 
-export type ServiceMessage = StartMainMessage | StartThreadMessage | { method: string };
+export type ServiceMessage =
+	| StartMainMessage
+	| StartThreadMessage
+	| { method: string };
 
 export interface WorkerReadyMessage {
-	readonly method: 'workerReady';
+	readonly method: "workerReady";
 }
 export namespace WorkerReadyMessage {
 	export function is(message: WorkerMessage): message is WorkerReadyMessage {
 		const candidate = message as WorkerReadyMessage;
-		return candidate && candidate.method === 'workerReady';
+		return candidate && candidate.method === "workerReady";
 	}
 }
 
 export interface WorkerDoneMessage {
-	readonly method: 'workerDone';
+	readonly method: "workerDone";
 }
 export namespace WorkerDoneMessage {
 	export function is(message: WorkerMessage): message is WorkerReadyMessage {
 		const candidate = message as WorkerDoneMessage;
-		return candidate && candidate.method === 'workerDone';
+		return candidate && candidate.method === "workerDone";
 	}
 }
 
 export interface TraceMessage {
-	readonly method: 'trace';
+	readonly method: "trace";
 	readonly message: string;
 	readonly timeTaken: number;
 }
 export namespace TraceMessage {
 	export function is(message: WorkerMessage): message is TraceMessage {
 		const candidate = message as TraceMessage;
-		return candidate && candidate.method === 'trace';
+		return candidate && candidate.method === "trace";
 	}
 }
 
 export interface TraceSummaryMessage {
-	readonly method: 'traceSummary';
+	readonly method: "traceSummary";
 	readonly summary: string[];
 }
 export namespace TraceSummaryMessage {
 	export function is(message: WorkerMessage): message is TraceSummaryMessage {
 		const candidate = message as TraceSummaryMessage;
-		return candidate && candidate.method === 'traceSummary';
+		return candidate && candidate.method === "traceSummary";
 	}
 }
 
 export type WasiCallMessage = [SharedArrayBuffer, SharedArrayBuffer];
 export namespace WasiCallMessage {
 	export function is(message: WorkerMessage): message is WasiCallMessage {
-		return Array.isArray(message) && message.length === 2 && message[0] instanceof SharedArrayBuffer && message[1] instanceof SharedArrayBuffer;
+		return (
+			Array.isArray(message) &&
+			message.length === 2 &&
+			message[0] instanceof SharedArrayBuffer &&
+			message[1] instanceof SharedArrayBuffer
+		);
 	}
 }
 
-export type WorkerMessage = WasiCallMessage | WorkerReadyMessage | WorkerDoneMessage | TraceMessage | TraceSummaryMessage | { method: string };
+export type WorkerMessage =
+	| WasiCallMessage
+	| WorkerReadyMessage
+	| WorkerDoneMessage
+	| TraceMessage
+	| TraceSummaryMessage
+	| { method: string };

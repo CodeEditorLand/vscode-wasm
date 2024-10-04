@@ -9,15 +9,18 @@ export type Options = {
 	outDir: string | undefined;
 	filter: string | undefined;
 	input: string | undefined;
-	target: 'ts';
-	nameStyle: 'ts' | 'wit';
+	target: "ts";
+	nameStyle: "ts" | "wit";
 	stdin: boolean;
-	structure: 'auto' | 'package' | 'namespace';
+	structure: "auto" | "package" | "namespace";
 	singleWorld: boolean;
 	keep?: { result: boolean; option: boolean; own: boolean; borrow: boolean };
 };
 
-export type ResolvedOptions = Required<Options> & { input: string; outDir: string  };
+export type ResolvedOptions = Required<Options> & {
+	input: string;
+	outDir: string;
+};
 
 export namespace Options {
 	export const defaults: Options = {
@@ -26,24 +29,29 @@ export namespace Options {
 		outDir: undefined,
 		filter: undefined,
 		input: undefined,
-		target: 'ts',
-		nameStyle: 'ts',
+		target: "ts",
+		nameStyle: "ts",
 		stdin: false,
-		structure: 'auto',
-		singleWorld: false
+		structure: "auto",
+		singleWorld: false,
 	};
 
 	export function validate(options: Options): options is ResolvedOptions {
 		if (options.stdin === false && !options.input) {
-			process.stderr.write('Missing file argument.\n');
+			process.stderr.write("Missing file argument.\n");
 			return false;
 		}
 		if (!options.outDir) {
-			process.stderr.write('Missing outDir argument.\n');
+			process.stderr.write("Missing outDir argument.\n");
 			return false;
 		}
 		if (!options.keep) {
-			options.keep = { result: false, option: false, own: false, borrow: false };
+			options.keep = {
+				result: false,
+				option: false,
+				own: false,
+				borrow: false,
+			};
 		}
 		return true;
 	}

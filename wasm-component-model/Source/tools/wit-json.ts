@@ -23,11 +23,13 @@ export interface World {
 }
 export namespace World {
 	export function is(value: any): value is World {
-		return typeof value === 'object'
-			&& typeof value.name === 'string'
-			&& typeof value.imports === 'object'
-			&& typeof value.exports === 'object'
-			&& typeof value.package === 'number';
+		return (
+			typeof value === "object" &&
+			typeof value.name === "string" &&
+			typeof value.imports === "object" &&
+			typeof value.exports === "object" &&
+			typeof value.package === "number"
+		);
 	}
 }
 export interface PackageNameParts {
@@ -44,10 +46,12 @@ export interface Package {
 }
 export namespace Package {
 	export function is(value: any): value is Package {
-		return typeof value === 'object'
-			&& typeof value.name === 'string'
-			&& typeof value.interfaces === 'object'
-			&& typeof value.worlds === 'object';
+		return (
+			typeof value === "object" &&
+			typeof value.name === "string" &&
+			typeof value.interfaces === "object" &&
+			typeof value.worlds === "object"
+		);
 	}
 }
 
@@ -58,17 +62,19 @@ export interface Interface {
 	functions: NameMap<Callable>;
 	world?: {
 		ref: number;
-		kind: 'imports' | 'exports';
+		kind: "imports" | "exports";
 	};
 	package: number;
 }
 export namespace Interface {
 	export function is(value: any): value is Interface {
-		return typeof value === 'object'
-			&& typeof value.name === 'string'
-			&& typeof value.types === 'object'
-			&& typeof value.functions === 'object'
-			&& typeof value.package === 'number';
+		return (
+			typeof value === "object" &&
+			typeof value.name === "string" &&
+			typeof value.types === "object" &&
+			typeof value.functions === "object" &&
+			typeof value.package === "number"
+		);
 	}
 }
 
@@ -76,24 +82,40 @@ export type Callable = Func | Method | StaticMethod | Constructor;
 export namespace Callable {
 	export function isFunction(value: Callable): value is Func {
 		const candidate = value as Func;
-		return candidate.kind === 'freestanding';
+		return candidate.kind === "freestanding";
 	}
 	export function isStaticMethod(value: Callable): value is StaticMethod {
 		const candidate = value as StaticMethod;
-		return typeof candidate.kind === 'object' && typeof candidate.kind.static === 'number';
+		return (
+			typeof candidate.kind === "object" &&
+			typeof candidate.kind.static === "number"
+		);
 	}
 	export function isConstructor(value: Callable): value is Constructor {
 		const candidate = value as Constructor;
-		return typeof candidate.kind === 'object' && typeof candidate.kind.constructor === 'number';
+		return (
+			typeof candidate.kind === "object" &&
+			typeof candidate.kind.constructor === "number"
+		);
 	}
 	export function isMethod(value: Callable): value is Method {
 		const candidate = value as Method;
-		return typeof candidate.kind === 'object' && typeof candidate.kind.method === 'number';
+		return (
+			typeof candidate.kind === "object" &&
+			typeof candidate.kind.method === "number"
+		);
 	}
 	export function is(value: any): value is Callable {
-		return isFunction(value) || isStaticMethod(value) || isConstructor(value) || isMethod(value);
+		return (
+			isFunction(value) ||
+			isStaticMethod(value) ||
+			isConstructor(value) ||
+			isMethod(value)
+		);
 	}
-	export function containingType(value: Method | StaticMethod | Constructor): number {
+	export function containingType(
+		value: Method | StaticMethod | Constructor,
+	): number {
 		if (isMethod(value)) {
 			return value.kind.method;
 		} else if (isStaticMethod(value)) {
@@ -113,7 +135,7 @@ interface AbstractCallable {
 }
 
 export interface Func extends AbstractCallable {
-	kind: 'freestanding';
+	kind: "freestanding";
 }
 
 export interface StaticMethod extends AbstractCallable {
@@ -134,7 +156,20 @@ export interface Method extends AbstractCallable {
 	};
 }
 
-export type Type = BaseType | ReferenceType | ListType | OptionType | TupleType | ResultType | RecordType | EnumType | FlagsType | VariantType | ResourceType | BorrowHandleType | OwnHandleType;
+export type Type =
+	| BaseType
+	| ReferenceType
+	| ListType
+	| OptionType
+	| TupleType
+	| ResultType
+	| RecordType
+	| EnumType
+	| FlagsType
+	| VariantType
+	| ResourceType
+	| BorrowHandleType
+	| OwnHandleType;
 export namespace Type {
 	export function isBaseType(type: Type): type is BaseType {
 		return TypeKind.isBase(type.kind);
@@ -176,10 +211,24 @@ export namespace Type {
 		return TypeKind.isOwnHandle(type.kind);
 	}
 	export function hasName(type: Type): type is Type & { name: string } {
-		return typeof type.name === 'string';
+		return typeof type.name === "string";
 	}
 	export function is(value: any): value is Type {
-		return isBaseType(value) || isReferenceType(value) || isListType(value) || isOptionType(value) || isTupleType(value) || isResultType(value) || isRecordType(value) || isEnumType(value) || isFlagsType(value) || isVariantType(value) || isResourceType(value) || isBorrowHandleType(value) || isOwnHandleType(value);
+		return (
+			isBaseType(value) ||
+			isReferenceType(value) ||
+			isListType(value) ||
+			isOptionType(value) ||
+			isTupleType(value) ||
+			isResultType(value) ||
+			isRecordType(value) ||
+			isEnumType(value) ||
+			isFlagsType(value) ||
+			isVariantType(value) ||
+			isResourceType(value) ||
+			isBorrowHandleType(value) ||
+			isOwnHandleType(value)
+		);
 	}
 }
 
@@ -238,15 +287,15 @@ export interface OwnHandleType extends AbstractType {
 }
 
 export interface ResourceType extends AbstractType {
-	kind: 'resource';
+	kind: "resource";
 }
 
 export namespace Owner {
 	export function isWorld(owner: Owner): owner is { world: number } {
-		return typeof (owner as { world: number }).world === 'number';
+		return typeof (owner as { world: number }).world === "number";
 	}
 	export function isInterface(owner: Owner): owner is { interface: number } {
-		return typeof (owner as { interface: number }).interface === 'number';
+		return typeof (owner as { interface: number }).interface === "number";
 	}
 	export function kind(owner: Owner): OwnerKind {
 		if (isWorld(owner)) {
@@ -260,66 +309,99 @@ export namespace Owner {
 }
 export type Owner = { world: number } | { interface: number };
 export enum OwnerKind {
-	World = 'world',
-	Interface = 'interface',
+	World = "world",
+	Interface = "interface",
 }
 
-export type TypeKind = TypeObject | RecordKind | VariantKind | EnumKind | FlagsKind | TupleKind | ListKind | OptionKind | BorrowHandleKind | OwnHandleKind | ResultKind | BaseKind | ReferenceKind | 'resource';
+export type TypeKind =
+	| TypeObject
+	| RecordKind
+	| VariantKind
+	| EnumKind
+	| FlagsKind
+	| TupleKind
+	| ListKind
+	| OptionKind
+	| BorrowHandleKind
+	| OwnHandleKind
+	| ResultKind
+	| BaseKind
+	| ReferenceKind
+	| "resource";
 export namespace TypeKind {
 	export function isBase(kind: TypeKind): kind is BaseKind {
-		return typeof (kind as BaseKind).type === 'string';
+		return typeof (kind as BaseKind).type === "string";
 	}
 	export function isReference(kind: TypeKind): kind is ReferenceKind {
-		return typeof (kind as ReferenceKind).type === 'number';
+		return typeof (kind as ReferenceKind).type === "number";
 	}
 	export function isTypeObject(kind: TypeKind): kind is TypeObject {
 		const candidate = kind as TypeObject;
-		return typeof candidate.type === 'number' || typeof candidate.type === 'string';
+		return (
+			typeof candidate.type === "number" ||
+			typeof candidate.type === "string"
+		);
 	}
 	export function isRecord(kind: TypeKind): kind is RecordKind {
-		return typeof (kind as RecordKind).record === 'object';
+		return typeof (kind as RecordKind).record === "object";
 	}
 	export function isVariant(kind: TypeKind): kind is VariantKind {
 		const candidate = kind as VariantKind;
-		return typeof candidate.variant === 'object';
+		return typeof candidate.variant === "object";
 	}
 	export function isEnum(kind: TypeKind): kind is EnumKind {
 		const candidate = kind as EnumKind;
-		return typeof candidate.enum === 'object';
+		return typeof candidate.enum === "object";
 	}
 	export function isFlags(kind: TypeKind): kind is FlagsKind {
 		const candidate = kind as FlagsKind;
-		return typeof candidate.flags === 'object';
+		return typeof candidate.flags === "object";
 	}
 	export function isTuple(kind: TypeKind): kind is TupleKind {
 		const candidate = kind as TupleKind;
-		return typeof candidate.tuple === 'object';
+		return typeof candidate.tuple === "object";
 	}
 	export function isList(kind: TypeKind): kind is ListKind {
 		const candidate = kind as ListKind;
-		return typeof candidate.list === 'number' || typeof candidate.list === 'string';
+		return (
+			typeof candidate.list === "number" ||
+			typeof candidate.list === "string"
+		);
 	}
 	export function isOption(kind: TypeKind): kind is OptionKind {
 		const candidate = kind as OptionKind;
-		return typeof candidate.option === 'number' || typeof candidate.option === 'string';
+		return (
+			typeof candidate.option === "number" ||
+			typeof candidate.option === "string"
+		);
 	}
 	export function isResult(kind: TypeKind): kind is ResultKind {
 		const candidate = kind as ResultKind;
 		const ok = candidate.result?.ok;
 		const err = candidate.result?.err;
-		return (ok !== undefined && (typeof ok === 'number' || typeof ok === 'string' || ok === null))
-			&& (err !== undefined && (typeof err === 'number' || typeof err === 'string' || err === null));
+		return (
+			ok !== undefined &&
+			(typeof ok === "number" || typeof ok === "string" || ok === null) &&
+			err !== undefined &&
+			(typeof err === "number" || typeof err === "string" || err === null)
+		);
 	}
 	export function isBorrowHandle(kind: TypeKind): kind is BorrowHandleKind {
 		const candidate = kind as BorrowHandleKind;
-		return typeof candidate.handle === 'object' && TypeReference.is(candidate.handle.borrow);
+		return (
+			typeof candidate.handle === "object" &&
+			TypeReference.is(candidate.handle.borrow)
+		);
 	}
 	export function isOwnHandle(kind: TypeKind): kind is OwnHandleKind {
 		const candidate = kind as OwnHandleKind;
-		return typeof candidate.handle === 'object' && TypeReference.is(candidate.handle.own);
+		return (
+			typeof candidate.handle === "object" &&
+			TypeReference.is(candidate.handle.own)
+		);
 	}
-	export function isResource(kind: TypeKind): kind is 'resource' {
-		return kind === 'resource';
+	export function isResource(kind: TypeKind): kind is "resource" {
+		return kind === "resource";
 	}
 }
 
@@ -413,12 +495,14 @@ export interface OwnHandleKind {
 export type ObjectKind = TypeObject | FuncObject | InterfaceObject;
 export namespace ObjectKind {
 	export function isTypeObject(kind: ObjectKind): kind is TypeObject {
-		return typeof (kind as TypeObject).type === 'number';
+		return typeof (kind as TypeObject).type === "number";
 	}
 	export function isFuncObject(kind: ObjectKind): kind is FuncObject {
-		return typeof (kind as FuncObject).function === 'object';
+		return typeof (kind as FuncObject).function === "object";
 	}
-	export function isInterfaceObject(kind: ObjectKind): kind is InterfaceObject {
+	export function isInterfaceObject(
+		kind: ObjectKind,
+	): kind is InterfaceObject {
 		return InterfaceObjectId.is((kind as InterfaceObject).interface);
 	}
 }
@@ -431,13 +515,16 @@ export interface FuncObject {
 	function: Func;
 }
 
-export type InterfaceObjectId = number | { id: number};
+export type InterfaceObjectId = number | { id: number };
 export namespace InterfaceObjectId {
 	export function isNumber(value: InterfaceObjectId): value is number {
-		return typeof value === 'number';
+		return typeof value === "number";
 	}
 	export function isId(value: InterfaceObjectId): value is { id: number } {
-		return typeof value === 'object' && typeof (value as { id: number }).id === 'number';
+		return (
+			typeof value === "object" &&
+			typeof (value as { id: number }).id === "number"
+		);
 	}
 	export function is(value: InterfaceObjectId): value is { id: number } {
 		return isNumber(value) || isId(value);
@@ -454,10 +541,10 @@ export namespace TypeReference {
 		return isNumber(candidate) || isString(candidate);
 	}
 	export function isNumber(ref: TypeReference): ref is number {
-		return typeof ref === 'number';
+		return typeof ref === "number";
 	}
 	export function isString(ref: TypeReference): ref is string {
-		return typeof ref === 'string';
+		return typeof ref === "string";
 	}
 }
 

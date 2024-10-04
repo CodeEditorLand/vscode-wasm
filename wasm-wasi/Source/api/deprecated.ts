@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 /// <reference path="../../typings/webAssemblyCommon.d.ts" preserve="true"/>
 
-import * as v1 from './v1';
+import * as v1 from "./v1";
 
 /**
  * @deprecated use types from the v1 module instead.
@@ -132,12 +132,12 @@ export type MemoryFileSystem = v1.MemoryFileSystem;
 /**
  * @deprecated use types from the v1 module instead.
  */
-export type RootFileSystem  = v1.RootFileSystem;
+export type RootFileSystem = v1.RootFileSystem;
 
 /**
  * @deprecated use types from the v1 module instead.
  */
-export type Wasm = Exclude<v1.Wasm, 'versions'> & {
+export type Wasm = Exclude<v1.Wasm, "versions"> & {
 	/**
 	 * The version of the WASM API following semver semantics.
 	 */
@@ -148,7 +148,6 @@ export type Wasm = Exclude<v1.Wasm, 'versions'> & {
  * @deprecated use types from the v1 module instead.
  */
 export namespace Wasm {
-
 	/**
 	 * @deprecated use functions from the v1 module instead.
 	 */

@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as code from 'vscode';
-import * as wasi from './wasi';
+import * as code from "vscode";
+
+import * as wasi from "./wasi";
 
 export namespace code2Wasi {
 	export function asFileType(fileType: code.FileType): wasi.filetype {
@@ -21,17 +22,17 @@ export namespace code2Wasi {
 	}
 	export function asErrno(code: string): wasi.errno {
 		switch (code) {
-			case 'FileNotFound':
+			case "FileNotFound":
 				return wasi.Errno.noent;
-			case 'FileExists':
+			case "FileExists":
 				return wasi.Errno.exist;
-			case 'FileNotADirectory':
+			case "FileNotADirectory":
 				return wasi.Errno.notdir;
-			case 'FileIsADirectory':
+			case "FileIsADirectory":
 				return wasi.Errno.isdir;
-			case 'NoPermissions':
+			case "NoPermissions":
 				return wasi.Errno.perm;
-			case 'Unavailable':
+			case "Unavailable":
 				return wasi.Errno.busy;
 			default:
 				return wasi.Errno.inval;
@@ -48,10 +49,10 @@ export namespace BigInts {
 		return Number(value);
 	}
 	export function max(...args: bigint[]): bigint {
-		return args.reduce((m, e) => e > m ? e : m);
+		return args.reduce((m, e) => (e > m ? e : m));
 	}
 
 	export function min(...args: bigint[]): bigint {
-		return args.reduce((m, e) => e < m ? e : m);
+		return args.reduce((m, e) => (e < m ? e : m));
 	}
 }

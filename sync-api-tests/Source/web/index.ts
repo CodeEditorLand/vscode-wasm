@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-require('mocha/mocha');
+require("mocha/mocha");
 
 export function run(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		// Create the mocha test
 		mocha.setup({
-			ui: 'tdd',
+			ui: "tdd",
 			color: true,
-			reporter: undefined
+			reporter: undefined,
 		});
 
-		require('./all.test');
+		require("./all.test");
 
 		try {
 			// Run the mocha test
-			mocha.run(failures => {
+			mocha.run((failures) => {
 				if (failures > 0) {
 					reject(new Error(`${failures} tests failed.`));
 				} else {

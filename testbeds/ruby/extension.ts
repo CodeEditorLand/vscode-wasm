@@ -3,44 +3,51 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
-import { commands, ExtensionContext, window } from 'vscode';
-import { Wasm, ProcessOptions } from '@vscode/wasm-wasi';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { ProcessOptions, Wasm } from "@vscode/wasm-wasi";
+import { commands, ExtensionContext, window } from "vscode";
 
 export async function activate(_context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
 
-	commands.registerCommand('testbed-ruby.runFile', async () => {
+	commands.registerCommand("testbed-ruby.runFile", async () => {
 		const editor = window.activeTextEditor;
 		if (editor === undefined) {
 			return;
 		}
 		const document = editor.document;
-		if (document.languageId !== 'ruby') {
+		if (document.languageId !== "ruby") {
 			return;
 		}
 
 		const pty = wasm.createPseudoterminal();
-		const terminal = window.createTerminal({ name: 'Ruby', pty, isTransient: true });
+		const terminal = window.createTerminal({
+			name: "Ruby",
+			pty,
+			isTransient: true,
+		});
 		terminal.show(true);
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
-			mountPoints: [
-				{ kind: 'workspaceFolder' }
-			],
-			args: [document.uri]
+			mountPoints: [{ kind: "workspaceFolder" }],
+			args: [document.uri],
 		};
-		const filename = path.join(path.sep, 'home', 'dirkb', 'bin', 'wasm', 'ruby.wasm');
+		const filename = path.join(
+			path.sep,
+			"home",
+			"dirkb",
+			"bin",
+			"wasm",
+			"ruby.wasm",
+		);
 		const bits = await fs.readFile(filename);
 		const module = await WebAssembly.compile(bits);
-		const process = await wasm.createProcess('ruby', module, options);
-		process.run().catch(err => {
+		const process = await wasm.createProcess("ruby", module, options);
+		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});
 	});
 }
 
-export function deactivate() {
-}
+export function deactivate() {}

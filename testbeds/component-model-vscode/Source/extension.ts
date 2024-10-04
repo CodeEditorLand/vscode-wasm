@@ -2,18 +2,25 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { WasmContext, Memory, type ResourceHandle, ResourceManager, Resource } from '@vscode/wasm-component-model';
-import * as vscode from 'vscode';
+import {
+	Memory,
+	Resource,
+	ResourceManager,
+	WasmContext,
+	type ResourceHandle,
+} from "@vscode/wasm-component-model";
+import * as vscode from "vscode";
 
-import { api } from './api';
+import { api } from "./api";
+
 import Types = api.Types;
 import OutputChannel = Types.OutputChannel;
 import TextDocument = Types.TextDocument;
 
 // Channel implementation
 class OutputChannelProxy extends Resource.Default implements OutputChannel {
-
-	public static $resources: ResourceManager = new ResourceManager.Default<OutputChannel>();
+	public static $resources: ResourceManager =
+		new ResourceManager.Default<OutputChannel>();
 
 	private channel: vscode.OutputChannel;
 
@@ -44,8 +51,8 @@ class OutputChannelProxy extends Resource.Default implements OutputChannel {
 }
 
 class TextDocumentProxy extends Resource.Default implements TextDocument {
-
-	public static $resources: ResourceManager = new ResourceManager.Default<TextDocument>();
+	public static $resources: ResourceManager =
+		new ResourceManager.Default<TextDocument>();
 
 	private textDocument: vscode.TextDocument;
 
@@ -55,7 +62,7 @@ class TextDocumentProxy extends Resource.Default implements TextDocument {
 	}
 
 	public $drop(): void {
-		console.log('TextDocumentProxy.$drop');
+		console.log("TextDocumentProxy.$drop");
 	}
 
 	public uri(): string {
@@ -76,12 +83,10 @@ class TextDocumentProxy extends Resource.Default implements TextDocument {
 }
 
 class CommandRegistry {
-
 	private commands: Map<string, vscode.Disposable> = new Map();
 	private callback!: api.Callbacks.executeCommand;
 
-	constructor() {
-	}
+	constructor() {}
 
 	initialize(callback: api.Callbacks.executeCommand): void {
 		this.callback = callback;
@@ -101,8 +106,16 @@ class CommandRegistry {
 	}
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
-	const filename = vscode.Uri.joinPath(context.extensionUri, 'target', 'wasm32-unknown-unknown', 'debug', 'example.wasm');
+export async function activate(
+	context: vscode.ExtensionContext,
+): Promise<void> {
+	const filename = vscode.Uri.joinPath(
+		context.extensionUri,
+		"target",
+		"wasm32-unknown-unknown",
+		"debug",
+		"example.wasm",
+	);
 	const bits = await vscode.workspace.fs.readFile(filename);
 	const module = await WebAssembly.compile(bits);
 	const commandRegistry = new CommandRegistry();
@@ -110,30 +123,34 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	const service: api.all.Imports = {
 		types: {
 			OutputChannel: OutputChannelProxy,
-			TextDocument: TextDocumentProxy
+			TextDocument: TextDocumentProxy,
 		},
 		window: {
 			createOutputChannel: (name: string, languageId?: string) => {
 				return new OutputChannelProxy(name, languageId);
-			}
+			},
 		},
 		workspace: {
-			registerOnDidChangeTextDocument: () => {
-			},
+			registerOnDidChangeTextDocument: () => {},
 			textDocuments: () => {
-				return vscode.workspace.textDocuments.map(document => new TextDocumentProxy(document));
-			}
+				return vscode.workspace.textDocuments.map(
+					(document) => new TextDocumentProxy(document),
+				);
+			},
 		},
 		commands: {
 			registerCommand: (command: string) => {
 				commandRegistry.register(command);
-			}
-		}
-	}
-	const imports = api.all._.imports.create(service, wasmContext)
+			},
+		},
+	};
+	const imports = api.all._.imports.create(service, wasmContext);
 	const instance = await WebAssembly.instantiate(module, imports);
 	wasmContext.initialize(new Memory.Default(instance.exports));
-	const exports = api.all._.exports.bind(instance.exports as api.all._.Exports, wasmContext);
+	const exports = api.all._.exports.bind(
+		instance.exports as api.all._.Exports,
+		wasmContext,
+	);
 	commandRegistry.initialize(exports.callbacks.executeCommand);
 	exports.activate();
 }

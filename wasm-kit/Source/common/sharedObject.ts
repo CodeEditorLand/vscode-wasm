@@ -2,22 +2,25 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import RAL from './ral';
-
-import * as uuid from 'uuid';
-
 import {
-	Alignment, ComponentModelContext,
+	Alignment,
+	ComponentModelContext,
 	ComponentModelTrap,
 	Memory,
-	MemoryError, MemoryRange,
+	MemoryError,
+	MemoryRange,
+	ptr,
 	ReadonlyMemoryRange,
-	ResourceManagers, ptr,
+	ResourceManagers,
 	size,
 	u32,
-	type BaseMemoryRange, type ResourceHandle,
-	type offset
-} from '@vscode/wasm-component-model';
+	type BaseMemoryRange,
+	type offset,
+	type ResourceHandle,
+} from "@vscode/wasm-component-model";
+import * as uuid from "uuid";
+
+import RAL from "./ral";
 
 export interface SharedMemory extends Memory {
 	id: string;
@@ -36,10 +39,21 @@ export interface SharedMemory extends Memory {
 }
 
 export namespace SharedMemory {
-
 	export interface Constructor {
-		new (module: WebAssembly_.Module, memory: WebAssembly_.Memory, exports: SharedMemory.Exports, size: u32): SharedMemory;
-		new (module: WebAssembly_.Module, memory: WebAssembly_.Memory, exports: SharedMemory.Exports, size: u32, id: string, counter: ptr): SharedMemory;
+		new (
+			module: WebAssembly_.Module,
+			memory: WebAssembly_.Memory,
+			exports: SharedMemory.Exports,
+			size: u32,
+		): SharedMemory;
+		new (
+			module: WebAssembly_.Module,
+			memory: WebAssembly_.Memory,
+			exports: SharedMemory.Exports,
+			size: u32,
+			id: string,
+			counter: ptr,
+		): SharedMemory;
 	}
 
 	export type Transferable = {
@@ -63,25 +77,27 @@ export namespace SharedMemory {
 		return RAL().Memory.create(MemoryImpl);
 	}
 
-	export function createFrom(transferable: SharedMemory.Transferable): Promise<SharedMemory> {
+	export function createFrom(
+		transferable: SharedMemory.Transferable,
+	): Promise<SharedMemory> {
 		return RAL().Memory.createFrom(MemoryImpl, transferable);
 	}
 }
 
-type _Range = SharedMemory['range'];
+type _Range = SharedMemory["range"];
 class RangeImpl implements _Range {
-	constructor(private readonly memory: MemoryImpl) {
-	}
+	constructor(private readonly memory: MemoryImpl) {}
 	public fromLocation(location: MemoryLocation): MemoryRange {
 		if (this.memory.id !== location.memory.id) {
-			throw new MemoryError(`MemoryLocation {${JSON.stringify(location, undefined, undefined)}} is not from this memory [${this.memory.id}]`);
+			throw new MemoryError(
+				`MemoryLocation {${JSON.stringify(location, undefined, undefined)}} is not from this memory [${this.memory.id}]`,
+			);
 		}
 		return new MemoryRange(this.memory, location.ptr, location.size);
 	}
 }
-type _Resources = SharedMemory['resources'];
+type _Resources = SharedMemory["resources"];
 class ResourcesImpl implements _Resources {
-
 	private readonly size: size;
 	private readonly counter: Int32Array;
 	private readonly pointerMask: u32;
@@ -91,18 +107,20 @@ class ResourcesImpl implements _Resources {
 	constructor(size: size, counter: Int32Array) {
 		const power = Math.log2(size);
 		if (!Number.isInteger(power)) {
-			throw new MemoryError('Memory size must be a power of 2');
+			throw new MemoryError("Memory size must be a power of 2");
 		}
 		this.size = size;
 		this.counter = counter;
 		this.pointerMask = size - 1;
-		this.counterLimit = Math.pow(2, (32 - power)) - 1;
+		this.counterLimit = Math.pow(2, 32 - power) - 1;
 		this.counterShift = power;
 	}
 	public computeHandle(memoryRange: BaseMemoryRange): u32 {
 		const ptr = memoryRange.ptr;
 		if (ptr > this.size) {
-			throw new MemoryError(`Memory access is out of bounds. Using [${ptr}], allocated[${this.size}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Using [${ptr}], allocated[${this.size}]`,
+			);
 		}
 		const nextId = Atomics.add(this.counter, 0, 1);
 		return ((nextId & this.counterLimit) << this.counterShift) | ptr;
@@ -118,7 +136,6 @@ class ResourcesImpl implements _Resources {
 }
 
 class MemoryImpl implements SharedMemory {
-
 	public readonly id: string;
 	public readonly range: _Range;
 	public readonly resources: _Resources;
@@ -131,9 +148,28 @@ class MemoryImpl implements SharedMemory {
 
 	private _view: DataView | undefined;
 
-	public constructor(module: WebAssembly_.Module, memory: WebAssembly_.Memory, exports: SharedMemory.Exports, size: u32);
-	public constructor(module: WebAssembly_.Module, memory: WebAssembly_.Memory, exports: SharedMemory.Exports, size: u32, id: string, counter: ptr);
-	public constructor(module: WebAssembly_.Module, memory: WebAssembly_.Memory, exports: SharedMemory.Exports, size: u32, id?: string, counter?: ptr) {
+	public constructor(
+		module: WebAssembly_.Module,
+		memory: WebAssembly_.Memory,
+		exports: SharedMemory.Exports,
+		size: u32,
+	);
+	public constructor(
+		module: WebAssembly_.Module,
+		memory: WebAssembly_.Memory,
+		exports: SharedMemory.Exports,
+		size: u32,
+		id: string,
+		counter: ptr,
+	);
+	public constructor(
+		module: WebAssembly_.Module,
+		memory: WebAssembly_.Memory,
+		exports: SharedMemory.Exports,
+		size: u32,
+		id?: string,
+		counter?: ptr,
+	) {
 		this.id = id ?? uuid.v4();
 		this.module = module;
 		this.memory = memory;
@@ -154,7 +190,13 @@ class MemoryImpl implements SharedMemory {
 	}
 
 	public getTransferable(): SharedMemory.Transferable {
-		return { id: this.id, module: this.module, memory: this.memory, size: this.size, counter: this.counter.byteOffset };
+		return {
+			id: this.id,
+			module: this.module,
+			memory: this.memory,
+			size: this.size,
+			counter: this.counter.byteOffset,
+		};
 	}
 
 	public get buffer(): ArrayBuffer {
@@ -162,7 +204,10 @@ class MemoryImpl implements SharedMemory {
 	}
 
 	public get view(): DataView {
-		if (this._view === undefined || this._view.buffer !== this.memory.buffer) {
+		if (
+			this._view === undefined ||
+			this._view.buffer !== this.memory.buffer
+		) {
 			this._view = new DataView(this.memory.buffer);
 		}
 		return this._view;
@@ -172,24 +217,32 @@ class MemoryImpl implements SharedMemory {
 		try {
 			const ptr = this.exports.aligned_alloc(align, size);
 			if (ptr === 0) {
-				throw new Error('Allocation failed');
+				throw new Error("Allocation failed");
 			}
 			const result = new MemoryRange(this, ptr, size);
 			result.getUint8View(0).fill(0);
 			return result;
 		} catch (error) {
-			RAL().console.error(`Alloc [${align}, ${size}] failed. Buffer size: ${this.memory.buffer.byteLength}`);
+			RAL().console.error(
+				`Alloc [${align}, ${size}] failed. Buffer size: ${this.memory.buffer.byteLength}`,
+			);
 			throw error;
 		}
 	}
 
-	public realloc(_range: MemoryRange, _align: Alignment, _newSize: size): MemoryRange {
-		throw new Error('Not implemented');
+	public realloc(
+		_range: MemoryRange,
+		_align: Alignment,
+		_newSize: size,
+	): MemoryRange {
+		throw new Error("Not implemented");
 	}
 
 	public preAllocated(ptr: number, size: number): MemoryRange {
 		if (ptr + size > this.buffer.byteLength) {
-			throw new MemoryError(`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`,
+			);
 		}
 		return new MemoryRange(this, ptr, size, true);
 	}
@@ -198,14 +251,18 @@ class MemoryImpl implements SharedMemory {
 		try {
 			this.exports.free(range.ptr);
 		} catch (error) {
-			RAL().console.error(`Free ptr ${ptr} failed. Buffer size: ${this.memory.buffer.byteLength}`);
+			RAL().console.error(
+				`Free ptr ${ptr} failed. Buffer size: ${this.memory.buffer.byteLength}`,
+			);
 			throw error;
 		}
 	}
 
 	public readonly(ptr: ptr, size: size): ReadonlyMemoryRange {
 		if (ptr + size > this.buffer.byteLength) {
-			throw new MemoryError(`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`);
+			throw new MemoryError(
+				`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`,
+			);
 		}
 		return new ReadonlyMemoryRange(this, ptr, size);
 	}
@@ -227,10 +284,10 @@ export namespace MemoryLocation {
 	export function from(memRange: BaseMemoryRange): MemoryLocation {
 		return {
 			memory: {
-				id: memRange.memory.id
+				id: memRange.memory.id,
 			},
 			ptr: memRange.ptr,
-			size: memRange.size
+			size: memRange.size,
 		};
 	}
 }
@@ -243,8 +300,8 @@ export class ConcurrentModificationError extends Error {
 
 export namespace SharedObjectContext {
 	export enum Mode {
-		new = 'new',
-		existing = 'existing',
+		new = "new",
+		existing = "existing",
 	}
 }
 export interface SharedObjectContext extends ComponentModelContext {
@@ -259,23 +316,49 @@ export interface BasePropertyType {
 export abstract class ObjectType<T = any> implements BasePropertyType {
 	public abstract readonly size: size;
 	public abstract readonly alignment: Alignment;
-	public abstract load(memory: MemoryRange, offset: offset, context: ComponentModelContext): T;
+	public abstract load(
+		memory: MemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T;
 }
 
 export interface ValueType<T = any> extends BasePropertyType {
-	load(memory: ReadonlyMemoryRange, offset: offset, context: ComponentModelContext): T;
-	store(memory: MemoryRange, offset: offset, value: T, context: ComponentModelContext): void;
+	load(
+		memory: ReadonlyMemoryRange,
+		offset: offset,
+		context: ComponentModelContext,
+	): T;
+	store(
+		memory: MemoryRange,
+		offset: offset,
+		value: T,
+		context: ComponentModelContext,
+	): void;
 }
 export namespace ValueType {
 	namespace $MemoryRange {
 		export const size: size = ptr.size + u32.size;
-		export const alignment: Alignment = Math.max(ptr.alignment, u32.alignment);
+		export const alignment: Alignment = Math.max(
+			ptr.alignment,
+			u32.alignment,
+		);
 
-		export function load(memRange: ReadonlyMemoryRange, offset: number): MemoryRange {
-			return memRange.memory.preAllocated(memRange.getUint32(offset), memRange.getUint32(offset + ptr.size));
+		export function load(
+			memRange: ReadonlyMemoryRange,
+			offset: number,
+		): MemoryRange {
+			return memRange.memory.preAllocated(
+				memRange.getUint32(offset),
+				memRange.getUint32(offset + ptr.size),
+			);
 		}
 
-		export function store(memory: MemoryRange, offset: number, value: MemoryRange): void {
+		export function store(
+			memory: MemoryRange,
+			offset: number,
+			value: MemoryRange,
+		): void {
 			memory.setUint32(offset, value.ptr);
 			memory.setUint32(offset + ptr.size, value.size);
 		}
@@ -284,27 +367,47 @@ export namespace ValueType {
 
 	namespace $ReadonlyMemoryRange {
 		export const size: size = ptr.size + u32.size;
-		export const alignment: Alignment = Math.max(ptr.alignment, u32.alignment);
+		export const alignment: Alignment = Math.max(
+			ptr.alignment,
+			u32.alignment,
+		);
 
-		export function load(memRange: ReadonlyMemoryRange, offset: number): ReadonlyMemoryRange {
-			return memRange.memory.readonly(memRange.getUint32(offset), memRange.getUint32(offset + ptr.size));
+		export function load(
+			memRange: ReadonlyMemoryRange,
+			offset: number,
+		): ReadonlyMemoryRange {
+			return memRange.memory.readonly(
+				memRange.getUint32(offset),
+				memRange.getUint32(offset + ptr.size),
+			);
 		}
 
-		export function store(memory: MemoryRange, offset: number, value: ReadonlyMemoryRange): void {
+		export function store(
+			memory: MemoryRange,
+			offset: number,
+			value: ReadonlyMemoryRange,
+		): void {
 			memory.setUint32(offset, value.ptr);
 			memory.setUint32(offset + ptr.size, value.size);
 		}
 	}
-	export const ReadonlyMemoryRange: ValueType<ReadonlyMemoryRange> = $ReadonlyMemoryRange;
+	export const ReadonlyMemoryRange: ValueType<ReadonlyMemoryRange> =
+		$ReadonlyMemoryRange;
 }
 export type PropertyType<T = any> = ObjectType<T> | ValueType<T>;
 
 export namespace Record {
-	export interface Properties { [key: string]: any }
+	export interface Properties {
+		[key: string]: any;
+	}
 	export type PropertyTypes = [string, PropertyType][];
 	export namespace PropertyTypes {
 		export function merge(...props: PropertyTypes[]): PropertyTypes {
-			return props.length === 0 ? [] : props.length === 1 ? props[0] : props.reduce((r, p) => r.concat(p), []);
+			return props.length === 0
+				? []
+				: props.length === 1
+					? props[0]
+					: props.reduce((r, p) => r.concat(p), []);
 		}
 	}
 	export namespace Type {
@@ -320,7 +423,10 @@ export namespace Record {
 			let alignment: Alignment = Alignment.byte;
 			let size = 0;
 			const fields = Object.create(null);
-			const fieldsMap: Map<string, { type: PropertyType; offset: number }> = new Map();
+			const fieldsMap: Map<
+				string,
+				{ type: PropertyType; offset: number }
+			> = new Map();
 			for (const [name, type] of properties) {
 				if (fieldsMap.has(name)) {
 					throw new ComponentModelTrap(`Duplicate property ${name}`);
@@ -337,7 +443,7 @@ export namespace Record {
 			this.fields = fieldsMap;
 		}
 
-		getField(name: string): Type.FieldInfo| undefined {
+		getField(name: string): Type.FieldInfo | undefined {
 			return this.fields.get(name);
 		}
 
@@ -345,27 +451,44 @@ export namespace Record {
 			return this.fields.has(name);
 		}
 
-		load(memory: MemoryRange, offset: offset, context: SharedObjectContext): T {
+		load(
+			memory: MemoryRange,
+			offset: offset,
+			context: SharedObjectContext,
+		): T {
 			memory.assertAlignment(offset, this.alignment);
 			const result = Object.create(null);
 			for (const [name, fieldInfo] of this.fields) {
 				const type = fieldInfo.type;
 				if (type instanceof ObjectType) {
-					let propResult = type.load(memory, offset + fieldInfo.offset, context);
+					let propResult = type.load(
+						memory,
+						offset + fieldInfo.offset,
+						context,
+					);
 					Object.defineProperty(result, name, {
 						get() {
 							return propResult;
-						}
+						},
 						// We need to think about how to handle a set. Best would be to copy the new object into the memory.
 					});
 				} else {
 					Object.defineProperty(result, name, {
 						get() {
-							return type.load(memory, offset + fieldInfo.offset, context);
+							return type.load(
+								memory,
+								offset + fieldInfo.offset,
+								context,
+							);
 						},
 						set(value) {
-							type.store(memory, offset + fieldInfo.offset, value, context);
-						}
+							type.store(
+								memory,
+								offset + fieldInfo.offset,
+								value,
+								context,
+							);
+						},
 					});
 				}
 			}
@@ -375,7 +498,6 @@ export namespace Record {
 }
 
 export abstract class ObjectProperty {
-
 	protected readonly memoryRange: MemoryRange;
 
 	constructor(memoryRange: MemoryRange) {
@@ -385,7 +507,9 @@ export abstract class ObjectProperty {
 	protected get memory(): SharedMemory {
 		const result = this.memoryRange.memory;
 		if (!SharedMemory.is(result)) {
-			throw new ComponentModelTrap(`Memory is not a shared memory instance.`);
+			throw new ComponentModelTrap(
+				`Memory is not a shared memory instance.`,
+			);
 		}
 		return result;
 	}
@@ -400,13 +524,15 @@ export abstract class ObjectProperty {
 }
 
 export class Lock extends ObjectProperty {
-
 	private readonly buffer: Int32Array;
 	private lockCount: number;
 
 	constructor(memory: SharedMemory);
 	constructor(memRange: MemoryRange, context?: SharedObjectContext);
-	constructor(arg: SharedMemory | MemoryRange, context?: SharedObjectContext) {
+	constructor(
+		arg: SharedMemory | MemoryRange,
+		context?: SharedObjectContext,
+	) {
 		const isMemory = SharedMemory.is(arg);
 		super(isMemory ? Lock.alloc(arg) : arg);
 		this.buffer = this.memoryRange.getInt32View(0, 1);
@@ -424,7 +550,11 @@ export class Lock extends ObjectProperty {
 		}
 		while (true) {
 			const value = Atomics.load(this.buffer, 0);
-			if (value > 0 && Atomics.compareExchange(this.buffer, 0, value, value - 1) === value) {
+			if (
+				value > 0 &&
+				Atomics.compareExchange(this.buffer, 0, value, value - 1) ===
+					value
+			) {
 				this.lockCount = 1;
 				return;
 			}
@@ -441,14 +571,16 @@ export class Lock extends ObjectProperty {
 		Atomics.notify(this.buffer, 0, 1);
 		this.lockCount = 0;
 	}
-
 }
 export namespace Lock {
-
 	class $Type extends ObjectType<Lock> {
 		public readonly alignment: Alignment = u32.alignment;
 		public readonly size: size = u32.size;
-		public load(memory: MemoryRange, offset: offset, context: SharedObjectContext): Lock {
+		public load(
+			memory: MemoryRange,
+			offset: offset,
+			context: SharedObjectContext,
+		): Lock {
 			memory.assertAlignment(offset, this.alignment);
 			return new Lock(memory.range(offset, this.size), context);
 		}
@@ -461,12 +593,14 @@ export namespace Lock {
 }
 
 export class Signal extends ObjectProperty {
-
 	private readonly buffer: Int32Array;
 
 	constructor(memory: SharedMemory);
 	constructor(memRange: MemoryRange, context?: SharedObjectContext);
-	constructor(arg: SharedMemory | MemoryRange, context?: SharedObjectContext) {
+	constructor(
+		arg: SharedMemory | MemoryRange,
+		context?: SharedObjectContext,
+	) {
 		const isMemory = SharedMemory.is(arg);
 		super(isMemory ? Signal.alloc(arg) : arg);
 		this.buffer = this.memoryRange.getInt32View(0, 1);
@@ -477,9 +611,9 @@ export class Signal extends ObjectProperty {
 
 	public wait(): void {
 		const result = Atomics.wait(this.buffer, 0, 0);
-		if (result === 'timed-out') {
+		if (result === "timed-out") {
 			throw new Error(`timed-out should never happen.`);
-		} else if (result === 'not-equal') {
+		} else if (result === "not-equal") {
 			const value = Atomics.load(this.buffer, 0);
 			if (value !== 1) {
 				throw new Error(`Unexpected signal value ${value}`);
@@ -490,9 +624,9 @@ export class Signal extends ObjectProperty {
 	public waitAsync(): Promise<void> | void {
 		const p = Atomics.waitAsync(this.buffer, 0, 0);
 		if (p.async === false) {
-			if (p.value === 'timed-out') {
+			if (p.value === "timed-out") {
 				throw new Error(`timed-out should never happen.`);
-			} else if (p.value === 'not-equal') {
+			} else if (p.value === "not-equal") {
 				const value = Atomics.load(this.buffer, 0);
 				if (value !== 1) {
 					throw new Error(`Unexpected signal value ${value}`);
@@ -500,7 +634,7 @@ export class Signal extends ObjectProperty {
 			}
 		} else {
 			return p.value.then((result) => {
-				if (result === 'timed-out') {
+				if (result === "timed-out") {
 					throw new Error(`timed-out should never happen.`);
 				}
 			});
@@ -521,7 +655,11 @@ export namespace Signal {
 	class $Type extends ObjectType<Signal> {
 		public readonly alignment: Alignment = u32.alignment;
 		public readonly size: size = u32.size;
-		public load(memory: MemoryRange, offset: offset, context: SharedObjectContext): Signal {
+		public load(
+			memory: MemoryRange,
+			offset: offset,
+			context: SharedObjectContext,
+		): Signal {
 			memory.assertAlignment(offset, this.alignment);
 			return new Signal(memory.range(offset, this.size), context);
 		}
@@ -533,45 +671,66 @@ export namespace Signal {
 	}
 }
 
-export abstract class SharedObject<T extends SharedObject.Properties = SharedObject.Properties> {
-
+export abstract class SharedObject<
+	T extends SharedObject.Properties = SharedObject.Properties,
+> {
 	private static idCounter: u32 = 1;
 
 	public static Context = {
 		new: {
-			options: { encoding: 'utf-8' },
+			options: { encoding: "utf-8" },
 			resources: new ResourceManagers.Default(),
-			mode: SharedObjectContext.Mode.new
+			mode: SharedObjectContext.Mode.new,
 		} satisfies SharedObjectContext,
 		existing: {
-			options: { encoding: 'utf-8' },
+			options: { encoding: "utf-8" },
 			resources: new ResourceManagers.Default(),
-			mode: SharedObjectContext.Mode.existing
-		} satisfies SharedObjectContext
+			mode: SharedObjectContext.Mode.existing,
+		} satisfies SharedObjectContext,
 	};
 
 	protected readonly memoryRange: MemoryRange;
 	protected readonly access: T;
 	private readonly lock: Lock;
 
-	protected constructor(type: Record.Type<T>, memoryOrSurrogate: SharedMemory | SharedObject.Surrogate) {
+	protected constructor(
+		type: Record.Type<T>,
+		memoryOrSurrogate: SharedMemory | SharedObject.Surrogate,
+	) {
 		if (SharedObject.Surrogate.is(memoryOrSurrogate)) {
 			const surrogate = memoryOrSurrogate;
 			const memoryRange = surrogate.memoryRange;
 			if (memoryRange.size !== type.size) {
-				throw new MemoryError(`Allocated memory[${memoryRange.ptr},${memoryRange.size}] doesn't match the record size[${type.size}].`);
+				throw new MemoryError(
+					`Allocated memory[${memoryRange.ptr},${memoryRange.size}] doesn't match the record size[${type.size}].`,
+				);
 			}
 			this.memoryRange = memoryRange;
-			this.access = type.load(this.memoryRange, 0, SharedObject.Context.existing);
+			this.access = type.load(
+				this.memoryRange,
+				0,
+				SharedObject.Context.existing,
+			);
 			if (this.access._size !== memoryRange.size) {
-				throw new MemoryError(`The memory size of the shared object ${this.access._size} doesn't match the allocated memory [${memoryRange.ptr},${memoryRange.size}].`);
+				throw new MemoryError(
+					`The memory size of the shared object ${this.access._size} doesn't match the allocated memory [${memoryRange.ptr},${memoryRange.size}].`,
+				);
 			}
 			if (this.access._id !== surrogate.id) {
-				throw new MemoryError(`The shared object id ${this.access._id} doesn't match the allocated memory id ${surrogate.id}.`);
+				throw new MemoryError(
+					`The shared object id ${this.access._id} doesn't match the allocated memory id ${surrogate.id}.`,
+				);
 			}
 		} else if (SharedMemory.is(memoryOrSurrogate)) {
-			this.memoryRange = memoryOrSurrogate.alloc(type.alignment, type.size);
-			this.access = type.load(this.memoryRange, 0, SharedObject.Context.new);
+			this.memoryRange = memoryOrSurrogate.alloc(
+				type.alignment,
+				type.size,
+			);
+			this.access = type.load(
+				this.memoryRange,
+				0,
+				SharedObject.Context.new,
+			);
 			this.access._size = this.memoryRange.size;
 			this.access._id = this.computeId();
 		} else {
@@ -605,11 +764,11 @@ export abstract class SharedObject<T extends SharedObject.Properties = SharedObj
 	public location(): SharedObject.Location {
 		return {
 			memory: {
-				id: this.memory.id
+				id: this.memory.id,
 			},
 			id: this.access._id,
 			ptr: this.memoryRange.ptr,
-			size: this.memoryRange.size
+			size: this.memoryRange.size,
 		};
 	}
 
@@ -631,7 +790,6 @@ export abstract class SharedObject<T extends SharedObject.Properties = SharedObj
 	}
 }
 export namespace SharedObject {
-
 	export interface Properties extends Record.Properties {
 		_size: size;
 		_id: u32;
@@ -639,9 +797,9 @@ export namespace SharedObject {
 	}
 
 	export const properties: Record.PropertyTypes = [
-		['_size', u32],
-		['_id', u32],
-		['_lock', Lock.Type]
+		["_size", u32],
+		["_id", u32],
+		["_lock", Lock.Type],
 	];
 
 	export interface Location extends MemoryLocation {
@@ -655,15 +813,22 @@ export namespace SharedObject {
 	export namespace Surrogate {
 		export function is(value: any): value is Surrogate {
 			const candidate = value as Surrogate;
-			return candidate && candidate.memoryRange instanceof MemoryRange && typeof candidate.id === 'number';
+			return (
+				candidate &&
+				candidate.memoryRange instanceof MemoryRange &&
+				typeof candidate.id === "number"
+			);
 		}
 	}
 }
 
-
-export abstract class SharedResource<T extends SharedResource.Properties = SharedResource.Properties> extends SharedObject<T> {
-
-	protected constructor(type: Record.Type<T>, memoryOrSurrogate: SharedMemory | SharedObject.Surrogate) {
+export abstract class SharedResource<
+	T extends SharedResource.Properties = SharedResource.Properties,
+> extends SharedObject<T> {
+	protected constructor(
+		type: Record.Type<T>,
+		memoryOrSurrogate: SharedMemory | SharedObject.Surrogate,
+	) {
 		super(type, memoryOrSurrogate);
 	}
 
@@ -676,7 +841,9 @@ export abstract class SharedResource<T extends SharedResource.Properties = Share
 	}
 
 	public set $handle(_value: ResourceHandle) {
-		throw new ComponentModelTrap(`The handle of a shared resource cannot be changed.`);
+		throw new ComponentModelTrap(
+			`The handle of a shared resource cannot be changed.`,
+		);
 	}
 }
 export namespace SharedResource {
@@ -689,8 +856,12 @@ export namespace Synchronize {
 		runLocked(callback: (value: T) => void): void;
 	};
 }
-export function Synchronize<T extends ObjectProperty>(memoryOrLock: SharedMemory | Lock, object: T): Synchronize.WithRunLocked<T> {
-	const lock = memoryOrLock instanceof Lock ? memoryOrLock : new Lock(memoryOrLock);
+export function Synchronize<T extends ObjectProperty>(
+	memoryOrLock: SharedMemory | Lock,
+	object: T,
+): Synchronize.WithRunLocked<T> {
+	const lock =
+		memoryOrLock instanceof Lock ? memoryOrLock : new Lock(memoryOrLock);
 	function runLocked(target: T, callback: (value: T) => void): void {
 		lock.acquire();
 		try {
@@ -712,7 +883,10 @@ export function Synchronize<T extends ObjectProperty>(memoryOrLock: SharedMemory
 			return true;
 		}
 		const prototype = Reflect.getPrototypeOf(target);
-		const descriptor = prototype !== null ? Reflect.getOwnPropertyDescriptor(prototype, p) : Reflect.getOwnPropertyDescriptor(target, p);
+		const descriptor =
+			prototype !== null
+				? Reflect.getOwnPropertyDescriptor(prototype, p)
+				: Reflect.getOwnPropertyDescriptor(target, p);
 		if (descriptor !== undefined && descriptor.get !== undefined) {
 			return true;
 		}
@@ -724,42 +898,53 @@ export function Synchronize<T extends ObjectProperty>(memoryOrLock: SharedMemory
 			return true;
 		}
 		const prototype = Reflect.getPrototypeOf(target);
-		const descriptor = prototype !== null ? Reflect.getOwnPropertyDescriptor(prototype, p) : Reflect.getOwnPropertyDescriptor(target, p);
+		const descriptor =
+			prototype !== null
+				? Reflect.getOwnPropertyDescriptor(prototype, p)
+				: Reflect.getOwnPropertyDescriptor(target, p);
 		if (descriptor !== undefined && descriptor.set !== undefined) {
 			return true;
 		}
 		return false;
 	}
-	return new Proxy<T & { runLocked(callback: (value: T) => void): void }>(object as any, {
-		get(target: T, p: PropertyKey, receiver: any): any {
-			if (p === 'runLocked') {
-				return runLocked.bind(null, target);
-			}
-			if (isPropertyOrGetter(target, p)) {
-				try {
-					lock.acquire();
-					return (target as any)[p];
-				} finally {
-					lock.release();
+	return new Proxy<T & { runLocked(callback: (value: T) => void): void }>(
+		object as any,
+		{
+			get(target: T, p: PropertyKey, receiver: any): any {
+				if (p === "runLocked") {
+					return runLocked.bind(null, target);
 				}
-			} else {
-				const value = Reflect.get(target, p, receiver);
-				if (typeof value === 'function') {
-					return func.bind(null, target, p);
+				if (isPropertyOrGetter(target, p)) {
+					try {
+						lock.acquire();
+						return (target as any)[p];
+					} finally {
+						lock.release();
+					}
+				} else {
+					const value = Reflect.get(target, p, receiver);
+					if (typeof value === "function") {
+						return func.bind(null, target, p);
+					}
 				}
-			}
+			},
+			set(
+				target: T,
+				p: PropertyKey,
+				value: any,
+				_receiver: any,
+			): boolean {
+				if (isPropertyOrSetter(target, p)) {
+					try {
+						lock.acquire();
+						(target as any)[p] = value;
+					} finally {
+						lock.release();
+					}
+					return true;
+				}
+				return false;
+			},
 		},
-		set(target: T, p: PropertyKey, value: any, _receiver: any): boolean {
-			if (isPropertyOrSetter(target, p)) {
-				try {
-					lock.acquire();
-					(target as any)[p] = value;
-				} finally {
-					lock.release();
-				}
-				return true;
-			}
-			return false;
-		}
-	});
+	);
 }

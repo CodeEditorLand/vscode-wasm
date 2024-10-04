@@ -2,26 +2,28 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Disposable, Event, EventEmitter } from 'vscode';
+import { Disposable, Event, EventEmitter } from "vscode";
 
-import type { Readable, Writable } from './api';
-import { CapturedPromise } from './promises';
-import RAL from './ral';
+import type { Readable, Writable } from "./api";
+import { CapturedPromise } from "./promises";
+import RAL from "./ral";
 
 export class DestroyError extends Error {
 	constructor() {
-		super('Pipe got destroyed');
+		super("Pipe got destroyed");
 	}
 }
 
 export abstract class Stream {
-
 	private static BufferSize = 16384;
 
 	protected chunks: Uint8Array[];
 	protected fillLevel: number;
 
-	private awaitForFillLevel: { fillLevel: number; promise: CapturedPromise<void> }[];
+	private awaitForFillLevel: {
+		fillLevel: number;
+		promise: CapturedPromise<void>;
+	}[];
 	private awaitForData: CapturedPromise<void>[];
 
 	constructor() {
@@ -50,11 +52,16 @@ export abstract class Stream {
 			return;
 		}
 		// Wait for the necessary space.
-		const targetFillLevel = Math.max(0, Stream.BufferSize - chunk.byteLength);
+		const targetFillLevel = Math.max(
+			0,
+			Stream.BufferSize - chunk.byteLength,
+		);
 		try {
 			await this.awaitFillLevel(targetFillLevel);
 			if (this.fillLevel > targetFillLevel) {
-				throw new Error(`Invalid state: fillLevel should be <= ${targetFillLevel}`);
+				throw new Error(
+					`Invalid state: fillLevel should be <= ${targetFillLevel}`,
+				);
 			}
 			this.chunks.push(chunk);
 			this.fillLevel += chunk.byteLength;
@@ -69,9 +76,9 @@ export abstract class Stream {
 	}
 
 	public async read(): Promise<Uint8Array>;
-	public async read(mode: 'max', size: number): Promise<Uint8Array>;
-	public async read(mode?: 'max', size?: number): Promise<Uint8Array> {
-		const maxBytes = mode === 'max' ? size : undefined;
+	public async read(mode: "max", size: number): Promise<Uint8Array>;
+	public async read(mode?: "max", size?: number): Promise<Uint8Array> {
+		const maxBytes = mode === "max" ? size : undefined;
 		if (this.chunks.length === 0) {
 			try {
 				await this.awaitData();
@@ -83,7 +90,9 @@ export abstract class Stream {
 			}
 		}
 		if (this.chunks.length === 0) {
-			throw new Error('Invalid state: no bytes available after awaiting data');
+			throw new Error(
+				"Invalid state: no bytes available after awaiting data",
+			);
 		}
 		// No max bytes or all data fits into the result.
 		if (maxBytes === undefined || maxBytes > this.fillLevel) {
@@ -129,8 +138,7 @@ export abstract class Stream {
 		}
 	}
 
-	public end(): void {
-	}
+	public end(): void {}
 
 	public destroy(): void {
 		this.chunks = [];
@@ -147,11 +155,17 @@ export abstract class Stream {
 	}
 
 	private awaitFillLevel(targetFillLevel: number): Promise<void> {
-		if (this.awaitForFillLevel.length === 0 && this.fillLevel <= targetFillLevel) {
+		if (
+			this.awaitForFillLevel.length === 0 &&
+			this.fillLevel <= targetFillLevel
+		) {
 			return Promise.resolve();
 		}
 		const result = CapturedPromise.create<void>();
-		this.awaitForFillLevel.push({ fillLevel: targetFillLevel, promise: result });
+		this.awaitForFillLevel.push({
+			fillLevel: targetFillLevel,
+			promise: result,
+		});
 		return result.promise;
 	}
 
@@ -181,40 +195,46 @@ export abstract class Stream {
 		const promise = this.awaitForData.shift()!;
 		promise.resolve();
 	}
-
 }
 
 enum StreamState {
-	open = 'open',
-	closed = 'closed',
+	open = "open",
+	closed = "closed",
 }
 
 export class WritableStream extends Stream implements Writable {
-
-	private readonly encoding: 'utf-8';
+	private readonly encoding: "utf-8";
 	private readonly encoder: RAL.TextEncoder;
 	protected streamState: StreamState;
 
-	constructor(encoding?: 'utf-8') {
+	constructor(encoding?: "utf-8") {
 		super();
-		this.encoding = encoding ?? 'utf-8';
+		this.encoding = encoding ?? "utf-8";
 		this.encoder = RAL().TextEncoder.create(this.encoding);
 		this.streamState = StreamState.open;
 	}
 
 	public write(chunk: Uint8Array): Promise<void>;
-	public write(chunk: string, encoding?: 'utf-8'): Promise<void>;
-	public write(chunk: Uint8Array | string, _encoding?: 'utf-8'): Promise<void> {
+	public write(chunk: string, encoding?: "utf-8"): Promise<void>;
+	public write(
+		chunk: Uint8Array | string,
+		_encoding?: "utf-8",
+	): Promise<void> {
 		if (this.streamState !== StreamState.open) {
-			return Promise.reject(new Error('Stream is closed'));
+			return Promise.reject(new Error("Stream is closed"));
 		}
-		return super.write(typeof chunk === 'string' ? this.encoder.encode(chunk) : chunk);
+		return super.write(
+			typeof chunk === "string" ? this.encoder.encode(chunk) : chunk,
+		);
 	}
 
 	public read(): Promise<Uint8Array>;
-	public read(mode: 'max', size: number): Promise<Uint8Array>;
-	public read(mode?: 'max', size?: number): Promise<Uint8Array> {
-		if (this.streamState === StreamState.closed && this.chunks.length === 0) {
+	public read(mode: "max", size: number): Promise<Uint8Array>;
+	public read(mode?: "max", size?: number): Promise<Uint8Array> {
+		if (
+			this.streamState === StreamState.closed &&
+			this.chunks.length === 0
+		) {
 			return Promise.resolve(new Uint8Array(0));
 		}
 		return mode !== undefined ? super.read(mode, size!) : super.read();
@@ -226,19 +246,24 @@ export class WritableStream extends Stream implements Writable {
 }
 
 export class WritableStreamEOT extends WritableStream {
-
-	constructor(encoding?: 'utf-8') {
+	constructor(encoding?: "utf-8") {
 		super(encoding);
 	}
 
-	public async write(chunk: Uint8Array | string, encoding?: 'utf-8'): Promise<void> {
+	public async write(
+		chunk: Uint8Array | string,
+		encoding?: "utf-8",
+	): Promise<void> {
 		if (this.streamState !== StreamState.open) {
-			throw new Error('Stream is closed');
+			throw new Error("Stream is closed");
 		}
-		let eot:boolean = false;
+		let eot: boolean = false;
 		try {
-			if (typeof chunk === 'string') {
-				if (chunk.length > 0 && chunk.charCodeAt(chunk.length - 1) === 0x04 /* EOT */) {
+			if (typeof chunk === "string") {
+				if (
+					chunk.length > 0 &&
+					chunk.charCodeAt(chunk.length - 1) === 0x04 /* EOT */
+				) {
 					eot = true;
 					if (chunk.length >= 1) {
 						chunk = chunk.substring(0, chunk.length - 1);
@@ -248,7 +273,10 @@ export class WritableStreamEOT extends WritableStream {
 					await super.write(chunk, encoding);
 				}
 			} else {
-				if (chunk.length > 0 && chunk[chunk.length - 1] === 0x04 /* EOT */) {
+				if (
+					chunk.length > 0 &&
+					chunk[chunk.length - 1] === 0x04 /* EOT */
+				) {
 					eot = true;
 					if (chunk.length >= 1) {
 						chunk = chunk.subarray(0, chunk.length - 1);
@@ -269,11 +297,10 @@ export class WritableStreamEOT extends WritableStream {
 enum ReadableStreamMode {
 	initial,
 	flowing,
-	paused
+	paused,
 }
 
 export class ReadableStream extends Stream implements Readable {
-
 	private mode: ReadableStreamMode;
 	private readonly _onData: EventEmitter<Uint8Array>;
 	private readonly _onDataEvent: Event<Uint8Array>;
@@ -318,10 +345,10 @@ export class ReadableStream extends Stream implements Readable {
 	}
 
 	public async read(): Promise<Uint8Array>;
-	public async read(mode: 'max', size: number): Promise<Uint8Array>;
-	public async read(mode?: 'max', size?: number): Promise<Uint8Array> {
+	public async read(mode: "max", size: number): Promise<Uint8Array>;
+	public async read(mode?: "max", size?: number): Promise<Uint8Array> {
 		if (this.mode === ReadableStreamMode.flowing) {
-			throw new Error('Cannot read from stream in flowing mode');
+			throw new Error("Cannot read from stream in flowing mode");
 		}
 		return mode === undefined ? super.read() : super.read(mode, size!);
 	}
@@ -354,7 +381,9 @@ export class ReadableStream extends Stream implements Readable {
 				try {
 					this._onData.fire(chunk);
 				} catch (error) {
-					RAL().console.error(`[ReadableStream]: Error while emitting data event: ${error}`);
+					RAL().console.error(
+						`[ReadableStream]: Error while emitting data event: ${error}`,
+					);
 				}
 			}
 			this.chunks = [];
@@ -371,7 +400,10 @@ export class ReadableStream extends Stream implements Readable {
 		this.fillLevel -= chunk.byteLength;
 		this._onData.fire(chunk);
 		this.signalSpace();
-		if (this.chunks.length > 0 && this.mode === ReadableStreamMode.flowing) {
+		if (
+			this.chunks.length > 0 &&
+			this.mode === ReadableStreamMode.flowing
+		) {
 			this.timer = RAL().timer.setImmediate(() => this.triggerData());
 		}
 	}

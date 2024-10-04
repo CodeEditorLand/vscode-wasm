@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import RAL from './ral';
+import RAL from "./ral";
 
 interface Thunk<T> {
 	(): T;
@@ -16,14 +16,13 @@ interface Waiting<T> {
 }
 
 export class Semaphore<T = void> {
-
 	private _capacity: number;
 	private _active: number;
 	private _waiting: Waiting<T>[];
 
 	public constructor(capacity: number = 1) {
 		if (capacity <= 0) {
-			throw new Error('Capacity must be greater than 0');
+			throw new Error("Capacity must be greater than 0");
 		}
 		this._capacity = capacity;
 		this._active = 0;
@@ -32,7 +31,7 @@ export class Semaphore<T = void> {
 
 	public dispose(): void {
 		for (const item of this._waiting) {
-			item.reject(new Error('Semaphore disposed'));
+			item.reject(new Error("Semaphore disposed"));
 		}
 		this._active = 0;
 		this._waiting = [];
@@ -49,7 +48,7 @@ export class Semaphore<T = void> {
 		return this._active;
 	}
 
-	private runNext():  void {
+	private runNext(): void {
 		if (this._waiting.length === 0 || this._active === this._capacity) {
 			return;
 		}
@@ -68,15 +67,18 @@ export class Semaphore<T = void> {
 		try {
 			const result = next.thunk();
 			if (result instanceof Promise) {
-				result.then((value) => {
-					this._active--;
-					next.resolve(value);
-					this.runNext();
-				}, (err) => {
-					this._active--;
-					next.reject(err);
-					this.runNext();
-				});
+				result.then(
+					(value) => {
+						this._active--;
+						next.resolve(value);
+						this.runNext();
+					},
+					(err) => {
+						this._active--;
+						next.reject(err);
+						this.runNext();
+					},
+				);
 			} else {
 				this._active--;
 				next.resolve(result);

@@ -2,11 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import path from 'node:path';
-import { Worker } from 'node:worker_threads';
+import path from "node:path";
+import { Worker } from "node:worker_threads";
 
-const mainWorker = new Worker(path.join(__dirname, 'thread.js'));
-mainWorker.on('message', (buffer: SharedArrayBuffer) => {
+const mainWorker = new Worker(path.join(__dirname, "thread.js"));
+mainWorker.on("message", (buffer: SharedArrayBuffer) => {
 	try {
 		const view = new DataView(buffer);
 		const value = Math.trunc(Math.random() * 1000);
@@ -18,7 +18,7 @@ mainWorker.on('message', (buffer: SharedArrayBuffer) => {
 	}
 });
 
-mainWorker.postMessage('start');
+mainWorker.postMessage("start");
 
 const buffer = new SharedArrayBuffer(4096);
 const view = new DataView(buffer);
@@ -33,7 +33,8 @@ const start = Date.now();
 for (let i = 0; i < 1000000; i++) {
 	store();
 	sum += view.getInt32(4, true);
-
 }
 const end = Date.now();
-console.log(`Time taken to call 1000000 times: ${end - start}ms. Sum value: ${sum}`);
+console.log(
+	`Time taken to call 1000000 times: ${end - start}ms. Sum value: ${sum}`,
+);

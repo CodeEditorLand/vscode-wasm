@@ -2,13 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import RAL from '../ral';
+import { clocks } from "@vscode/wasi";
+import { u64 } from "@vscode/wasm-component-model";
 
-import { u64 } from '@vscode/wasm-component-model';
-
-import { clocks } from '@vscode/wasi';
-import { Pollable } from './io';
-import type { WasiClient } from './wasiClient';
+import RAL from "../ral";
+import { Pollable } from "./io";
+import type { WasiClient } from "./wasiClient";
 
 export function createMonotonicClock(client: WasiClient) {
 	return {
@@ -23,7 +22,7 @@ export function createMonotonicClock(client: WasiClient) {
 			client.setTimeout(pollable, when);
 			return pollable;
 		},
-		subscribeInstant(when : u64): Pollable {
+		subscribeInstant(when: u64): Pollable {
 			const pollable = new Pollable(client.getSharedMemory());
 			const duration = when - RAL().clock.realtime();
 			if (duration < 0) {
@@ -32,7 +31,7 @@ export function createMonotonicClock(client: WasiClient) {
 				client.setTimeout(pollable, duration);
 			}
 			return pollable;
-		}
+		},
 	} satisfies clocks.MonotonicClock;
 }
 
@@ -44,6 +43,6 @@ export function createWallClock() {
 		},
 		resolution(): clocks.WallClock.Datetime {
 			return { seconds: 0n, nanoseconds: 1 };
-		}
+		},
 	} satisfies clocks.WallClock;
 }

@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { RootFileSystem, Stdio } from '@vscode/wasm-wasi/v1';
+import type { RootFileSystem, Stdio } from "@vscode/wasm-wasi/v1";
 
 export type CommandHandler = (
 	command: string,
 	args: string[],
 	cwd: string,
 	stdio: Stdio,
-	rootFileSystem: RootFileSystem
+	rootFileSystem: RootFileSystem,
 ) => Promise<number>;
 
 export interface HandlerTarget {

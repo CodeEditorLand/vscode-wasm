@@ -2,17 +2,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import RAL from '../ral';
+import {
+	AnyConnection,
+	BaseConnection,
+	BaseWorker,
+	MultiConnectionWorker,
+	Signal,
+	type ConnectionPort,
+	type SharedMemory,
+} from "@vscode/wasm-kit";
+import type { Disposable } from "vscode";
 
-import type { Disposable } from 'vscode';
-import { AnyConnection, BaseConnection, type ConnectionPort, MultiConnectionWorker, BaseWorker, type SharedMemory, Signal } from '@vscode/wasm-kit';
-import type { Client } from './wasiClient';
-import { Pollable } from './io';
+import RAL from "../ral";
+import { Pollable } from "./io";
+import type { Client } from "./wasiClient";
 
-type ConnectionType = BaseConnection<undefined, undefined, undefined, undefined, Client.SyncCalls, Client.Jobs>;
+type ConnectionType = BaseConnection<
+	undefined,
+	undefined,
+	undefined,
+	undefined,
+	Client.SyncCalls,
+	Client.Jobs
+>;
 
 export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
-
 	private memory!: SharedMemory;
 	private readonly timeouts: Map<number, Disposable>;
 
@@ -28,8 +42,10 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 	protected createConnection(port: ConnectionPort): Promise<ConnectionType> {
 		const connection: ConnectionType = AnyConnection.create(port);
 		connection.initializeSyncCall(this.connection.getSharedMemory());
-		connection.onNotify('setTimeout', async (params) => {
-			const signal = new Signal(this.memory.range.fromLocation(params.signal));
+		connection.onNotify("setTimeout", async (params) => {
+			const signal = new Signal(
+				this.memory.range.fromLocation(params.signal),
+			);
 			const diff = Date.now() - params.currentTime;
 			const ms = params.timeout - diff;
 			if (ms <= 0) {
@@ -40,9 +56,12 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 				}, ms);
 			}
 		});
-		connection.onNotify('pollable/setTimeout', async (params) => {
+		connection.onNotify("pollable/setTimeout", async (params) => {
 			const memoryRange = this.memory.range.fromLocation(params.pollable);
-			const pollable = new Pollable({ memoryRange, id: params.pollable.id });
+			const pollable = new Pollable({
+				memoryRange,
+				id: params.pollable.id,
+			});
 			const diff = Date.now() - params.currentTime;
 			const ms = params.timeout - diff;
 			if (ms <= 0) {
@@ -54,7 +73,7 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 				this.timeouts.set(pollable.$handle, disposable);
 			}
 		});
-		connection.onSyncCall('pollable/clearTimeout', async (params) => {
+		connection.onSyncCall("pollable/clearTimeout", async (params) => {
 			const key = params.pollable.id;
 			const disposable = this.timeouts.get(key);
 			if (disposable !== undefined) {
@@ -62,12 +81,17 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 				disposable.dispose();
 			}
 		});
-		connection.onNotify('pollables/race', async (params) => {
-			const signal = new Signal(this.memory.range.fromLocation(params.signal));
+		connection.onNotify("pollables/race", async (params) => {
+			const signal = new Signal(
+				this.memory.range.fromLocation(params.signal),
+			);
 			const promises: Promise<void>[] = [];
 			let isReady: boolean = false;
 			for (const entry of params.pollables) {
-				const pollable = new Pollable({ memoryRange: this.memory.range.fromLocation(entry), id: entry.id });
+				const pollable = new Pollable({
+					memoryRange: this.memory.range.fromLocation(entry),
+					id: entry.id,
+				});
 				const result = pollable.blockAsync();
 				if (result instanceof Promise) {
 					promises.push(result);

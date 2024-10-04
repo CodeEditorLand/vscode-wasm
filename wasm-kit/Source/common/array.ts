@@ -3,25 +3,65 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { MemoryRange, ptr, u32, type Alignment, type offset, type size, ComponentModelTrap } from '@vscode/wasm-component-model';
-import { SharedObject, ValueType, ObjectProperty, Record, type ObjectType, SharedObjectContext, ConcurrentModificationError, SharedMemory, Synchronize, type Lock } from './sharedObject';
+import {
+	ComponentModelTrap,
+	MemoryRange,
+	ptr,
+	u32,
+	type Alignment,
+	type offset,
+	type size,
+} from "@vscode/wasm-component-model";
 
+import {
+	ConcurrentModificationError,
+	ObjectProperty,
+	Record,
+	SharedMemory,
+	SharedObject,
+	SharedObjectContext,
+	Synchronize,
+	ValueType,
+	type Lock,
+	type ObjectType,
+} from "./sharedObject";
 
 export class SharedArray<T> extends ObjectProperty {
-
 	private readonly elementType: ValueType<T>;
 	private readonly access: SharedArray.Properties;
 
-	constructor(elementType: ValueType<T>, memory: SharedMemory, capacity?: u32);
-	constructor(elementType: ValueType<T>, memoryRange: MemoryRange, context?: SharedObjectContext);
-	constructor(elementType: ValueType<T>, arg1: SharedMemory | MemoryRange, arg2?: u32 | SharedObjectContext) {
-		const [memoryRange, context, capacity] = function () {
+	constructor(
+		elementType: ValueType<T>,
+		memory: SharedMemory,
+		capacity?: u32,
+	);
+	constructor(
+		elementType: ValueType<T>,
+		memoryRange: MemoryRange,
+		context?: SharedObjectContext,
+	);
+	constructor(
+		elementType: ValueType<T>,
+		arg1: SharedMemory | MemoryRange,
+		arg2?: u32 | SharedObjectContext,
+	) {
+		const [memoryRange, context, capacity] = (function () {
 			if (SharedMemory.is(arg1)) {
-				return [SharedArray.alloc(arg1), SharedObject.Context.new, arg2 as number ?? 32];
+				return [
+					SharedArray.alloc(arg1),
+					SharedObject.Context.new,
+					(arg2 as number) ?? 32,
+				];
 			} else {
-				return [arg1, arg2 !== undefined ? arg2 as SharedObjectContext : SharedObject.Context.existing, 32];
+				return [
+					arg1,
+					arg2 !== undefined
+						? (arg2 as SharedObjectContext)
+						: SharedObject.Context.existing,
+					32,
+				];
 			}
-		}();
+		})();
 		super(memoryRange);
 		this.elementType = elementType;
 		const access = SharedArray.properties.load(memoryRange, 0, context);
@@ -30,10 +70,15 @@ export class SharedArray<T> extends ObjectProperty {
 			access.start = 0;
 			access.next = 0;
 			access.elementSize = elementType.size;
-			access.elements = memoryRange.memory.alloc(u32.alignment, capacity * ptr.size);
+			access.elements = memoryRange.memory.alloc(
+				u32.alignment,
+				capacity * ptr.size,
+			);
 		} else {
 			if (elementType.size !== access.elementSize) {
-				throw new ComponentModelTrap(`Element size differs between element type [${this.elementType.size}] and allocated memory [${access.elementSize}].`);
+				throw new ComponentModelTrap(
+					`Element size differs between element type [${this.elementType.size}] and allocated memory [${access.elementSize}].`,
+				);
 			}
 		}
 		this.access = access;
@@ -73,17 +118,31 @@ export class SharedArray<T> extends ObjectProperty {
 		const currentCapacity = this.capacity;
 		if (access.next + numberOfItems > currentCapacity) {
 			const currentElements = access.elements;
-			const newCapacity = Math.max(currentCapacity * 2, currentCapacity + numberOfItems);
-			const newElements = memory.alloc(u32.alignment, newCapacity * u32.size);
+			const newCapacity = Math.max(
+				currentCapacity * 2,
+				currentCapacity + numberOfItems,
+			);
+			const newElements = memory.alloc(
+				u32.alignment,
+				newCapacity * u32.size,
+			);
 			memory.copyWithin(newElements, currentElements);
 			access.elements = newElements;
 			currentElements.free();
 		}
 		let next = access.next;
-		for(const value of items) {
-			const range = memory.alloc(this.elementType.alignment, this.elementType.size);
+		for (const value of items) {
+			const range = memory.alloc(
+				this.elementType.alignment,
+				this.elementType.size,
+			);
 			this.elementType.store(range, 0, value, SharedObject.Context.new);
-			ptr.store(access.elements, next * ptr.size, range.ptr, SharedObject.Context.existing);
+			ptr.store(
+				access.elements,
+				next * ptr.size,
+				range.ptr,
+				SharedObject.Context.existing,
+			);
 			next = next + 1;
 		}
 		access.next = next;
@@ -102,7 +161,7 @@ export class SharedArray<T> extends ObjectProperty {
 		memory.free(range);
 		access.next = next - 1;
 		return value;
- 	}
+	}
 
 	public *keys(): IterableIterator<number> {
 		const access = this.access;
@@ -110,7 +169,9 @@ export class SharedArray<T> extends ObjectProperty {
 		const length = access.next - access.start;
 		for (let i = 0; i < length; i++) {
 			if (access.state !== state) {
-				throw new ConcurrentModificationError(`Array got modified during iteration.`);
+				throw new ConcurrentModificationError(
+					`Array got modified during iteration.`,
+				);
 			}
 			yield i;
 		}
@@ -157,7 +218,9 @@ export class SharedArray<T> extends ObjectProperty {
 	private loadElement(index: number, state?: number): T {
 		const access = this.access;
 		if (state !== undefined && access.state !== state) {
-			throw new ConcurrentModificationError(`Array got modified during access.`);
+			throw new ConcurrentModificationError(
+				`Array got modified during access.`,
+			);
 		}
 		const ptr = access.elements.getPtr(u32.size * index);
 		const range = this.memory.readonly(ptr, access.elementSize);
@@ -171,12 +234,14 @@ export class SharedArray<T> extends ObjectProperty {
 		}
 		const ptr = access.elements.getPtr(u32.size * index);
 		const range = this.memory.preAllocated(ptr, access.elementSize);
-		return [this.elementType.load(range, 0, SharedObject.Context.existing), range];
+		return [
+			this.elementType.load(range, 0, SharedObject.Context.existing),
+			range,
+		];
 	}
 }
 
 export namespace SharedArray {
-
 	export type Properties = {
 		state: u32;
 		start: u32;
@@ -186,11 +251,11 @@ export namespace SharedArray {
 	};
 
 	export const properties: Record.Type<Properties> = new Record.Type([
-		['state', u32],
-		['start', u32],
-		['next', u32],
-		['elementSize', u32],
-		['elements', ValueType.MemoryRange]
+		["state", u32],
+		["start", u32],
+		["next", u32],
+		["elementSize", u32],
+		["elements", ValueType.MemoryRange],
 	]);
 
 	export function alloc(memory: SharedMemory): MemoryRange {
@@ -198,11 +263,14 @@ export namespace SharedArray {
 	}
 
 	export type Synchronized<T> = Synchronize.WithRunLocked<SharedArray<T>>;
-	export function synchronized<T>(memory: SharedMemory | Lock, array: SharedArray<T>): Synchronized<T> {
+	export function synchronized<T>(
+		memory: SharedMemory | Lock,
+		array: SharedArray<T>,
+	): Synchronized<T> {
 		return Synchronize(memory, array);
 	}
 
-	export class Type<T> implements ObjectType<SharedArray<T>>{
+	export class Type<T> implements ObjectType<SharedArray<T>> {
 		public size: size;
 		public alignment: Alignment;
 		private elementType: ValueType<T>;
@@ -211,7 +279,11 @@ export namespace SharedArray {
 			this.size = properties.size;
 			this.alignment = properties.alignment;
 		}
-		public load(memory: MemoryRange, offset: offset, context: SharedObjectContext): SharedArray<any> {
+		public load(
+			memory: MemoryRange,
+			offset: offset,
+			context: SharedObjectContext,
+		): SharedArray<any> {
 			memory.assertAlignment(this.alignment, offset);
 			const arrayMemory = memory.range(offset, this.size);
 			return new SharedArray<T>(this.elementType, arrayMemory, context);

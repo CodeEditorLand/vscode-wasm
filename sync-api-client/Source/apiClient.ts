@@ -3,11 +3,20 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { URI } from 'vscode-uri';
+import {
+	ClientConnection,
+	DTOs,
+	RAL,
+	RequestResult,
+	Requests,
+	RPCErrno,
+	RPCError,
+	Uint32Result,
+	VariableResult,
+} from "@vscode/sync-api-common";
+import { URI } from "vscode-uri";
 
-import { ClientConnection, Requests, RequestResult, DTOs, VariableResult, RPCErrno, RPCError, RAL, Uint32Result } from '@vscode/sync-api-common';
-
-import * as vscode from './vscode';
+import * as vscode from "./vscode";
 
 export interface Timer {
 	sleep(ms: number): void;
@@ -36,7 +45,10 @@ export interface FileSystem {
 	writeFile(uri: URI, content: Uint8Array): void;
 	readDirectory(uri: URI): DTOs.DirectoryEntries;
 	createDirectory(uri: URI): void;
-	delete(uri: URI, options?: { recursive?: boolean; useTrash?: boolean }): void;
+	delete(
+		uri: URI,
+		options?: { recursive?: boolean; useTrash?: boolean },
+	): void;
 	rename(source: URI, target: URI, options?: { overwrite?: boolean }): void;
 }
 
@@ -50,17 +62,20 @@ export interface TTY {
 	read(uri: URI, maxBytesToRead: number): Uint8Array;
 }
 
-export type FileDescriptorDescription = {
-	kind: 'fileSystem';
-	uri: URI;
-	path: string;
-} | {
-	kind: 'terminal';
-	uri: URI;
-} | {
-	kind: 'console';
-	uri: URI;
-};
+export type FileDescriptorDescription =
+	| {
+			kind: "fileSystem";
+			uri: URI;
+			path: string;
+	  }
+	| {
+			kind: "terminal";
+			uri: URI;
+	  }
+	| {
+			kind: "console";
+			uri: URI;
+	  };
 
 export namespace ApiClientConnection {
 	export type ReadyParams = {
@@ -72,10 +87,12 @@ export namespace ApiClientConnection {
 	};
 }
 
-export type ApiClientConnection = ClientConnection<Requests, ApiClientConnection.ReadyParams>;
+export type ApiClientConnection = ClientConnection<
+	Requests,
+	ApiClientConnection.ReadyParams
+>;
 
 class TimerImpl implements Timer {
-
 	private readonly connection: ApiClientConnection;
 
 	constructor(connection: ApiClientConnection) {
@@ -83,7 +100,7 @@ class TimerImpl implements Timer {
 	}
 
 	public sleep(ms: number): void {
-		this.connection.sendRequest('timer/sleep', { ms });
+		this.connection.sendRequest("timer/sleep", { ms });
 	}
 }
 
@@ -95,12 +112,11 @@ class ProcessImpl implements Process {
 	}
 
 	public procExit(rval: number): void {
-		this.connection.sendRequest('process/proc_exit', { rval: rval });
+		this.connection.sendRequest("process/proc_exit", { rval: rval });
 	}
 }
 
 class ByteSourceImpl implements ByteSource {
-
 	private readonly connection: ApiClientConnection;
 
 	constructor(connection: ApiClientConnection) {
@@ -108,7 +124,11 @@ class ByteSourceImpl implements ByteSource {
 	}
 
 	public read(uri: URI, maxBytesToRead: number): Uint8Array {
-		const result = this.connection.sendRequest('byteSource/read', { uri: uri.toJSON(), maxBytesToRead }, new VariableResult<Uint8Array>('binary'));
+		const result = this.connection.sendRequest(
+			"byteSource/read",
+			{ uri: uri.toJSON(), maxBytesToRead },
+			new VariableResult<Uint8Array>("binary"),
+		);
 		if (RequestResult.hasData(result)) {
 			return result.data;
 		}
@@ -117,7 +137,6 @@ class ByteSourceImpl implements ByteSource {
 }
 
 class ByteSinkImpl implements ByteSink {
-
 	private readonly connection: ApiClientConnection;
 
 	constructor(connection: ApiClientConnection) {
@@ -125,7 +144,11 @@ class ByteSinkImpl implements ByteSink {
 	}
 
 	public write(uri: URI, value: Uint8Array): number {
-		const result = this.connection.sendRequest('byteSink/write', { uri: uri.toJSON(), binary: value }, Uint32Result.fromLength(1));
+		const result = this.connection.sendRequest(
+			"byteSink/write",
+			{ uri: uri.toJSON(), binary: value },
+			Uint32Result.fromLength(1),
+		);
 		if (RequestResult.hasData(result)) {
 			return result.data[0];
 		}
@@ -134,15 +157,21 @@ class ByteSinkImpl implements ByteSink {
 }
 
 class ConsoleImpl implements Console {
-
-	private static scheme = 'stdio' as const;
-	private static authority = 'console' as const;
-	private static stdout = URI.from( { scheme: ConsoleImpl.scheme, authority: ConsoleImpl.authority, path: '/stdout'} );
-	private static stderr = URI.from( { scheme: ConsoleImpl.scheme, authority: ConsoleImpl.authority, path: '/stderr'} );
+	private static scheme = "stdio" as const;
+	private static authority = "console" as const;
+	private static stdout = URI.from({
+		scheme: ConsoleImpl.scheme,
+		authority: ConsoleImpl.authority,
+		path: "/stdout",
+	});
+	private static stderr = URI.from({
+		scheme: ConsoleImpl.scheme,
+		authority: ConsoleImpl.authority,
+		path: "/stderr",
+	});
 
 	private readonly byteTransfer: ByteSink;
 	private readonly encoder: RAL.TextEncoder;
-
 
 	constructor(byteSink: ByteSink, encoder: RAL.TextEncoder) {
 		this.byteTransfer = byteSink;
@@ -150,18 +179,23 @@ class ConsoleImpl implements Console {
 	}
 
 	log(message?: string): void {
-		message = message === undefined ? '\n' : `${message}\n`;
-		this.byteTransfer.write(ConsoleImpl.stdout, this.encoder.encode(message));
+		message = message === undefined ? "\n" : `${message}\n`;
+		this.byteTransfer.write(
+			ConsoleImpl.stdout,
+			this.encoder.encode(message),
+		);
 	}
 
 	error(message?: string): void {
-		message = message === undefined ? '\n' : `${message}\n`;
-		this.byteTransfer.write(ConsoleImpl.stderr, this.encoder.encode(message));
+		message = message === undefined ? "\n" : `${message}\n`;
+		this.byteTransfer.write(
+			ConsoleImpl.stderr,
+			this.encoder.encode(message),
+		);
 	}
 }
 
 class FileSystemImpl implements FileSystem {
-
 	private readonly connection: ApiClientConnection;
 
 	constructor(connection: ApiClientConnection) {
@@ -169,7 +203,11 @@ class FileSystemImpl implements FileSystem {
 	}
 
 	public stat(uri: URI): vscode.FileStat {
-		const requestResult = this.connection.sendRequest('fileSystem/stat', { uri: uri.toJSON() }, DTOs.Stat.typedResult);
+		const requestResult = this.connection.sendRequest(
+			"fileSystem/stat",
+			{ uri: uri.toJSON() },
+			DTOs.Stat.typedResult,
+		);
 		if (RequestResult.hasData(requestResult)) {
 			const stat = DTOs.Stat.create(requestResult.data);
 			const permission = stat.permission;
@@ -177,7 +215,7 @@ class FileSystemImpl implements FileSystem {
 				type: stat.type,
 				ctime: stat.ctime,
 				mtime: stat.mtime,
-				size: stat.size
+				size: stat.size,
 			};
 			if (permission !== 0) {
 				result.permissions = permission;
@@ -188,7 +226,11 @@ class FileSystemImpl implements FileSystem {
 	}
 
 	public readFile(uri: URI): Uint8Array {
-		const requestResult = this.connection.sendRequest('fileSystem/readFile', { uri: uri.toJSON() }, new VariableResult<Uint8Array>('binary'));
+		const requestResult = this.connection.sendRequest(
+			"fileSystem/readFile",
+			{ uri: uri.toJSON() },
+			new VariableResult<Uint8Array>("binary"),
+		);
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
 		}
@@ -196,43 +238,73 @@ class FileSystemImpl implements FileSystem {
 	}
 
 	public writeFile(uri: URI, content: Uint8Array): void {
-		const requestResult = this.connection.sendRequest('fileSystem/writeFile', { uri: uri.toJSON(), binary: content });
+		const requestResult = this.connection.sendRequest(
+			"fileSystem/writeFile",
+			{ uri: uri.toJSON(), binary: content },
+		);
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
 	}
 
 	public readDirectory(uri: URI): DTOs.DirectoryEntries {
-		const requestResult = this.connection.sendRequest('fileSystem/readDirectory', { uri: uri.toJSON() }, new VariableResult<DTOs.DirectoryEntries>('json'));
+		const requestResult = this.connection.sendRequest(
+			"fileSystem/readDirectory",
+			{ uri: uri.toJSON() },
+			new VariableResult<DTOs.DirectoryEntries>("json"),
+		);
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
-		 }
-		 throw this.asFileSystemError(requestResult.errno, uri);
+		}
+		throw this.asFileSystemError(requestResult.errno, uri);
 	}
 
 	public createDirectory(uri: URI): void {
-		const requestResult = this.connection.sendRequest('fileSystem/createDirectory', { uri: uri.toJSON() });
+		const requestResult = this.connection.sendRequest(
+			"fileSystem/createDirectory",
+			{ uri: uri.toJSON() },
+		);
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
 	}
 
-	public delete(uri: URI, options?: { recursive?: boolean; useTrash?: boolean }): void {
-		const requestResult = this.connection.sendRequest('fileSystem/delete', { uri: uri.toJSON(), options });
+	public delete(
+		uri: URI,
+		options?: { recursive?: boolean; useTrash?: boolean },
+	): void {
+		const requestResult = this.connection.sendRequest("fileSystem/delete", {
+			uri: uri.toJSON(),
+			options,
+		});
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
 	}
 
-	public rename(source: URI, target: URI, options?: { overwrite?: boolean }): void {
-		const requestResult = this.connection.sendRequest('fileSystem/rename', { source: source.toJSON(), target: target.toJSON(), options });
+	public rename(
+		source: URI,
+		target: URI,
+		options?: { overwrite?: boolean },
+	): void {
+		const requestResult = this.connection.sendRequest("fileSystem/rename", {
+			source: source.toJSON(),
+			target: target.toJSON(),
+			options,
+		});
 		if (requestResult.errno !== RPCErrno.Success) {
-			throw this.asFileSystemError(requestResult.errno, `${source.toString()} -> ${target.toString()}`);
+			throw this.asFileSystemError(
+				requestResult.errno,
+				`${source.toString()} -> ${target.toString()}`,
+			);
 		}
 	}
 
-	private asFileSystemError(errno: RPCErrno, uri: URI | string): vscode.FileSystemError {
-		switch(errno) {
+	private asFileSystemError(
+		errno: RPCErrno,
+		uri: URI | string,
+	): vscode.FileSystemError {
+		switch (errno) {
 			case DTOs.FileSystemError.FileNotFound:
 				return vscode.FileSystemError.FileNotFound(uri);
 			case DTOs.FileSystemError.FileExists:
@@ -251,7 +323,6 @@ class FileSystemImpl implements FileSystem {
 }
 
 class WorkspaceImpl implements Workspace {
-
 	private readonly connection: ApiClientConnection;
 	public readonly fileSystem: FileSystem;
 
@@ -261,16 +332,24 @@ class WorkspaceImpl implements Workspace {
 	}
 
 	public get workspaceFolders(): vscode.WorkspaceFolder[] {
-		const requestResult = this.connection.sendRequest('workspace/workspaceFolders', new VariableResult<DTOs.WorkspaceFolder[]>('json'));
+		const requestResult = this.connection.sendRequest(
+			"workspace/workspaceFolders",
+			new VariableResult<DTOs.WorkspaceFolder[]>("json"),
+		);
 		if (RequestResult.hasData(requestResult)) {
-			return requestResult.data.map(folder => { return { uri: URI.from(folder.uri), name: folder.name, index: folder.index }; } );
+			return requestResult.data.map((folder) => {
+				return {
+					uri: URI.from(folder.uri),
+					name: folder.name,
+					index: folder.index,
+				};
+			});
 		}
 		throw new RPCError(RPCErrno.UnknownError);
 	}
 }
 
 export interface ApiShape {
-
 	readonly timer: Timer;
 	readonly process: Process;
 	readonly byteSource: ByteSource;
@@ -283,7 +362,6 @@ export interface ApiShape {
 }
 
 export class ApiClient implements ApiShape {
-
 	private readonly connection: ApiClientConnection;
 	private readonly encoder: RAL.TextEncoder;
 
@@ -302,8 +380,10 @@ export class ApiClient implements ApiShape {
 		this.encoder = RAL().TextEncoder.create();
 		this.timer = new TimerImpl(this.connection);
 		this.process = new ProcessImpl(this.connection);
-		const byteSource = this.byteSource = new ByteSourceImpl(this.connection);
-		const byteSink = this.byteSink = new ByteSinkImpl(this.connection);
+		const byteSource = (this.byteSource = new ByteSourceImpl(
+			this.connection,
+		));
+		const byteSink = (this.byteSink = new ByteSinkImpl(this.connection));
 		this.console = new ConsoleImpl(byteSink, this.encoder);
 		this.tty = {
 			read(uri, maxBytesToRead) {
@@ -314,27 +394,41 @@ export class ApiClient implements ApiShape {
 			},
 		};
 		this.vscode = {
-			workspace: new WorkspaceImpl(this.connection)
+			workspace: new WorkspaceImpl(this.connection),
 		};
 	}
 
 	public async serviceReady(): Promise<ApiClientConnection.ReadyParams> {
 		const params = await this.connection.serviceReady();
-		return { stdio: {
-			stdin: this.asFileDescriptorDescription(params.stdio.stdin),
-			stdout: this.asFileDescriptorDescription(params.stdio.stdout),
-			stderr: this.asFileDescriptorDescription(params.stdio.stderr),
-		}};
+		return {
+			stdio: {
+				stdin: this.asFileDescriptorDescription(params.stdio.stdin),
+				stdout: this.asFileDescriptorDescription(params.stdio.stdout),
+				stderr: this.asFileDescriptorDescription(params.stdio.stderr),
+			},
+		};
 	}
 
-	private asFileDescriptorDescription(fileDescriptor: DTOs.FileDescriptorDescription): FileDescriptorDescription {
+	private asFileDescriptorDescription(
+		fileDescriptor: DTOs.FileDescriptorDescription,
+	): FileDescriptorDescription {
 		switch (fileDescriptor.kind) {
-			case 'fileSystem':
-				return { kind: fileDescriptor.kind, uri: URI.from(fileDescriptor.uri), path: fileDescriptor.path };
-			case 'terminal':
-				return { kind: fileDescriptor.kind, uri: URI.from(fileDescriptor.uri) };
-			case 'console':
-				return { kind: fileDescriptor.kind, uri: URI.from(fileDescriptor.uri) };
+			case "fileSystem":
+				return {
+					kind: fileDescriptor.kind,
+					uri: URI.from(fileDescriptor.uri),
+					path: fileDescriptor.path,
+				};
+			case "terminal":
+				return {
+					kind: fileDescriptor.kind,
+					uri: URI.from(fileDescriptor.uri),
+				};
+			case "console":
+				return {
+					kind: fileDescriptor.kind,
+					uri: URI.from(fileDescriptor.uri),
+				};
 		}
 	}
 }

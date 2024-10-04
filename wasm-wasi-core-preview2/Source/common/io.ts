@@ -3,13 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { io } from '@vscode/wasi';
+import { io } from "@vscode/wasi";
+import {
+	Record,
+	SharedObject,
+	SharedResource,
+	Signal,
+	type SharedMemory,
+} from "@vscode/wasm-kit";
 
-import { SharedObject, type SharedMemory, Signal, SharedResource, Record } from '@vscode/wasm-kit';
-import type { WasiClient } from './wasiClient';
+import type { WasiClient } from "./wasiClient";
 
-export class Pollable extends SharedResource<Pollable.Properties> implements io.Poll.Pollable {
-
+export class Pollable
+	extends SharedResource<Pollable.Properties>
+	implements io.Poll.Pollable
+{
 	public static $drop(inst: io.Poll.Pollable) {
 		if (!(inst instanceof this)) {
 			throw new Error(`Instance if not an instance of Pollable`);
@@ -43,10 +51,11 @@ export class Pollable extends SharedResource<Pollable.Properties> implements io.
 }
 
 export namespace Pollable {
-	export interface Properties extends SharedResource.Properties { signal: Signal }
-	export const properties: Record.PropertyTypes = SharedResource.properties.concat([
-		['signal', Signal.Type]
-	]);
+	export interface Properties extends SharedResource.Properties {
+		signal: Signal;
+	}
+	export const properties: Record.PropertyTypes =
+		SharedResource.properties.concat([["signal", Signal.Type]]);
 	export const record = new Record.Type<Properties>(properties);
 }
 
@@ -65,6 +74,6 @@ export function createPoll(client: WasiClient) {
 				}
 			}
 			return new Uint32Array(result);
-		}
+		},
 	} satisfies io.Poll;
 }

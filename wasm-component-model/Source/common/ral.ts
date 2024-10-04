@@ -3,8 +3,12 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import type { MainConnection, WorkerConnection, WorldType } from './componentModel';
-import type * as d from './disposable';
+import type {
+	MainConnection,
+	WorkerConnection,
+	WorldType,
+} from "./componentModel";
+import type * as d from "./disposable";
 
 interface _TextEncoder {
 	encode(input?: string): Uint8Array;
@@ -16,12 +20,11 @@ interface _TextDecoder {
 
 interface _ConnectionPort {
 	postMessage(message: any, ...args: any[]): void;
-	on?(event: 'message', listener: (value: any) => void): this;
+	on?(event: "message", listener: (value: any) => void): this;
 	onmessage?: ((this: any, ev: any) => any) | null;
 }
 
 interface RAL {
-
 	readonly TextEncoder: {
 		create(encoding?: string): _TextEncoder;
 	};
@@ -31,21 +34,36 @@ interface RAL {
 	};
 
 	readonly console: {
-	    info(message?: any, ...optionalParams: any[]): void;
-	    log(message?: any, ...optionalParams: any[]): void;
-	    warn(message?: any, ...optionalParams: any[]): void;
-	    error(message?: any, ...optionalParams: any[]): void;
+		info(message?: any, ...optionalParams: any[]): void;
+		log(message?: any, ...optionalParams: any[]): void;
+		warn(message?: any, ...optionalParams: any[]): void;
+		error(message?: any, ...optionalParams: any[]): void;
 	};
 
 	readonly timer: {
-		setTimeout(callback: (...args: any[]) => void, ms: number, ...args: any[]): d.Disposable;
-		setImmediate(callback: (...args: any[]) => void, ...args: any[]): d.Disposable;
-		setInterval(callback: (...args: any[]) => void, ms: number, ...args: any[]): d.Disposable;
+		setTimeout(
+			callback: (...args: any[]) => void,
+			ms: number,
+			...args: any[]
+		): d.Disposable;
+		setImmediate(
+			callback: (...args: any[]) => void,
+			...args: any[]
+		): d.Disposable;
+		setInterval(
+			callback: (...args: any[]) => void,
+			ms: number,
+			...args: any[]
+		): d.Disposable;
 	};
 
 	readonly Connection: {
 		createMain(port: RAL.ConnectionPort): Promise<MainConnection>;
-		createWorker(port: RAL.ConnectionPort | undefined, world: WorldType, timeout?: number): Promise<WorkerConnection>;
+		createWorker(
+			port: RAL.ConnectionPort | undefined,
+			world: WorldType,
+			timeout?: number,
+		): Promise<WorkerConnection>;
 	};
 
 	readonly Worker: {
@@ -56,7 +74,10 @@ interface RAL {
 
 	readonly WebAssembly: {
 		compile(bytes: Uint8Array): Promise<WebAssembly_.Module>;
-		instantiate(module: WebAssembly_.Module, imports: WebAssembly_.Imports): Promise<WebAssembly_.Instance>;
+		instantiate(
+			module: WebAssembly_.Module,
+			imports: WebAssembly_.Imports,
+		): Promise<WebAssembly_.Instance>;
 	};
 }
 

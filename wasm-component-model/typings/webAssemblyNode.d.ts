@@ -15,15 +15,13 @@ and limitations under the License.
 /// <reference path="./webAssemblyCommon.d.ts" />
 
 declare namespace WebAssembly {
-
 	type BufferSource = ArrayBufferView | ArrayBuffer;
 
-	interface CompileError extends Error {
-	}
+	interface CompileError extends Error {}
 
 	var CompileError: {
 		prototype: CompileError;
-		new(message?: string): CompileError;
+		new (message?: string): CompileError;
 		(message?: string): CompileError;
 	};
 
@@ -37,7 +35,10 @@ declare namespace WebAssembly {
 
 	var Global: {
 		prototype: Global;
-		new<T extends ValueType = ValueType>(descriptor: GlobalDescriptor<T>, v?: ValueTypeMap[T]): Global<T>;
+		new <T extends ValueType = ValueType>(
+			descriptor: GlobalDescriptor<T>,
+			v?: ValueTypeMap[T],
+		): Global<T>;
 	};
 
 	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Instance) */
@@ -48,15 +49,14 @@ declare namespace WebAssembly {
 
 	var Instance: {
 		prototype: Instance;
-		new(module: Module, importObject?: Imports): Instance;
+		new (module: Module, importObject?: Imports): Instance;
 	};
 
-	interface LinkError extends Error {
-	}
+	interface LinkError extends Error {}
 
 	var LinkError: {
 		prototype: LinkError;
-		new(message?: string): LinkError;
+		new (message?: string): LinkError;
 		(message?: string): LinkError;
 	};
 
@@ -70,30 +70,31 @@ declare namespace WebAssembly {
 
 	var Memory: {
 		prototype: Memory;
-		new(descriptor: MemoryDescriptor): Memory;
+		new (descriptor: MemoryDescriptor): Memory;
 	};
 
 	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module) */
-	interface Module {
-	}
+	interface Module {}
 
 	var Module: {
 		prototype: Module;
-		new(bytes: BufferSource): Module;
+		new (bytes: BufferSource): Module;
 		/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module/customSections) */
-		customSections(moduleObject: Module, sectionName: string): ArrayBuffer[];
+		customSections(
+			moduleObject: Module,
+			sectionName: string,
+		): ArrayBuffer[];
 		/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module/exports) */
 		exports(moduleObject: Module): ModuleExportDescriptor[];
 		/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module/imports) */
 		imports(moduleObject: Module): ModuleImportDescriptor[];
 	};
 
-	interface RuntimeError extends Error {
-	}
+	interface RuntimeError extends Error {}
 
 	var RuntimeError: {
 		prototype: RuntimeError;
-		new(message?: string): RuntimeError;
+		new (message?: string): RuntimeError;
 		(message?: string): RuntimeError;
 	};
 
@@ -111,7 +112,7 @@ declare namespace WebAssembly {
 
 	var Table: {
 		prototype: Table;
-		new(descriptor: TableDescriptor, value?: any): Table;
+		new (descriptor: TableDescriptor, value?: any): Table;
 	};
 
 	interface GlobalDescriptor<T extends ValueType = ValueType> {
@@ -157,23 +158,29 @@ declare namespace WebAssembly {
 		module: Module;
 	}
 
-    type ImportExportKind = 'function' | 'global' | 'memory' | 'table';
-    type TableKind = 'anyfunc' | 'externref';
-    type ExportValue = Function | Global | Memory | Table;
-    type Exports = Record<string, ExportValue>;
-    type ImportValue = ExportValue | number;
-    type Imports = Record<string, ModuleImports>;
-    type ModuleImports = Record<string, ImportValue>;
-    type ValueType = keyof ValueTypeMap;
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compile) */
-    function compile(bytes: BufferSource): Promise<Module>;
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compileStreaming) */
-    // function compileStreaming(source: Response | PromiseLike<Response>): Promise<Module>;
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiate) */
-    function instantiate(bytes: BufferSource, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;
-    function instantiate(moduleObject: Module, importObject?: Imports): Promise<Instance>;
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiateStreaming) */
-    // function instantiateStreaming(source: Response | PromiseLike<Response>, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/validate) */
-    function validate(bytes: BufferSource): boolean;
+	type ImportExportKind = "function" | "global" | "memory" | "table";
+	type TableKind = "anyfunc" | "externref";
+	type ExportValue = Function | Global | Memory | Table;
+	type Exports = Record<string, ExportValue>;
+	type ImportValue = ExportValue | number;
+	type Imports = Record<string, ModuleImports>;
+	type ModuleImports = Record<string, ImportValue>;
+	type ValueType = keyof ValueTypeMap;
+	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compile) */
+	function compile(bytes: BufferSource): Promise<Module>;
+	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compileStreaming) */
+	// function compileStreaming(source: Response | PromiseLike<Response>): Promise<Module>;
+	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiate) */
+	function instantiate(
+		bytes: BufferSource,
+		importObject?: Imports,
+	): Promise<WebAssemblyInstantiatedSource>;
+	function instantiate(
+		moduleObject: Module,
+		importObject?: Imports,
+	): Promise<Instance>;
+	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/instantiateStreaming) */
+	// function instantiateStreaming(source: Response | PromiseLike<Response>, importObject?: Imports): Promise<WebAssemblyInstantiatedSource>;
+	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/validate) */
+	function validate(bytes: BufferSource): boolean;
 }

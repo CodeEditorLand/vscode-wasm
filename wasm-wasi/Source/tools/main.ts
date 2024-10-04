@@ -4,14 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 /* eslint-disable no-console */
 
-import { BigIntStats, Dir } from 'node:fs';
-import * as paths from 'node:path';
-import * as fs from 'node:fs/promises';
-
-import * as yargs from 'yargs';
+import { BigIntStats, Dir } from "node:fs";
+import * as fs from "node:fs/promises";
+import * as paths from "node:path";
+import * as yargs from "yargs";
 
 type FileNode = {
-	kind: 'file';
+	kind: "file";
 	name: string;
 	size: bigint;
 	ctime: bigint;
@@ -19,8 +18,8 @@ type FileNode = {
 	mtime: bigint;
 };
 
-type DirectoryNode =  {
-	kind: 'directory';
+type DirectoryNode = {
+	kind: "directory";
 	name: string;
 	size: bigint;
 	ctime: bigint;
@@ -45,23 +44,26 @@ export namespace Options {
 		version: false,
 		stdout: false,
 		out: undefined,
-		directory: undefined
+		directory: undefined,
 	};
 }
 
-async function readDirectory(path: string, stat: BigIntStats): Promise<DirectoryNode> {
+async function readDirectory(
+	path: string,
+	stat: BigIntStats,
+): Promise<DirectoryNode> {
 	const name = paths.basename(path);
 	if (!stat.isDirectory()) {
 		throw new Error(`${path} is not a directory`);
 	}
 	const result: DirectoryNode = {
-		kind: 'directory',
+		kind: "directory",
 		name,
 		size: stat.size,
 		ctime: stat.ctimeNs,
 		atime: stat.atimeNs,
 		mtime: stat.mtimeNs,
-		children: Object.create(null)
+		children: Object.create(null),
 	};
 
 	const dir: Dir = await fs.opendir(path);
@@ -72,12 +74,12 @@ async function readDirectory(path: string, stat: BigIntStats): Promise<Directory
 			result.children[entry.name] = await readDirectory(entryPath, stat);
 		} else if (stat.isFile()) {
 			result.children[entry.name] = {
-				kind: 'file',
+				kind: "file",
 				size: stat.size,
 				name: entry.name,
 				ctime: stat.ctimeNs,
 				atime: stat.atimeNs,
-				mtime: stat.mtimeNs
+				mtime: stat.mtimeNs,
 			};
 		} else {
 			throw new Error(`${entryPath} is not a file or directory`);
@@ -93,12 +95,12 @@ async function run(options: Options): Promise<number> {
 	}
 
 	if (options.version) {
-		console.log(require('../../package.json').version);
+		console.log(require("../../package.json").version);
 		return 0;
 	}
 
 	if (!options.directory) {
-		console.error('Missing directory argument.');
+		console.error("Missing directory argument.");
 		yargs.showHelp();
 		return 1;
 	}
@@ -111,14 +113,19 @@ async function run(options: Options): Promise<number> {
 		}
 
 		const directory = await readDirectory(options.directory, stat);
-		directory.name = '/';
-		const dump = JSON.stringify(directory, (_key, value) => typeof value === 'bigint' ? value.toString() : value, '\t');
+		directory.name = "/";
+		const dump = JSON.stringify(
+			directory,
+			(_key, value) =>
+				typeof value === "bigint" ? value.toString() : value,
+			"\t",
+		);
 		if (options.out) {
 			await fs.writeFile(options.out, dump);
 		} else if (options.stdout) {
 			process.stdout.write(dump);
 		} else {
-			console.error('No output specified.');
+			console.error("No output specified.");
 			yargs.showHelp();
 			return 1;
 		}
@@ -130,30 +137,35 @@ async function run(options: Options): Promise<number> {
 }
 
 export async function main(): Promise<number> {
-	yargs.
-		parserConfiguration({ 'camel-case-expansion': false }).
-		exitProcess(false).
-		usage(`Tool to generate a directory content for accessing in vscode.dev\nVersion: ${require('../../package.json').version}\nUsage: dir-dump [options] directory`).
-		example(`dir-dump --stdout .`, `Create a directory dump for the current directory and print it to stdout.`).
-		version(false).
-		wrap(Math.min(100, yargs.terminalWidth())).
-		option('v', {
-			alias: 'version',
-			description: 'Output the version number',
-			boolean: true
-		}).
-		option('h', {
-			alias: 'help',
-			description: 'Output usage information',
-			boolean: true
-		}).
-		option('out', {
-			description: 'The output file the dump is save to.',
-			string: true
-		}).
-		option('stdout', {
-			description: 'Writes the dump to stdout.',
-			boolean: true
+	yargs
+		.parserConfiguration({ "camel-case-expansion": false })
+		.exitProcess(false)
+		.usage(
+			`Tool to generate a directory content for accessing in vscode.dev\nVersion: ${require("../../package.json").version}\nUsage: dir-dump [options] directory`,
+		)
+		.example(
+			`dir-dump --stdout .`,
+			`Create a directory dump for the current directory and print it to stdout.`,
+		)
+		.version(false)
+		.wrap(Math.min(100, yargs.terminalWidth()))
+		.option("v", {
+			alias: "version",
+			description: "Output the version number",
+			boolean: true,
+		})
+		.option("h", {
+			alias: "help",
+			description: "Output usage information",
+			boolean: true,
+		})
+		.option("out", {
+			description: "The output file the dump is save to.",
+			string: true,
+		})
+		.option("stdout", {
+			description: "Writes the dump to stdout.",
+			boolean: true,
 		});
 
 	const parsed = await yargs.argv;
@@ -163,5 +175,10 @@ export async function main(): Promise<number> {
 }
 
 if (module === require.main) {
-	main().then((exitCode) => process.exitCode = exitCode).catch((error) => { process.exitCode = 1; console.error(error); });
+	main()
+		.then((exitCode) => (process.exitCode = exitCode))
+		.catch((error) => {
+			process.exitCode = 1;
+			console.error(error);
+		});
 }

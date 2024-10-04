@@ -3,11 +3,10 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 /// <reference path="../../typings/webAssemblyNode.d.ts" preserve="true" />
-import path from 'node:path';
+import path from "node:path";
+import { Uri, workspace } from "vscode";
 
-import { Uri, workspace } from 'vscode';
-
-import RAL from '../common/ral';
+import RAL from "../common/ral";
 
 const _ril: RAL = Object.freeze<RAL>({
 	path: path.posix,
@@ -15,8 +14,8 @@ const _ril: RAL = Object.freeze<RAL>({
 		async compile(uri: Uri): Promise<WebAssembly.Module> {
 			const bits = await workspace.fs.readFile(uri);
 			return WebAssembly.compile(bits);
-		}
-	})
+		},
+	}),
 });
 
 function RIL(): RAL {

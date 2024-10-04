@@ -3,20 +3,25 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import RAL from '../common/ral';
-import { HostConnection } from '../common/host';
-import { ServiceMessage, WasiCallMessage, WorkerMessage } from '../common/connection';
+import {
+	ServiceMessage,
+	WasiCallMessage,
+	WorkerMessage,
+} from "../common/connection";
+import { HostConnection } from "../common/host";
+import RAL from "../common/ral";
 
 export abstract class BrowserHostConnection extends HostConnection {
-
 	private readonly port: MessagePort | Worker | DedicatedWorkerGlobalScope;
 
-	public constructor(port: MessagePort | Worker | DedicatedWorkerGlobalScope) {
+	public constructor(
+		port: MessagePort | Worker | DedicatedWorkerGlobalScope,
+	) {
 		super();
 		this.port = port;
-		this.port.onmessage = ((event: MessageEvent<ServiceMessage>) => {
+		this.port.onmessage = (event: MessageEvent<ServiceMessage>) => {
 			this.handleMessage(event.data).catch(RAL().console.error);
-		});
+		};
 	}
 
 	public postMessage(message: WasiCallMessage | WorkerMessage): void {
