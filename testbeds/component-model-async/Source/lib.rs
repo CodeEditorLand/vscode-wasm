@@ -1,27 +1,27 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+//  Licensed under the MIT License. See License.txt in the project root for
+// license information.
+// --------------------------------------------------------------------------------------------
 use std::cell::RefCell;
 mod calculator;
-use calculator::exports::vscode::example::reverse_notation;
-use calculator::exports::vscode::example::reverse_notation::{ GuestEngine, Operation};
-use calculator::vscode::example::types;
+use calculator::{
+	exports::vscode::example::{
+		reverse_notation,
+		reverse_notation::{GuestEngine, Operation},
+	},
+	vscode::example::types,
+};
 
 struct EngineImpl {
-	left: Option<u32>,
-	right: Option<u32>,
+	left:Option<u32>,
+	right:Option<u32>,
 }
 
 impl EngineImpl {
-	fn new() -> Self {
-		EngineImpl {
-			left: None,
-			right: None,
-		}
-	}
+	fn new() -> Self { EngineImpl { left:None, right:None } }
 
-	fn push_operand(&mut self, operand: u32) {
+	fn push_operand(&mut self, operand:u32) {
 		if self.left == None {
 			self.left = Some(operand);
 		} else {
@@ -29,10 +29,10 @@ impl EngineImpl {
 		}
 	}
 
-	fn push_operation(&mut self, operation: Operation) {
-        let left = self.left.unwrap();
-        let right = self.right.unwrap();
-        self.left = Some(match operation {
+	fn push_operation(&mut self, operation:Operation) {
+		let left = self.left.unwrap();
+		let right = self.right.unwrap();
+		self.left = Some(match operation {
 			Operation::Add => left + right,
 			Operation::Sub => left - right,
 			Operation::Mul => left * right,
@@ -40,34 +40,25 @@ impl EngineImpl {
 		});
 	}
 
-	fn execute(&mut self) -> u32 {
-		self.left.unwrap()
-	}
+	fn execute(&mut self) -> u32 { self.left.unwrap() }
 }
 
 struct CalcEngine {
-	stack: RefCell<EngineImpl>,
+	stack:RefCell<EngineImpl>,
 }
 
 impl GuestEngine for CalcEngine {
+	fn new() -> Self { CalcEngine { stack:RefCell::new(EngineImpl::new()) } }
 
-	fn new() -> Self {
-		CalcEngine {
-			stack: RefCell::new(EngineImpl::new())
-		}
-	}
-
-	fn push_operand(&self, operand: u32) {
+	fn push_operand(&self, operand:u32) {
 		self.stack.borrow_mut().push_operand(operand);
 	}
 
-	fn push_operation(&self, operation: Operation) {
+	fn push_operation(&self, operation:Operation) {
 		self.stack.borrow_mut().push_operation(operation);
 	}
 
-	fn execute(&self) -> u32 {
-		return self.stack.borrow_mut().execute();
-	}
+	fn execute(&self) -> u32 { return self.stack.borrow_mut().execute(); }
 }
 
 struct Implementation;
@@ -76,7 +67,7 @@ impl reverse_notation::Guest for Implementation {
 }
 
 impl calculator::Guest for Implementation {
-    fn calc(op: types::Operation) -> u32 {
+	fn calc(op:types::Operation) -> u32 {
 		calculator::log(&format!("Starting calculation: {:?}", op));
 		let result = match op {
 			types::Operation::Add(operands) => operands.left + operands.right,
@@ -87,6 +78,7 @@ impl calculator::Guest for Implementation {
 		calculator::log(&format!("Finished calculation: {:?}", op));
 		return result;
 	}
+
 	fn msg() -> String {
 		calculator::generate()
 		// return "Hello from Rust".to_string();

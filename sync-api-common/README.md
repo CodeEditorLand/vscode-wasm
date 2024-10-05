@@ -2,13 +2,23 @@
 
 [![Build Status](https://dev.azure.com/vscode/vscode-wasm/_apis/build/status/microsoft.vscode-wasm?branchName=main)](https://dev.azure.com/vscode/vscode-wasm/_build/latest?definitionId=47&branchName=main)
 
-This npm module implements a sync communication mechanism between two web workers, include the main worker running either in Node or in a Browser. This for example allows to access async API from another worker in sync form.
+This npm module implements a sync communication mechanism between two web
+workers, include the main worker running either in Node or in a Browser. This
+for example allows to access async API from another worker in sync form.
 
-The implementation depends on `SharedArrayBuffers` and `Atomics`. So you need a decent version of Node. On the browser side various headers need to be enabled. Please check [MDN](https://developer.mozilla.org/en-US/) for the corresponding details. Also note that the code works best if typed arrays are transferred (e.g. Uint8Array, ...) since they can easily be mapped into shared arrays. JSON structures might need two calls to the service (done by the library) to receive the data.
+The implementation depends on `SharedArrayBuffers` and `Atomics`. So you need a
+decent version of Node. On the browser side various headers need to be enabled.
+Please check [MDN](https://developer.mozilla.org/en-US/) for the corresponding
+details. Also note that the code works best if typed arrays are transferred
+(e.g. Uint8Array, ...) since they can easily be mapped into shared arrays. JSON
+structures might need two calls to the service (done by the library) to receive
+the data.
 
 ## Example
 
-Main worker offers an API `getValue(arg: number): Promise<string>` which you want to access from another worker which solely has sync API. The setup for code running under node looks as follows:
+Main worker offers an API `getValue(arg: number): Promise<string>` which you
+want to access from another worker which solely has sync API. The setup for code
+running under node looks as follows:
 
 A common file were the sync RPC requests are defined (e.g. `requests.ts`).
 
@@ -64,4 +74,5 @@ connection.onRequest('getValue', async (params) => {
 connection.signalReady();
 ```
 
-For code executed in the desktop exchange the import `@vscode/sync-api-common/browser` with `@vscode/sync-api-common/node`.
+For code executed in the desktop exchange the import
+`@vscode/sync-api-common/browser` with `@vscode/sync-api-common/node`.

@@ -2,27 +2,36 @@
 
 [![Build Status](https://dev.azure.com/vscode/vscode-wasm/_apis/build/status/microsoft.vscode-wasm?branchName=main)](https://dev.azure.com/vscode/vscode-wasm/_build/latest?definitionId=47&branchName=main)
 
-This npm module implements an API facade for the WASM WASI Core VS Code extension.
+This npm module implements an API facade for the WASM WASI Core VS Code
+extension.
 
 ## History
 
 ### 1.0.1
 
-- Readme updates.
+-   Readme updates.
 
 ### 1.0.0
 
-The npm module now provides version specific import routes to support API migration in the future. The standard import `import { Wasm } from '@vscode/wasm-wasi'` still exists but points to deprecated code. Please switch to the new import route `import { Wasm } from '@vscode/wasm-wasi/v1`.
+The npm module now provides version specific import routes to support API
+migration in the future. The standard import
+`import { Wasm } from '@vscode/wasm-wasi'` still exists but points to deprecated
+code. Please switch to the new import route
+`import { Wasm } from '@vscode/wasm-wasi/v1`.
 
 ### 0.11.0
 
-With release version `0.11.0` the implementation details of the WASM support for VS Code has changed. This npm module is now a facade around the `wasm-wasi-core` VS Code extension.
+With release version `0.11.0` the implementation details of the WASM support for
+VS Code has changed. This npm module is now a facade around the `wasm-wasi-core`
+VS Code extension.
 
 ## Example
 
-The source code of the example can be found [here](https://github.com/microsoft/vscode-wasi/blob/dbaeumer/expected-baboon-red/wasm-wasi/example/package.json)
+The source code of the example can be found
+[here](https://github.com/microsoft/vscode-wasi/blob/dbaeumer/expected-baboon-red/wasm-wasi/example/package.json)
 
-First we need to define a `package.json` for the extension that wants to execute a WASM process:
+First we need to define a `package.json` for the extension that wants to execute
+a WASM process:
 
 ```jsonc
 {

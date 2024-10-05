@@ -1,56 +1,78 @@
 ## Mapping Wit types onto JavaScript / TypeScript types
 
-To support interoperability between different component interfaces written in JavaScript / Typescript a standard should be established specifying how Wit types are to be mapped onto corresponding JavaScript / TypeScript files.
+To support interoperability between different component interfaces written in
+JavaScript / Typescript a standard should be established specifying how Wit
+types are to be mapped onto corresponding JavaScript / TypeScript files.
 
-The mapping we should be idiomatic for both JavaScript and TypeScript programmers. Pure JavaScript programmers should be able to use the mappings intuitively without corresponding TypeScript declaration files.
+The mapping we should be idiomatic for both JavaScript and TypeScript
+programmers. Pure JavaScript programmers should be able to use the mappings
+intuitively without corresponding TypeScript declaration files.
 
-For the following Wit types the mapping is straight forward and captured in the following table:
+For the following Wit types the mapping is straight forward and captured in the
+following table:
 
-| Wit         | JavaScript | TypeScript declaration |
-|-------------|------------|------------|
-| u8 | number | type u8 = number; |
-| u16 | number | type u16 = number; |
-| u32 | number | type u32 = number; |
-| u64 | bigint | type u64 = bigint; |
-| s8 | number | type s8 = number; |
-| s16 | number | type s16 = number; |
-| s32 | number | type s32 = number; |
-| s64 | bigint | type s64 = bigint; |
-| float32 | number | type float32 = number; |
-| float64 | number | type float64 = number; |
-| bool | boolean |  boolean |
-| string | string | string |
-| char | string[0] | string |
-| record | object literal | type declaration |
-| list\<T\> | [] | Array\<T\>|
-| tuple\<T1, T2\> | [] | [T1, T2] |
-| option\<T\> | variable | ? and (T \| undefined) |
-| result\<ok, err\> | ok & Error | ok & Error |
+| Wit               | JavaScript     | TypeScript declaration |
+| ----------------- | -------------- | ---------------------- |
+| u8                | number         | type u8 = number;      |
+| u16               | number         | type u16 = number;     |
+| u32               | number         | type u32 = number;     |
+| u64               | bigint         | type u64 = bigint;     |
+| s8                | number         | type s8 = number;      |
+| s16               | number         | type s16 = number;     |
+| s32               | number         | type s32 = number;     |
+| s64               | bigint         | type s64 = bigint;     |
+| float32           | number         | type float32 = number; |
+| float64           | number         | type float64 = number; |
+| bool              | boolean        | boolean                |
+| string            | string         | string                 |
+| char              | string[0]      | string                 |
+| record            | object literal | type declaration       |
+| list\<T\>         | []             | Array\<T\>             |
+| tuple\<T1, T2\>   | []             | [T1, T2]               |
+| option\<T\>       | variable       | ? and (T \| undefined) |
+| result\<ok, err\> | ok & Error     | ok & Error             |
 
-Enums, variants and flags need some supporting JavaScript / TypeScript code since they are not natively supported in JavaScript. The proposed code should be aligned whenever possible with existing efforts to standardize these types in JavaScript.
+Enums, variants and flags need some supporting JavaScript / TypeScript code
+since they are not natively supported in JavaScript. The proposed code should be
+aligned whenever possible with existing efforts to standardize these types in
+JavaScript.
 
-To determine an idiomatic implementation for these types I used the following data sources:
+To determine an idiomatic implementation for these types I used the following
+data sources:
 
-- usage of these programming constructs in [NodeJS](https://nodejs.org/en/docs) and the [standard libraries](https://developer.mozilla.org/en-US/)
-- searching on public GitHub repositories to find implementation of the prgramming constructs
-- asked ChatGPT 4 to generate JavaScript code for the construct in a JavaScript idiomatic way.
+-   usage of these programming constructs in
+    [NodeJS](https://nodejs.org/en/docs) and the
+    [standard libraries](https://developer.mozilla.org/en-US/)
+-   searching on public GitHub repositories to find implementation of the
+    prgramming constructs
+-   asked ChatGPT 4 to generate JavaScript code for the construct in a
+    JavaScript idiomatic way.
 
 ### Enum
 
-Actually, enumerations are implemented in many ways on JavaScript. Typical approaches are:
+Actually, enumerations are implemented in many ways on JavaScript. Typical
+approaches are:
 
-- string literal
-- object keys, were the value is either a string or number
-- Symbols
-- classes
-- Proxies
+-   string literal
+-   object keys, were the value is either a string or number
+-   Symbols
+-   classes
+-   Proxies
 
-String literals are mainly used in NodeJS and the standard libraries. You find all kind of implementation on GitHub. ChatGPT generated object keys with numbers as values.
+String literals are mainly used in NodeJS and the standard libraries. You find
+all kind of implementation on GitHub. ChatGPT generated object keys with numbers
+as values.
 
-To keep things idiomatic for JavaScript developers but sill have decent TypeScript and tooling support component model enums (u32 value) should be mapped onto a string value, where the valid values of the string value are the names of the enumeration fields. In addition a supporting JS structure must be generated that allows accessing the enumeration value using a key on an object literal. This ensures that:
+To keep things idiomatic for JavaScript developers but sill have decent
+TypeScript and tooling support component model enums (u32 value) should be
+mapped onto a string value, where the valid values of the string value are the
+names of the enumeration fields. In addition a supporting JS structure must be
+generated that allows accessing the enumeration value using a key on an object
+literal. This ensures that:
 
-- we have a place to add corresponding documentation of an enum field
-- tools can support operations like hover, goto declaration, find all references
+-   we have a place to add corresponding documentation of an enum field
+-   tools can support operations like hover, goto declaration, find all
+    references
 
 This mapping makes enumeration value types in JavaScript.
 
@@ -86,35 +108,35 @@ export const DescriptorType = Object.freeze({
 	 * The type of the descriptor or file is unknown or is different from
 	 * any of the other types specified.
 	 */
-	unknown: 'unknown',
+	unknown: "unknown",
 	/**
 	 * The descriptor refers to a block device inode.
 	 */
-	blockDevice: 'blockDevice',
+	blockDevice: "blockDevice",
 	/**
 	 * The descriptor refers to a character device inode.
 	 */
-	characterDevice: 'characterDevice',
+	characterDevice: "characterDevice",
 	/**
 	 * The descriptor refers to a directory inode.
 	 */
-	directory: 'directory',
+	directory: "directory",
 	/**
 	 * The file refers to a symbolic link inode.
 	 */
-	fifo: 'fifo',
+	fifo: "fifo",
 	/**
 	 * The descriptor refers to a regular file inode.
 	 */
-	symbolicLink: 'symbolicLink',
+	symbolicLink: "symbolicLink",
 	/**
 	 * The descriptor refers to a regular file inode.
 	 */
-	regularFile: 'regularFile',
+	regularFile: "regularFile",
 	/**
 	 * The descriptor refers to a socket.
 	 */
-	socket: 'socket'
+	socket: "socket",
 });
 
 // Usage
@@ -136,19 +158,26 @@ export enum DescriptorType = {
 	socket = 'socket'
 }
 ```
-The JavaScript representation of such a TypeScript enumeration will be a string. So JavaScript developers are not forced to use any of the support structures.
 
+The JavaScript representation of such a TypeScript enumeration will be a string.
+So JavaScript developers are not forced to use any of the support structures.
 
 ### Variants
 
-Component model variants are mapped onto an object literal with the following two properties:
+Component model variants are mapped onto an object literal with the following
+two properties:
 
-- tag/case: a string denoting the case of the variant. The component model uses case to refer to the variant case. However when writing code using tag might be more appropriate.
-- value: carrying the value of the variant if there is any
+-   tag/case: a string denoting the case of the variant. The component model
+    uses case to refer to the variant case. However when writing code using tag
+    might be more appropriate.
+-   value: carrying the value of the variant if there is any
 
-To match the semantic of variants/enums in other programming languages the object literals should have value semantic (e.g. being immutable).
+To match the semantic of variants/enums in other programming languages the
+object literals should have value semantic (e.g. being immutable).
 
-Besides the object literal holding the value of the variant a code generation tool should generate a supporting JavaScript structure as well. For the following Wit variant definition
+Besides the object literal holding the value of the variant a code generation
+tool should generate a supporting JavaScript structure as well. For the
+following Wit variant definition
 
 ```wit
 /// Access type used by `access-at`.
@@ -191,7 +220,8 @@ if (accessType.tag === AccessType.access) {
 }
 ```
 
-If TypeScript code is generated the following discriminated union definition can be used
+If TypeScript code is generated the following discriminated union definition can
+be used
 
 ```TypeScript
 export namespace AccessType {
@@ -246,29 +276,34 @@ export declare const AccessType: {
 export type AccessType = AccessType.Access | AccessType.Exists;
 ```
 
-For variant cases that don't carry a value we could use a singleton and make that one a const declaration instead of providing a creator function. For the above example this would look like this:
+For variant cases that don't carry a value we could use a singleton and make
+that one a const declaration instead of providing a creator function. For the
+above example this would look like this:
 
 ```js
 export const AccessType = {
-
 	// as above
 
-	Exists: Object.freeze({ tag: AccessType.exists })
-}
+	Exists: Object.freeze({ tag: AccessType.exists }),
+};
 ```
 
-However this would lead to inconsistencies when comparing variant cases. For the cases without value someone could write:
+However this would lead to inconsistencies when comparing variant cases. For the
+cases without value someone could write:
 
 ```js
 let accessType = AccessType.Exists();
 if (accessType === AccessType.Exists) {
-
 }
 ```
 
-which would do the correct checking since the object literals are identical. However it will not work for variant cases carrying a value since we would compare a object literal to a function.
+which would do the correct checking since the object literals are identical.
+However it will not work for variant cases carrying a value since we would
+compare a object literal to a function.
 
-To further ease the variant case checking we could generate additional checking functions on the variant literal. The TypeScript interfaces for this would look like this:
+To further ease the variant case checking we could generate additional checking
+functions on the variant literal. The TypeScript interfaces for this would look
+like this:
 
 ```typescript
 export namespace AccessType {
@@ -294,13 +329,24 @@ if (accessType.isAccess()) {
 
 with the benefit of TypeScript providing correct error messages.
 
-Implementation wise the variant would be implemented using a class instead of using a frozen object literal. However, this will have no impact on the user of the variant, especially not how a JavaScript developer can interact with it. There will still be a `tag` and a `value` property with direct access to it.
+Implementation wise the variant would be implemented using a class instead of
+using a frozen object literal. However, this will have no impact on the user of
+the variant, especially not how a JavaScript developer can interact with it.
+There will still be a `tag` and a `value` property with direct access to it.
 
 ### Flags
 
-Existing idiomatic usages of flags in JavaScript (see usage in NodeJS) seem to map flags onto the `number` type and use the provided bit operations (&, |, ~, <<, >>, ... ) to manipulate the bitset. Using the `number` type has also the advantage that flags will have value semantic out of the box.
+Existing idiomatic usages of flags in JavaScript (see usage in NodeJS) seem to
+map flags onto the `number` type and use the provided bit operations (&, |, ~,
+<<, >>, ... ) to manipulate the bitset. Using the `number` type has also the
+advantage that flags will have value semantic out of the box.
 
-Since JavaScript only supports bit operations on numbers on the lower 32 bits we need a solution for flags with more and 32 bits. Those should be mapped onto `bigint` which provides integers with unlimited size, including their corresponding bit operations. Besides the base type holding the value a code generation tool must generate a supporting JavaScript structure as well. For the following Wit variant definition
+Since JavaScript only supports bit operations on numbers on the lower 32 bits we
+need a solution for flags with more and 32 bits. Those should be mapped onto
+`bigint` which provides integers with unlimited size, including their
+corresponding bit operations. Besides the base type holding the value a code
+generation tool must generate a supporting JavaScript structure as well. For the
+following Wit variant definition
 
 ```wit
 /// Descriptor flags.

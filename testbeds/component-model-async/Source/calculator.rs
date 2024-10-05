@@ -2,109 +2,113 @@
 // Options used:
 pub type Operation = vscode::example::types::Operation;
 #[allow(unused_unsafe, clippy::all)]
-pub fn log(msg: &str,){
-  unsafe {
-    let vec0 = msg;
-    let ptr0 = vec0.as_ptr().cast::<u8>();
-    let len0 = vec0.len();
+pub fn log(msg:&str) {
+	unsafe {
+		let vec0 = msg;
+		let ptr0 = vec0.as_ptr().cast::<u8>();
+		let len0 = vec0.len();
 
-    #[cfg(target_arch = "wasm32")]
-    #[link(wasm_import_module = "$root")]
-    extern "C" {
-      #[link_name = "log"]
-      fn wit_import(_: *mut u8, _: usize, );
-    }
+		#[cfg(target_arch = "wasm32")]
+		#[link(wasm_import_module = "$root")]
+		extern {
+			#[link_name = "log"]
+			fn wit_import(_:*mut u8, _:usize);
+		}
 
-    #[cfg(not(target_arch = "wasm32"))]
-    fn wit_import(_: *mut u8, _: usize, ){ unreachable!() }
-    wit_import(ptr0.cast_mut(), len0);
-  }
+		#[cfg(not(target_arch = "wasm32"))]
+		fn wit_import(_:*mut u8, _:usize) { unreachable!() }
+		wit_import(ptr0.cast_mut(), len0);
+	}
 }
 #[allow(unused_unsafe, clippy::all)]
-pub fn generate() -> _rt::String{
-  unsafe {
-    #[repr(align(4))]
-    struct RetArea([::core::mem::MaybeUninit::<u8>; 8]);
-    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
-    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
-    #[cfg(target_arch = "wasm32")]
-    #[link(wasm_import_module = "$root")]
-    extern "C" {
-      #[link_name = "generate"]
-      fn wit_import(_: *mut u8, );
-    }
+pub fn generate() -> _rt::String {
+	unsafe {
+		#[repr(align(4))]
+		struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+		let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+		let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+		#[cfg(target_arch = "wasm32")]
+		#[link(wasm_import_module = "$root")]
+		extern {
+			#[link_name = "generate"]
+			fn wit_import(_:*mut u8);
+		}
 
-    #[cfg(not(target_arch = "wasm32"))]
-    fn wit_import(_: *mut u8, ){ unreachable!() }
-    wit_import(ptr0);
-    let l1 = *ptr0.add(0).cast::<*mut u8>();
-    let l2 = *ptr0.add(4).cast::<usize>();
-    let len3 = l2;
-    let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
-    _rt::string_lift(bytes3)
-  }
+		#[cfg(not(target_arch = "wasm32"))]
+		fn wit_import(_:*mut u8) { unreachable!() }
+		wit_import(ptr0);
+		let l1 = *ptr0.add(0).cast::<*mut u8>();
+		let l2 = *ptr0.add(4).cast::<usize>();
+		let len3 = l2;
+		let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+		_rt::string_lift(bytes3)
+	}
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub unsafe fn _export_calc_cabi<T: Guest>(arg0: i32,arg1: i32,arg2: i32,) -> i32 {#[cfg(target_arch="wasm32")]
-_rt::run_ctors_once();use vscode::example::types::Operation as V0;
-let v0 = match arg0 {
-  0 => {
-    let e0 = vscode::example::types::Operands{
-      left: arg1 as u32,
-      right: arg2 as u32,
-    };
-    V0::Add(e0)
-  }
-  1 => {
-    let e0 = vscode::example::types::Operands{
-      left: arg1 as u32,
-      right: arg2 as u32,
-    };
-    V0::Sub(e0)
-  }
-  2 => {
-    let e0 = vscode::example::types::Operands{
-      left: arg1 as u32,
-      right: arg2 as u32,
-    };
-    V0::Mul(e0)
-  }
-  n => {
-    debug_assert_eq!(n, 3, "invalid enum discriminant");
-    let e0 = vscode::example::types::Operands{
-      left: arg1 as u32,
-      right: arg2 as u32,
-    };
-    V0::Div(e0)
-  }
-};
-let result1 = T::calc(v0);
-_rt::as_i32(result1)
+pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
+	#[cfg(target_arch = "wasm32")]
+	_rt::run_ctors_once();
+	use vscode::example::types::Operation as V0;
+	let v0 = match arg0 {
+		0 => {
+			let e0 = vscode::example::types::Operands {
+				left:arg1 as u32,
+				right:arg2 as u32,
+			};
+			V0::Add(e0)
+		},
+		1 => {
+			let e0 = vscode::example::types::Operands {
+				left:arg1 as u32,
+				right:arg2 as u32,
+			};
+			V0::Sub(e0)
+		},
+		2 => {
+			let e0 = vscode::example::types::Operands {
+				left:arg1 as u32,
+				right:arg2 as u32,
+			};
+			V0::Mul(e0)
+		},
+		n => {
+			debug_assert_eq!(n, 3, "invalid enum discriminant");
+			let e0 = vscode::example::types::Operands {
+				left:arg1 as u32,
+				right:arg2 as u32,
+			};
+			V0::Div(e0)
+		},
+	};
+	let result1 = T::calc(v0);
+	_rt::as_i32(result1)
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub unsafe fn _export_msg_cabi<T: Guest>() -> *mut u8 {#[cfg(target_arch="wasm32")]
-_rt::run_ctors_once();let result0 = T::msg();
-let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
-let vec2 = (result0.into_bytes()).into_boxed_slice();
-let ptr2 = vec2.as_ptr().cast::<u8>();
-let len2 = vec2.len();
-::core::mem::forget(vec2);
-*ptr1.add(4).cast::<usize>() = len2;
-*ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
-ptr1
+pub unsafe fn _export_msg_cabi<T:Guest>() -> *mut u8 {
+	#[cfg(target_arch = "wasm32")]
+	_rt::run_ctors_once();
+	let result0 = T::msg();
+	let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+	let vec2 = (result0.into_bytes()).into_boxed_slice();
+	let ptr2 = vec2.as_ptr().cast::<u8>();
+	let len2 = vec2.len();
+	::core::mem::forget(vec2);
+	*ptr1.add(4).cast::<usize>() = len2;
+	*ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+	ptr1
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
-pub unsafe fn __post_return_msg<T: Guest>(arg0: *mut u8,) {
-  let l0 = *arg0.add(0).cast::<*mut u8>();
-  let l1 = *arg0.add(4).cast::<usize>();
-  _rt::cabi_dealloc(l0, l1, 1);
+pub unsafe fn __post_return_msg<T:Guest>(arg0:*mut u8) {
+	let l0 = *arg0.add(0).cast::<*mut u8>();
+	let l1 = *arg0.add(4).cast::<usize>();
+	_rt::cabi_dealloc(l0, l1, 1);
 }
 pub trait Guest {
-  fn calc(o: Operation,) -> u32;
-  fn msg() -> _rt::String;
+	fn calc(o:Operation) -> u32;
+	fn msg() -> _rt::String;
 }
 #[doc(hidden)]
 
@@ -128,425 +132,478 @@ macro_rules! __export_world_calculator_cabi{
 #[doc(hidden)]
 pub(crate) use __export_world_calculator_cabi;
 #[repr(align(4))]
-struct _RetArea([::core::mem::MaybeUninit::<u8>; 8]);
-static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
+static mut _RET_AREA:_RetArea =
+	_RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 #[allow(dead_code)]
 pub mod vscode {
-  #[allow(dead_code)]
-  pub mod example {
-    #[allow(dead_code, clippy::all)]
-    pub mod types {
-      #[used]
-      #[doc(hidden)]
-      #[cfg(target_arch = "wasm32")]
-      static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
-      use super::super::super::_rt;
-      #[repr(C)]
-      #[derive(Clone, Copy)]
-      pub struct Operands {
-        pub left: u32,
-        pub right: u32,
-      }
-      impl ::core::fmt::Debug for Operands {
-        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-          f.debug_struct("Operands").field("left", &self.left).field("right", &self.right).finish()
-        }
-      }
-      #[derive(Clone, Copy)]
-      pub enum Operation {
-        Add(Operands),
-        Sub(Operands),
-        Mul(Operands),
-        Div(Operands),
-      }
-      impl ::core::fmt::Debug for Operation {
-        fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-          match self {
-            Operation::Add(e) => {
-              f.debug_tuple("Operation::Add").field(e).finish()
-            }
-            Operation::Sub(e) => {
-              f.debug_tuple("Operation::Sub").field(e).finish()
-            }
-            Operation::Mul(e) => {
-              f.debug_tuple("Operation::Mul").field(e).finish()
-            }
-            Operation::Div(e) => {
-              f.debug_tuple("Operation::Div").field(e).finish()
-            }
-          }
-        }
-      }
+	#[allow(dead_code)]
+	pub mod example {
+		#[allow(dead_code, clippy::all)]
+		pub mod types {
+			#[used]
+			#[doc(hidden)]
+			#[cfg(target_arch = "wasm32")]
+			static __FORCE_SECTION_REF:fn() =
+				super::super::super::__link_custom_section_describing_imports;
+			use super::super::super::_rt;
+			#[repr(C)]
+			#[derive(Clone, Copy)]
+			pub struct Operands {
+				pub left:u32,
+				pub right:u32,
+			}
+			impl ::core::fmt::Debug for Operands {
+				fn fmt(
+					&self,
+					f:&mut ::core::fmt::Formatter<'_>,
+				) -> ::core::fmt::Result {
+					f.debug_struct("Operands")
+						.field("left", &self.left)
+						.field("right", &self.right)
+						.finish()
+				}
+			}
+			#[derive(Clone, Copy)]
+			pub enum Operation {
+				Add(Operands),
+				Sub(Operands),
+				Mul(Operands),
+				Div(Operands),
+			}
+			impl ::core::fmt::Debug for Operation {
+				fn fmt(
+					&self,
+					f:&mut ::core::fmt::Formatter<'_>,
+				) -> ::core::fmt::Result {
+					match self {
+						Operation::Add(e) => {
+							f.debug_tuple("Operation::Add").field(e).finish()
+						},
+						Operation::Sub(e) => {
+							f.debug_tuple("Operation::Sub").field(e).finish()
+						},
+						Operation::Mul(e) => {
+							f.debug_tuple("Operation::Mul").field(e).finish()
+						},
+						Operation::Div(e) => {
+							f.debug_tuple("Operation::Div").field(e).finish()
+						},
+					}
+				}
+			}
 
-      #[derive(Debug)]
-      #[repr(transparent)]
-      pub struct Channel{
-        handle: _rt::Resource<Channel>,
-      }
+			#[derive(Debug)]
+			#[repr(transparent)]
+			pub struct Channel {
+				handle:_rt::Resource<Channel>,
+			}
 
-      impl Channel{
-        #[doc(hidden)]
-        pub unsafe fn from_handle(handle: u32) -> Self {
-          Self {
-            handle: _rt::Resource::from_handle(handle),
-          }
-        }
+			impl Channel {
+				#[doc(hidden)]
+				pub unsafe fn from_handle(handle:u32) -> Self {
+					Self { handle:_rt::Resource::from_handle(handle) }
+				}
 
-        #[doc(hidden)]
-        pub fn take_handle(&self) -> u32 {
-          _rt::Resource::take_handle(&self.handle)
-        }
+				#[doc(hidden)]
+				pub fn take_handle(&self) -> u32 {
+					_rt::Resource::take_handle(&self.handle)
+				}
 
-        #[doc(hidden)]
-        pub fn handle(&self) -> u32 {
-          _rt::Resource::handle(&self.handle)
-        }
-      }
+				#[doc(hidden)]
+				pub fn handle(&self) -> u32 {
+					_rt::Resource::handle(&self.handle)
+				}
+			}
 
+			unsafe impl _rt::WasmResource for Channel {
+				#[inline]
+				unsafe fn drop(_handle:u32) {
+					#[cfg(not(target_arch = "wasm32"))]
+					unreachable!();
 
-      unsafe impl _rt::WasmResource for Channel{
-        #[inline]
-        unsafe fn drop(_handle: u32) {
-          #[cfg(not(target_arch = "wasm32"))]
-          unreachable!();
+					#[cfg(target_arch = "wasm32")]
+					{
+						#[link(wasm_import_module = "vscode:example/types")]
+						extern {
+							#[link_name = "[resource-drop]channel"]
+							fn drop(_:u32);
+						}
 
-          #[cfg(target_arch = "wasm32")]
-          {
-            #[link(wasm_import_module = "vscode:example/types")]
-            extern "C" {
-              #[link_name = "[resource-drop]channel"]
-              fn drop(_: u32);
-            }
+						drop(_handle);
+					}
+				}
+			}
 
-            drop(_handle);
-          }
-        }
-      }
+			impl Channel {
+				#[allow(unused_unsafe, clippy::all)]
+				pub fn new(level:u32) -> Self {
+					unsafe {
+						#[cfg(target_arch = "wasm32")]
+						#[link(wasm_import_module = "vscode:example/types")]
+						extern {
+							#[link_name = "[constructor]channel"]
+							fn wit_import(_:i32) -> i32;
+						}
 
-      impl Channel {
-        #[allow(unused_unsafe, clippy::all)]
-        pub fn new(level: u32,) -> Self{
-          unsafe {
+						#[cfg(not(target_arch = "wasm32"))]
+						fn wit_import(_:i32) -> i32 { unreachable!() }
+						let ret = wit_import(_rt::as_i32(&level));
+						Channel::from_handle(ret as u32)
+					}
+				}
+			}
+			impl Channel {
+				#[allow(unused_unsafe, clippy::all)]
+				pub fn send(&self, msg:&str) {
+					unsafe {
+						let vec0 = msg;
+						let ptr0 = vec0.as_ptr().cast::<u8>();
+						let len0 = vec0.len();
 
-            #[cfg(target_arch = "wasm32")]
-            #[link(wasm_import_module = "vscode:example/types")]
-            extern "C" {
-              #[link_name = "[constructor]channel"]
-              fn wit_import(_: i32, ) -> i32;
-            }
+						#[cfg(target_arch = "wasm32")]
+						#[link(wasm_import_module = "vscode:example/types")]
+						extern {
+							#[link_name = "[method]channel.send"]
+							fn wit_import(_:i32, _:*mut u8, _:usize);
+						}
 
-            #[cfg(not(target_arch = "wasm32"))]
-            fn wit_import(_: i32, ) -> i32{ unreachable!() }
-            let ret = wit_import(_rt::as_i32(&level));
-            Channel::from_handle(ret as u32)
-          }
-        }
-      }
-      impl Channel {
-        #[allow(unused_unsafe, clippy::all)]
-        pub fn send(&self,msg: &str,){
-          unsafe {
-            let vec0 = msg;
-            let ptr0 = vec0.as_ptr().cast::<u8>();
-            let len0 = vec0.len();
-
-            #[cfg(target_arch = "wasm32")]
-            #[link(wasm_import_module = "vscode:example/types")]
-            extern "C" {
-              #[link_name = "[method]channel.send"]
-              fn wit_import(_: i32, _: *mut u8, _: usize, );
-            }
-
-            #[cfg(not(target_arch = "wasm32"))]
-            fn wit_import(_: i32, _: *mut u8, _: usize, ){ unreachable!() }
-            wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
-          }
-        }
-      }
-
-    }
-
-  }
+						#[cfg(not(target_arch = "wasm32"))]
+						fn wit_import(_:i32, _:*mut u8, _:usize) {
+							unreachable!()
+						}
+						wit_import(
+							(self).handle() as i32,
+							ptr0.cast_mut(),
+							len0,
+						);
+					}
+				}
+			}
+		}
+	}
 }
 #[allow(dead_code)]
 pub mod exports {
-  #[allow(dead_code)]
-  pub mod vscode {
-    #[allow(dead_code)]
-    pub mod example {
-      #[allow(dead_code, clippy::all)]
-      pub mod reverse_notation {
-        #[used]
-        #[doc(hidden)]
-        #[cfg(target_arch = "wasm32")]
-        static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
-        use super::super::super::super::_rt;
-        #[repr(u8)]
-        #[derive(Clone, Copy, Eq, PartialEq)]
-        pub enum Operation {
-          Add,
-          Sub,
-          Mul,
-          Div,
-        }
-        impl ::core::fmt::Debug for Operation {
-          fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-            match self {
-              Operation::Add => {
-                f.debug_tuple("Operation::Add").finish()
-              }
-              Operation::Sub => {
-                f.debug_tuple("Operation::Sub").finish()
-              }
-              Operation::Mul => {
-                f.debug_tuple("Operation::Mul").finish()
-              }
-              Operation::Div => {
-                f.debug_tuple("Operation::Div").finish()
-              }
-            }
-          }
-        }
+	#[allow(dead_code)]
+	pub mod vscode {
+		#[allow(dead_code)]
+		pub mod example {
+			#[allow(dead_code, clippy::all)]
+			pub mod reverse_notation {
+				#[used]
+				#[doc(hidden)]
+				#[cfg(target_arch = "wasm32")]
+				static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
+				use super::super::super::super::_rt;
+				#[repr(u8)]
+				#[derive(Clone, Copy, Eq, PartialEq)]
+				pub enum Operation {
+					Add,
+					Sub,
+					Mul,
+					Div,
+				}
+				impl ::core::fmt::Debug for Operation {
+					fn fmt(
+						&self,
+						f:&mut ::core::fmt::Formatter<'_>,
+					) -> ::core::fmt::Result {
+						match self {
+							Operation::Add => {
+								f.debug_tuple("Operation::Add").finish()
+							},
+							Operation::Sub => {
+								f.debug_tuple("Operation::Sub").finish()
+							},
+							Operation::Mul => {
+								f.debug_tuple("Operation::Mul").finish()
+							},
+							Operation::Div => {
+								f.debug_tuple("Operation::Div").finish()
+							},
+						}
+					}
+				}
 
-        impl Operation{
-          pub(crate) unsafe fn _lift(val: u8) -> Operation{
-            if !cfg!(debug_assertions) {
-              return ::core::mem::transmute(val);
-            }
+				impl Operation {
+					pub(crate) unsafe fn _lift(val:u8) -> Operation {
+						if !cfg!(debug_assertions) {
+							return ::core::mem::transmute(val);
+						}
 
-            match val {
-              0 => Operation::Add,
-              1 => Operation::Sub,
-              2 => Operation::Mul,
-              3 => Operation::Div,
+						match val {
+							0 => Operation::Add,
+							1 => Operation::Sub,
+							2 => Operation::Mul,
+							3 => Operation::Div,
 
-              _ => panic!("invalid enum discriminant"),
-            }
-          }
-        }
+							_ => panic!("invalid enum discriminant"),
+						}
+					}
+				}
 
+				#[derive(Debug)]
+				#[repr(transparent)]
+				pub struct Engine {
+					handle:_rt::Resource<Engine>,
+				}
 
-        #[derive(Debug)]
-        #[repr(transparent)]
-        pub struct Engine{
-          handle: _rt::Resource<Engine>,
-        }
+				type _EngineRep<T> = Option<T>;
 
-        type _EngineRep<T> = Option<T>;
+				impl Engine {
+					/// Creates a new resource from the specified
+					/// representation.
+					///
+					/// This function will create a new resource handle by
+					/// moving `val` onto the heap and then passing that
+					/// heap pointer to the component model to
+					/// create a handle. The owned handle is then returned as
+					/// `Engine`.
+					pub fn new<T:GuestEngine>(val:T) -> Self {
+						Self::type_guard::<T>();
+						let val:_EngineRep<T> = Some(val);
+						let ptr:*mut _EngineRep<T> =
+							_rt::Box::into_raw(_rt::Box::new(val));
+						unsafe {
+							Self::from_handle(T::_resource_new(ptr.cast()))
+						}
+					}
 
-        impl Engine{
-          /// Creates a new resource from the specified representation.
-          ///
-          /// This function will create a new resource handle by moving `val` onto
-          /// the heap and then passing that heap pointer to the component model to
-          /// create a handle. The owned handle is then returned as `Engine`.
-          pub fn new<T: GuestEngine>(val: T) -> Self {
-            Self::type_guard::<T>();
-            let val: _EngineRep<T> = Some(val);
-            let ptr: *mut _EngineRep<T> =
-            _rt::Box::into_raw(_rt::Box::new(val));
-            unsafe {
-              Self::from_handle(T::_resource_new(ptr.cast()))
-            }
-          }
+					/// Gets access to the underlying `T` which represents this
+					/// resource.
+					pub fn get<T:GuestEngine>(&self) -> &T {
+						let ptr = unsafe { &*self.as_ptr::<T>() };
+						ptr.as_ref().unwrap()
+					}
 
-          /// Gets access to the underlying `T` which represents this resource.
-          pub fn get<T: GuestEngine>(&self) -> &T {
-            let ptr = unsafe { &*self.as_ptr::<T>() };
-            ptr.as_ref().unwrap()
-          }
+					/// Gets mutable access to the underlying `T` which
+					/// represents this resource.
+					pub fn get_mut<T:GuestEngine>(&mut self) -> &mut T {
+						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+						ptr.as_mut().unwrap()
+					}
 
-          /// Gets mutable access to the underlying `T` which represents this
-          /// resource.
-          pub fn get_mut<T: GuestEngine>(&mut self) -> &mut T {
-            let ptr = unsafe { &mut *self.as_ptr::<T>() };
-            ptr.as_mut().unwrap()
-          }
+					/// Consumes this resource and returns the underlying `T`.
+					pub fn into_inner<T:GuestEngine>(self) -> T {
+						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+						ptr.take().unwrap()
+					}
 
-          /// Consumes this resource and returns the underlying `T`.
-          pub fn into_inner<T: GuestEngine>(self) -> T {
-            let ptr = unsafe { &mut *self.as_ptr::<T>() };
-            ptr.take().unwrap()
-          }
+					#[doc(hidden)]
+					pub unsafe fn from_handle(handle:u32) -> Self {
+						Self { handle:_rt::Resource::from_handle(handle) }
+					}
 
-          #[doc(hidden)]
-          pub unsafe fn from_handle(handle: u32) -> Self {
-            Self {
-              handle: _rt::Resource::from_handle(handle),
-            }
-          }
+					#[doc(hidden)]
+					pub fn take_handle(&self) -> u32 {
+						_rt::Resource::take_handle(&self.handle)
+					}
 
-          #[doc(hidden)]
-          pub fn take_handle(&self) -> u32 {
-            _rt::Resource::take_handle(&self.handle)
-          }
+					#[doc(hidden)]
+					pub fn handle(&self) -> u32 {
+						_rt::Resource::handle(&self.handle)
+					}
 
-          #[doc(hidden)]
-          pub fn handle(&self) -> u32 {
-            _rt::Resource::handle(&self.handle)
-          }
+					// It's theoretically possible to implement the
+					// `GuestEngine` trait twice so guard against using it
+					// with two different types here.
+					#[doc(hidden)]
+					fn type_guard<T:'static>() {
+						use core::any::TypeId;
+						static mut LAST_TYPE:Option<TypeId> = None;
+						unsafe {
+							assert!(!cfg!(target_feature = "threads"));
+							let id = TypeId::of::<T>();
+							match LAST_TYPE {
+								Some(ty) => {
+									assert!(
+										ty == id,
+										"cannot use two types with this \
+										 resource type"
+									)
+								},
+								None => LAST_TYPE = Some(id),
+							}
+						}
+					}
 
-          // It's theoretically possible to implement the `GuestEngine` trait twice
-          // so guard against using it with two different types here.
-          #[doc(hidden)]
-          fn type_guard<T: 'static>() {
-            use core::any::TypeId;
-            static mut LAST_TYPE: Option<TypeId> = None;
-            unsafe {
-              assert!(!cfg!(target_feature = "threads"));
-              let id = TypeId::of::<T>();
-              match LAST_TYPE {
-                Some(ty) => assert!(ty == id, "cannot use two types with this resource type"),
-                None => LAST_TYPE = Some(id),
-              }
-            }
-          }
+					#[doc(hidden)]
+					pub unsafe fn dtor<T:'static>(handle:*mut u8) {
+						Self::type_guard::<T>();
+						let _ =
+							_rt::Box::from_raw(handle as *mut _EngineRep<T>);
+					}
 
-          #[doc(hidden)]
-          pub unsafe fn dtor<T: 'static>(handle: *mut u8) {
-            Self::type_guard::<T>();
-            let _ = _rt::Box::from_raw(handle as *mut _EngineRep<T>);
-          }
+					fn as_ptr<T:GuestEngine>(&self) -> *mut _EngineRep<T> {
+						Engine::type_guard::<T>();
+						T::_resource_rep(self.handle()).cast()
+					}
+				}
 
-          fn as_ptr<T: GuestEngine>(&self) -> *mut _EngineRep<T> {
-            Engine::type_guard::<T>();
-            T::_resource_rep(self.handle()).cast()
-          }
-        }
+				/// A borrowed version of [`Engine`] which represents a borrowed
+				/// value with the lifetime `'a`.
+				#[derive(Debug)]
+				#[repr(transparent)]
+				pub struct EngineBorrow<'a> {
+					rep:*mut u8,
+					_marker:core::marker::PhantomData<&'a Engine>,
+				}
 
-        /// A borrowed version of [`Engine`] which represents a borrowed value
-        /// with the lifetime `'a`.
-        #[derive(Debug)]
-        #[repr(transparent)]
-        pub struct EngineBorrow<'a> {
-          rep: *mut u8,
-          _marker: core::marker::PhantomData<&'a Engine>,
-        }
+				impl<'a> EngineBorrow<'a> {
+					#[doc(hidden)]
+					pub unsafe fn lift(rep:usize) -> Self {
+						Self {
+							rep:rep as *mut u8,
+							_marker:core::marker::PhantomData,
+						}
+					}
 
-        impl<'a> EngineBorrow<'a>{
-          #[doc(hidden)]
-          pub unsafe fn lift(rep: usize) -> Self {
-            Self {
-              rep: rep as *mut u8,
-              _marker: core::marker::PhantomData,
-            }
-          }
+					/// Gets access to the underlying `T` in this resource.
+					pub fn get<T:GuestEngine>(&self) -> &T {
+						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+						ptr.as_ref().unwrap()
+					}
 
-          /// Gets access to the underlying `T` in this resource.
-          pub fn get<T: GuestEngine>(&self) -> &T {
-            let ptr = unsafe { &mut *self.as_ptr::<T>() };
-            ptr.as_ref().unwrap()
-          }
+					// NB: mutable access is not allowed due to the component
+					// model allowing multiple borrows of the same
+					// resource.
 
-          // NB: mutable access is not allowed due to the component model allowing
-          // multiple borrows of the same resource.
+					fn as_ptr<T:'static>(&self) -> *mut _EngineRep<T> {
+						Engine::type_guard::<T>();
+						self.rep.cast()
+					}
+				}
 
-          fn as_ptr<T: 'static>(&self) -> *mut _EngineRep<T> {
-            Engine::type_guard::<T>();
-            self.rep.cast()
-          }
-        }
+				unsafe impl _rt::WasmResource for Engine {
+					#[inline]
+					unsafe fn drop(_handle:u32) {
+						#[cfg(not(target_arch = "wasm32"))]
+						unreachable!();
 
+						#[cfg(target_arch = "wasm32")]
+						{
+							#[link(wasm_import_module = "[export]vscode:\
+							                             example/reverse-notation")]
+							extern {
+								#[link_name = "[resource-drop]engine"]
+								fn drop(_:u32);
+							}
 
-        unsafe impl _rt::WasmResource for Engine{
-          #[inline]
-          unsafe fn drop(_handle: u32) {
-            #[cfg(not(target_arch = "wasm32"))]
-            unreachable!();
+							drop(_handle);
+						}
+					}
+				}
 
-            #[cfg(target_arch = "wasm32")]
-            {
-              #[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
-              extern "C" {
-                #[link_name = "[resource-drop]engine"]
-                fn drop(_: u32);
-              }
+				#[doc(hidden)]
+				#[allow(non_snake_case)]
+				pub unsafe fn _export_constructor_engine_cabi<T:GuestEngine>()
+				-> i32 {
+					#[cfg(target_arch = "wasm32")]
+					_rt::run_ctors_once();
+					let result0 = Engine::new(T::new());
+					(result0).take_handle() as i32
+				}
+				#[doc(hidden)]
+				#[allow(non_snake_case)]
+				pub unsafe fn _export_method_engine_push_operand_cabi<
+					T:GuestEngine,
+				>(
+					arg0:*mut u8,
+					arg1:i32,
+				) {
+					#[cfg(target_arch = "wasm32")]
+					_rt::run_ctors_once();
+					T::push_operand(
+						EngineBorrow::lift(arg0 as u32 as usize).get(),
+						arg1 as u32,
+					);
+				}
+				#[doc(hidden)]
+				#[allow(non_snake_case)]
+				pub unsafe fn _export_method_engine_push_operation_cabi<
+					T:GuestEngine,
+				>(
+					arg0:*mut u8,
+					arg1:i32,
+				) {
+					#[cfg(target_arch = "wasm32")]
+					_rt::run_ctors_once();
+					T::push_operation(
+						EngineBorrow::lift(arg0 as u32 as usize).get(),
+						Operation::_lift(arg1 as u8),
+					);
+				}
+				#[doc(hidden)]
+				#[allow(non_snake_case)]
+				pub unsafe fn _export_method_engine_execute_cabi<
+					T:GuestEngine,
+				>(
+					arg0:*mut u8,
+				) -> i32 {
+					#[cfg(target_arch = "wasm32")]
+					_rt::run_ctors_once();
+					let result0 = T::execute(
+						EngineBorrow::lift(arg0 as u32 as usize).get(),
+					);
+					_rt::as_i32(result0)
+				}
+				pub trait Guest {
+					type Engine: GuestEngine;
+				}
+				pub trait GuestEngine: 'static {
+					#[doc(hidden)]
+					unsafe fn _resource_new(val:*mut u8) -> u32
+					where
+						Self: Sized, {
+						#[cfg(not(target_arch = "wasm32"))]
+						{
+							let _ = val;
+							unreachable!();
+						}
 
-              drop(_handle);
-            }
-          }
-        }
+						#[cfg(target_arch = "wasm32")]
+						{
+							#[link(wasm_import_module = "[export]vscode:\
+							                             example/reverse-notation")]
+							extern {
+								#[link_name = "[resource-new]engine"]
+								fn new(_:*mut u8) -> u32;
+							}
+							new(val)
+						}
+					}
 
-        #[doc(hidden)]
-        #[allow(non_snake_case)]
-        pub unsafe fn _export_constructor_engine_cabi<T: GuestEngine>() -> i32 {#[cfg(target_arch="wasm32")]
-        _rt::run_ctors_once();let result0 = Engine::new(T::new());
-        (result0).take_handle() as i32
-      }
-      #[doc(hidden)]
-      #[allow(non_snake_case)]
-      pub unsafe fn _export_method_engine_push_operand_cabi<T: GuestEngine>(arg0: *mut u8,arg1: i32,) {#[cfg(target_arch="wasm32")]
-      _rt::run_ctors_once();T::push_operand(EngineBorrow::lift(arg0 as u32 as usize).get(), arg1 as u32);
-    }
-    #[doc(hidden)]
-    #[allow(non_snake_case)]
-    pub unsafe fn _export_method_engine_push_operation_cabi<T: GuestEngine>(arg0: *mut u8,arg1: i32,) {#[cfg(target_arch="wasm32")]
-    _rt::run_ctors_once();T::push_operation(EngineBorrow::lift(arg0 as u32 as usize).get(), Operation::_lift(arg1 as u8));
-  }
-  #[doc(hidden)]
-  #[allow(non_snake_case)]
-  pub unsafe fn _export_method_engine_execute_cabi<T: GuestEngine>(arg0: *mut u8,) -> i32 {#[cfg(target_arch="wasm32")]
-  _rt::run_ctors_once();let result0 = T::execute(EngineBorrow::lift(arg0 as u32 as usize).get());
-  _rt::as_i32(result0)
-}
-pub trait Guest {
-  type Engine: GuestEngine;
-}
-pub trait GuestEngine: 'static {
+					#[doc(hidden)]
+					fn _resource_rep(handle:u32) -> *mut u8
+					where
+						Self: Sized, {
+						#[cfg(not(target_arch = "wasm32"))]
+						{
+							let _ = handle;
+							unreachable!();
+						}
 
-  #[doc(hidden)]
-  unsafe fn _resource_new(val: *mut u8) -> u32
-  where Self: Sized
-  {
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-      let _ = val;
-      unreachable!();
-    }
+						#[cfg(target_arch = "wasm32")]
+						{
+							#[link(wasm_import_module = "[export]vscode:\
+							                             example/reverse-notation")]
+							extern {
+								#[link_name = "[resource-rep]engine"]
+								fn rep(_:u32) -> *mut u8;
+							}
+							unsafe { rep(handle) }
+						}
+					}
 
-    #[cfg(target_arch = "wasm32")]
-    {
-      #[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
-      extern "C" {
-        #[link_name = "[resource-new]engine"]
-        fn new(_: *mut u8) -> u32;
-      }
-      new(val)
-    }
-  }
+					fn new() -> Self;
+					fn push_operand(&self, operand:u32);
+					fn push_operation(&self, operation:Operation);
+					fn execute(&self) -> u32;
+				}
+				#[doc(hidden)]
 
-  #[doc(hidden)]
-  fn _resource_rep(handle: u32) -> *mut u8
-  where Self: Sized
-  {
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-      let _ = handle;
-      unreachable!();
-    }
-
-    #[cfg(target_arch = "wasm32")]
-    {
-      #[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
-      extern "C" {
-        #[link_name = "[resource-rep]engine"]
-        fn rep(_: u32) -> *mut u8;
-      }
-      unsafe {
-        rep(handle)
-      }
-    }
-  }
-
-  
-  fn new() -> Self;
-  fn push_operand(&self,operand: u32,);
-  fn push_operation(&self,operation: Operation,);
-  fn execute(&self,) -> u32;
-}
-#[doc(hidden)]
-
-macro_rules! __export_vscode_example_reverse_notation_cabi{
+				macro_rules! __export_vscode_example_reverse_notation_cabi{
   ($ty:ident with_types_in $($path_to_types:tt)*) => (const _: () = {
 
     #[export_name = "vscode:example/reverse-notation#[constructor]engine"]
@@ -576,207 +633,180 @@ macro_rules! __export_vscode_example_reverse_notation_cabi{
         >(rep)
       }
     };
-    
+
   };);
 }
-#[doc(hidden)]
-pub(crate) use __export_vscode_example_reverse_notation_cabi;
-
-}
-
-}
-}
+				#[doc(hidden)]
+				pub(crate) use __export_vscode_example_reverse_notation_cabi;
+			}
+		}
+	}
 }
 mod _rt {
 
+	use core::{
+		fmt,
+		marker,
+		sync::atomic::{AtomicU32, Ordering::Relaxed},
+	};
 
-  use core::fmt;
-  use core::marker;
-  use core::sync::atomic::{AtomicU32, Ordering::Relaxed};
+	/// A type which represents a component model resource, either imported or
+	/// exported into this component.
+	///
+	/// This is a low-level wrapper which handles the lifetime of the resource
+	/// (namely this has a destructor). The `T` provided defines the component
+	/// model intrinsics that this wrapper uses.
+	///
+	/// One of the chief purposes of this type is to provide `Deref`
+	/// implementations to access the underlying data when it is owned.
+	///
+	/// This type is primarily used in generated code for exported and imported
+	/// resources.
+	#[repr(transparent)]
+	pub struct Resource<T:WasmResource> {
+		// NB: This would ideally be `u32` but it is not. The fact that this
+		// has interior mutability is not exposed in the API of this type
+		// except for the `take_handle` method which is supposed to in theory
+		// be private.
+		//
+		// This represents, almost all the time, a valid handle value. When
+		// it's invalid it's stored as `u32::MAX`.
+		handle:AtomicU32,
+		_marker:marker::PhantomData<T>,
+	}
 
-  /// A type which represents a component model resource, either imported or
-  /// exported into this component.
-  ///
-  /// This is a low-level wrapper which handles the lifetime of the resource
-  /// (namely this has a destructor). The `T` provided defines the component model
-  /// intrinsics that this wrapper uses.
-  ///
-  /// One of the chief purposes of this type is to provide `Deref` implementations
-  /// to access the underlying data when it is owned.
-  ///
-  /// This type is primarily used in generated code for exported and imported
-  /// resources.
-  #[repr(transparent)]
-  pub struct Resource<T: WasmResource> {
-    // NB: This would ideally be `u32` but it is not. The fact that this has
-    // interior mutability is not exposed in the API of this type except for the
-    // `take_handle` method which is supposed to in theory be private.
-    //
-    // This represents, almost all the time, a valid handle value. When it's
-    // invalid it's stored as `u32::MAX`.
-    handle: AtomicU32,
-    _marker: marker::PhantomData<T>,
-  }
+	/// A trait which all wasm resources implement, namely providing the ability
+	/// to drop a resource.
+	///
+	/// This generally is implemented by generated code, not user-facing code.
+	pub unsafe trait WasmResource {
+		/// Invokes the `[resource-drop]...` intrinsic.
+		unsafe fn drop(handle:u32);
+	}
 
-  /// A trait which all wasm resources implement, namely providing the ability to
-  /// drop a resource.
-  ///
-  /// This generally is implemented by generated code, not user-facing code.
-  pub unsafe trait WasmResource {
-    /// Invokes the `[resource-drop]...` intrinsic.
-    unsafe fn drop(handle: u32);
-  }
+	impl<T:WasmResource> Resource<T> {
+		#[doc(hidden)]
+		pub unsafe fn from_handle(handle:u32) -> Self {
+			debug_assert!(handle != u32::MAX);
+			Self { handle:AtomicU32::new(handle), _marker:marker::PhantomData }
+		}
 
-  impl<T: WasmResource> Resource<T> {
-    #[doc(hidden)]
-    pub unsafe fn from_handle(handle: u32) -> Self {
-      debug_assert!(handle != u32::MAX);
-      Self {
-        handle: AtomicU32::new(handle),
-        _marker: marker::PhantomData,
-      }
-    }
+		/// Takes ownership of the handle owned by `resource`.
+		///
+		/// Note that this ideally would be `into_handle` taking `Resource<T>`
+		/// by ownership. The code generator does not enable that in all
+		/// situations, unfortunately, so this is provided instead.
+		///
+		/// Also note that `take_handle` is in theory only ever called on values
+		/// owned by a generated function. For example a generated function
+		/// might take `Resource<T>` as an argument but then call
+		/// `take_handle` on a reference to that argument. In that sense the
+		/// dynamic nature of `take_handle` should only be exposed internally
+		/// to generated code, not to user code.
+		#[doc(hidden)]
+		pub fn take_handle(resource:&Resource<T>) -> u32 {
+			resource.handle.swap(u32::MAX, Relaxed)
+		}
 
-    /// Takes ownership of the handle owned by `resource`.
-    ///
-    /// Note that this ideally would be `into_handle` taking `Resource<T>` by
-    /// ownership. The code generator does not enable that in all situations,
-    /// unfortunately, so this is provided instead.
-    ///
-    /// Also note that `take_handle` is in theory only ever called on values
-    /// owned by a generated function. For example a generated function might
-    /// take `Resource<T>` as an argument but then call `take_handle` on a
-    /// reference to that argument. In that sense the dynamic nature of
-    /// `take_handle` should only be exposed internally to generated code, not
-    /// to user code.
-    #[doc(hidden)]
-    pub fn take_handle(resource: &Resource<T>) -> u32 {
-      resource.handle.swap(u32::MAX, Relaxed)
-    }
+		#[doc(hidden)]
+		pub fn handle(resource:&Resource<T>) -> u32 {
+			resource.handle.load(Relaxed)
+		}
+	}
 
-    #[doc(hidden)]
-    pub fn handle(resource: &Resource<T>) -> u32 {
-      resource.handle.load(Relaxed)
-    }
-  }
+	impl<T:WasmResource> fmt::Debug for Resource<T> {
+		fn fmt(&self, f:&mut fmt::Formatter<'_>) -> fmt::Result {
+			f.debug_struct("Resource").field("handle", &self.handle).finish()
+		}
+	}
 
-  impl<T: WasmResource> fmt::Debug for Resource<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-      f.debug_struct("Resource")
-      .field("handle", &self.handle)
-      .finish()
-    }
-  }
+	impl<T:WasmResource> Drop for Resource<T> {
+		fn drop(&mut self) {
+			unsafe {
+				match self.handle.load(Relaxed) {
+					// If this handle was "taken" then don't do anything in the
+					// destructor.
+					u32::MAX => {},
 
-  impl<T: WasmResource> Drop for Resource<T> {
-    fn drop(&mut self) {
-      unsafe {
-        match self.handle.load(Relaxed) {
-          // If this handle was "taken" then don't do anything in the
-          // destructor.
-          u32::MAX => {}
+					// ... but otherwise do actually destroy it with the
+					// imported component model intrinsic as defined
+					// through `T`.
+					other => T::drop(other),
+				}
+			}
+		}
+	}
 
-          // ... but otherwise do actually destroy it with the imported
-          // component model intrinsic as defined through `T`.
-          other => T::drop(other),
-        }
-      }
-    }
-  }
-  
-  pub fn as_i32<T: AsI32>(t: T) -> i32 {
-    t.as_i32()
-  }
+	pub fn as_i32<T:AsI32>(t:T) -> i32 { t.as_i32() }
 
-  pub trait AsI32 {
-    fn as_i32(self) -> i32;
-  }
+	pub trait AsI32 {
+		fn as_i32(self) -> i32;
+	}
 
-  impl<'a, T: Copy + AsI32> AsI32 for &'a T {
-    fn as_i32(self) -> i32 {
-      (*self).as_i32()
-    }
-  }
-  
-  impl AsI32 for i32 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for u32 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for i16 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for u16 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for i8 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for u8 {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for char {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  
-  impl AsI32 for usize {
-    #[inline]
-    fn as_i32(self) -> i32 {
-      self as i32
-    }
-  }
-  pub use alloc_crate::string::String;
-  pub use alloc_crate::vec::Vec;
-  pub unsafe fn string_lift(bytes: Vec<u8>) -> String {
-    if cfg!(debug_assertions) {
-      String::from_utf8(bytes).unwrap()
-    } else {
-      String::from_utf8_unchecked(bytes)
-    }
-  }
-  
-  #[cfg(target_arch = "wasm32")]
-  pub fn run_ctors_once() {
-    wit_bindgen::rt::run_ctors_once();
-  }
-  pub unsafe fn cabi_dealloc(ptr: *mut u8, size: usize, align: usize) {
-    if size == 0 {
-      return;
-    }
-    let layout = alloc::Layout::from_size_align_unchecked(size, align);
-    alloc::dealloc(ptr as *mut u8, layout);
-  }
-  pub use alloc_crate::boxed::Box;
-  extern crate alloc as alloc_crate;
-  pub use alloc_crate::alloc;
+	impl<'a, T:Copy + AsI32> AsI32 for &'a T {
+		fn as_i32(self) -> i32 { (*self).as_i32() }
+	}
+
+	impl AsI32 for i32 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for u32 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for i16 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for u16 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for i8 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for u8 {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for char {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+
+	impl AsI32 for usize {
+		#[inline]
+		fn as_i32(self) -> i32 { self as i32 }
+	}
+	pub use alloc_crate::{string::String, vec::Vec};
+	pub unsafe fn string_lift(bytes:Vec<u8>) -> String {
+		if cfg!(debug_assertions) {
+			String::from_utf8(bytes).unwrap()
+		} else {
+			String::from_utf8_unchecked(bytes)
+		}
+	}
+
+	#[cfg(target_arch = "wasm32")]
+	pub fn run_ctors_once() { wit_bindgen::rt::run_ctors_once(); }
+	pub unsafe fn cabi_dealloc(ptr:*mut u8, size:usize, align:usize) {
+		if size == 0 {
+			return;
+		}
+		let layout = alloc::Layout::from_size_align_unchecked(size, align);
+		alloc::dealloc(ptr as *mut u8, layout);
+	}
+	pub use alloc_crate::boxed::Box;
+	extern crate alloc as alloc_crate;
+	pub use alloc_crate::alloc;
 }
 
 /// Generates `#[no_mangle]` functions to export the specified type as the
@@ -790,7 +820,7 @@ mod _rt {
 /// struct MyType;
 ///
 /// impl Guest for MyType {
-///     // ...
+/// 	// ...
 /// }
 ///
 /// export!(MyType);
@@ -834,6 +864,5 @@ oducers\x01\x0cprocessed-by\x02\x0dwit-component\x070.202.0\x10wit-bindgen-rust\
 #[doc(hidden)]
 #[cfg(target_arch = "wasm32")]
 pub fn __link_custom_section_describing_imports() {
-  wit_bindgen::rt::maybe_link_cabi_realloc();
+	wit_bindgen::rt::maybe_link_cabi_realloc();
 }
-
