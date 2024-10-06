@@ -48,9 +48,7 @@ struct Implementation;
 impl exports::host::api::callbacks::Guest for Implementation {
 	fn execute_command(command:String) { commands::execute_command(&command); }
 
-	fn did_change_text_document(
-		event:host::api::types::TextDocumentChangeEvent,
-	) {
+	fn did_change_text_document(event:host::api::types::TextDocumentChangeEvent) {
 		workspace::fire_did_change_text_document(&event);
 	}
 }

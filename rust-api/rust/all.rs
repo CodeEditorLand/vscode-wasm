@@ -17,10 +17,7 @@ pub mod host {
 				pub character:u32,
 			}
 			impl ::core::fmt::Debug for Position {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Position")
 						.field("line", &self.line)
 						.field("character", &self.character)
@@ -34,10 +31,7 @@ pub mod host {
 				pub end:Position,
 			}
 			impl ::core::fmt::Debug for Range {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Range")
 						.field("start", &self.start)
 						.field("end", &self.end)
@@ -52,10 +46,7 @@ pub mod host {
 				pub text:_rt::String,
 			}
 			impl ::core::fmt::Debug for TextDocumentContentChangeEvent {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("TextDocumentContentChangeEvent")
 						.field("range", &self.range)
 						.field("range-offset", &self.range_offset)
@@ -78,14 +69,10 @@ pub mod host {
 				}
 
 				#[doc(hidden)]
-				pub fn take_handle(&self) -> u32 {
-					_rt::Resource::take_handle(&self.handle)
-				}
+				pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 				#[doc(hidden)]
-				pub fn handle(&self) -> u32 {
-					_rt::Resource::handle(&self.handle)
-				}
+				pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 			}
 
 			unsafe impl _rt::WasmResource for TextDocument {
@@ -114,18 +101,13 @@ pub mod host {
 				Redo,
 			}
 			impl ::core::fmt::Debug for TextDocumentChangeReason {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
 						TextDocumentChangeReason::Undo => {
-							f.debug_tuple("TextDocumentChangeReason::Undo")
-								.finish()
+							f.debug_tuple("TextDocumentChangeReason::Undo").finish()
 						},
 						TextDocumentChangeReason::Redo => {
-							f.debug_tuple("TextDocumentChangeReason::Redo")
-								.finish()
+							f.debug_tuple("TextDocumentChangeReason::Redo").finish()
 						},
 					}
 				}
@@ -152,10 +134,7 @@ pub mod host {
 				pub reason:Option<TextDocumentChangeReason>,
 			}
 			impl ::core::fmt::Debug for TextDocumentChangeEvent {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("TextDocumentChangeEvent")
 						.field("document", &self.document)
 						.field("content-changes", &self.content_changes)
@@ -177,14 +156,10 @@ pub mod host {
 				}
 
 				#[doc(hidden)]
-				pub fn take_handle(&self) -> u32 {
-					_rt::Resource::take_handle(&self.handle)
-				}
+				pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 				#[doc(hidden)]
-				pub fn handle(&self) -> u32 {
-					_rt::Resource::handle(&self.handle)
-				}
+				pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 			}
 
 			unsafe impl _rt::WasmResource for OutputChannel {
@@ -211,15 +186,10 @@ pub mod host {
 				Pattern(_rt::String),
 			}
 			impl ::core::fmt::Debug for GlobPattern {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
 						GlobPattern::Pattern(e) => {
-							f.debug_tuple("GlobPattern::Pattern")
-								.field(e)
-								.finish()
+							f.debug_tuple("GlobPattern::Pattern").field(e).finish()
 						},
 					}
 				}
@@ -232,10 +202,7 @@ pub mod host {
 				pub pattern:Option<GlobPattern>,
 			}
 			impl ::core::fmt::Debug for DocumentFilter {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("DocumentFilter")
 						.field("language", &self.language)
 						.field("scheme", &self.scheme)
@@ -250,20 +217,13 @@ pub mod host {
 				Single(DocumentFilter),
 			}
 			impl ::core::fmt::Debug for DocumentSelector {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
 						DocumentSelector::Many(e) => {
-							f.debug_tuple("DocumentSelector::Many")
-								.field(e)
-								.finish()
+							f.debug_tuple("DocumentSelector::Many").field(e).finish()
 						},
 						DocumentSelector::Single(e) => {
-							f.debug_tuple("DocumentSelector::Single")
-								.field(e)
-								.finish()
+							f.debug_tuple("DocumentSelector::Single").field(e).finish()
 						},
 					}
 				}
@@ -274,8 +234,7 @@ pub mod host {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -290,8 +249,7 @@ pub mod host {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -302,8 +260,7 @@ pub mod host {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -318,8 +275,7 @@ pub mod host {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -348,8 +304,7 @@ pub mod host {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -364,8 +319,7 @@ pub mod host {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -376,8 +330,7 @@ pub mod host {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -392,8 +345,7 @@ pub mod host {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -414,14 +366,8 @@ pub mod host {
 						}
 
 						#[cfg(not(target_arch = "wasm32"))]
-						fn wit_import(_:i32, _:*mut u8, _:usize) {
-							unreachable!()
-						}
-						wit_import(
-							(self).handle() as i32,
-							ptr0.cast_mut(),
-							len0,
-						);
+						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
@@ -441,14 +387,8 @@ pub mod host {
 						}
 
 						#[cfg(not(target_arch = "wasm32"))]
-						fn wit_import(_:i32, _:*mut u8, _:usize) {
-							unreachable!()
-						}
-						wit_import(
-							(self).handle() as i32,
-							ptr0.cast_mut(),
-							len0,
-						);
+						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
@@ -496,15 +436,13 @@ pub mod host {
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
 			use super::super::super::_rt;
-			pub type TextDocument =
-				super::super::super::host::api::types::TextDocument;
+			pub type TextDocument = super::super::super::host::api::types::TextDocument;
 			#[allow(unused_unsafe, clippy::all)]
 			pub fn text_documents() -> _rt::Vec<TextDocument> {
 				unsafe {
 					#[repr(align(4))]
 					struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-					let mut ret_area =
-						RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+					let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 					let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 					#[cfg(target_arch = "wasm32")]
 					#[link(wasm_import_module = "host:api/workspace")]
@@ -526,7 +464,9 @@ pub mod host {
 						let e4 = {
 							let l3 = *base.add(0).cast::<i32>();
 
-							super::super::super::host::api::types::TextDocument::from_handle(l3 as u32)
+							super::super::super::host::api::types::TextDocument::from_handle(
+								l3 as u32,
+							)
 						};
 						result4.push(e4);
 					}
@@ -620,13 +560,9 @@ pub mod host {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
-			pub type OutputChannel =
-				super::super::super::host::api::types::OutputChannel;
+			pub type OutputChannel = super::super::super::host::api::types::OutputChannel;
 			#[allow(unused_unsafe, clippy::all)]
-			pub fn create_output_channel(
-				name:&str,
-				language_id:Option<&str>,
-			) -> OutputChannel {
+			pub fn create_output_channel(name:&str, language_id:Option<&str>) -> OutputChannel {
 				unsafe {
 					let vec0 = name;
 					let ptr0 = vec0.as_ptr().cast::<u8>();
@@ -645,32 +581,14 @@ pub mod host {
 					#[link(wasm_import_module = "host:api/window")]
 					extern {
 						#[link_name = "create-output-channel"]
-						fn wit_import(
-							_:*mut u8,
-							_:usize,
-							_:i32,
-							_:*mut u8,
-							_:usize,
-						) -> i32;
+						fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32;
 					}
 
 					#[cfg(not(target_arch = "wasm32"))]
-					fn wit_import(
-						_:*mut u8,
-						_:usize,
-						_:i32,
-						_:*mut u8,
-						_:usize,
-					) -> i32 {
+					fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32 {
 						unreachable!()
 					}
-					let ret = wit_import(
-						ptr0.cast_mut(),
-						len0,
-						result2_0,
-						result2_1,
-						result2_2,
-					);
+					let ret = wit_import(ptr0.cast_mut(), len0, result2_0, result2_1, result2_2);
 					super::super::super::host::api::types::OutputChannel::from_handle(ret as u32)
 				}
 			}
@@ -684,15 +602,10 @@ pub mod host {
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
 			use super::super::super::_rt;
-			pub type DocumentSelector =
-				super::super::super::host::api::types::DocumentSelector;
-			pub type TextDocument =
-				super::super::super::host::api::types::TextDocument;
+			pub type DocumentSelector = super::super::super::host::api::types::DocumentSelector;
+			pub type TextDocument = super::super::super::host::api::types::TextDocument;
 			#[allow(unused_unsafe, clippy::all)]
-			pub fn match_selector(
-				selector:&DocumentSelector,
-				document:TextDocument,
-			) -> u32 {
+			pub fn match_selector(selector:&DocumentSelector, document:TextDocument) -> u32 {
 				unsafe {
 					let mut cleanup_list = _rt::Vec::new();
 					use super::super::super::host::api::types::DocumentSelector as V18;
@@ -716,13 +629,9 @@ pub mod host {
 							let vec6 = e;
 							let len6 = vec6.len();
 							let layout6 =
-								_rt::alloc::Layout::from_size_align_unchecked(
-									vec6.len() * 52,
-									4,
-								);
+								_rt::alloc::Layout::from_size_align_unchecked(vec6.len() * 52, 4);
 							let result6 = if layout6.size() != 0 {
-								let ptr =
-									_rt::alloc::alloc(layout6).cast::<u8>();
+								let ptr = _rt::alloc::alloc(layout6).cast::<u8>();
 								if ptr.is_null() {
 									_rt::alloc::handle_alloc_error(layout6);
 								}
@@ -733,93 +642,74 @@ pub mod host {
 							for (i, e) in vec6.into_iter().enumerate() {
 								let base = result6.add(i * 52);
 								{
-									let super::super::super::host::api::types::DocumentFilter{ language:language0, scheme:scheme0, notebook_type:notebook_type0, pattern:pattern0, } = e;
+									let super::super::super::host::api::types::DocumentFilter {
+										language: language0,
+										scheme: scheme0,
+										notebook_type: notebook_type0,
+										pattern: pattern0,
+									} = e;
 									match language0 {
 										Some(e) => {
-											*base.add(0).cast::<u8>() =
-												(1i32) as u8;
+											*base.add(0).cast::<u8>() = (1i32) as u8;
 											let vec1 = e;
-											let ptr1 =
-												vec1.as_ptr().cast::<u8>();
+											let ptr1 = vec1.as_ptr().cast::<u8>();
 											let len1 = vec1.len();
 											*base.add(8).cast::<usize>() = len1;
-											*base.add(4).cast::<*mut u8>() =
-												ptr1.cast_mut();
+											*base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
 										},
 										None => {
-											*base.add(0).cast::<u8>() =
-												(0i32) as u8;
+											*base.add(0).cast::<u8>() = (0i32) as u8;
 										},
 									};
 									match scheme0 {
 										Some(e) => {
-											*base.add(12).cast::<u8>() =
-												(1i32) as u8;
+											*base.add(12).cast::<u8>() = (1i32) as u8;
 											let vec2 = e;
-											let ptr2 =
-												vec2.as_ptr().cast::<u8>();
+											let ptr2 = vec2.as_ptr().cast::<u8>();
 											let len2 = vec2.len();
-											*base.add(20).cast::<usize>() =
-												len2;
-											*base.add(16).cast::<*mut u8>() =
-												ptr2.cast_mut();
+											*base.add(20).cast::<usize>() = len2;
+											*base.add(16).cast::<*mut u8>() = ptr2.cast_mut();
 										},
 										None => {
-											*base.add(12).cast::<u8>() =
-												(0i32) as u8;
+											*base.add(12).cast::<u8>() = (0i32) as u8;
 										},
 									};
 									match notebook_type0 {
 										Some(e) => {
-											*base.add(24).cast::<u8>() =
-												(1i32) as u8;
+											*base.add(24).cast::<u8>() = (1i32) as u8;
 											let vec3 = e;
-											let ptr3 =
-												vec3.as_ptr().cast::<u8>();
+											let ptr3 = vec3.as_ptr().cast::<u8>();
 											let len3 = vec3.len();
-											*base.add(32).cast::<usize>() =
-												len3;
-											*base.add(28).cast::<*mut u8>() =
-												ptr3.cast_mut();
+											*base.add(32).cast::<usize>() = len3;
+											*base.add(28).cast::<*mut u8>() = ptr3.cast_mut();
 										},
 										None => {
-											*base.add(24).cast::<u8>() =
-												(0i32) as u8;
+											*base.add(24).cast::<u8>() = (0i32) as u8;
 										},
 									};
 									match pattern0 {
 										Some(e) => {
-											*base.add(36).cast::<u8>() =
-												(1i32) as u8;
+											*base.add(36).cast::<u8>() = (1i32) as u8;
 											use super::super::super::host::api::types::GlobPattern as V5;
 											match e {
 												V5::Pattern(e) => {
-													*base
-														.add(40)
-														.cast::<u8>() = (0i32) as u8;
+													*base.add(40).cast::<u8>() = (0i32) as u8;
 													let vec4 = e;
-													let ptr4 = vec4
-														.as_ptr()
-														.cast::<u8>();
+													let ptr4 = vec4.as_ptr().cast::<u8>();
 													let len4 = vec4.len();
-													*base
-														.add(48)
-														.cast::<usize>() = len4;
-													*base
-														.add(44)
-														.cast::<*mut u8>() = ptr4.cast_mut();
+													*base.add(48).cast::<usize>() = len4;
+													*base.add(44).cast::<*mut u8>() =
+														ptr4.cast_mut();
 												},
 											}
 										},
 										None => {
-											*base.add(36).cast::<u8>() =
-												(0i32) as u8;
+											*base.add(36).cast::<u8>() = (0i32) as u8;
 										},
 									};
 								}
 							}
-							cleanup_list
-								.extend_from_slice(&[(result6, layout6)]);
+							cleanup_list.extend_from_slice(&[(result6, layout6)]);
 
 							(
 								0i32,
@@ -839,76 +729,58 @@ pub mod host {
 							)
 						},
 						V18::Single(e) => {
-							let super::super::super::host::api::types::DocumentFilter{ language:language7, scheme:scheme7, notebook_type:notebook_type7, pattern:pattern7, } = e;
-							let (result9_0, result9_1, result9_2) =
-								match language7 {
-									Some(e) => {
-										let vec8 = e;
-										let ptr8 = vec8.as_ptr().cast::<u8>();
-										let len8 = vec8.len();
+							let super::super::super::host::api::types::DocumentFilter {
+								language: language7,
+								scheme: scheme7,
+								notebook_type: notebook_type7,
+								pattern: pattern7,
+							} = e;
+							let (result9_0, result9_1, result9_2) = match language7 {
+								Some(e) => {
+									let vec8 = e;
+									let ptr8 = vec8.as_ptr().cast::<u8>();
+									let len8 = vec8.len();
 
-										(1i32, ptr8.cast_mut(), len8)
-									},
-									None => {
-										(0i32, ::core::ptr::null_mut(), 0usize)
-									},
-								};
-							let (result11_0, result11_1, result11_2) =
-								match scheme7 {
-									Some(e) => {
-										let vec10 = e;
-										let ptr10 = vec10.as_ptr().cast::<u8>();
-										let len10 = vec10.len();
+									(1i32, ptr8.cast_mut(), len8)
+								},
+								None => (0i32, ::core::ptr::null_mut(), 0usize),
+							};
+							let (result11_0, result11_1, result11_2) = match scheme7 {
+								Some(e) => {
+									let vec10 = e;
+									let ptr10 = vec10.as_ptr().cast::<u8>();
+									let len10 = vec10.len();
 
-										(1i32, ptr10.cast_mut(), len10)
-									},
-									None => {
-										(0i32, ::core::ptr::null_mut(), 0usize)
-									},
-								};
-							let (result13_0, result13_1, result13_2) =
-								match notebook_type7 {
-									Some(e) => {
-										let vec12 = e;
-										let ptr12 = vec12.as_ptr().cast::<u8>();
-										let len12 = vec12.len();
+									(1i32, ptr10.cast_mut(), len10)
+								},
+								None => (0i32, ::core::ptr::null_mut(), 0usize),
+							};
+							let (result13_0, result13_1, result13_2) = match notebook_type7 {
+								Some(e) => {
+									let vec12 = e;
+									let ptr12 = vec12.as_ptr().cast::<u8>();
+									let len12 = vec12.len();
 
-										(1i32, ptr12.cast_mut(), len12)
-									},
-									None => {
-										(0i32, ::core::ptr::null_mut(), 0usize)
-									},
-								};
-							let (
-								result17_0,
-								result17_1,
-								result17_2,
-								result17_3,
-							) = match pattern7 {
+									(1i32, ptr12.cast_mut(), len12)
+								},
+								None => (0i32, ::core::ptr::null_mut(), 0usize),
+							};
+							let (result17_0, result17_1, result17_2, result17_3) = match pattern7 {
 								Some(e) => {
 									use super::super::super::host::api::types::GlobPattern as V15;
-									let (result16_0, result16_1, result16_2) =
-										match e {
-											V15::Pattern(e) => {
-												let vec14 = e;
-												let ptr14 =
-													vec14.as_ptr().cast::<u8>();
-												let len14 = vec14.len();
+									let (result16_0, result16_1, result16_2) = match e {
+										V15::Pattern(e) => {
+											let vec14 = e;
+											let ptr14 = vec14.as_ptr().cast::<u8>();
+											let len14 = vec14.len();
 
-												(0i32, ptr14.cast_mut(), len14)
-											},
-										};
+											(0i32, ptr14.cast_mut(), len14)
+										},
+									};
 
 									(1i32, result16_0, result16_1, result16_2)
 								},
-								None => {
-									(
-										0i32,
-										0i32,
-										::core::ptr::null_mut(),
-										0usize,
-									)
-								},
+								None => (0i32, 0i32, ::core::ptr::null_mut(), 0usize),
 							};
 							(
 								1i32,
@@ -1008,9 +880,11 @@ pub mod exports {
 				#[used]
 				#[doc(hidden)]
 				#[cfg(target_arch = "wasm32")]
-				static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
+				static __FORCE_SECTION_REF:fn() =
+					super::super::super::super::__link_custom_section_describing_imports;
 				use super::super::super::super::_rt;
-				pub type TextDocumentChangeEvent = super::super::super::super::host::api::types::TextDocumentChangeEvent;
+				pub type TextDocumentChangeEvent =
+					super::super::super::super::host::api::types::TextDocumentChangeEvent;
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
 				pub unsafe fn _export_did_change_text_document_cabi<T:Guest>(
@@ -1035,8 +909,7 @@ pub mod exports {
 							let l6 = *base.add(24).cast::<*mut u8>();
 							let l7 = *base.add(28).cast::<usize>();
 							let len8 = l7;
-							let bytes8 =
-								_rt::Vec::from_raw_parts(l6.cast(), len8, len8);
+							let bytes8 = _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
 							super::super::super::super::host::api::types::TextDocumentContentChangeEvent{
                 range: super::super::super::super::host::api::types::Range{
@@ -1072,13 +945,9 @@ pub mod exports {
 				}
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_execute_command_cabi<T:Guest>(
-					arg0:*mut u8,
-					arg1:usize,
-				) {
+				pub unsafe fn _export_execute_command_cabi<T:Guest>(arg0:*mut u8, arg1:usize) {
 					let len0 = arg1;
-					let bytes0 =
-						_rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
 					T::execute_command(_rt::string_lift(bytes0));
 				}
 				pub trait Guest {
@@ -1169,14 +1038,10 @@ mod _rt {
 		/// dynamic nature of `take_handle` should only be exposed internally
 		/// to generated code, not to user code.
 		#[doc(hidden)]
-		pub fn take_handle(resource:&Resource<T>) -> u32 {
-			resource.handle.swap(u32::MAX, Relaxed)
-		}
+		pub fn take_handle(resource:&Resource<T>) -> u32 { resource.handle.swap(u32::MAX, Relaxed) }
 
 		#[doc(hidden)]
-		pub fn handle(resource:&Resource<T>) -> u32 {
-			resource.handle.load(Relaxed)
-		}
+		pub fn handle(resource:&Resource<T>) -> u32 { resource.handle.load(Relaxed) }
 	}
 
 	impl<T:WasmResource> fmt::Debug for Resource<T> {
@@ -1258,7 +1123,7 @@ pub(crate) use __export_all_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.21.0:all:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1708] = *b"\
+pub static __WIT_BINDGEN_COMPONENT_TYPE:[u8; 1708] = *b"\
 \0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb2\x0c\x01A\x02\x01\
 A\x10\x01B(\x01r\x02\x04liney\x09charactery\x04\0\x08position\x03\0\0\x01r\x02\x05\
 start\x01\x03end\x01\x04\0\x05range\x03\0\x02\x01r\x04\x05range\x03\x0crange-off\
@@ -1299,6 +1164,4 @@ wit-bindgen-rust\x060.21.0";
 #[inline(never)]
 #[doc(hidden)]
 #[cfg(target_arch = "wasm32")]
-pub fn __link_custom_section_describing_imports() {
-	wit_bindgen::rt::maybe_link_cabi_realloc();
-}
+pub fn __link_custom_section_describing_imports() { wit_bindgen::rt::maybe_link_cabi_realloc(); }

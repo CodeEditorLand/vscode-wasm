@@ -52,32 +52,20 @@ pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	use vscode::example::types::Operation as V0;
 	let v0 = match arg0 {
 		0 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Add(e0)
 		},
 		1 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Sub(e0)
 		},
 		2 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Div(e0)
 		},
 	};
@@ -133,8 +121,7 @@ macro_rules! __export_world_calculator_cabi{
 pub(crate) use __export_world_calculator_cabi;
 #[repr(align(4))]
 struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
-static mut _RET_AREA:_RetArea =
-	_RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+static mut _RET_AREA:_RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 #[allow(dead_code)]
 pub mod vscode {
 	#[allow(dead_code)]
@@ -154,10 +141,7 @@ pub mod vscode {
 				pub right:u32,
 			}
 			impl ::core::fmt::Debug for Operands {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
 						.field("left", &self.left)
 						.field("right", &self.right)
@@ -172,23 +156,12 @@ pub mod vscode {
 				Div(Operands),
 			}
 			impl ::core::fmt::Debug for Operation {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
-						Operation::Add(e) => {
-							f.debug_tuple("Operation::Add").field(e).finish()
-						},
-						Operation::Sub(e) => {
-							f.debug_tuple("Operation::Sub").field(e).finish()
-						},
-						Operation::Mul(e) => {
-							f.debug_tuple("Operation::Mul").field(e).finish()
-						},
-						Operation::Div(e) => {
-							f.debug_tuple("Operation::Div").field(e).finish()
-						},
+						Operation::Add(e) => f.debug_tuple("Operation::Add").field(e).finish(),
+						Operation::Sub(e) => f.debug_tuple("Operation::Sub").field(e).finish(),
+						Operation::Mul(e) => f.debug_tuple("Operation::Mul").field(e).finish(),
+						Operation::Div(e) => f.debug_tuple("Operation::Div").field(e).finish(),
 					}
 				}
 			}
@@ -206,14 +179,10 @@ pub mod vscode {
 				}
 
 				#[doc(hidden)]
-				pub fn take_handle(&self) -> u32 {
-					_rt::Resource::take_handle(&self.handle)
-				}
+				pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 				#[doc(hidden)]
-				pub fn handle(&self) -> u32 {
-					_rt::Resource::handle(&self.handle)
-				}
+				pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 			}
 
 			unsafe impl _rt::WasmResource for Channel {
@@ -269,14 +238,8 @@ pub mod vscode {
 						}
 
 						#[cfg(not(target_arch = "wasm32"))]
-						fn wit_import(_:i32, _:*mut u8, _:usize) {
-							unreachable!()
-						}
-						wit_import(
-							(self).handle() as i32,
-							ptr0.cast_mut(),
-							len0,
-						);
+						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
@@ -294,7 +257,8 @@ pub mod exports {
 				#[used]
 				#[doc(hidden)]
 				#[cfg(target_arch = "wasm32")]
-				static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
+				static __FORCE_SECTION_REF:fn() =
+					super::super::super::super::__link_custom_section_describing_imports;
 				use super::super::super::super::_rt;
 				#[repr(u8)]
 				#[derive(Clone, Copy, Eq, PartialEq)]
@@ -305,23 +269,12 @@ pub mod exports {
 					Div,
 				}
 				impl ::core::fmt::Debug for Operation {
-					fn fmt(
-						&self,
-						f:&mut ::core::fmt::Formatter<'_>,
-					) -> ::core::fmt::Result {
+					fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 						match self {
-							Operation::Add => {
-								f.debug_tuple("Operation::Add").finish()
-							},
-							Operation::Sub => {
-								f.debug_tuple("Operation::Sub").finish()
-							},
-							Operation::Mul => {
-								f.debug_tuple("Operation::Mul").finish()
-							},
-							Operation::Div => {
-								f.debug_tuple("Operation::Div").finish()
-							},
+							Operation::Add => f.debug_tuple("Operation::Add").finish(),
+							Operation::Sub => f.debug_tuple("Operation::Sub").finish(),
+							Operation::Mul => f.debug_tuple("Operation::Mul").finish(),
+							Operation::Div => f.debug_tuple("Operation::Div").finish(),
 						}
 					}
 				}
@@ -363,11 +316,8 @@ pub mod exports {
 					pub fn new<T:GuestEngine>(val:T) -> Self {
 						Self::type_guard::<T>();
 						let val:_EngineRep<T> = Some(val);
-						let ptr:*mut _EngineRep<T> =
-							_rt::Box::into_raw(_rt::Box::new(val));
-						unsafe {
-							Self::from_handle(T::_resource_new(ptr.cast()))
-						}
+						let ptr:*mut _EngineRep<T> = _rt::Box::into_raw(_rt::Box::new(val));
+						unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
 					}
 
 					/// Gets access to the underlying `T` which represents this
@@ -396,14 +346,10 @@ pub mod exports {
 					}
 
 					#[doc(hidden)]
-					pub fn take_handle(&self) -> u32 {
-						_rt::Resource::take_handle(&self.handle)
-					}
+					pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 					#[doc(hidden)]
-					pub fn handle(&self) -> u32 {
-						_rt::Resource::handle(&self.handle)
-					}
+					pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 
 					// It's theoretically possible to implement the
 					// `GuestEngine` trait twice so guard against using it
@@ -419,8 +365,7 @@ pub mod exports {
 								Some(ty) => {
 									assert!(
 										ty == id,
-										"cannot use two types with this \
-										 resource type"
+										"cannot use two types with this resource type"
 									)
 								},
 								None => LAST_TYPE = Some(id),
@@ -431,8 +376,7 @@ pub mod exports {
 					#[doc(hidden)]
 					pub unsafe fn dtor<T:'static>(handle:*mut u8) {
 						Self::type_guard::<T>();
-						let _ =
-							_rt::Box::from_raw(handle as *mut _EngineRep<T>);
+						let _ = _rt::Box::from_raw(handle as *mut _EngineRep<T>);
 					}
 
 					fn as_ptr<T:GuestEngine>(&self) -> *mut _EngineRep<T> {
@@ -453,10 +397,7 @@ pub mod exports {
 				impl<'a> EngineBorrow<'a> {
 					#[doc(hidden)]
 					pub unsafe fn lift(rep:usize) -> Self {
-						Self {
-							rep:rep as *mut u8,
-							_marker:core::marker::PhantomData,
-						}
+						Self { rep:rep as *mut u8, _marker:core::marker::PhantomData }
 					}
 
 					/// Gets access to the underlying `T` in this resource.
@@ -483,8 +424,7 @@ pub mod exports {
 
 						#[cfg(target_arch = "wasm32")]
 						{
-							#[link(wasm_import_module = "[export]vscode:\
-							                             example/reverse-notation")]
+							#[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
 							extern {
 								#[link_name = "[resource-drop]engine"]
 								fn drop(_:u32);
@@ -497,8 +437,7 @@ pub mod exports {
 
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_constructor_engine_cabi<T:GuestEngine>()
-				-> i32 {
+				pub unsafe fn _export_constructor_engine_cabi<T:GuestEngine>() -> i32 {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
 					let result0 = Engine::new(T::new());
@@ -506,24 +445,17 @@ pub mod exports {
 				}
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_method_engine_push_operand_cabi<
-					T:GuestEngine,
-				>(
+				pub unsafe fn _export_method_engine_push_operand_cabi<T:GuestEngine>(
 					arg0:*mut u8,
 					arg1:i32,
 				) {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
-					T::push_operand(
-						EngineBorrow::lift(arg0 as u32 as usize).get(),
-						arg1 as u32,
-					);
+					T::push_operand(EngineBorrow::lift(arg0 as u32 as usize).get(), arg1 as u32);
 				}
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_method_engine_push_operation_cabi<
-					T:GuestEngine,
-				>(
+				pub unsafe fn _export_method_engine_push_operation_cabi<T:GuestEngine>(
 					arg0:*mut u8,
 					arg1:i32,
 				) {
@@ -536,16 +468,12 @@ pub mod exports {
 				}
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_method_engine_execute_cabi<
-					T:GuestEngine,
-				>(
+				pub unsafe fn _export_method_engine_execute_cabi<T:GuestEngine>(
 					arg0:*mut u8,
 				) -> i32 {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
-					let result0 = T::execute(
-						EngineBorrow::lift(arg0 as u32 as usize).get(),
-					);
+					let result0 = T::execute(EngineBorrow::lift(arg0 as u32 as usize).get());
 					_rt::as_i32(result0)
 				}
 				pub trait Guest {
@@ -564,8 +492,7 @@ pub mod exports {
 
 						#[cfg(target_arch = "wasm32")]
 						{
-							#[link(wasm_import_module = "[export]vscode:\
-							                             example/reverse-notation")]
+							#[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
 							extern {
 								#[link_name = "[resource-new]engine"]
 								fn new(_:*mut u8) -> u32;
@@ -586,8 +513,7 @@ pub mod exports {
 
 						#[cfg(target_arch = "wasm32")]
 						{
-							#[link(wasm_import_module = "[export]vscode:\
-							                             example/reverse-notation")]
+							#[link(wasm_import_module = "[export]vscode:example/reverse-notation")]
 							extern {
 								#[link_name = "[resource-rep]engine"]
 								fn rep(_:u32) -> *mut u8;
@@ -704,14 +630,10 @@ mod _rt {
 		/// dynamic nature of `take_handle` should only be exposed internally
 		/// to generated code, not to user code.
 		#[doc(hidden)]
-		pub fn take_handle(resource:&Resource<T>) -> u32 {
-			resource.handle.swap(u32::MAX, Relaxed)
-		}
+		pub fn take_handle(resource:&Resource<T>) -> u32 { resource.handle.swap(u32::MAX, Relaxed) }
 
 		#[doc(hidden)]
-		pub fn handle(resource:&Resource<T>) -> u32 {
-			resource.handle.load(Relaxed)
-		}
+		pub fn handle(resource:&Resource<T>) -> u32 { resource.handle.load(Relaxed) }
 	}
 
 	impl<T:WasmResource> fmt::Debug for Resource<T> {
@@ -841,7 +763,7 @@ pub(crate) use __export_calculator_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.24.0:calculator:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 720] = *b"\
+pub static __WIT_BINDGEN_COMPONENT_TYPE:[u8; 720] = *b"\
 \0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xcf\x04\x01A\x02\x01\
 A\x0d\x01B\x0b\x01r\x02\x04lefty\x05righty\x04\0\x08operands\x03\0\0\x01q\x04\x03\
 add\x01\x01\0\x03sub\x01\x01\0\x03mul\x01\x01\0\x03div\x01\x01\0\x04\0\x09operat\
@@ -863,6 +785,4 @@ oducers\x01\x0cprocessed-by\x02\x0dwit-component\x070.202.0\x10wit-bindgen-rust\
 #[inline(never)]
 #[doc(hidden)]
 #[cfg(target_arch = "wasm32")]
-pub fn __link_custom_section_describing_imports() {
-	wit_bindgen::rt::maybe_link_cabi_realloc();
-}
+pub fn __link_custom_section_describing_imports() { wit_bindgen::rt::maybe_link_cabi_realloc(); }

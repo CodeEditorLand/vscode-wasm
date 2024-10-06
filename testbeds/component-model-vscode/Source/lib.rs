@@ -52,29 +52,17 @@ wit_bindgen::generate!({
 struct Extension;
 
 impl callbacks::Guest for Extension {
-	fn execute_command(command:String) {
-		vscode::commands::execute_command(&command);
-	}
+	fn execute_command(command:String) { vscode::commands::execute_command(&command); }
 
-	fn did_change_text_document(
-		_event:host::api::types::TextDocumentChangeEvent,
-	) {
-	}
+	fn did_change_text_document(_event:host::api::types::TextDocumentChangeEvent) {}
 }
 
 impl Guest for Extension {
 	fn activate() {
 		let channel:Rc<vscode::OutputChannel> =
-			Rc::new(vscode::window::create_output_channel(
-				"Rust Extension",
-				Some("plaintext"),
-			));
+			Rc::new(vscode::window::create_output_channel("Rust Extension", Some("plaintext")));
 		for document in vscode::workspace::text_documents() {
-			channel.append_line(&format!(
-				"Document: {} {}",
-				document.uri(),
-				document.handle()
-			));
+			channel.append_line(&format!("Document: {} {}", document.uri(), document.handle()));
 		}
 		let channel_clone = channel.clone();
 		vscode::commands::register_command(

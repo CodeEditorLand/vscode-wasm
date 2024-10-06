@@ -7,32 +7,20 @@ pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	use vscode::example::types::Operation as V0;
 	let v0 = match arg0 {
 		0 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Add(e0)
 		},
 		1 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Sub(e0)
 		},
 		2 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Div(e0)
 		},
 	};
@@ -133,10 +121,7 @@ pub mod vscode {
 				pub right:u32,
 			}
 			impl ::core::fmt::Debug for Operands {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
 						.field("left", &self.left)
 						.field("right", &self.right)
@@ -151,23 +136,12 @@ pub mod vscode {
 				Div(Operands),
 			}
 			impl ::core::fmt::Debug for Operation {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
-						Operation::Add(e) => {
-							f.debug_tuple("Operation::Add").field(e).finish()
-						},
-						Operation::Sub(e) => {
-							f.debug_tuple("Operation::Sub").field(e).finish()
-						},
-						Operation::Mul(e) => {
-							f.debug_tuple("Operation::Mul").field(e).finish()
-						},
-						Operation::Div(e) => {
-							f.debug_tuple("Operation::Div").field(e).finish()
-						},
+						Operation::Add(e) => f.debug_tuple("Operation::Add").field(e).finish(),
+						Operation::Sub(e) => f.debug_tuple("Operation::Sub").field(e).finish(),
+						Operation::Mul(e) => f.debug_tuple("Operation::Mul").field(e).finish(),
+						Operation::Div(e) => f.debug_tuple("Operation::Div").field(e).finish(),
 					}
 				}
 			}
@@ -185,14 +159,10 @@ pub mod vscode {
 				}
 
 				#[doc(hidden)]
-				pub fn take_handle(&self) -> u32 {
-					_rt::Resource::take_handle(&self.handle)
-				}
+				pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 				#[doc(hidden)]
-				pub fn handle(&self) -> u32 {
-					_rt::Resource::handle(&self.handle)
-				}
+				pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 			}
 
 			unsafe impl _rt::WasmResource for TextDocument {
@@ -221,18 +191,13 @@ pub mod vscode {
 				Redo,
 			}
 			impl ::core::fmt::Debug for TextDocumentChangeReason {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
 						TextDocumentChangeReason::Undo => {
-							f.debug_tuple("TextDocumentChangeReason::Undo")
-								.finish()
+							f.debug_tuple("TextDocumentChangeReason::Undo").finish()
 						},
 						TextDocumentChangeReason::Redo => {
-							f.debug_tuple("TextDocumentChangeReason::Redo")
-								.finish()
+							f.debug_tuple("TextDocumentChangeReason::Redo").finish()
 						},
 					}
 				}
@@ -266,14 +231,10 @@ pub mod vscode {
 				}
 
 				#[doc(hidden)]
-				pub fn take_handle(&self) -> u32 {
-					_rt::Resource::take_handle(&self.handle)
-				}
+				pub fn take_handle(&self) -> u32 { _rt::Resource::take_handle(&self.handle) }
 
 				#[doc(hidden)]
-				pub fn handle(&self) -> u32 {
-					_rt::Resource::handle(&self.handle)
-				}
+				pub fn handle(&self) -> u32 { _rt::Resource::handle(&self.handle) }
 			}
 
 			unsafe impl _rt::WasmResource for OutputChannel {
@@ -301,8 +262,7 @@ pub mod vscode {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -317,8 +277,7 @@ pub mod vscode {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -329,8 +288,7 @@ pub mod vscode {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -345,8 +303,7 @@ pub mod vscode {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -375,8 +332,7 @@ pub mod vscode {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -391,8 +347,7 @@ pub mod vscode {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -403,8 +358,7 @@ pub mod vscode {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
-						let mut ret_area =
-							RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -419,8 +373,7 @@ pub mod vscode {
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
 						let l2 = *ptr0.add(4).cast::<usize>();
 						let len3 = l2;
-						let bytes3 =
-							_rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
 						_rt::string_lift(bytes3)
 					}
 				}
@@ -441,14 +394,8 @@ pub mod vscode {
 						}
 
 						#[cfg(not(target_arch = "wasm32"))]
-						fn wit_import(_:i32, _:*mut u8, _:usize) {
-							unreachable!()
-						}
-						wit_import(
-							(self).handle() as i32,
-							ptr0.cast_mut(),
-							len0,
-						);
+						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
@@ -468,14 +415,8 @@ pub mod vscode {
 						}
 
 						#[cfg(not(target_arch = "wasm32"))]
-						fn wit_import(_:i32, _:*mut u8, _:usize) {
-							unreachable!()
-						}
-						wit_import(
-							(self).handle() as i32,
-							ptr0.cast_mut(),
-							len0,
-						);
+						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
@@ -522,13 +463,9 @@ pub mod vscode {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
-			pub type OutputChannel =
-				super::super::super::vscode::example::types::OutputChannel;
+			pub type OutputChannel = super::super::super::vscode::example::types::OutputChannel;
 			#[allow(unused_unsafe, clippy::all)]
-			pub fn create_output_channel(
-				name:&str,
-				language_id:Option<&str>,
-			) -> OutputChannel {
+			pub fn create_output_channel(name:&str, language_id:Option<&str>) -> OutputChannel {
 				unsafe {
 					let vec0 = name;
 					let ptr0 = vec0.as_ptr().cast::<u8>();
@@ -547,33 +484,17 @@ pub mod vscode {
 					#[link(wasm_import_module = "vscode:example/window")]
 					extern {
 						#[link_name = "create-output-channel"]
-						fn wit_import(
-							_:*mut u8,
-							_:usize,
-							_:i32,
-							_:*mut u8,
-							_:usize,
-						) -> i32;
+						fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32;
 					}
 
 					#[cfg(not(target_arch = "wasm32"))]
-					fn wit_import(
-						_:*mut u8,
-						_:usize,
-						_:i32,
-						_:*mut u8,
-						_:usize,
-					) -> i32 {
+					fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32 {
 						unreachable!()
 					}
-					let ret = wit_import(
-						ptr0.cast_mut(),
-						len0,
-						result2_0,
-						result2_1,
-						result2_2,
-					);
-					super::super::super::vscode::example::types::OutputChannel::from_handle(ret as u32)
+					let ret = wit_import(ptr0.cast_mut(), len0, result2_0, result2_1, result2_2);
+					super::super::super::vscode::example::types::OutputChannel::from_handle(
+						ret as u32,
+					)
 				}
 			}
 		}
@@ -587,7 +508,8 @@ pub mod exports {
 				#[used]
 				#[doc(hidden)]
 				#[cfg(target_arch = "wasm32")]
-				static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
+				static __FORCE_SECTION_REF:fn() =
+					super::super::super::super::__link_custom_section_describing_imports;
 				use super::super::super::super::_rt;
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
@@ -596,8 +518,7 @@ pub mod exports {
 					arg1:usize,
 				) {
 					let len0 = arg1;
-					let bytes0 =
-						_rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
 					T::did_change_text_document(_rt::string_lift(bytes0));
 				}
 				pub trait Guest {
@@ -623,17 +544,14 @@ pub mod exports {
 				#[used]
 				#[doc(hidden)]
 				#[cfg(target_arch = "wasm32")]
-				static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
+				static __FORCE_SECTION_REF:fn() =
+					super::super::super::super::__link_custom_section_describing_imports;
 				use super::super::super::super::_rt;
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
-				pub unsafe fn _export_execute_cabi<T:Guest>(
-					arg0:*mut u8,
-					arg1:usize,
-				) {
+				pub unsafe fn _export_execute_cabi<T:Guest>(arg0:*mut u8, arg1:usize) {
 					let len0 = arg1;
-					let bytes0 =
-						_rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
 					T::execute(_rt::string_lift(bytes0));
 				}
 				pub trait Guest {
@@ -718,14 +636,10 @@ mod _rt {
 		/// dynamic nature of `take_handle` should only be exposed internally
 		/// to generated code, not to user code.
 		#[doc(hidden)]
-		pub fn take_handle(resource:&Resource<T>) -> u32 {
-			resource.handle.swap(u32::MAX, Relaxed)
-		}
+		pub fn take_handle(resource:&Resource<T>) -> u32 { resource.handle.swap(u32::MAX, Relaxed) }
 
 		#[doc(hidden)]
-		pub fn handle(resource:&Resource<T>) -> u32 {
-			resource.handle.load(Relaxed)
-		}
+		pub fn handle(resource:&Resource<T>) -> u32 { resource.handle.load(Relaxed) }
 	}
 
 	impl<T:WasmResource> fmt::Debug for Resource<T> {
@@ -845,7 +759,7 @@ export!(Stub);
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.21.0:calculator:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1403] = *b"\
+pub static __WIT_BINDGEN_COMPONENT_TYPE:[u8; 1403] = *b"\
 \0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xfa\x09\x01A\x02\x01\
 A\x11\x01B\x02\x01@\0\x01\0\x04\0$register-on-did-change-text-document\x01\0\x03\
 \x01\x18vscode:example/workspace\x05\0\x01B\x02\x01@\x01\x07commands\x01\0\x04\0\
@@ -879,9 +793,7 @@ y\x02\x0dwit-component\x070.201.0\x10wit-bindgen-rust\x060.21.0";
 #[inline(never)]
 #[doc(hidden)]
 #[cfg(target_arch = "wasm32")]
-pub fn __link_custom_section_describing_imports() {
-	wit_bindgen::rt::maybe_link_cabi_realloc();
-}
+pub fn __link_custom_section_describing_imports() { wit_bindgen::rt::maybe_link_cabi_realloc(); }
 
 #[derive(Debug)]
 pub struct Stub;

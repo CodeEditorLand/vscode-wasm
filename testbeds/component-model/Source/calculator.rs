@@ -33,32 +33,20 @@ pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	use vscode::example::types::Operation as V0;
 	let v0 = match arg0 {
 		0 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Add(e0)
 		},
 		1 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Sub(e0)
 		},
 		2 => {
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
-			let e0 = vscode::example::types::Operands {
-				left:arg1 as u32,
-				right:arg2 as u32,
-			};
+			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
 			V0::Div(e0)
 		},
 	};
@@ -114,8 +102,7 @@ macro_rules! __export_world_calculator_cabi{
 pub(crate) use __export_world_calculator_cabi;
 #[repr(align(4))]
 struct _RetArea([::core::mem::MaybeUninit<u8>; 8]);
-static mut _RET_AREA:_RetArea =
-	_RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+static mut _RET_AREA:_RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 8]);
 #[allow(dead_code)]
 pub mod vscode {
 	#[allow(dead_code)]
@@ -134,10 +121,7 @@ pub mod vscode {
 				pub right:u32,
 			}
 			impl ::core::fmt::Debug for Operands {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
 						.field("left", &self.left)
 						.field("right", &self.right)
@@ -152,23 +136,12 @@ pub mod vscode {
 				Div(Operands),
 			}
 			impl ::core::fmt::Debug for Operation {
-				fn fmt(
-					&self,
-					f:&mut ::core::fmt::Formatter<'_>,
-				) -> ::core::fmt::Result {
+				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
-						Operation::Add(e) => {
-							f.debug_tuple("Operation::Add").field(e).finish()
-						},
-						Operation::Sub(e) => {
-							f.debug_tuple("Operation::Sub").field(e).finish()
-						},
-						Operation::Mul(e) => {
-							f.debug_tuple("Operation::Mul").field(e).finish()
-						},
-						Operation::Div(e) => {
-							f.debug_tuple("Operation::Div").field(e).finish()
-						},
+						Operation::Add(e) => f.debug_tuple("Operation::Add").field(e).finish(),
+						Operation::Sub(e) => f.debug_tuple("Operation::Sub").field(e).finish(),
+						Operation::Mul(e) => f.debug_tuple("Operation::Mul").field(e).finish(),
+						Operation::Div(e) => f.debug_tuple("Operation::Div").field(e).finish(),
 					}
 				}
 			}
@@ -279,7 +252,7 @@ pub(crate) use __export_calculator_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.24.0:calculator:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 341] = *b"\
+pub static __WIT_BINDGEN_COMPONENT_TYPE:[u8; 341] = *b"\
 \0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd4\x01\x01A\x02\x01\
 A\x09\x01B\x04\x01r\x02\x04lefty\x05righty\x04\0\x08operands\x03\0\0\x01q\x04\x03\
 add\x01\x01\0\x03sub\x01\x01\0\x03mul\x01\x01\0\x03div\x01\x01\0\x04\0\x09operat\
@@ -292,6 +265,4 @@ r\x04\0\x0b\x10\x01\0\x0acalculator\x03\0\0\0G\x09producers\x01\x0cprocessed-by\
 #[inline(never)]
 #[doc(hidden)]
 #[cfg(target_arch = "wasm32")]
-pub fn __link_custom_section_describing_imports() {
-	wit_bindgen::rt::maybe_link_cabi_realloc();
-}
+pub fn __link_custom_section_describing_imports() { wit_bindgen::rt::maybe_link_cabi_realloc(); }
