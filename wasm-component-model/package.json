@@ -1,4 +1,40 @@
 {
+	"name": "@vscode/wasm-component-model",
+	"version": "1.0.1",
+	"description": "A VS Code specific component model implementation",
+	"author": "Visual Studio Code Team",
+	"license": "MIT",
+	"keywords": [
+		"VSCode",
+		"WASM",
+		"Component Model"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/microsoft/vscode-wasm.git"
+	},
+	"bugs": {
+		"url": "https://github.com/microsoft/vscode-wasm/issues"
+	},
+	"homepage": "https://github.com/microsoft/vscode-wasm#readme",
+	"engines": {
+		"node": ">=18.18.2"
+	},
+	"exports": {
+		".": {
+			"types": "./lib/common/api.d.ts",
+			"node": "./lib/node/main.js",
+			"browser": "./lib/browser/main.js"
+		},
+		"./node": {
+			"types": "./lib/node/main.d.ts",
+			"node": "./lib/node/main.js"
+		},
+		"./browser": {
+			"types": "./lib/browser/main.d.ts",
+			"browser": "./lib/browser/main.js"
+		}
+	},
 	"bin": {
 		"wit2ts": "./bin/wit2ts"
 	},
