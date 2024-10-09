@@ -1,7 +1,13 @@
 {
-	"activationEvents": [
-		"*"
-	],
+	"name": "testbed-rust",
+	"description": "Rust Example",
+	"main": "./out/extension.js",
+	"scripts": {
+		"build": "npm run compile:ts && npm run build:rust",
+		"build:rust": "cargo build --target wasm32-wasip1",
+		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
+		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -11,13 +17,7 @@
 			}
 		]
 	},
-	"description": "Rust Example",
-	"main": "./out/extension.js",
-	"name": "testbed-rust",
-	"scripts": {
-		"build": "npm run compile:ts && npm run build:rust",
-		"build:rust": "cargo build --target wasm32-wasip1",
-		"compile:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json",
-		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	}
+	"activationEvents": [
+		"*"
+	]
 }

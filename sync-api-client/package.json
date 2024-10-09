@@ -1,9 +1,8 @@
 {
-	"dependencies": {},
-	"description": "A client that calls VS Code API from a non extension host worker in sync fashion.",
-	"devDependencies": {},
-	"main": "./lib/main.js",
 	"name": "@vscode/sync-api-client",
+	"description": "A client that calls VS Code API from a non extension host worker in sync fashion.",
+	"main": "./lib/main.js",
+	"typings": "./lib/main.d.ts",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -13,5 +12,6 @@
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
-	"typings": "./lib/main.d.ts"
+	"dependencies": {},
+	"devDependencies": {}
 }
