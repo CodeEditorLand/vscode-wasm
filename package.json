@@ -1,9 +1,9 @@
 {
 	"description": "A WASI implementation that uses VS Code's extension host as the implementing API",
 	"devDependencies": {
-		"@types/assert": "1.5.10",
+		"@types/assert": "1.5.11",
 		"@types/glob": "8.1.0",
-		"@types/node": "22.7.7",
+		"@types/node": "22.7.9",
 		"@types/path-browserify": "1.0.3",
 		"assert": "2.1.0",
 		"esbuild": "0.24.0",

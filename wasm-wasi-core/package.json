@@ -6,7 +6,7 @@
 	},
 	"description": "Executes WebAssemblies compiled to WASI Preview 1 on top of the VS Code API.",
 	"devDependencies": {
-		"@types/assert": "1.5.10",
+		"@types/assert": "1.5.11",
 		"@types/uuid": "10.0.0",
 		"assert": "2.1.0",
 		"find-process": "1.4.7"
