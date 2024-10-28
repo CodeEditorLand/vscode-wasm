@@ -9,7 +9,7 @@
 	"devDependencies": {
 		"@types/uuid": "10.0.0",
 		"find-process": "1.4.7",
-		"uuid": "10.0.0"
+		"uuid": "11.0.1"
 	},
 	"main": "./extension.js",
 	"name": "@vscode/sync-api-tests",

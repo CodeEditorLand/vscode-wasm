@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"uuid": "10.0.0"
+		"uuid": "11.0.1"
 	},
 	"description": "Utilities operating on shared memory to support the component model.",
 	"devDependencies": {
