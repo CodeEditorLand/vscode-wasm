@@ -2,7 +2,7 @@
 	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
 	"dependencies": {
-		"uuid": "11.0.1"
+		"uuid": "11.0.2"
 	},
 	"description": "Executes WebAssemblies compiled to WASI Preview 1 on top of the VS Code API.",
 	"devDependencies": {
