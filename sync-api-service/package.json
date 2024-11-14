@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"uuid": "11.0.2"
+		"uuid": "11.0.3"
 	},
 	"description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
 	"devDependencies": {
