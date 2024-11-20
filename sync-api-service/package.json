@@ -1,16 +1,8 @@
 {
-	"dependencies": {
-		"uuid": "11.0.3"
-	},
-	"description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
-	"devDependencies": {
-		"@types/uuid": "10.0.0"
-	},
-	"enabledApiProposals": [
-		"fsChunks"
-	],
-	"main": "./lib/main.js",
 	"name": "@vscode/sync-api-service",
+	"description": "A sync implementation of the VS Code API. Only supported from a worker in NodeJS and browser",
+	"main": "./lib/main.js",
+	"typings": "./lib/main.d.ts",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint && npm run test",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && cd ../sync-api-tests && npm run all:publish && cd ..",
@@ -20,5 +12,13 @@
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
-	"typings": "./lib/main.d.ts"
+	"dependencies": {
+		"uuid": "11.0.3"
+	},
+	"devDependencies": {
+		"@types/uuid": "10.0.0"
+	},
+	"enabledApiProposals": [
+		"fsChunks"
+	]
 }
