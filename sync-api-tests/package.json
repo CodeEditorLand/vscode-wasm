@@ -1,8 +1,18 @@
 {
-	"name": "@vscode/sync-api-tests",
-	"description": "Test cases for the sync vscode API",
-	"main": "./extension.js",
+	"activationEvents": [
+		"*"
+	],
 	"browser": "./extension.js",
+	"contributes": {},
+	"dependencies": {},
+	"description": "Test cases for the sync vscode API",
+	"devDependencies": {
+		"@types/uuid": "10.0.0",
+		"find-process": "1.4.7",
+		"uuid": "11.0.3"
+	},
+	"main": "./extension.js",
+	"name": "@vscode/sync-api-tests",
 	"scripts": {
 		"all:publish": "git clean -xfd . && npm install && npm run symlink:publish && npm run compile:publish && npm run lint && npm run test",
 		"clean": "node ../node_modules/.bin/rimraf lib",
@@ -13,15 +23,5 @@
 		"test:desktop": "node lib/desktop/runTests.js",
 		"test:runWebTests": "node lib/web/runTests.js",
 		"test:web": "node ./bin/esbuild.js && node lib/web/runTests.js"
-	},
-	"contributes": {},
-	"activationEvents": [
-		"*"
-	],
-	"dependencies": {},
-	"devDependencies": {
-		"@types/uuid": "10.0.0",
-		"find-process": "1.4.7",
-		"uuid": "11.0.3"
 	}
 }

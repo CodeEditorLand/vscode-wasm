@@ -1,6 +1,6 @@
 {
-	"name": "@vscode/rust-api",
 	"description": "Rust VS Code API bindings",
+	"devDependencies": {},
 	"exports": {
 		".": {
 			"browser": "./lib/main.js",
@@ -8,6 +8,7 @@
 			"types": "./lib/main.d.ts"
 		}
 	},
+	"name": "@vscode/rust-api",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:rust",
 		"build:rust": "cd rust && cargo build --target wasm32-unknown-unknown && cd ..",
@@ -17,6 +18,5 @@
 		"generate:wat": "wasm-tools print ./target/wasm32-unknown-unknown/debug/vscode.wasm > ./target/wasm32-unknown-unknown/debug/vscode.wat",
 		"run": "npm run build:rust && npm run compile:ts && node ./out/main.js",
 		"watch:ts": "tsc -b tsconfig.json -w"
-	},
-	"devDependencies": {}
+	}
 }

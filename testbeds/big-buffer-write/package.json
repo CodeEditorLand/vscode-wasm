@@ -1,17 +1,6 @@
 {
-	"name": "big-buffer-write",
-	"description": "Demonstrate issue with big buffer writes in vscode-wasm-core",
-	"main": "./out/extension.js",
+	"activationEvents": [],
 	"browser": "./dist/web/extension.js",
-	"scripts": {
-		"build": "npm run build:wasi && npm run build:js",
-		"build:esbuild": "node ./scripts/esbuild.js",
-		"build:js": "npm run compile:ts && npm run build:esbuild",
-		"build:wasi": "make wasi",
-		"clean": "npx shx rm -rf dist out bin",
-		"compile:ts": "tsc -b tsconfig.json",
-		"test-browser": "vscode-test-web --coi --extensionId ms-vscode.wasm-wasi-core@prerelease --extensionDevelopmentPath=. ."
-	},
 	"contributes": {
 		"commands": [
 			{
@@ -21,8 +10,19 @@
 			}
 		]
 	},
-	"activationEvents": [],
+	"description": "Demonstrate issue with big buffer writes in vscode-wasm-core",
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
-	]
+	],
+	"main": "./out/extension.js",
+	"name": "big-buffer-write",
+	"scripts": {
+		"build": "npm run build:wasi && npm run build:js",
+		"build:esbuild": "node ./scripts/esbuild.js",
+		"build:js": "npm run compile:ts && npm run build:esbuild",
+		"build:wasi": "make wasi",
+		"clean": "npx shx rm -rf dist out bin",
+		"compile:ts": "tsc -b tsconfig.json",
+		"test-browser": "vscode-test-web --coi --extensionId ms-vscode.wasm-wasi-core@prerelease --extensionDevelopmentPath=. ."
+	}
 }
