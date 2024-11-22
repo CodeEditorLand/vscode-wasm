@@ -15,6 +15,7 @@ runSingle((client, folder) => {
 	const dirname = folder.uri.with({
 		path: path.join(folder.uri.path, "directory"),
 	});
+
 	const stat = client.vscode.workspace.fileSystem.stat(dirname);
 	assert.strictEqual(stat.type, FileType.Directory);
 }).catch(console.error);

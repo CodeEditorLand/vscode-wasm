@@ -35,12 +35,14 @@ export async function activate(
 			return Promise.resolve(new ChannelImpl(level));
 		}
 		private readonly level: u32;
+
 		constructor(level: u32) {
 			super(ChannelImpl.$resources);
 			this.level = level;
 		}
 		send(msg: string): Promise<void> {
 			channel.appendLine(msg);
+
 			return Promise.resolve();
 		}
 	}
@@ -65,12 +67,15 @@ export async function activate(
 		"debug",
 		"calculator.wasm",
 	);
+
 	const bits = await vscode.workspace.fs.readFile(filename);
+
 	const module = await WebAssembly.compile(bits);
 
 	const worker = new Worker(
 		vscode.Uri.joinPath(context.extensionUri, "./out/worker.js").fsPath,
 	);
+
 	const api = await calculator._.bind(service, module, worker);
 	vscode.commands.registerCommand(
 		"testbed-component-model-async.run",

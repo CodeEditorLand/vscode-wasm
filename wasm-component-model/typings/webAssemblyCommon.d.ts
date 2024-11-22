@@ -173,6 +173,7 @@ declare namespace WebAssembly_ {
 		bytes: BufferSource,
 		importObject?: Imports,
 	): Promise<WebAssemblyInstantiatedSource>;
+
 	function instantiate(
 		moduleObject: Module,
 		importObject?: Imports,

@@ -22,6 +22,7 @@ export namespace io {
 				toDebugString(): string;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type Error = Error.Interface;
@@ -54,6 +55,7 @@ export namespace io {
 				block(): void;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type Pollable = Pollable.Interface;
@@ -108,10 +110,12 @@ export namespace io {
 			 * More information is available in the `error` payload.
 			 */
 			export const lastOperationFailed = "lastOperationFailed" as const;
+
 			export type LastOperationFailed = {
 				readonly tag: typeof lastOperationFailed;
 				readonly value: Error;
 			} & _common;
+
 			export function LastOperationFailed(
 				value: Error,
 			): LastOperationFailed {
@@ -127,20 +131,25 @@ export namespace io {
 			 * future operations.
 			 */
 			export const closed = "closed" as const;
+
 			export type Closed = { readonly tag: typeof closed } & _common;
+
 			export function Closed(): Closed {
 				return new VariantImpl(closed, undefined) as Closed;
 			}
 
 			export type _tt = typeof lastOperationFailed | typeof closed;
+
 			export type _vt = Error | undefined;
 			type _common = Omit<VariantImpl, "tag" | "value">;
+
 			export function _ctor(t: _tt, v: _vt): StreamError {
 				return new VariantImpl(t, v) as StreamError;
 			}
 			class VariantImpl {
 				private readonly _tag: _tt;
 				private readonly _value?: _vt;
+
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
 					this._value = value;
@@ -162,6 +171,7 @@ export namespace io {
 		export type StreamError =
 			| StreamError.LastOperationFailed
 			| StreamError.Closed;
+
 		export namespace StreamError {
 			export class Error_ extends $wcm.ResultError<StreamError> {
 				constructor(value: StreamError) {
@@ -241,6 +251,7 @@ export namespace io {
 				subscribe(): Pollable;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type InputStream = InputStream.Interface;
@@ -422,6 +433,7 @@ export namespace io {
 				blockingSplice(src: InputStream, len: u64): u64;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type OutputStream = OutputStream.Interface;
@@ -438,6 +450,7 @@ export namespace io {
 			"error",
 			"wasi:io@0.2.1/error/error",
 		);
+
 		export const Error_Handle = new $wcm.ResourceHandleType("error");
 		Error.addDestructor(
 			"$drop",
@@ -454,7 +467,9 @@ export namespace io {
 	}
 	export namespace Error._ {
 		export const id = "wasi:io/error@0.2.1" as const;
+
 		export const witName = "error" as const;
+
 		export namespace Error {
 			export type WasmInterface = {
 				"[method]error.to-debug-string": (
@@ -462,6 +477,7 @@ export namespace io {
 					result: ptr<string>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = Error.WasmInterface & {
 					"[resource-drop]error": (self: i32) => void;
@@ -477,11 +493,14 @@ export namespace io {
 			string,
 			$wcm.AnyComponentModelType
 		>([["Error", $.Error]]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["Error", $.Error]]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				Error.imports.WasmInterface;
@@ -489,6 +508,7 @@ export namespace io {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Error.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]error": (rep: i32) => i32;
@@ -504,6 +524,7 @@ export namespace io {
 			"pollable",
 			"wasi:io@0.2.1/poll/pollable",
 		);
+
 		export const Pollable_Handle = new $wcm.ResourceHandleType("pollable");
 		Pollable.addDestructor(
 			"$drop",
@@ -527,6 +548,7 @@ export namespace io {
 				undefined,
 			),
 		);
+
 		export const poll = new $wcm.FunctionType<io.Poll.poll>(
 			"poll",
 			[
@@ -542,12 +564,15 @@ export namespace io {
 	}
 	export namespace Poll._ {
 		export const id = "wasi:io/poll@0.2.1" as const;
+
 		export const witName = "poll" as const;
+
 		export namespace Pollable {
 			export type WasmInterface = {
 				"[method]pollable.ready": (self: i32) => i32;
 				"[method]pollable.block": (self: i32) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = Pollable.WasmInterface & {
 					"[resource-drop]pollable": (self: i32) => void;
@@ -563,13 +588,16 @@ export namespace io {
 			string,
 			$wcm.AnyComponentModelType
 		>([["Pollable", $.Pollable]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["poll", $.poll],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["Pollable", $.Pollable]]);
+
 		export type WasmInterface = {
 			"poll": (
 				in__ptr: i32,
@@ -577,6 +605,7 @@ export namespace io {
 				result: ptr<Uint32Array>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				Pollable.imports.WasmInterface;
@@ -584,6 +613,7 @@ export namespace io {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Pollable.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]pollable": (rep: i32) => i32;
@@ -596,7 +626,9 @@ export namespace io {
 
 	export namespace Streams.$ {
 		export const Error = io.Error.$.Error;
+
 		export const Pollable = io.Poll.$.Pollable;
+
 		export const StreamError = new $wcm.VariantType<
 			io.Streams.StreamError,
 			io.Streams.StreamError._tt,
@@ -611,19 +643,23 @@ export namespace io {
 			],
 			io.Streams.StreamError._ctor,
 		);
+
 		export const InputStream =
 			new $wcm.ResourceType<io.Streams.InputStream>(
 				"input-stream",
 				"wasi:io@0.2.1/streams/input-stream",
 			);
+
 		export const InputStream_Handle = new $wcm.ResourceHandleType(
 			"input-stream",
 		);
+
 		export const OutputStream =
 			new $wcm.ResourceType<io.Streams.OutputStream>(
 				"output-stream",
 				"wasi:io@0.2.1/streams/output-stream",
 			);
+
 		export const OutputStream_Handle = new $wcm.ResourceHandleType(
 			"output-stream",
 		);
@@ -846,7 +882,9 @@ export namespace io {
 	}
 	export namespace Streams._ {
 		export const id = "wasi:io/streams@0.2.1" as const;
+
 		export const witName = "streams" as const;
+
 		export namespace InputStream {
 			export type WasmInterface = {
 				"[method]input-stream.read": (
@@ -871,6 +909,7 @@ export namespace io {
 				) => void;
 				"[method]input-stream.subscribe": (self: i32) => i32;
 			};
+
 			export namespace imports {
 				export type WasmInterface = InputStream.WasmInterface & {
 					"[resource-drop]input-stream": (self: i32) => void;
@@ -932,6 +971,7 @@ export namespace io {
 					result: ptr<result<u64, StreamError>>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = OutputStream.WasmInterface & {
 					"[resource-drop]output-stream": (self: i32) => void;
@@ -953,6 +993,7 @@ export namespace io {
 			["InputStream", $.InputStream],
 			["OutputStream", $.OutputStream],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
@@ -960,7 +1001,9 @@ export namespace io {
 			["InputStream", $.InputStream],
 			["OutputStream", $.OutputStream],
 		]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				InputStream.imports.WasmInterface &
@@ -970,6 +1013,7 @@ export namespace io {
 			export type WasmInterface = _.WasmInterface &
 				InputStream.exports.WasmInterface &
 				OutputStream.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]input-stream": (rep: i32) => i32;
@@ -986,8 +1030,11 @@ export namespace io {
 
 export namespace io._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:io@0.2.1" as const;
+
 	export const witName = "io" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType

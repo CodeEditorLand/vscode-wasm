@@ -39,10 +39,12 @@ export namespace Options {
 	export function validate(options: Options): options is ResolvedOptions {
 		if (options.stdin === false && !options.input) {
 			process.stderr.write("Missing file argument.\n");
+
 			return false;
 		}
 		if (!options.outDir) {
 			process.stderr.write("Missing outDir argument.\n");
+
 			return false;
 		}
 		if (!options.keep) {

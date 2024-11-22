@@ -67,6 +67,7 @@ export class BrowserWasiProcess extends WasiProcess {
 			module instanceof WebAssembly.Module
 				? Promise.resolve(module)
 				: module;
+
 		if (memory instanceof WebAssembly.Memory) {
 			this.memory = memory;
 		} else {
@@ -91,6 +92,7 @@ export class BrowserWasiProcess extends WasiProcess {
 		// to hook on to know when they are done. To ensure that the run promise resolves,
 		// we call it here so callers awaiting `process.run()` will get a result.
 		this.resolveRunPromise(result);
+
 		return result;
 	}
 
@@ -100,14 +102,17 @@ export class BrowserWasiProcess extends WasiProcess {
 			"./dist/web/mainWorker.js",
 		).toString();
 		this.mainWorker = new Worker(filename);
+
 		const connection = new BrowserServiceConnection(
 			wasiService,
 			this.mainWorker,
 			this.options.trace,
 		);
 		await connection.workerReady();
+
 		const module = await this.module;
 		this.importsMemory = this.doesImportMemory(module);
+
 		if (this.importsMemory && this.memory === undefined) {
 			if (this.memoryDescriptor === undefined) {
 				throw new Error(
@@ -133,6 +138,7 @@ export class BrowserWasiProcess extends WasiProcess {
 			.catch((error) => {
 				RAL().console.error(error);
 			});
+
 		return Promise.resolve();
 	}
 
@@ -153,13 +159,16 @@ export class BrowserWasiProcess extends WasiProcess {
 			this.baseUri,
 			"./dist/web/threadWorker.js",
 		).toString();
+
 		const worker = new Worker(filename);
+
 		const connection = new BrowserServiceConnection(
 			wasiService,
 			worker,
 			this.options.trace,
 		);
 		await connection.workerReady();
+
 		const message: StartThreadMessage = {
 			method: "startThread",
 			module: await this.module,
@@ -170,6 +179,7 @@ export class BrowserWasiProcess extends WasiProcess {
 		};
 		connection.postMessage(message);
 		this.threadWorkers.set(tid, worker);
+
 		return Promise.resolve();
 	}
 
@@ -182,6 +192,7 @@ export class BrowserWasiProcess extends WasiProcess {
 
 	protected async threadEnded(tid: u32): Promise<void> {
 		const worker = this.threadWorkers.get(tid);
+
 		if (worker !== undefined) {
 			this.threadWorkers.delete(tid);
 			worker.terminate();
@@ -190,6 +201,7 @@ export class BrowserWasiProcess extends WasiProcess {
 
 	private doesImportMemory(module: WebAssembly.Module): boolean {
 		const imports = WebAssembly.Module.imports(module);
+
 		for (const item of imports) {
 			if (item.kind === "memory" && item.name === "memory") {
 				return true;

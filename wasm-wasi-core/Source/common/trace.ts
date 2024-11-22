@@ -46,16 +46,20 @@ import {
 
 namespace wasi {
 	export type Uint32 = { readonly $ptr: ptr; value: number };
+
 	export type Uint32Array = {
 		readonly $ptr: ptr;
 		size: number;
+
 		get(index: number): number;
+
 		set(index: number, value: number): void;
 	};
 
 	export type Uint64 = { readonly $ptr: ptr; value: bigint };
 
 	export type String = { readonly $ptr: ptr; byteLength: number };
+
 	export type StringBuffer = { readonly $ptr: ptr; get value(): string };
 
 	export type Bytes = { readonly $ptr: ptr; readonly byteLength: number };
@@ -63,6 +67,7 @@ namespace wasi {
 	export type StructArray<T> = {
 		readonly $ptr: ptr;
 		size: number;
+
 		get(index: number): T;
 	};
 }
@@ -84,6 +89,7 @@ export class Memory {
 
 	public readUint32Array(ptr: ptr<u32>, size: number): wasi.Uint32Array {
 		const view = this.dataView;
+
 		return {
 			get $ptr(): ptr {
 				return ptr;
@@ -120,6 +126,7 @@ export class Memory {
 
 	public readString(ptr: ptr, len: number = -1): string {
 		const length = len === -1 ? this.getStringLength(ptr) : len;
+
 		if (length === -1) {
 			throw new Error(`No null terminate character found`);
 		}
@@ -134,7 +141,9 @@ export class Memory {
 
 	private getStringLength(start: ptr): number {
 		const bytes = new Uint8Array(this.raw);
+
 		let index = start;
+
 		while (index < bytes.byteLength) {
 			if (bytes[index] === 0) {
 				return index - start;
@@ -156,21 +165,28 @@ export interface TraceMessage {
 export namespace TraceMessage {
 	export function create(): TraceMessage {
 		let argvCount: u32 = 0;
+
 		let argvBufSize: u32 = 0;
+
 		let environCount: u32 = 0;
+
 		let environBufSize: u32 = 0;
 
 		const preStats: Map<fd, string> = new Map();
+
 		const fileDescriptors: Map<fd, string> = new Map();
 
 		function getFileDescriptorPath(fd: fd): string {
 			switch (fd) {
 				case 0:
 					return "stdin";
+
 				case 1:
 					return "stdout";
+
 				case 2:
 					return "stderr";
+
 				default:
 					return fileDescriptors.get(fd) || `fd: ${fd}`;
 			}
@@ -187,6 +203,7 @@ export namespace TraceMessage {
 					const memory = new Memory(_memory);
 					argvCount = memory.readUint32(argvCount_ptr);
 					argvBufSize = memory.readUint32(argvBufSize_ptr);
+
 					return `args_sizes_get() => [count: ${argvCount}, bufSize: ${argvBufSize}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `args_sizes_get() => [result: ${Errno.toString(result)}]`;
@@ -200,12 +217,16 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const argv = memory.readUint32Array(argv_ptr, argvCount);
+
 					const buffer: string[] = [
 						`args_get() => [result: ${Errno.toString(result)}]`,
 					];
+
 					for (let i = 0; i < argvCount; i++) {
 						const valueStartOffset = argv.get(i);
+
 						const arg = memory.readString(valueStartOffset);
 						buffer.push(`\t${i}: ${arg}`);
 					}
@@ -224,6 +245,7 @@ export namespace TraceMessage {
 					const memory = new Memory(_memory);
 					environCount = memory.readUint32(environCount_ptr);
 					environBufSize = memory.readUint32(environBufSize_ptr);
+
 					return `environ_sizes_get() => [envCount: ${environCount}, envBufSize: ${environBufSize}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `environ_sizes_get() => [result: ${Errno.toString(result)}]`;
@@ -237,15 +259,19 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const environ = memory.readUint32Array(
 						environ_ptr,
 						environCount,
 					);
+
 					const buffer: string[] = [
 						`environ_get() => [result: ${Errno.toString(result)}]`,
 					];
+
 					for (let i = 0; i < environCount; i++) {
 						const valueStartOffset = environ.get(i);
+
 						const env = memory.readString(valueStartOffset);
 						buffer.push(`\t${i}: ${env}`);
 					}
@@ -262,7 +288,9 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const prestat = memory.readStruct(bufPtr, Prestat);
+
 					return `fd_prestat_get(fd: ${fd}) => [prestat: ${JSON.stringify(prestat, undefined, 0)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_prestat_get(fd: ${fd}) => [result: ${Errno.toString(result)}]`;
@@ -277,9 +305,11 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const path = memory.readString(pathPtr, pathLen);
 					preStats.set(fd, path);
 					fileDescriptors.set(fd, path);
+
 					return `fd_prestat_dir_name(fd: ${fd}) => [path: ${path}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_prestat_dir_name(fd: ${fd}) => [result: ${Errno.toString(result)}]`;
@@ -293,6 +323,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `clock_res_get(id: ${Clockid.toString(id)}) => [timestamp: ${memory.readUint64(timestamp_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `clock_res_get(id: ${Clockid.toString(id)}) => [result: ${Errno.toString(result)}]`;
@@ -307,6 +338,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `clock_time_get(id: ${Clockid.toString(id)}, precision: ${precision}) => [timestamp: ${memory.readUint64(timestamp_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `clock_time_get(id: ${Clockid.toString(id)}, precision: ${precision}) => [result: ${Errno.toString(result)}]`;
@@ -334,6 +366,7 @@ export namespace TraceMessage {
 			fd_close: (_memory: ArrayBuffer, result: errno, fd: fd): string => {
 				const message = `fd_close(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
 				fileDescriptors.delete(fd);
+
 				return message;
 			},
 			fd_datasync: (
@@ -351,7 +384,9 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const fdstat = memory.readStruct(fdstat_ptr, Fdstat);
+
 					return `fd_fdstat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [fdstat: ${Filetype.toString(fdstat.fs_filetype)}}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_fdstat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
@@ -373,7 +408,9 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					const filestat = memory.readStruct(filestat_ptr, Filestat);
+
 					return `fd_filestat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [filestat: ${Filetype.toString(filestat.filetype)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_filestat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
@@ -408,6 +445,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_pread(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}) => [bytesRead: ${memory.readUint32(bytesRead_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_pread(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}) => [result: ${Errno.toString(result)}]`;
@@ -424,6 +462,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_pwrite(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}) => [bytesWritten: ${memory.readUint32(bytesWritten_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_pwrite(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}) => [result: ${Errno.toString(result)}]`;
@@ -439,6 +478,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_read(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [bytesRead: ${memory.readUint32(bytesRead_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_read(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
@@ -455,6 +495,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_readdir(fd: ${fd} => ${getFileDescriptorPath(fd)}, cookie: ${cookie}) => [buf_used: ${memory.readUint32(buf_used_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_readdir(fd: ${fd} => ${getFileDescriptorPath(fd)}, cookie: ${cookie}) => [result: ${Errno.toString(result)}]`;
@@ -470,6 +511,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_seek(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}, whence: ${Whence.toString(whence)}) => [new_offset: ${memory.readUint64(new_offset_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_seek(fd: ${fd} => ${getFileDescriptorPath(fd)}, offset: ${offset}, whence: ${Whence.toString(whence)}) => [result: ${Errno.toString(result)}]`;
@@ -482,6 +524,7 @@ export namespace TraceMessage {
 				to: fd,
 			): string => {
 				const message = `fd_renumber(fd: ${fd} => ${getFileDescriptorPath(fd)}, to: ${to}) => [result: ${Errno.toString(result)}]`;
+
 				if (result === Errno.success) {
 					fileDescriptors.set(to, fileDescriptors.get(fd)!);
 					fileDescriptors.delete(fd);
@@ -499,6 +542,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_tell(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [offset: ${memory.readUint64(offset_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_tell(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
@@ -514,6 +558,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `fd_write(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [bytesWritten: ${memory.readUint32(bytesWritten_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `fd_write(fd: ${fd} => ${fd === 1 || fd === 2 ? fd : fileDescriptors.get(fd)}) => [result: ${Errno.toString(result)}]`;
@@ -527,6 +572,7 @@ export namespace TraceMessage {
 				path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_create_directory(fd: ${fd} => ${getFileDescriptorPath(fd)}, path: ${memory.readString(path_ptr, path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_filestat_get: (
@@ -539,8 +585,10 @@ export namespace TraceMessage {
 				filestat_ptr: ptr<filestat>,
 			): string => {
 				const memory = new Memory(_memory);
+
 				if (result === Errno.success) {
 					const filestat = memory.readStruct(filestat_ptr, Filestat);
+
 					return `path_filestat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}, flags: ${Lookupflags.toString(flags)} path: ${memory.readString(path_ptr, path_len)}) => [filestat: ${Filetype.toString(filestat.filetype)} result: ${Errno.toString(result)}]`;
 				} else {
 					return `path_filestat_get(fd: ${fd} => ${getFileDescriptorPath(fd)}, flags: ${Lookupflags.toString(flags)} path: ${memory.readString(path_ptr, path_len)}) => [result: ${Errno.toString(result)}]`;
@@ -558,6 +606,7 @@ export namespace TraceMessage {
 				fst_flags: fstflags,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_filestat_set_times(fd: ${fd} => ${getFileDescriptorPath(fd)}, flags: ${Lookupflags.toString(flags)} path: ${memory.readString(path_ptr, path_len)}, atim: ${atim}, mtim: ${mtim}, fst_flags: ${Fstflags.toString(fst_flags)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_link: (
@@ -572,6 +621,7 @@ export namespace TraceMessage {
 				new_path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_link(old_fd: ${old_fd} => ${fileDescriptors.get(old_fd)}, old_flags: ${Lookupflags.toString(old_flags)}, old_path: ${memory.readString(old_path_ptr, old_path_len)}, new_fd: ${new_fd} => ${fileDescriptors.get(new_fd)}, new_path: ${memory.readString(new_path_ptr, new_path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_open: (
@@ -588,10 +638,14 @@ export namespace TraceMessage {
 				fd_ptr: ptr<fd>,
 			): string => {
 				const memory = new Memory(_memory);
+
 				const path = memory.readString(path_ptr, path_len);
+
 				if (result === Errno.success) {
 					const resultFd = memory.readUint32(fd_ptr);
+
 					const message = `path_open(fd: ${fd} => ${getFileDescriptorPath(fd)}, dirflags: ${Lookupflags.toString(dirflags)}, path: ${path}, oflags: ${Oflags.toString(oflags)}, fdflags: ${Fdflags.toString(fdflags)}) => [fd: ${resultFd}, result: ${Errno.toString(result)}]`;
+
 					if (result === Errno.success) {
 						const parentPath = fileDescriptors.get(fd);
 						fileDescriptors.set(
@@ -617,8 +671,10 @@ export namespace TraceMessage {
 				result_size_ptr: ptr<u32>,
 			): string => {
 				const memory = new Memory(_memory);
+
 				if (result === Errno.success) {
 					const resultSize = memory.readUint32(result_size_ptr);
+
 					return `path_readlink(fd: ${fd} => ${getFileDescriptorPath(fd)}, path: ${memory.readString(path_ptr, path_len)}, buf_len: ${buf_len}) => [target: ${memory.readString(buf_ptr, resultSize)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `path_readlink(fd: ${fd} => ${getFileDescriptorPath(fd)}, path: ${memory.readString(path_ptr, path_len)}, buf_len: ${buf_len}) => [result: ${Errno.toString(result)}]`;
@@ -632,6 +688,7 @@ export namespace TraceMessage {
 				path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_remove_directory(fd: ${fd} => ${getFileDescriptorPath(fd)}, path: ${memory.readString(path_ptr, path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_rename: (
@@ -645,6 +702,7 @@ export namespace TraceMessage {
 				new_path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_rename(old_fd: ${old_fd} => ${fileDescriptors.get(old_fd)}, old_path: ${memory.readString(old_path_ptr, old_path_len)}, new_fd: ${new_fd} => ${fileDescriptors.get(new_fd)}, new_path: ${memory.readString(new_path_ptr, new_path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_symlink: (
@@ -657,6 +715,7 @@ export namespace TraceMessage {
 				new_path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_symlink(old_path: ${memory.readString(old_path_ptr, old_path_len)}, fd: ${fd} => ${getFileDescriptorPath(fd)}, new_path: ${memory.readString(new_path_ptr, new_path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			path_unlink_file: (
@@ -667,6 +726,7 @@ export namespace TraceMessage {
 				path_len: size,
 			): string => {
 				const memory = new Memory(_memory);
+
 				return `path_unlink_file(fd: ${fd} => ${getFileDescriptorPath(fd)}, path: ${memory.readString(path_ptr, path_len)}) => [result: ${Errno.toString(result)}]`;
 			},
 			poll_oneoff: (
@@ -706,6 +766,7 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					return `sock_accept(fd: ${fd}}, flags: ${flags}) => [result_fd: ${memory.readUint32(result_fd_ptr)}, result: ${Errno.toString(result)}]`;
 				} else {
 					return `sock_accept(fd: ${fd}}, flags: ${flags}) => [result: ${Errno.toString(result)}]`;

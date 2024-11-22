@@ -35,7 +35,9 @@ export interface DeviceDrivers {
 	add(driver: DeviceDriver): void;
 	has(id: DeviceId): boolean;
 	hasByUri(uri: Uri): boolean;
+
 	get(id: DeviceId): DeviceDriver;
+
 	getByUri(uri: Uri): DeviceDriver;
 	remove(id: DeviceId): void;
 	removeByUri(uri: Uri): void;
@@ -69,6 +71,7 @@ class DeviceDriversImpl {
 
 	public get(id: DeviceId): DeviceDriver {
 		const driver = this.devices.get(id);
+
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
@@ -77,6 +80,7 @@ class DeviceDriversImpl {
 
 	public getByUri(uri: Uri): DeviceDriver {
 		const driver = this.devicesByUri.get(uri.toString(true));
+
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
@@ -85,6 +89,7 @@ class DeviceDriversImpl {
 
 	public remove(id: DeviceId): void {
 		const driver = this.devices.get(id);
+
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
@@ -94,7 +99,9 @@ class DeviceDriversImpl {
 
 	public removeByUri(uri: Uri): void {
 		const key = uri.toString(true);
+
 		const driver = this.devicesByUri.get(key);
+
 		if (driver === undefined) {
 			throw new WasiError(Errno.nxio);
 		}
@@ -151,6 +158,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 
 	public get(id: bigint): DeviceDriver {
 		const result = this.devices.get(id);
+
 		if (result !== undefined) {
 			return result;
 		}
@@ -159,6 +167,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 
 	public getByUri(uri: Uri): DeviceDriver {
 		const result = this.devicesByUri.get(uri.toString(true));
+
 		if (result !== undefined) {
 			return result;
 		}
@@ -167,9 +176,11 @@ class LocalDeviceDrivers implements DeviceDrivers {
 
 	public remove(id: bigint): void {
 		const driver = this.devices.get(id);
+
 		if (driver !== undefined) {
 			this.devices.delete(id);
 			this.devicesByUri.delete(driver.uri.toString(true));
+
 			return;
 		}
 		this.nextDrivers.remove(id);
@@ -177,10 +188,13 @@ class LocalDeviceDrivers implements DeviceDrivers {
 
 	public removeByUri(uri: Uri): void {
 		const key = uri.toString(true);
+
 		const driver = this.devicesByUri.get(key);
+
 		if (driver !== undefined) {
 			this.devices.delete(driver.id);
 			this.devicesByUri.delete(key);
+
 			return;
 		}
 		this.nextDrivers.removeByUri(uri);
@@ -193,7 +207,9 @@ class LocalDeviceDrivers implements DeviceDrivers {
 	public entries(): IterableIterator<[bigint, DeviceDriver]> {
 		let local: IterableIterator<[bigint, DeviceDriver]> | undefined =
 			this.devices.entries();
+
 		const next = this.nextDrivers.entries();
+
 		const iterator: IterableIterator<[bigint, DeviceDriver]> = {
 			[Symbol.iterator]: () => {
 				return iterator;
@@ -201,6 +217,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 			next: (): IteratorResult<[bigint, DeviceDriver]> => {
 				if (local !== undefined) {
 					const result = local.next();
+
 					if (!result.done) {
 						return result;
 					}
@@ -209,13 +226,16 @@ class LocalDeviceDrivers implements DeviceDrivers {
 				return next.next();
 			},
 		};
+
 		return iterator;
 	}
 
 	public values(): IterableIterator<DeviceDriver> {
 		let local: IterableIterator<DeviceDriver> | undefined =
 			this.devices.values();
+
 		const next = this.nextDrivers.values();
+
 		const iterator: IterableIterator<DeviceDriver> = {
 			[Symbol.iterator]: () => {
 				return iterator;
@@ -223,6 +243,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 			next: (): IteratorResult<DeviceDriver> => {
 				if (local !== undefined) {
 					const result = local.next();
+
 					if (!result.done) {
 						return result;
 					}
@@ -231,6 +252,7 @@ class LocalDeviceDrivers implements DeviceDrivers {
 				return next.next();
 			},
 		};
+
 		return iterator;
 	}
 
@@ -250,6 +272,7 @@ namespace ExtensionDataFileSystem {
 		value: any,
 	): value is Omit<ExtensionDataFileSystem, "extension"> {
 		const candidate = value as ExtensionDataFileSystem;
+
 		return (
 			candidate &&
 			candidate.kind === "extensionData" &&
@@ -319,10 +342,13 @@ namespace MapDirDescriptors {
 		switch (descriptor.kind) {
 			case "extensionLocation":
 				return getExtensionLocationKey(descriptor);
+
 			case "memoryFileSystem":
 				return getMemoryKey(descriptor);
+
 			case "vscodeFileSystem":
 				return getVScodeFileSystemKey(descriptor);
+
 			default:
 				throw new Error(
 					`Unknown MapDirDescriptor kind ${JSON.stringify(descriptor, undefined, 0)}`,
@@ -337,8 +363,11 @@ namespace MapDirDescriptors {
 		memoryFileSystems: MemoryFileSystemDescriptor[];
 	} {
 		const extensions: ExtensionLocationDescriptor[] = [];
+
 		const vscodeFileSystems: VSCodeFileSystemDescriptor[] = [];
+
 		const memoryFileSystems: MemoryFileSystemDescriptor[] = [];
+
 		if (descriptors === undefined) {
 			return {
 				extensions,
@@ -349,6 +378,7 @@ namespace MapDirDescriptors {
 		for (const descriptor of descriptors) {
 			if (descriptor.kind === "workspaceFolder") {
 				const folders = workspace.workspaceFolders;
+
 				if (folders !== undefined) {
 					if (folders.length === 1) {
 						vscodeFileSystems.push(
@@ -382,6 +412,7 @@ namespace MapDirDescriptors {
 		single: boolean,
 	): VSCodeFileSystemDescriptor {
 		const path = RAL().path;
+
 		const mountPoint: string = single
 			? path.join(path.sep, "workspace")
 			: path.join(path.sep, "workspaces", folder.name);
@@ -432,6 +463,7 @@ class FileSystems {
 		);
 
 		const fileSystems = this.parseFileSystems();
+
 		for (const fileSystem of fileSystems) {
 			this.contributedFileSystems.set(
 				fileSystem.id.toString(),
@@ -449,11 +481,14 @@ class FileSystems {
 		uri: Uri,
 	): Promise<FileSystemDeviceDriver | undefined> {
 		const key = uri.toString();
+
 		let result = this.fileSystemDeviceDrivers.get(key);
+
 		if (result !== undefined) {
 			return result;
 		}
 		const mapDir = this.contributedFileSystems.get(key);
+
 		if (mapDir !== undefined) {
 			if (mapDir.kind === "extensionLocation") {
 				try {
@@ -473,14 +508,19 @@ class FileSystems {
 		descriptors: MountPointDescriptor[],
 	): Promise<RootFileSystemInfo> {
 		const fileSystems: FileSystemDeviceDriver[] = [];
+
 		const preOpens: Map<string, FileSystemDeviceDriver> = new Map();
+
 		const { extensions, vscodeFileSystems, memoryFileSystems } =
 			MapDirDescriptors.getDescriptors(descriptors);
+
 		if (extensions.length > 0) {
 			for (const descriptor of extensions) {
 				const key =
 					MapDirDescriptors.getExtensionLocationKey(descriptor);
+
 				let fs = this.fileSystemDeviceDrivers.get(key.toString());
+
 				if (fs === undefined) {
 					fs =
 						await this.createExtensionLocationFileSystem(
@@ -496,7 +536,9 @@ class FileSystems {
 			for (const descriptor of vscodeFileSystems) {
 				const key =
 					MapDirDescriptors.getVScodeFileSystemKey(descriptor);
+
 				let fs = this.fileSystemDeviceDrivers.get(key.toString());
+
 				if (fs === undefined) {
 					fs = vscfs.create(
 						WasiKernel.nextDeviceId(),
@@ -525,6 +567,7 @@ class FileSystems {
 		}
 
 		let needsRootFs = false;
+
 		for (const mountPoint of preOpens.keys()) {
 			if (mountPoint === "/") {
 				if (preOpens.size > 1) {
@@ -537,11 +580,14 @@ class FileSystems {
 			}
 		}
 		const deviceDrivers = new DeviceDriversImpl();
+
 		let result: RootFileSystemInfo;
+
 		if (needsRootFs) {
 			const mountPoints: Map<string, FileSystemDeviceDriver> = new Map(
 				Array.from(preOpens.entries()),
 			);
+
 			const fs = vrfs.create(
 				WasiKernel.nextDeviceId(),
 				fileDescriptors,
@@ -578,16 +624,20 @@ class FileSystems {
 		manage: ManageKind = ManageKind.default,
 	): Promise<FileSystemDeviceDriver> {
 		const key = MapDirDescriptors.key(descriptor);
+
 		if (deviceDrivers.hasByUri(key)) {
 			return deviceDrivers.getByUri(key) as FileSystemDeviceDriver;
 		}
 		let result = this.fileSystemDeviceDrivers.get(key.toString());
+
 		if (result !== undefined) {
 			deviceDrivers.add(result);
+
 			return result;
 		}
 		if (MapDirDescriptors.isExtensionLocation(descriptor)) {
 			result = await this.createExtensionLocationFileSystem(descriptor);
+
 			if (manage === ManageKind.default) {
 				manage = ManageKind.yes;
 			}
@@ -596,6 +646,7 @@ class FileSystems {
 				WasiKernel.nextDeviceId(),
 				descriptor.fileSystem as memfs.MemoryFileSystem,
 			);
+
 			if (manage === ManageKind.default) {
 				manage = ManageKind.no;
 			}
@@ -608,6 +659,7 @@ class FileSystems {
 					true
 				),
 			);
+
 			if (manage === ManageKind.default) {
 				manage = ManageKind.yes;
 			}
@@ -621,6 +673,7 @@ class FileSystems {
 			);
 		}
 		deviceDrivers.add(result);
+
 		return result;
 	}
 
@@ -634,10 +687,13 @@ class FileSystems {
 			contributionId: string;
 			mapDir: MountPointDescriptor;
 		}[] = [];
+
 		for (const extension of extensions.all) {
 			const packageJSON = extension.packageJSON;
+
 			const fileSystems: FileSystem[] =
 				packageJSON?.contributes?.wasm?.fileSystems;
+
 			if (fileSystems !== undefined) {
 				for (const contribution of fileSystems) {
 					if (ExtensionDataFileSystem.is(contribution)) {
@@ -647,6 +703,7 @@ class FileSystems {
 							path: contribution.path,
 							mountPoint: contribution.mountPoint,
 						};
+
 						const id = Uri.joinPath(
 							extension.extensionUri,
 							...getSegments(contribution.path),
@@ -667,13 +724,16 @@ class FileSystems {
 		const oldFileSystems: Map<string, MountPointDescriptor> = new Map(
 			this.contributedFileSystems.entries(),
 		);
+
 		const newFileSystems: Map<string, MountPointDescriptor> = new Map(
 			this.parseFileSystems().map((fileSystem) => [
 				fileSystem.id.toString(),
 				fileSystem.mapDir,
 			]),
 		);
+
 		const added: Map<string, MountPointDescriptor> = new Map();
+
 		for (const [id, newFileSystem] of newFileSystems) {
 			if (oldFileSystems.has(id)) {
 				oldFileSystems.delete(id);
@@ -692,9 +752,11 @@ class FileSystems {
 
 	private parseWorkspaceFolders(): void {
 		const folders = workspace.workspaceFolders;
+
 		if (folders !== undefined) {
 			for (const folder of folders) {
 				const key = folder.uri.toString();
+
 				if (!this.fileSystemDeviceDrivers.has(key)) {
 					const driver = vscfs.create(
 						WasiKernel.nextDeviceId(),
@@ -716,6 +778,7 @@ class FileSystems {
 	): void {
 		for (const added of event.added) {
 			const key = added.uri.toString();
+
 			if (!this.fileSystemDeviceDrivers.has(key)) {
 				const driver = vscfs.create(
 					WasiKernel.nextDeviceId(),
@@ -743,28 +806,36 @@ class FileSystems {
 		});
 
 		const paths = RAL().path;
+
 		const basename = paths.basename(descriptor.path);
+
 		const dirname = paths.dirname(descriptor.path);
+
 		const dirDumpFileUri = Uri.joinPath(
 			descriptor.extension.extensionUri,
 			dirname,
 			`${basename}.dir.json`,
 		);
+
 		try {
 			const content = await workspace.fs.readFile(dirDumpFileUri);
+
 			const dirDump = JSON.parse(
 				RAL().TextDecoder.create().decode(content),
 			);
+
 			const extensionFS = extlocfs.create(
 				WasiKernel.nextDeviceId(),
 				extensionUri,
 				dirDump,
 			);
+
 			return extensionFS;
 		} catch (error) {
 			RAL().console.error(
 				`Failed to read directory dump file ${dirDumpFileUri.toString()}: ${error}`,
 			);
+
 			throw error;
 		}
 	}
@@ -772,11 +843,13 @@ class FileSystems {
 
 namespace WasiKernel {
 	let deviceCounter: DeviceId = 1n;
+
 	export function nextDeviceId(): bigint {
 		return deviceCounter++;
 	}
 
 	const fileSystems = new FileSystems();
+
 	export function getOrCreateFileSystemByDescriptor(
 		deviceDrivers: DeviceDrivers,
 		descriptor:
@@ -800,6 +873,7 @@ namespace WasiKernel {
 	// By default we have a console
 	export const console = ConsoleDriver.create(nextDeviceId());
 	deviceDrivers.add(console);
+
 	export function createLocalDeviceDrivers(): DeviceDrivers {
 		return new LocalDeviceDrivers(deviceDrivers);
 	}

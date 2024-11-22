@@ -10,20 +10,25 @@ export async function activate(context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
 	commands.registerCommand("testbed-threads.run", async () => {
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "threads",
 			pty,
 			isTransient: true,
 		});
 		terminal.show(true);
+
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
 			mountPoints: [{ kind: "workspaceFolder" }],
 		};
+
 		const filename = Uri.joinPath(context.extensionUri, "out", "main.wasm");
+
 		const bits = await workspace.fs.readFile(filename);
 		// options.stdio.out = { kind: 'file', path: '/workspace/out.txt' };
 		// options.stdio.out = { kind: 'pipe' };
+
 		const process = await wasm.createProcess(
 			"threads",
 			WebAssembly.compile(bits),

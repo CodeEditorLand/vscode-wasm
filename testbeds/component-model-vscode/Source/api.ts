@@ -47,6 +47,7 @@ export namespace api {
 				getText(): string;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type TextDocument = TextDocument.Interface;
@@ -64,6 +65,7 @@ export namespace api {
 				show(): void;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type OutputChannel = OutputChannel.Interface;
@@ -117,6 +119,7 @@ export namespace api {
 		didChangeTextDocument: Callbacks.didChangeTextDocument;
 		executeCommand: Callbacks.executeCommand;
 	};
+
 	export namespace all {
 		export type Imports = {
 			types: api.Types;
@@ -124,6 +127,7 @@ export namespace api {
 			commands: api.Commands;
 			window: api.Window;
 		};
+
 		export namespace Imports {
 			export type Promisified = $wcm.$imports.Promisify<Imports>;
 		}
@@ -135,6 +139,7 @@ export namespace api {
 			deactivate: () => void;
 			callbacks: api.Callbacks;
 		};
+
 		export namespace Exports {
 			export type Promisified = $wcm.$exports.Promisify<Exports>;
 		}
@@ -150,10 +155,12 @@ export namespace api {
 			["line", $wcm.u32],
 			["character", $wcm.u32],
 		]);
+
 		export const Range = new $wcm.RecordType<api.Types.Range>([
 			["start", Position],
 			["end", Position],
 		]);
+
 		export const TextDocumentContentChangeEvent =
 			new $wcm.RecordType<api.Types.TextDocumentContentChangeEvent>([
 				["range", Range],
@@ -161,19 +168,23 @@ export namespace api {
 				["rangeLength", $wcm.u32],
 				["text", $wcm.wstring],
 			]);
+
 		export const TextDocument =
 			new $wcm.ResourceType<api.Types.TextDocument>(
 				"text-document",
 				"host:api/types/text-document",
 			);
+
 		export const TextDocument_Handle = new $wcm.ResourceHandleType(
 			"text-document",
 		);
+
 		export const TextDocumentChangeReason =
 			new $wcm.EnumType<api.Types.TextDocumentChangeReason>([
 				"undo",
 				"redo",
 			]);
+
 		export const TextDocumentChangeEvent =
 			new $wcm.RecordType<api.Types.TextDocumentChangeEvent>([
 				[
@@ -193,11 +204,13 @@ export namespace api {
 					),
 				],
 			]);
+
 		export const OutputChannel =
 			new $wcm.ResourceType<api.Types.OutputChannel>(
 				"output-channel",
 				"host:api/types/output-channel",
 			);
+
 		export const OutputChannel_Handle = new $wcm.ResourceHandleType(
 			"output-channel",
 		);
@@ -290,7 +303,9 @@ export namespace api {
 	}
 	export namespace Types._ {
 		export const id = "host:api/types" as const;
+
 		export const witName = "types" as const;
+
 		export namespace TextDocument {
 			export type WasmInterface = {
 				"[method]text-document.uri": (
@@ -307,6 +322,7 @@ export namespace api {
 					result: ptr<string>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = TextDocument.WasmInterface & {
 					"[resource-drop]text-document": (self: i32) => void;
@@ -337,6 +353,7 @@ export namespace api {
 				"[method]output-channel.clear": (self: i32) => void;
 				"[method]output-channel.show": (self: i32) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = OutputChannel.WasmInterface & {
 					"[resource-drop]output-channel": (self: i32) => void;
@@ -363,6 +380,7 @@ export namespace api {
 			["TextDocument", $.TextDocument],
 			["OutputChannel", $.OutputChannel],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
@@ -370,7 +388,9 @@ export namespace api {
 			["TextDocument", $.TextDocument],
 			["OutputChannel", $.OutputChannel],
 		]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				TextDocument.imports.WasmInterface &
@@ -380,6 +400,7 @@ export namespace api {
 			export type WasmInterface = _.WasmInterface &
 				TextDocument.exports.WasmInterface &
 				OutputChannel.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]text-document": (rep: i32) => i32;
@@ -403,13 +424,17 @@ export namespace api {
 	}
 	export namespace Commands._ {
 		export const id = "host:api/commands" as const;
+
 		export const witName = "commands" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["registerCommand", $.registerCommand],
 		]);
+
 		export type WasmInterface = {
 			"register-command": (command_ptr: i32, command_len: i32) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -420,6 +445,7 @@ export namespace api {
 
 	export namespace Window.$ {
 		export const OutputChannel = api.Types.$.OutputChannel;
+
 		export const createOutputChannel =
 			new $wcm.FunctionType<api.Window.createOutputChannel>(
 				"create-output-channel",
@@ -432,14 +458,18 @@ export namespace api {
 	}
 	export namespace Window._ {
 		export const id = "host:api/window" as const;
+
 		export const witName = "window" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["OutputChannel", $.OutputChannel]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["createOutputChannel", $.createOutputChannel],
 		]);
+
 		export type WasmInterface = {
 			"create-output-channel": (
 				name_ptr: i32,
@@ -449,6 +479,7 @@ export namespace api {
 				languageId_option_len: i32,
 			) => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -459,6 +490,7 @@ export namespace api {
 
 	export namespace Workspace.$ {
 		export const TextDocument = api.Types.$.TextDocument;
+
 		export const textDocuments =
 			new $wcm.FunctionType<api.Workspace.textDocuments>(
 				"text-documents",
@@ -467,6 +499,7 @@ export namespace api {
 					new $wcm.OwnType<api.Workspace.TextDocument>(TextDocument),
 				),
 			);
+
 		export const registerOnDidChangeTextDocument =
 			new $wcm.FunctionType<api.Workspace.registerOnDidChangeTextDocument>(
 				"register-on-did-change-text-document",
@@ -476,11 +509,14 @@ export namespace api {
 	}
 	export namespace Workspace._ {
 		export const id = "host:api/workspace" as const;
+
 		export const witName = "workspace" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["TextDocument", $.TextDocument]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["textDocuments", $.textDocuments],
 			[
@@ -488,10 +524,12 @@ export namespace api {
 				$.registerOnDidChangeTextDocument,
 			],
 		]);
+
 		export type WasmInterface = {
 			"text-documents": (result: ptr<own<TextDocument>[]>) => void;
 			"register-on-did-change-text-document": () => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -503,12 +541,14 @@ export namespace api {
 	export namespace Callbacks.$ {
 		export const TextDocumentChangeEvent =
 			api.Types.$.TextDocumentChangeEvent;
+
 		export const didChangeTextDocument =
 			new $wcm.FunctionType<api.Callbacks.didChangeTextDocument>(
 				"did-change-text-document",
 				[["event", TextDocumentChangeEvent]],
 				undefined,
 			);
+
 		export const executeCommand =
 			new $wcm.FunctionType<api.Callbacks.executeCommand>(
 				"execute-command",
@@ -518,15 +558,19 @@ export namespace api {
 	}
 	export namespace Callbacks._ {
 		export const id = "host:api/callbacks" as const;
+
 		export const witName = "callbacks" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["TextDocumentChangeEvent", $.TextDocumentChangeEvent]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["didChangeTextDocument", $.didChangeTextDocument],
 			["executeCommand", $.executeCommand],
 		]);
+
 		export type WasmInterface = {
 			"did-change-text-document": (
 				event_TextDocumentChangeEvent_document: i32,
@@ -537,6 +581,7 @@ export namespace api {
 			) => void;
 			"execute-command": (command_ptr: i32, command_len: i32) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -549,6 +594,7 @@ export namespace api {
 			export const activate = new $wcm.FunctionType<
 				all.Exports["activate"]
 			>("activate", [], undefined);
+
 			export const deactivate = new $wcm.FunctionType<
 				all.Exports["deactivate"]
 			>("deactivate", [], undefined);
@@ -556,7 +602,9 @@ export namespace api {
 	}
 	export namespace all._ {
 		export const id = "host:api/all" as const;
+
 		export const witName = "all" as const;
+
 		export namespace imports {
 			export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 				string,
@@ -567,6 +615,7 @@ export namespace api {
 				["Commands", Commands._],
 				["Window", Window._],
 			]);
+
 			export function create(
 				service: all.Imports,
 				context: $wcm.WasmContext,
@@ -586,15 +635,18 @@ export namespace api {
 			"host:api/commands": api.Commands._.imports.WasmInterface;
 			"host:api/window": api.Window._.imports.WasmInterface;
 		};
+
 		export namespace exports {
 			export const functions: Map<string, $wcm.FunctionType> = new Map([
 				["activate", $.exports.activate],
 				["deactivate", $.exports.deactivate],
 			]);
+
 			export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 				string,
 				$wcm.InterfaceType
 			>([["Callbacks", Callbacks._]]);
+
 			export function bind(
 				exports: Exports,
 				context: $wcm.WasmContext,
@@ -617,17 +669,20 @@ export namespace api {
 				command_len: i32,
 			) => void;
 		};
+
 		export function bind(
 			service: all.Imports,
 			code: $wcm.Code,
 			context?: $wcm.ComponentModelContext,
 		): Promise<all.Exports>;
+
 		export function bind(
 			service: all.Imports.Promisified,
 			code: $wcm.Code,
 			port: $wcm.RAL.ConnectionPort,
 			context?: $wcm.ComponentModelContext,
 		): Promise<all.Exports.Promisified>;
+
 		export function bind(
 			service: all.Imports | all.Imports.Promisified,
 			code: $wcm.Code,
@@ -643,7 +698,9 @@ export namespace api {
 
 export namespace api._ {
 	export const id = "host:api" as const;
+
 	export const witName = "api" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType
@@ -654,6 +711,7 @@ export namespace api._ {
 		["Workspace", Workspace._],
 		["Callbacks", Callbacks._],
 	]);
+
 	export const worlds: Map<string, $wcm.WorldType> = new Map<
 		string,
 		$wcm.WorldType

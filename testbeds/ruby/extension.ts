@@ -13,26 +13,31 @@ export async function activate(_context: ExtensionContext) {
 
 	commands.registerCommand("testbed-ruby.runFile", async () => {
 		const editor = window.activeTextEditor;
+
 		if (editor === undefined) {
 			return;
 		}
 		const document = editor.document;
+
 		if (document.languageId !== "ruby") {
 			return;
 		}
 
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "Ruby",
 			pty,
 			isTransient: true,
 		});
 		terminal.show(true);
+
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
 			mountPoints: [{ kind: "workspaceFolder" }],
 			args: [document.uri],
 		};
+
 		const filename = path.join(
 			path.sep,
 			"home",
@@ -41,8 +46,11 @@ export async function activate(_context: ExtensionContext) {
 			"wasm",
 			"ruby.wasm",
 		);
+
 		const bits = await fs.readFile(filename);
+
 		const module = await WebAssembly.compile(bits);
+
 		const process = await wasm.createProcess("ruby", module, options);
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);

@@ -232,6 +232,7 @@ export class FileDescriptors implements FdProvider {
 
 	public get(fd: fd): FileDescriptor {
 		const descriptor = this.descriptors.get(fd);
+
 		if (!descriptor) {
 			throw new WasiError(Errno.badf);
 		}

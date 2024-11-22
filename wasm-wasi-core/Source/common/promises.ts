@@ -12,11 +12,14 @@ export interface CapturedPromise<T> {
 export namespace CapturedPromise {
 	export function create<T>(): CapturedPromise<T> {
 		let _resolve!: (value: T | PromiseLike<T>) => void;
+
 		let _reject!: (reason?: any) => void;
+
 		const promise: Promise<T> = new Promise<T>((resolve, reject) => {
 			_resolve = resolve;
 			_reject = reject;
 		});
+
 		return {
 			promise,
 			resolve: _resolve,

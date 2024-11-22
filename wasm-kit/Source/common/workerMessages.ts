@@ -33,6 +33,7 @@ export namespace Client {
 				};
 				result: void;
 		  };
+
 	export type ConnectionType<TIL = TransferItems> = BaseConnection<
 		Client.AsyncCalls,
 		undefined,
@@ -48,6 +49,7 @@ export namespace Service {
 	export type Notifications = {
 		method: "workerReady";
 	};
+
 	export type ConnectionType<TIL = TransferItems> = BaseConnection<
 		undefined,
 		undefined,

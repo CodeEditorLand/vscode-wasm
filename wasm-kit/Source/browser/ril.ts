@@ -22,7 +22,9 @@ const _ril: RIL = Object.freeze<RIL>(
 				constructor: SharedMemory.Constructor,
 			): Promise<SharedMemory> {
 				const memory = new WebAssembly.Memory(malloc.descriptor);
+
 				const module = await WebAssembly.compile(malloc.bytes);
+
 				const instance = new WebAssembly.Instance(module, {
 					env: {
 						memory,
@@ -31,6 +33,7 @@ const _ril: RIL = Object.freeze<RIL>(
 						sched_yield: () => 0,
 					},
 				});
+
 				return new constructor(
 					module,
 					memory,
@@ -50,6 +53,7 @@ const _ril: RIL = Object.freeze<RIL>(
 						sched_yield: () => 0,
 					},
 				});
+
 				return new constructor(
 					transferable.module,
 					transferable.memory,
@@ -66,6 +70,7 @@ const _ril: RIL = Object.freeze<RIL>(
 				commonConnection.ConnectionPort,
 			] {
 				const channel = new MessageChannel();
+
 				return [channel.port1, channel.port2];
 			},
 		}),

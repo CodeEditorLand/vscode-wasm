@@ -36,10 +36,13 @@ export namespace Filetypes {
 		switch (filetype) {
 			case WasiFiletype.directory:
 				return ApiFiletype.directory;
+
 			case WasiFiletype.regular_file:
 				return ApiFiletype.regular_file;
+
 			case WasiFiletype.character_device:
 				return ApiFiletype.character_device;
+
 			default:
 				return ApiFiletype.unknown;
 		}
@@ -48,10 +51,13 @@ export namespace Filetypes {
 		switch (filetype) {
 			case ApiFiletype.regular_file:
 				return WasiFiletype.regular_file;
+
 			case ApiFiletype.directory:
 				return WasiFiletype.directory;
+
 			case ApiFiletype.character_device:
 				return WasiFiletype.character_device;
+
 			default:
 				return WasiFiletype.unknown;
 		}
@@ -140,7 +146,9 @@ export abstract class BaseFileSystem<
 		p?: string,
 	): D | F | C | undefined {
 		let parent: D;
+
 		let path: string;
+
 		if (typeof parentOrPath === "string") {
 			parent = this.root;
 			path = parentOrPath;
@@ -149,6 +157,7 @@ export abstract class BaseFileSystem<
 			path = p!;
 		}
 		const parts = this.getSegmentsFromPath(path);
+
 		if (parts.length === 1) {
 			if (parts[0] === ".") {
 				return parent;
@@ -157,15 +166,18 @@ export abstract class BaseFileSystem<
 			}
 		}
 		let current: F | D | undefined = parent;
+
 		for (let i = 0; i < parts.length; i++) {
 			switch (current.filetype) {
 				case WasiFiletype.regular_file:
 					return undefined;
+
 				case WasiFiletype.directory:
 					current = current.entries.get(parts[i]) as
 						| F
 						| D
 						| undefined;
+
 					if (current === undefined) {
 						return undefined;
 					}
@@ -214,6 +226,7 @@ abstract class NodeDescriptor<N extends Node> extends BaseFileDescriptor {
 
 	dispose(): Promise<void> {
 		this.node.refs--;
+
 		return Promise.resolve();
 	}
 }
@@ -365,6 +378,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		this.deviceDrivers = info.deviceDrivers;
 		this.preOpens = info.preOpens;
 		this.fileDescriptors = fileDescriptors;
+
 		if (info.kind === "virtual") {
 			this.service = FileSystemService.create(
 				info.deviceDrivers,
@@ -388,8 +402,11 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 
 	public async initialize(): Promise<void> {
 		let fd = 3;
+
 		let errno: errno;
+
 		const memory = new ArrayBuffer(1024);
+
 		do {
 			errno = await this.service.fd_prestat_get(memory, fd++, 0);
 		} while (errno === Errno.success);
@@ -410,6 +427,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 	async toVSCode(path: string): Promise<Uri | undefined> {
 		try {
 			const [deviceDriver, relativePath] = this.getDeviceDriver(path);
+
 			if (deviceDriver === undefined) {
 				return undefined;
 			}
@@ -425,12 +443,14 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 	async toWasm(uri: Uri): Promise<string | undefined> {
 		try {
 			const [mountPoint, root] = this.getMountPoint(uri);
+
 			if (mountPoint === undefined) {
 				return undefined;
 			}
 			const relative = uri
 				.toString()
 				.substring(root.toString().length + 1);
+
 			return RAL().path.join(mountPoint, relative);
 		} catch (error) {
 			if (error instanceof WasiError && error.errno === Errno.noent) {
@@ -442,10 +462,12 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 
 	async stat(path: string): Promise<{ filetype: ApiFiletype }> {
 		const [fileDescriptor, relativePath] = this.getFileDescriptor(path);
+
 		if (fileDescriptor !== undefined) {
 			const deviceDriver = this.deviceDrivers.get(
 				fileDescriptor.deviceId,
 			);
+
 			if (
 				deviceDriver !== undefined &&
 				deviceDriver.kind === "fileSystem"
@@ -457,6 +479,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 					relativePath,
 					result,
 				);
+
 				return { filetype: Filetypes.from(result.filetype) };
 			}
 		}
@@ -469,6 +492,7 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 		if (this.virtualFileSystem !== undefined) {
 			const [deviceDriver, rest] =
 				this.virtualFileSystem.getDeviceDriver(path);
+
 			if (deviceDriver !== undefined) {
 				return [this.fileDescriptors.getRoot(deviceDriver), rest];
 			} else {
@@ -501,7 +525,9 @@ export class WasmRootFileSystemImpl implements RootFileSystem {
 			return this.virtualFileSystem.getMountPoint(uri);
 		} else if (this.singleFileSystem !== undefined) {
 			const uriStr = uri.toString();
+
 			const rootStr = this.singleFileSystem.uri.toString();
+
 			if (
 				uriStr === rootStr ||
 				(uriStr.startsWith(rootStr) &&

@@ -15,6 +15,7 @@ runSingle((client, folder) => {
 	const filename = folder.uri.with({
 		path: path.join(folder.uri.path, "test.txt"),
 	});
+
 	const content = RAL()
 		.TextDecoder.create()
 		.decode(client.vscode.workspace.fileSystem.readFile(filename).slice());

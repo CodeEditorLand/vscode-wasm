@@ -11,6 +11,7 @@ interface RIL extends RAL {}
 
 // In Browser environments we can only encode / decode utf-8
 const encoder: RAL.TextEncoder = new TextEncoder();
+
 const decoder: RAL.TextDecoder = new TextDecoder();
 
 const _ril: RIL = Object.freeze<RIL>({
@@ -44,6 +45,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setImmediate(
@@ -51,6 +53,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, 0, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setInterval(
@@ -59,6 +62,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setInterval(callback, ms, ...args);
+
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),
@@ -70,7 +74,9 @@ const _ril: RIL = Object.freeze<RIL>({
 		monotonic(): bigint {
 			// digits are ms, decimal places are fractions of ms.
 			const now = self.performance.timeOrigin + self.performance.now();
+
 			const ms = Math.trunc(now);
+
 			const msf = now - ms;
 			// We need to convert everything into nanoseconds
 			return BigInt(ms) * 1000000n + BigInt(Math.round(msf * 1000000));
@@ -80,6 +86,7 @@ const _ril: RIL = Object.freeze<RIL>({
 		randomGet(size: number): Uint8Array {
 			const result = new Uint8Array(size);
 			self.crypto.getRandomValues(result);
+
 			return result;
 		},
 	}),

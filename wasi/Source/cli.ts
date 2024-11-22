@@ -35,6 +35,7 @@ export namespace cli {
 	}
 	export type Environment = {
 		getEnvironment: Environment.getEnvironment;
+
 		getArguments: Environment.getArguments;
 		initialCwd: Environment.initialCwd;
 	};
@@ -97,6 +98,7 @@ export namespace cli {
 		export namespace TerminalInput {
 			export interface Interface extends $wcm.Resource {}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type TerminalInput = TerminalInput.Interface;
@@ -114,6 +116,7 @@ export namespace cli {
 		export namespace TerminalOutput {
 			export interface Interface extends $wcm.Resource {}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type TerminalOutput = TerminalOutput.Interface;
@@ -170,8 +173,10 @@ export namespace cli {
 	export type TerminalStderr = {
 		getTerminalStderr: TerminalStderr.getTerminalStderr;
 	};
+
 	export namespace command {
 		export type Imports = {};
+
 		export namespace Imports {
 			export type Promisified = $wcm.$imports.Promisify<Imports>;
 		}
@@ -179,6 +184,7 @@ export namespace cli {
 			export type Promisify<T> = $wcm.$imports.Promisify<T>;
 		}
 		export type Exports = {};
+
 		export namespace Exports {
 			export type Promisified = $wcm.$exports.Promisify<Exports>;
 		}
@@ -201,12 +207,14 @@ export namespace cli {
 					]),
 				),
 			);
+
 		export const getArguments =
 			new $wcm.FunctionType<cli.Environment.getArguments>(
 				"get-arguments",
 				[],
 				new $wcm.ListType<string>($wcm.wstring),
 			);
+
 		export const initialCwd =
 			new $wcm.FunctionType<cli.Environment.initialCwd>(
 				"initial-cwd",
@@ -216,17 +224,21 @@ export namespace cli {
 	}
 	export namespace Environment._ {
 		export const id = "wasi:cli/environment@0.2.1" as const;
+
 		export const witName = "environment" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getEnvironment", $.getEnvironment],
 			["getArguments", $.getArguments],
 			["initialCwd", $.initialCwd],
 		]);
+
 		export type WasmInterface = {
 			"get-environment": (result: ptr<[string, string][]>) => void;
 			"get-arguments": (result: ptr<string[]>) => void;
 			"initial-cwd": (result: ptr<string | undefined>) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -244,13 +256,17 @@ export namespace cli {
 	}
 	export namespace Exit._ {
 		export const id = "wasi:cli/exit@0.2.1" as const;
+
 		export const witName = "exit" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["exit", $.exit],
 		]);
+
 		export type WasmInterface = {
 			"exit": (status_case: i32) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -268,13 +284,17 @@ export namespace cli {
 	}
 	export namespace Run._ {
 		export const id = "wasi:cli/run@0.2.1" as const;
+
 		export const witName = "run" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["run", $.run],
 		]);
+
 		export type WasmInterface = {
 			"run": () => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -285,6 +305,7 @@ export namespace cli {
 
 	export namespace Stdin.$ {
 		export const InputStream = io.Streams.$.InputStream;
+
 		export const getStdin = new $wcm.FunctionType<cli.Stdin.getStdin>(
 			"get-stdin",
 			[],
@@ -293,17 +314,22 @@ export namespace cli {
 	}
 	export namespace Stdin._ {
 		export const id = "wasi:cli/stdin@0.2.1" as const;
+
 		export const witName = "stdin" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["InputStream", $.InputStream]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getStdin", $.getStdin],
 		]);
+
 		export type WasmInterface = {
 			"get-stdin": () => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -314,6 +340,7 @@ export namespace cli {
 
 	export namespace Stdout.$ {
 		export const OutputStream = io.Streams.$.OutputStream;
+
 		export const getStdout = new $wcm.FunctionType<cli.Stdout.getStdout>(
 			"get-stdout",
 			[],
@@ -322,17 +349,22 @@ export namespace cli {
 	}
 	export namespace Stdout._ {
 		export const id = "wasi:cli/stdout@0.2.1" as const;
+
 		export const witName = "stdout" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["OutputStream", $.OutputStream]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getStdout", $.getStdout],
 		]);
+
 		export type WasmInterface = {
 			"get-stdout": () => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -343,6 +375,7 @@ export namespace cli {
 
 	export namespace Stderr.$ {
 		export const OutputStream = io.Streams.$.OutputStream;
+
 		export const getStderr = new $wcm.FunctionType<cli.Stderr.getStderr>(
 			"get-stderr",
 			[],
@@ -351,17 +384,22 @@ export namespace cli {
 	}
 	export namespace Stderr._ {
 		export const id = "wasi:cli/stderr@0.2.1" as const;
+
 		export const witName = "stderr" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["OutputStream", $.OutputStream]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getStderr", $.getStderr],
 		]);
+
 		export type WasmInterface = {
 			"get-stderr": () => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -376,6 +414,7 @@ export namespace cli {
 				"terminal-input",
 				"wasi:cli@0.2.1/terminal-input/terminal-input",
 			);
+
 		export const TerminalInput_Handle = new $wcm.ResourceHandleType(
 			"terminal-input",
 		);
@@ -388,9 +427,12 @@ export namespace cli {
 	}
 	export namespace TerminalInput._ {
 		export const id = "wasi:cli/terminal-input@0.2.1" as const;
+
 		export const witName = "terminal-input" as const;
+
 		export namespace TerminalInput {
 			export type WasmInterface = {};
+
 			export namespace imports {
 				export type WasmInterface = TerminalInput.WasmInterface & {
 					"[resource-drop]terminal-input": (self: i32) => void;
@@ -406,11 +448,14 @@ export namespace cli {
 			string,
 			$wcm.AnyComponentModelType
 		>([["TerminalInput", $.TerminalInput]]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["TerminalInput", $.TerminalInput]]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalInput.imports.WasmInterface;
@@ -418,6 +463,7 @@ export namespace cli {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalInput.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]terminal-input": (rep: i32) => i32;
@@ -434,6 +480,7 @@ export namespace cli {
 				"terminal-output",
 				"wasi:cli@0.2.1/terminal-output/terminal-output",
 			);
+
 		export const TerminalOutput_Handle = new $wcm.ResourceHandleType(
 			"terminal-output",
 		);
@@ -446,9 +493,12 @@ export namespace cli {
 	}
 	export namespace TerminalOutput._ {
 		export const id = "wasi:cli/terminal-output@0.2.1" as const;
+
 		export const witName = "terminal-output" as const;
+
 		export namespace TerminalOutput {
 			export type WasmInterface = {};
+
 			export namespace imports {
 				export type WasmInterface = TerminalOutput.WasmInterface & {
 					"[resource-drop]terminal-output": (self: i32) => void;
@@ -464,11 +514,14 @@ export namespace cli {
 			string,
 			$wcm.AnyComponentModelType
 		>([["TerminalOutput", $.TerminalOutput]]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["TerminalOutput", $.TerminalOutput]]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalOutput.imports.WasmInterface;
@@ -476,6 +529,7 @@ export namespace cli {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalOutput.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]terminal-output": (rep: i32) => i32;
@@ -488,6 +542,7 @@ export namespace cli {
 
 	export namespace TerminalStdin.$ {
 		export const TerminalInput = cli.TerminalInput.$.TerminalInput;
+
 		export const getTerminalStdin =
 			new $wcm.FunctionType<cli.TerminalStdin.getTerminalStdin>(
 				"get-terminal-stdin",
@@ -501,19 +556,24 @@ export namespace cli {
 	}
 	export namespace TerminalStdin._ {
 		export const id = "wasi:cli/terminal-stdin@0.2.1" as const;
+
 		export const witName = "terminal-stdin" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["TerminalInput", $.TerminalInput]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getTerminalStdin", $.getTerminalStdin],
 		]);
+
 		export type WasmInterface = {
 			"get-terminal-stdin": (
 				result: ptr<TerminalInput | undefined>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -524,6 +584,7 @@ export namespace cli {
 
 	export namespace TerminalStdout.$ {
 		export const TerminalOutput = cli.TerminalOutput.$.TerminalOutput;
+
 		export const getTerminalStdout =
 			new $wcm.FunctionType<cli.TerminalStdout.getTerminalStdout>(
 				"get-terminal-stdout",
@@ -537,19 +598,24 @@ export namespace cli {
 	}
 	export namespace TerminalStdout._ {
 		export const id = "wasi:cli/terminal-stdout@0.2.1" as const;
+
 		export const witName = "terminal-stdout" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["TerminalOutput", $.TerminalOutput]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getTerminalStdout", $.getTerminalStdout],
 		]);
+
 		export type WasmInterface = {
 			"get-terminal-stdout": (
 				result: ptr<TerminalOutput | undefined>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -560,6 +626,7 @@ export namespace cli {
 
 	export namespace TerminalStderr.$ {
 		export const TerminalOutput = cli.TerminalOutput.$.TerminalOutput;
+
 		export const getTerminalStderr =
 			new $wcm.FunctionType<cli.TerminalStderr.getTerminalStderr>(
 				"get-terminal-stderr",
@@ -573,19 +640,24 @@ export namespace cli {
 	}
 	export namespace TerminalStderr._ {
 		export const id = "wasi:cli/terminal-stderr@0.2.1" as const;
+
 		export const witName = "terminal-stderr" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["TerminalOutput", $.TerminalOutput]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getTerminalStderr", $.getTerminalStderr],
 		]);
+
 		export type WasmInterface = {
 			"get-terminal-stderr": (
 				result: ptr<TerminalOutput | undefined>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -596,18 +668,22 @@ export namespace cli {
 	export namespace command.$ {}
 	export namespace command._ {
 		export const id = "wasi:cli/command@0.2.1" as const;
+
 		export const witName = "command" as const;
+
 		export function bind(
 			service: command.Imports,
 			code: $wcm.Code,
 			context?: $wcm.ComponentModelContext,
 		): Promise<command.Exports>;
+
 		export function bind(
 			service: command.Imports.Promisified,
 			code: $wcm.Code,
 			port: $wcm.RAL.ConnectionPort,
 			context?: $wcm.ComponentModelContext,
 		): Promise<command.Exports.Promisified>;
+
 		export function bind(
 			service: command.Imports | command.Imports.Promisified,
 			code: $wcm.Code,
@@ -623,8 +699,11 @@ export namespace cli {
 
 export namespace cli._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:cli@0.2.1" as const;
+
 	export const witName = "cli" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType
@@ -641,6 +720,7 @@ export namespace cli._ {
 		["TerminalStdout", TerminalStdout._],
 		["TerminalStderr", TerminalStderr._],
 	]);
+
 	export const worlds: Map<string, $wcm.WorldType> = new Map<
 		string,
 		$wcm.WorldType

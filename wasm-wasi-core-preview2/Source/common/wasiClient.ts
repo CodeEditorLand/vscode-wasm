@@ -39,6 +39,7 @@ export namespace Client {
 					pollables: SharedObject.Location[];
 				};
 		  };
+
 	export type SyncCalls = {
 		method: "pollable/clearTimeout";
 		params: {

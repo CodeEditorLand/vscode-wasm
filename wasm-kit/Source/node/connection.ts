@@ -39,6 +39,7 @@ export class Connection<
 
 	public dispose(): void {
 		this.port.removeAllListeners("message");
+
 		if (this.port instanceof MessagePort) {
 			this.port.close();
 		}

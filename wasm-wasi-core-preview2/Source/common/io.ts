@@ -56,6 +56,7 @@ export namespace Pollable {
 	}
 	export const properties: Record.PropertyTypes =
 		SharedResource.properties.concat([["signal", Signal.Type]]);
+
 	export const record = new Record.Type<Properties>(properties);
 }
 
@@ -64,10 +65,13 @@ export function createPoll(client: WasiClient) {
 		Pollable: Pollable,
 		poll(p: io.Poll.Pollable.Interface[]): Uint32Array {
 			const pollables: Pollable[] = p as Pollable[];
+
 			const signal = new Signal(client.getSharedMemory());
 			client.racePollables(signal, pollables);
 			signal.wait();
+
 			const result: number[] = [];
+
 			for (const [index, pollable] of pollables.entries()) {
 				if (pollable.ready()) {
 					result.push(index);

@@ -20,11 +20,14 @@ export function createMonotonicClock(client: WasiClient) {
 		subscribeDuration(when: u64): Pollable {
 			const pollable = new Pollable(client.getSharedMemory());
 			client.setTimeout(pollable, when);
+
 			return pollable;
 		},
 		subscribeInstant(when: u64): Pollable {
 			const pollable = new Pollable(client.getSharedMemory());
+
 			const duration = when - RAL().clock.realtime();
+
 			if (duration < 0) {
 				pollable.resolve();
 			} else {
@@ -39,6 +42,7 @@ export function createWallClock() {
 	return {
 		now(): clocks.WallClock.Datetime {
 			// const value: i64 = RAL().clock.monotonic();
+
 			return { seconds: 0n, nanoseconds: 0 };
 		},
 		resolution(): clocks.WallClock.Datetime {

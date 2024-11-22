@@ -166,6 +166,7 @@ export namespace filesystem {
 			 */
 			mutateDirectory: 1 << 5,
 		});
+
 		export type DescriptorFlags = u32;
 
 		/**
@@ -178,6 +179,7 @@ export namespace filesystem {
 			 */
 			symlinkFollow: 1 << 0,
 		});
+
 		export type PathFlags = u32;
 
 		/**
@@ -204,6 +206,7 @@ export namespace filesystem {
 			 */
 			truncate: 1 << 3,
 		});
+
 		export type OpenFlags = u32;
 
 		/**
@@ -266,7 +269,9 @@ export namespace filesystem {
 			 * Leave the timestamp set to its previous value.
 			 */
 			export const noChange = "noChange" as const;
+
 			export type NoChange = { readonly tag: typeof noChange } & _common;
+
 			export function NoChange(): NoChange {
 				return new VariantImpl(noChange, undefined) as NoChange;
 			}
@@ -276,7 +281,9 @@ export namespace filesystem {
 			 * with the filesystem.
 			 */
 			export const now = "now" as const;
+
 			export type Now = { readonly tag: typeof now } & _common;
+
 			export function Now(): Now {
 				return new VariantImpl(now, undefined) as Now;
 			}
@@ -285,23 +292,28 @@ export namespace filesystem {
 			 * Set the timestamp to the given value.
 			 */
 			export const timestamp = "timestamp" as const;
+
 			export type Timestamp = {
 				readonly tag: typeof timestamp;
 				readonly value: Datetime;
 			} & _common;
+
 			export function Timestamp(value: Datetime): Timestamp {
 				return new VariantImpl(timestamp, value) as Timestamp;
 			}
 
 			export type _tt = typeof noChange | typeof now | typeof timestamp;
+
 			export type _vt = Datetime | undefined;
 			type _common = Omit<VariantImpl, "tag" | "value">;
+
 			export function _ctor(t: _tt, v: _vt): NewTimestamp {
 				return new VariantImpl(t, v) as NewTimestamp;
 			}
 			class VariantImpl {
 				private readonly _tag: _tt;
 				private readonly _value?: _vt;
+
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
 					this._value = value;
@@ -980,6 +992,7 @@ export namespace filesystem {
 				): MetadataHashValue;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type Descriptor = Descriptor.Interface;
@@ -994,6 +1007,7 @@ export namespace filesystem {
 				readDirectoryEntry(): DirectoryEntry | undefined;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type DirectoryEntryStream = DirectoryEntryStream.Interface;
@@ -1034,10 +1048,15 @@ export namespace filesystem {
 export namespace filesystem {
 	export namespace Types.$ {
 		export const InputStream = io.Streams.$.InputStream;
+
 		export const OutputStream = io.Streams.$.OutputStream;
+
 		export const Error = io.Streams.$.Error;
+
 		export const Datetime = clocks.WallClock.$.Datetime;
+
 		export const Filesize = $wcm.u64;
+
 		export const DescriptorType =
 			new $wcm.EnumType<filesystem.Types.DescriptorType>([
 				"unknown",
@@ -1049,15 +1068,20 @@ export namespace filesystem {
 				"regularFile",
 				"socket",
 			]);
+
 		export const DescriptorFlags =
 			new $wcm.FlagsType<filesystem.Types.DescriptorFlags>(6);
+
 		export const PathFlags = new $wcm.FlagsType<filesystem.Types.PathFlags>(
 			1,
 		);
+
 		export const OpenFlags = new $wcm.FlagsType<filesystem.Types.OpenFlags>(
 			4,
 		);
+
 		export const LinkCount = $wcm.u64;
+
 		export const DescriptorStat =
 			new $wcm.RecordType<filesystem.Types.DescriptorStat>([
 				["type", DescriptorType],
@@ -1076,6 +1100,7 @@ export namespace filesystem {
 					new $wcm.OptionType<filesystem.Types.Datetime>(Datetime),
 				],
 			]);
+
 		export const NewTimestamp = new $wcm.VariantType<
 			filesystem.Types.NewTimestamp,
 			filesystem.Types.NewTimestamp._tt,
@@ -1088,11 +1113,13 @@ export namespace filesystem {
 			],
 			filesystem.Types.NewTimestamp._ctor,
 		);
+
 		export const DirectoryEntry =
 			new $wcm.RecordType<filesystem.Types.DirectoryEntry>([
 				["type", DescriptorType],
 				["name", $wcm.wstring],
 			]);
+
 		export const ErrorCode = new $wcm.EnumType<filesystem.Types.ErrorCode>([
 			"access",
 			"wouldBlock",
@@ -1132,6 +1159,7 @@ export namespace filesystem {
 			"textFileBusy",
 			"crossDevice",
 		]);
+
 		export const Advice = new $wcm.EnumType<filesystem.Types.Advice>([
 			"normal",
 			"sequential",
@@ -1140,24 +1168,29 @@ export namespace filesystem {
 			"dontNeed",
 			"noReuse",
 		]);
+
 		export const MetadataHashValue =
 			new $wcm.RecordType<filesystem.Types.MetadataHashValue>([
 				["lower", $wcm.u64],
 				["upper", $wcm.u64],
 			]);
+
 		export const Descriptor =
 			new $wcm.ResourceType<filesystem.Types.Descriptor>(
 				"descriptor",
 				"wasi:filesystem@0.2.1/types/descriptor",
 			);
+
 		export const Descriptor_Handle = new $wcm.ResourceHandleType(
 			"descriptor",
 		);
+
 		export const DirectoryEntryStream =
 			new $wcm.ResourceType<filesystem.Types.DirectoryEntryStream>(
 				"directory-entry-stream",
 				"wasi:filesystem@0.2.1/types/directory-entry-stream",
 			);
+
 		export const DirectoryEntryStream_Handle = new $wcm.ResourceHandleType(
 			"directory-entry-stream",
 		);
@@ -1648,6 +1681,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		export const filesystemErrorCode =
 			new $wcm.FunctionType<filesystem.Types.filesystemErrorCode>(
 				"filesystem-error-code",
@@ -1657,7 +1691,9 @@ export namespace filesystem {
 	}
 	export namespace Types._ {
 		export const id = "wasi:filesystem/types@0.2.1" as const;
+
 		export const witName = "types" as const;
+
 		export namespace Descriptor {
 			export type WasmInterface = {
 				"[method]descriptor.read-via-stream": (
@@ -1829,6 +1865,7 @@ export namespace filesystem {
 					result: ptr<result<MetadataHashValue, ErrorCode>>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = Descriptor.WasmInterface & {
 					"[resource-drop]descriptor": (self: i32) => void;
@@ -1847,6 +1884,7 @@ export namespace filesystem {
 					result: ptr<result<DirectoryEntry | undefined, ErrorCode>>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface =
 					DirectoryEntryStream.WasmInterface & {
@@ -1885,9 +1923,11 @@ export namespace filesystem {
 			["Descriptor", $.Descriptor],
 			["DirectoryEntryStream", $.DirectoryEntryStream],
 		]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["filesystemErrorCode", $.filesystemErrorCode],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
@@ -1895,12 +1935,14 @@ export namespace filesystem {
 			["Descriptor", $.Descriptor],
 			["DirectoryEntryStream", $.DirectoryEntryStream],
 		]);
+
 		export type WasmInterface = {
 			"filesystem-error-code": (
 				err: i32,
 				result: ptr<ErrorCode | undefined>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				Descriptor.imports.WasmInterface &
@@ -1910,6 +1952,7 @@ export namespace filesystem {
 			export type WasmInterface = _.WasmInterface &
 				Descriptor.exports.WasmInterface &
 				DirectoryEntryStream.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]descriptor": (rep: i32) => i32;
@@ -1929,6 +1972,7 @@ export namespace filesystem {
 
 	export namespace Preopens.$ {
 		export const Descriptor = filesystem.Types.$.Descriptor;
+
 		export const getDirectories =
 			new $wcm.FunctionType<filesystem.Preopens.getDirectories>(
 				"get-directories",
@@ -1947,17 +1991,22 @@ export namespace filesystem {
 	}
 	export namespace Preopens._ {
 		export const id = "wasi:filesystem/preopens@0.2.1" as const;
+
 		export const witName = "preopens" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["Descriptor", $.Descriptor]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getDirectories", $.getDirectories],
 		]);
+
 		export type WasmInterface = {
 			"get-directories": (result: ptr<[Descriptor, string][]>) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -1969,8 +2018,11 @@ export namespace filesystem {
 
 export namespace filesystem._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:filesystem@0.2.1" as const;
+
 	export const witName = "filesystem" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType

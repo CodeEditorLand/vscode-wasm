@@ -34,6 +34,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setImmediate(
@@ -41,6 +42,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setImmediate(callback, ...args);
+
 			return { dispose: () => clearImmediate(handle) };
 		},
 		setInterval(
@@ -49,6 +51,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setInterval(callback, ms, ...args);
+
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),
@@ -66,6 +69,7 @@ const _ril: RIL = Object.freeze<RIL>({
 		randomGet(size: number): Uint8Array {
 			const result = new Uint8Array(size);
 			crypto.randomFillSync(result);
+
 			return result;
 		},
 	}),

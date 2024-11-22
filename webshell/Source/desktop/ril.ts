@@ -13,6 +13,7 @@ const _ril: RAL = Object.freeze<RAL>({
 	webAssembly: Object.freeze({
 		async compile(uri: Uri): Promise<WebAssembly.Module> {
 			const bits = await workspace.fs.readFile(uri);
+
 			return WebAssembly.compile(bits);
 		},
 	}),

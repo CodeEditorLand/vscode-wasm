@@ -53,6 +53,7 @@ async function readDirectory(
 	stat: BigIntStats,
 ): Promise<DirectoryNode> {
 	const name = paths.basename(path);
+
 	if (!stat.isDirectory()) {
 		throw new Error(`${path} is not a directory`);
 	}
@@ -67,9 +68,12 @@ async function readDirectory(
 	};
 
 	const dir: Dir = await fs.opendir(path);
+
 	for await (const entry of dir) {
 		const entryPath = paths.join(path, entry.name);
+
 		const stat = await fs.stat(entryPath, { bigint: true });
+
 		if (stat.isDirectory()) {
 			result.children[entry.name] = await readDirectory(entryPath, stat);
 		} else if (stat.isFile()) {
@@ -91,35 +95,42 @@ async function readDirectory(
 async function run(options: Options): Promise<number> {
 	if (options.help) {
 		yargs.showHelp();
+
 		return 0;
 	}
 
 	if (options.version) {
 		console.log(require("../../package.json").version);
+
 		return 0;
 	}
 
 	if (!options.directory) {
 		console.error("Missing directory argument.");
 		yargs.showHelp();
+
 		return 1;
 	}
 
 	try {
 		const stat = await fs.stat(options.directory, { bigint: true });
+
 		if (!stat.isDirectory()) {
 			console.error(`${options.directory} is not a directory`);
+
 			return 1;
 		}
 
 		const directory = await readDirectory(options.directory, stat);
 		directory.name = "/";
+
 		const dump = JSON.stringify(
 			directory,
 			(_key, value) =>
 				typeof value === "bigint" ? value.toString() : value,
 			"\t",
 		);
+
 		if (options.out) {
 			await fs.writeFile(options.out, dump);
 		} else if (options.stdout) {
@@ -127,11 +138,13 @@ async function run(options: Options): Promise<number> {
 		} else {
 			console.error("No output specified.");
 			yargs.showHelp();
+
 			return 1;
 		}
 		return 0;
 	} catch (error) {
 		console.error(`Creating dump failed`, error);
+
 		return 1;
 	}
 }
@@ -169,8 +182,10 @@ export async function main(): Promise<number> {
 		});
 
 	const parsed = await yargs.argv;
+
 	const options: Options = Object.assign({}, Options.defaults, parsed);
 	options.directory = parsed._[0] as string;
+
 	return run(options);
 }
 

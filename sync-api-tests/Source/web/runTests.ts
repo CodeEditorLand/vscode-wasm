@@ -9,15 +9,18 @@ import { runTests } from "@vscode/test-web";
 async function go() {
 	try {
 		const workspaceRoot = path.resolve(__dirname, "..", "..", "..");
+
 		const folderPath = path.join(
 			workspaceRoot,
 			"sync-api-tests",
 			".vscode-test-workspace",
 		);
+
 		const extensionDevelopmentPath = path.join(
 			workspaceRoot,
 			"sync-api-tests",
 		);
+
 		const extensionTestsPath = path.resolve(
 			workspaceRoot,
 			"sync-api-tests",

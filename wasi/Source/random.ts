@@ -68,6 +68,7 @@ export namespace random {
 	}
 	export type Insecure = {
 		getInsecureRandomBytes: Insecure.getInsecureRandomBytes;
+
 		getInsecureRandomU64: Insecure.getInsecureRandomU64;
 	};
 
@@ -104,6 +105,7 @@ export namespace random {
 	}
 	export type Random = {
 		getRandomBytes: Random.getRandomBytes;
+
 		getRandomU64: Random.getRandomU64;
 	};
 }
@@ -119,13 +121,17 @@ export namespace random {
 	}
 	export namespace InsecureSeed._ {
 		export const id = "wasi:random/insecure-seed@0.2.1" as const;
+
 		export const witName = "insecure-seed" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["insecureSeed", $.insecureSeed],
 		]);
+
 		export type WasmInterface = {
 			"insecure-seed": (result: ptr<[u64, u64]>) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -141,6 +147,7 @@ export namespace random {
 				[["len", $wcm.u64]],
 				new $wcm.Uint8ArrayType(),
 			);
+
 		export const getInsecureRandomU64 =
 			new $wcm.FunctionType<random.Insecure.getInsecureRandomU64>(
 				"get-insecure-random-u64",
@@ -150,11 +157,14 @@ export namespace random {
 	}
 	export namespace Insecure._ {
 		export const id = "wasi:random/insecure@0.2.1" as const;
+
 		export const witName = "insecure" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getInsecureRandomBytes", $.getInsecureRandomBytes],
 			["getInsecureRandomU64", $.getInsecureRandomU64],
 		]);
+
 		export type WasmInterface = {
 			"get-insecure-random-bytes": (
 				len: i64,
@@ -162,6 +172,7 @@ export namespace random {
 			) => void;
 			"get-insecure-random-u64": () => i64;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -177,6 +188,7 @@ export namespace random {
 				[["len", $wcm.u64]],
 				new $wcm.Uint8ArrayType(),
 			);
+
 		export const getRandomU64 =
 			new $wcm.FunctionType<random.Random.getRandomU64>(
 				"get-random-u64",
@@ -186,15 +198,19 @@ export namespace random {
 	}
 	export namespace Random._ {
 		export const id = "wasi:random/random@0.2.1" as const;
+
 		export const witName = "random" as const;
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["getRandomBytes", $.getRandomBytes],
 			["getRandomU64", $.getRandomU64],
 		]);
+
 		export type WasmInterface = {
 			"get-random-bytes": (len: i64, result: ptr<Uint8Array>) => void;
 			"get-random-u64": () => i64;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -206,8 +222,11 @@ export namespace random {
 
 export namespace random._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:random@0.2.1" as const;
+
 	export const witName = "random" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType

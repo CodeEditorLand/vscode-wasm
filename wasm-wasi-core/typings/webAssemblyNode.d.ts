@@ -56,8 +56,10 @@ declare namespace WebAssembly {
 
 	interface Table {
 		readonly length: number;
+
 		get(index: number): any;
 		grow(delta: number, value?: any): number;
+
 		set(index: number, value?: any): void;
 	}
 
@@ -92,7 +94,9 @@ declare namespace WebAssembly {
 			moduleObject: Module,
 			sectionName: string,
 		): ArrayBuffer[];
+
 		exports(moduleObject: Module): ModuleExportDescriptor[];
+
 		imports(moduleObject: Module): ModuleImportDescriptor[];
 	};
 
@@ -102,13 +106,16 @@ declare namespace WebAssembly {
 	}
 
 	function compile(bytes: BufferSource): Promise<Module>;
+
 	function instantiate(
 		bytes: BufferSource,
 		importObject?: Imports,
 	): Promise<WebAssemblyInstantiatedSource>;
+
 	function instantiate(
 		moduleObject: Module,
 		importObject?: Imports,
 	): Promise<Instance>;
+
 	function validate(bytes: BufferSource): boolean;
 }

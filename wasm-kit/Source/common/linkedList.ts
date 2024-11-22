@@ -32,11 +32,13 @@ export class SharedLinkedList<T> extends ObjectProperty {
 	) {
 		super(memoryRange);
 		this.elementType = elementType;
+
 		const access = SharedLinkedList.properties.load(
 			memoryRange,
 			0,
 			context,
 		);
+
 		if (context.mode === SharedObjectContext.Mode.new) {
 			access.state = 0;
 			access.head = 0;
@@ -75,6 +77,7 @@ export namespace SharedLinkedList {
 		public size: size;
 		public alignment: Alignment;
 		private elementType: ValueType<T>;
+
 		constructor(elementType: ValueType<T>) {
 			this.elementType = elementType;
 			this.size = properties.size;
@@ -86,6 +89,7 @@ export namespace SharedLinkedList {
 			context: SharedObjectContext,
 		): SharedLinkedList<any> {
 			const linkedListMemory = memory.range(offset, this.size);
+
 			return new SharedLinkedList<T>(
 				this.elementType,
 				linkedListMemory,

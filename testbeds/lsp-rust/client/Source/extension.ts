@@ -14,6 +14,7 @@ import {
 } from "vscode-languageclient/node";
 
 let client: LanguageClient;
+
 const channel = window.createOutputChannel("LSP WASM Server");
 
 export async function activate(context: ExtensionContext) {
@@ -24,6 +25,7 @@ export async function activate(context: ExtensionContext) {
 			stdio: createStdioOptions(),
 			mountPoints: [{ kind: "workspaceFolder" }],
 		};
+
 		const filename = Uri.joinPath(
 			context.extensionUri,
 			"server",
@@ -32,8 +34,11 @@ export async function activate(context: ExtensionContext) {
 			"release",
 			"server.wasm",
 		);
+
 		const bits = await workspace.fs.readFile(filename);
+
 		const module = await WebAssembly.compile(bits);
+
 		const process = await wasm.createProcess(
 			"lsp-server",
 			module,
@@ -61,6 +66,7 @@ export async function activate(context: ExtensionContext) {
 		serverOptions,
 		clientOptions,
 	);
+
 	try {
 		await client.start();
 	} catch (error) {
@@ -68,6 +74,7 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	type CountFileParams = { dir: string };
+
 	const CountFilesRequest = new RequestType<CountFileParams, number, void>(
 		"wasm-language-server/countFilesInDirectory",
 	);

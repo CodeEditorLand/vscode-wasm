@@ -18,6 +18,7 @@ export interface CommandMountPointContribution {
 export namespace CommandMountPointContribution {
 	export function is(value: object): value is CommandMountPointContribution {
 		const candidate = value as CommandMountPointContribution;
+
 		return (
 			candidate &&
 			typeof candidate.command === "string" &&
@@ -38,6 +39,7 @@ export namespace DirectoryMountPointContribution {
 		value: object,
 	): value is DirectoryMountPointContribution {
 		const candidate = value as DirectoryMountPointContribution;
+
 		return (
 			candidate &&
 			typeof candidate.path === "string" &&
@@ -62,7 +64,9 @@ export interface ChangeEvent {
 
 export interface WebShellContributions {
 	readonly onChanged: Event<ChangeEvent>;
+
 	getCommandMountPoints(): CommandMountPoint[];
+
 	getDirectoryMountPoints(): DirectoryMountPoint[];
 }
 
@@ -106,9 +110,12 @@ class WebShellContributionsImpl implements WebShellContributions {
 			commands: CommandMountPoint[];
 			directories: DirectoryMountPoint[];
 		} = { commands: [], directories: [] };
+
 		for (const extension of Extensions.all) {
 			const packageJSON = extension.packageJSON;
+
 			const mountPoints = packageJSON?.contributes?.webShellMountPoints;
+
 			if (mountPoints !== undefined) {
 				for (const mountPoint of mountPoints) {
 					if (CommandMountPointContribution.is(mountPoint)) {
@@ -135,12 +142,15 @@ class WebShellContributionsImpl implements WebShellContributions {
 				command,
 			]),
 		);
+
 		const newCommands: Map<string, CommandMountPoint> = new Map(
 			commands.map((command) => [command.command, command]),
 		);
 
 		const addedCommands: CommandMountPoint[] = [];
+
 		const removedCommands: CommandMountPoint[] = [];
+
 		for (const [command, newCommand] of newCommands) {
 			if (oldCommands.has(command)) {
 				oldCommands.delete(command);
@@ -161,6 +171,7 @@ class WebShellContributionsImpl implements WebShellContributions {
 				directory,
 			]),
 		);
+
 		const newDirectories: Map<string, DirectoryMountPoint> = new Map(
 			directories.map((directory) => [
 				Uri.joinPath(
@@ -170,8 +181,11 @@ class WebShellContributionsImpl implements WebShellContributions {
 				directory,
 			]),
 		);
+
 		const addedDirectories: DirectoryMountPoint[] = [];
+
 		const removedDirectories: DirectoryMountPoint[] = [];
+
 		for (const [path, newDirectory] of newDirectories) {
 			if (oldDirectories.has(path)) {
 				oldDirectories.delete(path);

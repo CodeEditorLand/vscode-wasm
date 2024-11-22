@@ -11,6 +11,7 @@ class LineBuffer {
 	private offset: number;
 	private cursor: number;
 	private content: string[];
+
 	constructor() {
 		this.offset = 0;
 		this.cursor = 0;
@@ -64,6 +65,7 @@ class LineBuffer {
 			return false;
 		}
 		this.content.splice(this.cursor, 1);
+
 		return true;
 	}
 
@@ -73,15 +75,18 @@ class LineBuffer {
 		}
 		this.cursor -= 1;
 		this.content.splice(this.cursor, 1);
+
 		return true;
 	}
 
 	public moveCursorRelative(characters: number): boolean {
 		const newValue = this.cursor + characters;
+
 		if (newValue < 0 || newValue > this.content.length) {
 			return false;
 		}
 		this.cursor = newValue;
+
 		return true;
 	}
 
@@ -90,6 +95,7 @@ class LineBuffer {
 			return false;
 		}
 		this.cursor = 0;
+
 		return true;
 	}
 
@@ -98,6 +104,7 @@ class LineBuffer {
 			return false;
 		}
 		this.cursor = this.content.length;
+
 		return true;
 	}
 
@@ -109,6 +116,7 @@ class LineBuffer {
 		// check if we are at the beginning of a word
 		if (this.content[this.cursor - 1] === " ") {
 			index = this.cursor - 2;
+
 			while (index > 0) {
 				if (this.content[index] === " ") {
 					index--;
@@ -121,18 +129,21 @@ class LineBuffer {
 		}
 		if (index === 0) {
 			this.cursor = index;
+
 			return true;
 		}
 		// On the first character that is not space
 		while (index > 0) {
 			if (this.content[index] === " ") {
 				index++;
+
 				break;
 			} else {
 				index--;
 			}
 		}
 		this.cursor = index;
+
 		return true;
 	}
 
@@ -141,8 +152,10 @@ class LineBuffer {
 			return false;
 		}
 		let index: number;
+
 		if (this.content[this.cursor] === " ") {
 			index = this.cursor + 1;
+
 			while (index < this.content.length) {
 				if (this.content[index] === " ") {
 					index++;
@@ -155,6 +168,7 @@ class LineBuffer {
 		}
 		if (index === this.content.length) {
 			this.cursor = index;
+
 			return true;
 		}
 
@@ -166,6 +180,7 @@ class LineBuffer {
 			}
 		}
 		this.cursor = index;
+
 		return true;
 	}
 }
@@ -312,6 +327,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	public setState(state: PseudoterminalState): void {
 		const old = this.state;
 		this.state = state;
+
 		if (old !== state) {
 			if (
 				state === PseudoterminalState.free ||
@@ -339,6 +355,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	public open(): void {
 		this.isOpen = true;
+
 		if (this.nameBuffer !== undefined) {
 			this._onDidChangeName.fire(this.nameBuffer);
 			this.nameBuffer = undefined;
@@ -360,6 +377,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 			return new Uint8Array(0);
 		}
 		const value = await this.readline();
+
 		return this.encoder.encode(value);
 	}
 
@@ -387,9 +405,11 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	): Promise<void> | Promise<number> {
 		if (typeof content === "string") {
 			this.writeString(this.replaceNewlines(content));
+
 			return Promise.resolve();
 		} else {
 			this.writeString(this.getString(content, encoding));
+
 			return Promise.resolve(content.byteLength);
 		}
 	}
@@ -413,16 +433,22 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	public handleInput(data: string): void {
 		if (this.state === PseudoterminalState.free) {
 			this._onAnyKey.fire();
+
 			return;
 		}
 		const previousCursor = this.lineBuffer.getCursor();
+
 		switch (data) {
 			case "\x03": // ctrl+C
 				this.handleInterrupt();
+
 				break;
+
 			case "\x04": // ctrl+D (end of transmission)
 				this.handleEOT(data);
+
 				break;
+
 			case "\x06": // ctrl+f
 			case "\x1b[C": // right
 				this.adjustCursor(
@@ -430,7 +456,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1bf": // alt+f
 			case "\x1b[1;5C": // ctrl+right
 				this.adjustCursor(
@@ -438,7 +466,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x02": // ctrl+b
 			case "\x1b[D": // left
 				this.adjustCursor(
@@ -446,7 +476,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1bb": // alt+b
 			case "\x1b[1;5D": // ctrl+left
 				this.adjustCursor(
@@ -454,7 +486,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x01": // ctrl+a
 			case "\x1b[H": // home
 				this.adjustCursor(
@@ -462,7 +496,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x05": // ctrl+e
 			case "\x1b[F": // end
 				this.adjustCursor(
@@ -470,12 +506,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1b[A": // up
 				if (this.commandHistory === undefined) {
 					this.bell();
 				} else {
 					const content = this.commandHistory.previous();
+
 					if (content !== undefined) {
 						this.eraseLine();
 						this.lineBuffer.setContent(content);
@@ -485,11 +524,13 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					}
 				}
 				break;
+
 			case "\x1b[B": // down
 				if (this.commandHistory === undefined) {
 					this.bell();
 				} else {
 					const content = this.commandHistory.next();
+
 					if (content !== undefined) {
 						this.eraseLine();
 						this.lineBuffer.setContent(content);
@@ -499,26 +540,35 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 					}
 				}
 				break;
+
 			case "\x08": // shift+backspace
 			case "\x7F": // backspace
 				this.lineBuffer.backspace()
 					? this._onDidWrite.fire("\x1b[D\x1b[P")
 					: this.bell();
+
 				break;
+
 			case "\x1b[3~": // delete key
 				this.lineBuffer.del()
 					? this._onDidWrite.fire("\x1b[P")
 					: this.bell();
+
 				break;
+
 			case "\r": // enter
 				this.handleEnter();
+
 				break;
+
 			default:
 				this.lineBuffer.insert(data);
+
 				if (!this.lineBuffer.isCursorAtEnd()) {
 					this._onDidWrite.fire("\x1b[@");
 				}
 				this._onDidWrite.fire(data);
+
 				if (this.commandHistory !== undefined) {
 					this.commandHistory.update(this.lineBuffer.getLine());
 				}
@@ -536,9 +586,11 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	private handleEnter(): void {
 		this._onDidWrite.fire("\r\n");
+
 		const line = this.lineBuffer.getLine();
 		this.lineBuffer.clear();
 		this.lines.push(line);
+
 		if (this.commandHistory !== undefined) {
 			this.commandHistory.markExecuted();
 		}
@@ -551,8 +603,10 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	private handleEOT(_data: string): void {
 		this.isStdInClosed = true;
+
 		const line = this.lineBuffer.getLine();
 		this.lineBuffer.clear();
+
 		if (line.length > 0) {
 			this.lines.push(line);
 		}
@@ -570,11 +624,14 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	): void {
 		if (!success) {
 			this.bell();
+
 			return;
 		}
 
 		const change = oldCursor - newCursor;
+
 		const code = change > 0 ? "D" : "C";
+
 		const sequence = `\x1b[${code}`.repeat(Math.abs(change));
 		this._onDidWrite.fire(sequence);
 	}

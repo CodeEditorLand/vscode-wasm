@@ -14,6 +14,7 @@ export async function activate(context: ExtensionContext) {
 	commands.registerCommand("wasm-wasi-c-example.run", async () => {
 		// Create a pseudoterminal to provide stdio to the WASM process.
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "Run C Example",
 			pty,
@@ -28,6 +29,7 @@ export async function activate(context: ExtensionContext) {
 			const bits = await workspace.fs.readFile(
 				Uri.joinPath(context.extensionUri, "hello.wasm"),
 			);
+
 			const module = await WebAssembly.compile(bits);
 			// Create a WASM process.
 			const process = await wasm.createProcess("hello", module, {

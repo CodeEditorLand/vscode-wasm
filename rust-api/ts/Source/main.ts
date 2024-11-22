@@ -96,17 +96,20 @@ class TextDocumentResourceManager extends ResourceManager.Default<TextDocumentRe
 
 	public getOrCreate(document: vscode.TextDocument): TextDocumentResource {
 		const handle = this.document2Handle.get(document);
+
 		if (handle !== undefined) {
 			if (this.hasResource(handle)) {
 				return this.getResource(handle);
 			} else {
 				const resource = new TextDocumentResource(document, handle);
 				this.registerResource(resource, handle);
+
 				return resource;
 			}
 		} else {
 			const resource = new TextDocumentResource(document);
 			this.document2Handle.set(document, resource.$handle());
+
 			return resource;
 		}
 	}
@@ -201,6 +204,7 @@ class CommandRegistry {
 
 	unregister(command: string): void {
 		const disposable = this.commands.get(command);
+
 		if (disposable !== undefined) {
 			this.commands.delete(command);
 			disposable.dispose();
@@ -215,12 +219,14 @@ class CommandRegistry {
 }
 
 const commandRegistry = new CommandRegistry();
+
 let instance: WebAssembly_.Instance;
 export async function activate(
 	_context: vscode.ExtensionContext,
 	module: WebAssembly_.Module,
 ): Promise<void> {
 	let memory: Memory | undefined;
+
 	const wasmContext: WasmContext = {
 		options: { encoding: "utf-8" },
 		resources: new ResourceManagers.Default(),
@@ -231,7 +237,9 @@ export async function activate(
 			return memory;
 		},
 	};
+
 	let textDocumentChangeListener: vscode.Disposable | undefined;
+
 	const service: api.all.Imports = {
 		types: {
 			OutputChannel: OutputChannelResource,
@@ -306,15 +314,19 @@ export async function activate(
 			},
 		},
 	};
+
 	const imports = api.all._.imports.create(service, wasmContext);
 	instance = await RAL().WebAssembly.instantiate(module, imports);
 	memory = new Memory.Default(instance.exports);
+
 	const $exports = api.all._.exports.bind(
 		instance.exports as api.all._.Exports,
 		wasmContext,
 	);
 	commandRegistry.initialize($exports.callbacks.executeCommand);
+
 	const extension = instance.exports as Extension;
+
 	if (typeof extension.activate === "function") {
 		extension.activate();
 	}
@@ -322,8 +334,10 @@ export async function activate(
 
 export function deactivate(): void {
 	commandRegistry.dispose();
+
 	if (instance !== undefined) {
 		const extension = instance.exports as Extension;
+
 		if (typeof extension.deactivate === "function") {
 			extension.deactivate();
 		}

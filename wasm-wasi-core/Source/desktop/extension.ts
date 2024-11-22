@@ -13,6 +13,7 @@ RIL.install();
 export async function activate(context: ExtensionContext) {
 	return new APILoader(context, NodeWasiProcess, async (source) => {
 		const bits = await workspace.fs.readFile(source);
+
 		return WebAssembly.compile(bits);
 	});
 }

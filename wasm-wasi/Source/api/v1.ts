@@ -566,6 +566,7 @@ interface APILoader {
 
 export namespace Wasm {
 	let $api: Wasm | undefined | null = undefined;
+
 	let $promise: Promise<Wasm> | undefined | null = undefined;
 
 	export function api(): Wasm {
@@ -590,10 +591,12 @@ export namespace Wasm {
 		const wasiCoreExt = Extensions.getExtension<APILoader>(
 			"ms-vscode.wasm-wasi-core",
 		);
+
 		if (wasiCoreExt === undefined) {
 			throw new Error(`Unable to load WASM WASI Core extension.`);
 		}
 		$promise = doLoad(wasiCoreExt);
+
 		return $promise;
 	}
 
@@ -602,9 +605,12 @@ export namespace Wasm {
 	): Promise<Wasm> {
 		try {
 			const loader = await wasiCoreExt.activate();
+
 			try {
 				let api: Wasm;
+
 				let extVersion: SemVer | null;
+
 				if (isAPILoader(loader)) {
 					api = loader.load(1);
 					extVersion = semverParse(api.versions.extension);
@@ -625,12 +631,14 @@ export namespace Wasm {
 				// The pre-release version of the WASM WASI Core extension is currently 0.13.3. This works with the v1 version of the API.
 				if (semverSatisfies(extVersion, "^0.13.3")) {
 					$api = api;
+
 					return $api;
 				}
 
 				// The release version of the WASM WASI Core extension starts with 1.0.0. This works with the v1 version of the API.
 				if (semverSatisfies(extVersion, "^1.0.0")) {
 					$api = api;
+
 					return $api;
 				}
 
@@ -640,10 +648,12 @@ export namespace Wasm {
 				);
 			} catch (error) {
 				$api = null;
+
 				throw error;
 			}
 		} catch (err) {
 			$promise = null;
+
 			throw new Error(
 				`Unable to activate WASM WASI Core extension: ${err}`,
 			);
@@ -663,7 +673,9 @@ export namespace Wasm {
 			version: string;
 			versions: { api: number; extension: string };
 		};
+
 		const value = wasm as unknown as InternalWasm;
+
 		if (value.versions === undefined) {
 			if (value.version === undefined) {
 				throw new Error(

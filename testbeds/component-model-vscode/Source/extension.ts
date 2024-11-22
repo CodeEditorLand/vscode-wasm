@@ -116,10 +116,15 @@ export async function activate(
 		"debug",
 		"example.wasm",
 	);
+
 	const bits = await vscode.workspace.fs.readFile(filename);
+
 	const module = await WebAssembly.compile(bits);
+
 	const commandRegistry = new CommandRegistry();
+
 	const wasmContext: WasmContext.Default = new WasmContext.Default();
+
 	const service: api.all.Imports = {
 		types: {
 			OutputChannel: OutputChannelProxy,
@@ -144,13 +149,17 @@ export async function activate(
 			},
 		},
 	};
+
 	const imports = api.all._.imports.create(service, wasmContext);
+
 	const instance = await WebAssembly.instantiate(module, imports);
 	wasmContext.initialize(new Memory.Default(instance.exports));
+
 	const exports = api.all._.exports.bind(
 		instance.exports as api.all._.Exports,
 		wasmContext,
 	);
 	commandRegistry.initialize(exports.callbacks.executeCommand);
+
 	exports.activate();
 }

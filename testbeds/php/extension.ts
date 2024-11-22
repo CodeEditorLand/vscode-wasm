@@ -10,33 +10,41 @@ export async function activate(context: ExtensionContext) {
 
 	commands.registerCommand("testbed-php.runFile", async () => {
 		const editor = window.activeTextEditor;
+
 		if (editor === undefined) {
 			return;
 		}
 		const document = editor.document;
+
 		if (document.languageId !== "php") {
 			return;
 		}
 
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "PHP",
 			pty,
 			isTransient: true,
 		});
 		terminal.show(true);
+
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
 			mountPoints: [{ kind: "workspaceFolder" }],
 			args: [document.uri],
 		};
+
 		const filename = Uri.joinPath(
 			context.extensionUri,
 			"wasm",
 			"php-cgi-8.2.0.wasm",
 		);
+
 		const bits = await workspace.fs.readFile(filename);
+
 		const module = await WebAssembly.compile(bits);
+
 		const process = await wasm.createProcess("php-cgi", module, options);
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);

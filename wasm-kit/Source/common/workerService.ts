@@ -27,6 +27,7 @@ export abstract class BaseWorker {
 export namespace BaseWorker {
 	export type ConnectionType<TIL = TransferItems> =
 		Messages.Service.ConnectionType<TIL>;
+
 	export type Constructor = new (
 		connection: AnyConnection,
 		args?: string[],
@@ -45,6 +46,7 @@ export abstract class MultiConnectionWorker<C> extends BaseWorker {
 		});
 		connection.onAsyncCall("connection/drop", async (params) => {
 			const connection = this.connections.get(params.id);
+
 			if (connection !== undefined) {
 				this.connections.delete(params.id);
 				await this.dropConnection(connection);

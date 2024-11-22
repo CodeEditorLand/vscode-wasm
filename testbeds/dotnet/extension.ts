@@ -11,12 +11,14 @@ export async function activate(context: ExtensionContext) {
 
 	commands.registerCommand("testbed-dotnet.runFile", async () => {
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "Dotnet",
 			pty,
 			isTransient: true,
 		});
 		terminal.show(true);
+
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
 			mountPoints: [
@@ -29,13 +31,17 @@ export async function activate(context: ExtensionContext) {
 			],
 			trace: true,
 		};
+
 		const filename = Uri.joinPath(
 			context.extensionUri,
 			"wasm",
 			"tempDir.wasm",
 		);
+
 		const bits = await workspace.fs.readFile(filename);
+
 		const module = await WebAssembly.compile(bits);
+
 		const process = await wasm.createProcess("dotnet", module, options);
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);

@@ -46,10 +46,12 @@ interface RAL {
 			ms: number,
 			...args: any[]
 		): d.Disposable;
+
 		setImmediate(
 			callback: (...args: any[]) => void,
 			...args: any[]
 		): d.Disposable;
+
 		setInterval(
 			callback: (...args: any[]) => void,
 			ms: number,
@@ -68,6 +70,7 @@ interface RAL {
 
 	readonly Worker: {
 		getPort(): RAL.ConnectionPort;
+
 		getArgs(): string[];
 		exitCode: number | undefined;
 	};
@@ -92,9 +95,13 @@ function RAL(): RAL {
 
 namespace RAL {
 	export type TextEncoder = _TextEncoder;
+
 	export type TextDecoder = _TextDecoder;
+
 	export type Disposable = d.Disposable;
+
 	export type ConnectionPort = _ConnectionPort;
+
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);

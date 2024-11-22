@@ -70,6 +70,7 @@ export const uri: Uri = Uri.from({
 });
 export function create(deviceId: DeviceId): CharacterDeviceDriver {
 	let inodeCounter: bigint = 0n;
+
 	const decoder = RAL().TextDecoder.create();
 
 	function createConsoleFileDescriptor(fd: 0 | 1 | 2): ConsoleFileDescriptor {
@@ -107,6 +108,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 			result.fs_flags = fileDescriptor.fdflags;
 			result.fs_rights_base = fileDescriptor.rights_base;
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
+
 			return Promise.resolve();
 		},
 		fd_filestat_get(
@@ -118,10 +120,12 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 			result.filetype = Filetype.character_device;
 			result.nlink = 0n;
 			result.size = 101n;
+
 			const now = BigInt(Date.now());
 			result.atim = now;
 			result.ctim = now;
 			result.mtim = now;
+
 			return Promise.resolve();
 		},
 		fd_write(
@@ -129,6 +133,7 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 			buffers: Uint8Array[],
 		): Promise<size> {
 			let buffer: Uint8Array;
+
 			if (buffers.length === 1) {
 				buffer = buffers[0];
 			} else {
@@ -137,13 +142,16 @@ export function create(deviceId: DeviceId): CharacterDeviceDriver {
 					0,
 				);
 				buffer = new Uint8Array(byteLength);
+
 				let offset = 0;
+
 				for (const item of buffers) {
 					buffer.set(item, offset);
 					offset = item.byteLength;
 				}
 			}
 			RAL().console.log(decoder.decode(buffer));
+
 			return Promise.resolve(buffer.byteLength);
 		},
 	};

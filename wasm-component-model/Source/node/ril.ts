@@ -39,6 +39,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setImmediate(
@@ -46,6 +47,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setImmediate(callback, ...args);
+
 			return { dispose: () => clearImmediate(handle) };
 		},
 		setInterval(
@@ -54,6 +56,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setInterval(callback, ms, ...args);
+
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),
@@ -70,6 +73,7 @@ const _ril: RIL = Object.freeze<RIL>({
 				throw new Error(`Expected MessagePort`);
 			}
 			const connection = await import("./connection.js");
+
 			return new connection.WorkerConnection(port, world, timeout);
 		},
 		async createMain(port: unknown): Promise<MainConnection> {
@@ -77,6 +81,7 @@ const _ril: RIL = Object.freeze<RIL>({
 				throw new Error(`Expected MessagePort or Worker`);
 			}
 			const connection = await import("./connection.js");
+
 			return new connection.MainConnection(port);
 		},
 	}),

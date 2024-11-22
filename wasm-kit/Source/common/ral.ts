@@ -30,6 +30,7 @@ interface RAL extends _RAL {
 	): new () => WorkerClient & C;
 	readonly Worker: {
 		getPort(): ConnectionPort;
+
 		getArgs(): string[];
 		exitCode: number | undefined;
 	};
@@ -53,8 +54,11 @@ function RAL(): RAL {
 
 namespace RAL {
 	export type TextEncoder = _RAL.TextEncoder;
+
 	export type TextDecoder = _RAL.TextDecoder;
+
 	export type Disposable = _RAL.Disposable;
+
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);

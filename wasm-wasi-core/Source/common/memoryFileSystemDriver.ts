@@ -175,8 +175,11 @@ export class MemoryFileSystem
 
 	public createDirectory(path: string): void {
 		const dirname = paths.dirname(path);
+
 		const basename = paths.basename(path);
+
 		const parent = this.getDirectoryNode(dirname);
+
 		const node = DirectoryNode.create(
 			parent,
 			this.nextInode(),
@@ -193,8 +196,11 @@ export class MemoryFileSystem
 			| { size: bigint; reader: () => Promise<Uint8Array> },
 	): void {
 		const dirname = paths.dirname(path);
+
 		const basename = paths.basename(path);
+
 		const parent = this.getDirectoryNode(dirname);
+
 		const node = FileNode.create(
 			parent,
 			this.nextInode(),
@@ -207,8 +213,11 @@ export class MemoryFileSystem
 
 	public createReadable(path: string): Readable {
 		const dirname = paths.dirname(path);
+
 		const basename = paths.basename(path);
+
 		const parent = this.getDirectoryNode(dirname);
+
 		const node = CharacterDeviceNode.create(
 			parent,
 			this.nextInode(),
@@ -218,13 +227,17 @@ export class MemoryFileSystem
 			undefined,
 		);
 		parent.entries.set(basename, node);
+
 		return node.readable!;
 	}
 
 	public createWritable(path: string, encoding?: "utf-8"): Writable {
 		const dirname = paths.dirname(path);
+
 		const basename = paths.basename(path);
+
 		const parent = this.getDirectoryNode(dirname);
+
 		const node = CharacterDeviceNode.create(
 			parent,
 			this.nextInode(),
@@ -234,11 +247,13 @@ export class MemoryFileSystem
 			new WritableStream(encoding),
 		);
 		parent.entries.set(basename, node);
+
 		return node.writable!;
 	}
 
 	private getDirectoryNode(path: string): DirectoryNode {
 		const result = this.findNode(path);
+
 		if (result === undefined) {
 			throw new Error(`ENOENT: no such directory ${path}`);
 		}
@@ -254,6 +269,7 @@ export class MemoryFileSystem
 		buffers: Uint8Array[],
 	): Promise<size> {
 		const content = await this.getContent(node);
+
 		return this.read(content, offset, buffers);
 	}
 
@@ -264,7 +280,9 @@ export class MemoryFileSystem
 		const maxBytes = buffers.reduce((previousValue, current) => {
 			return previousValue + current.byteLength;
 		}, 0);
+
 		const content = await node.writable.read("max", maxBytes);
+
 		return this.read(content, 0n, buffers);
 	}
 
@@ -274,8 +292,10 @@ export class MemoryFileSystem
 		buffers: Uint8Array[],
 	): Promise<size> {
 		const content = await this.getContent(node);
+
 		const [newContent, bytesWritten] = this.write(content, offset, buffers);
 		node.content = newContent;
+
 		return bytesWritten;
 	}
 
@@ -286,13 +306,17 @@ export class MemoryFileSystem
 		const allBytes = buffers.reduce((previousValue, current) => {
 			return previousValue + current.byteLength;
 		}, 0);
+
 		const buffer = new Uint8Array(allBytes);
+
 		let offset = 0;
+
 		for (const b of buffers) {
 			buffer.set(b, offset);
 			offset += b.byteLength;
 		}
 		await node.readable.write(buffer);
+
 		return allBytes;
 	}
 
@@ -302,6 +326,7 @@ export class MemoryFileSystem
 		} else {
 			const result = await node.content.reader();
 			(node as { content: Uint8Array }).content = result;
+
 			return result;
 		}
 	}
@@ -312,11 +337,14 @@ export class MemoryFileSystem
 		buffers: Uint8Array[],
 	): size {
 		let offset = BigInts.asNumber(_offset);
+
 		let totalBytesRead = 0;
+
 		for (const buffer of buffers) {
 			const toRead = Math.min(buffer.length, content.byteLength - offset);
 			buffer.set(content.subarray(offset, offset + toRead));
 			totalBytesRead += toRead;
+
 			if (toRead < buffer.length) {
 				break;
 			}
@@ -331,7 +359,9 @@ export class MemoryFileSystem
 		buffers: Uint8Array[],
 	): [Uint8Array, size] {
 		let offset = BigInts.asNumber(_offset);
+
 		let bytesToWrite: size = 0;
+
 		for (const bytes of buffers) {
 			bytesToWrite += bytes.byteLength;
 		}
@@ -360,6 +390,7 @@ const DirectoryBaseRights: rights =
 	Rights.path_open |
 	Rights.path_create_file |
 	Rights.path_create_directory;
+
 const FileBaseRights: rights =
 	Rights.fd_read |
 	Rights.fd_seek |
@@ -367,8 +398,11 @@ const FileBaseRights: rights =
 	Rights.fd_advise |
 	Rights.fd_filestat_get |
 	Rights.poll_fd_readwrite;
+
 const DirectoryInheritingRights: rights = DirectoryBaseRights | FileBaseRights;
+
 const DirectoryOnlyBaseRights: rights = DirectoryBaseRights & ~FileBaseRights;
+
 const FileOnlyBaseRights: rights = FileBaseRights & DirectoryBaseRights;
 
 export function create(
@@ -458,8 +492,10 @@ export function create(
 		switch (node.filetype) {
 			case Filetype.regular_file:
 				return FileNode.size(node);
+
 			case Filetype.directory:
 				return DirectoryNode.size(node);
+
 			case Filetype.character_device:
 				return 1n;
 		}
@@ -496,6 +532,7 @@ export function create(
 		},
 		fd_create_prestat_fd(fd: fd): Promise<FileDescriptor> {
 			const root = $fs.getRoot();
+
 			return Promise.resolve(
 				new fs.DirectoryNodeDescriptor(
 					deviceId,
@@ -520,6 +557,7 @@ export function create(
 		},
 		fd_close(fileDescriptor: FileDescriptor): Promise<void> {
 			assertDescriptor(fileDescriptor);
+
 			return Promise.resolve();
 		},
 		fd_fdstat_get(
@@ -530,6 +568,7 @@ export function create(
 			result.fs_flags = fileDescriptor.fdflags;
 			result.fs_rights_base = fileDescriptor.rights_base;
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
+
 			return Promise.resolve();
 		},
 		fd_filestat_get(
@@ -538,6 +577,7 @@ export function create(
 		): Promise<void> {
 			assertFileDescriptor(fileDescriptor);
 			assignStat(result, fileDescriptor.node);
+
 			return Promise.resolve();
 		},
 		async fd_pread(
@@ -549,6 +589,7 @@ export function create(
 				return 0;
 			}
 			assertReadDescriptor(fileDescriptor);
+
 			if (fileDescriptor instanceof fs.FileNodeDescriptor) {
 				return $fs.readFile(fileDescriptor.node, offset, buffers);
 			} else {
@@ -563,7 +604,9 @@ export function create(
 				return 0;
 			}
 			assertReadDescriptor(fileDescriptor);
+
 			let totalBytesRead = 0;
+
 			if (fileDescriptor instanceof fs.FileNodeDescriptor) {
 				totalBytesRead = await $fs.readFile(
 					fileDescriptor.node,
@@ -584,6 +627,7 @@ export function create(
 			assertDirectoryDescriptor(fileDescriptor);
 
 			const result: ReaddirEntry[] = [];
+
 			for (const entry of fileDescriptor.node.entries.values()) {
 				result.push({
 					d_ino: entry.inode,
@@ -603,23 +647,30 @@ export function create(
 			switch (whence) {
 				case Whence.set:
 					fileDescriptor.cursor = offset;
+
 					break;
+
 				case Whence.cur:
 					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+
 					break;
+
 				case Whence.end:
 					const size = FileNode.size(fileDescriptor.node);
 					fileDescriptor.cursor = BigInts.max(0n, size - offset);
+
 					break;
 			}
 			return BigInt(fileDescriptor.cursor);
 		},
 		fd_renumber(fileDescriptor: FileDescriptor, _to: fd): Promise<void> {
 			assertDescriptor(fileDescriptor);
+
 			return Promise.resolve();
 		},
 		fd_tell(fileDescriptor: FileDescriptor): Promise<u64> {
 			assertFileDescriptor(fileDescriptor);
+
 			return Promise.resolve(fileDescriptor.cursor);
 		},
 		async fd_pwrite(
@@ -628,7 +679,9 @@ export function create(
 			buffers: Uint8Array[],
 		): Promise<size> {
 			assertWriteDescriptor(fileDescriptor);
+
 			let bytesWritten: size = 0;
+
 			if (fileDescriptor instanceof fs.FileNodeDescriptor) {
 				bytesWritten = await $fs.writeFile(
 					fileDescriptor.node,
@@ -648,7 +701,9 @@ export function create(
 			buffers: Uint8Array[],
 		): Promise<size> {
 			assertWriteDescriptor(fileDescriptor);
+
 			let bytesWritten: size = 0;
+
 			if (fileDescriptor instanceof fs.FileNodeDescriptor) {
 				// We have append mode on. According to POSIX we need to
 				// move the cursor to the end of the file on every write
@@ -679,7 +734,9 @@ export function create(
 			result: filestat,
 		): Promise<void> {
 			assertDirectoryDescriptor(fileDescriptor);
+
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
@@ -698,6 +755,7 @@ export function create(
 			assertDirectoryDescriptor(fileDescriptor);
 
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				if (Oflags.creatOn(oflags)) {
 					throw new WasiError(Errno.perm);
@@ -729,11 +787,13 @@ export function create(
 						Rights.fd_allocate |
 						Rights.fd_filestat_set_size)) !==
 				0n;
+
 			if (target.filetype === Filetype.regular_file && write) {
 				throw new WasiError(Errno.perm);
 			}
 
 			let descriptor: FileDescriptor;
+
 			switch (target.filetype) {
 				case Filetype.regular_file:
 					descriptor = new fs.FileNodeDescriptor(
@@ -747,7 +807,9 @@ export function create(
 						target.inode,
 						target,
 					);
+
 					break;
+
 				case Filetype.directory:
 					descriptor = new fs.DirectoryNodeDescriptor<DirectoryNode>(
 						deviceId,
@@ -761,7 +823,9 @@ export function create(
 						target.inode,
 						target,
 					);
+
 					break;
+
 				case Filetype.character_device:
 					let rights =
 						fileDescriptor.childFileRights(
@@ -776,6 +840,7 @@ export function create(
 						target.inode,
 						target,
 					);
+
 					break;
 			}
 			if (descriptor === undefined) {
@@ -788,7 +853,9 @@ export function create(
 			path: string,
 		): Promise<string> {
 			assertDirectoryDescriptor(fileDescriptor);
+
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
@@ -796,6 +863,7 @@ export function create(
 		},
 		fd_bytesAvailable(fileDescriptor: FileDescriptor): Promise<filesize> {
 			assertFileDescriptor(fileDescriptor);
+
 			return Promise.resolve(
 				BigInts.max(
 					0n,

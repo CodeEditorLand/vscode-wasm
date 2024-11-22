@@ -17,11 +17,13 @@ class TestServiceConnection<
 	ReadyParams extends Params | undefined = undefined,
 > extends ServiceConnection<RequestHandlers, ReadyParams> {
 	private readonly worker: Worker;
+
 	constructor(script: string, testCase?: string) {
 		const worker = new Worker(
 			script,
 			testCase !== undefined ? { argv: [testCase] } : undefined,
 		);
+
 		super(worker);
 		this.worker = worker;
 	}
@@ -54,6 +56,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setImmediate(
@@ -61,6 +64,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setImmediate(callback, ...args);
+
 			return { dispose: () => clearImmediate(handle) };
 		},
 		setInterval(
@@ -69,6 +73,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setInterval(callback, ms, ...args);
+
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),

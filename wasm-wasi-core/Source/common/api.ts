@@ -559,6 +559,7 @@ export interface Wasm {
 namespace MemoryDescriptor {
 	export function is(value: any): value is WebAssembly.MemoryDescriptor {
 		const candidate = value as WebAssembly.MemoryDescriptor;
+
 		return (
 			candidate &&
 			typeof candidate === "object" &&
@@ -593,6 +594,7 @@ namespace WasiCoreImpl {
 	): Wasm {
 		const version: string | undefined =
 			context.extension.packageJSON?.version;
+
 		if (typeof version !== "string") {
 			throw new Error(
 				`Failed to determine extension version. Found ${version}`,
@@ -613,15 +615,18 @@ namespace WasiCoreImpl {
 				mountDescriptors: MountPointDescriptor[],
 			): Promise<RootFileSystem> {
 				const fileDescriptors = new FileDescriptors();
+
 				const info = await WasiKernel.createRootFileSystem(
 					fileDescriptors,
 					mountDescriptors,
 				);
+
 				const result = new WasmRootFileSystemImpl(
 					info,
 					fileDescriptors,
 				);
 				await result.initialize();
+
 				return result;
 			},
 			createReadable() {
@@ -636,7 +641,9 @@ namespace WasiCoreImpl {
 					return new WritableStream();
 				}
 				let ctor: new (encoding?: "utf-8") => Writable = WritableStream;
+
 				let encoding: "utf-8" | undefined = undefined;
+
 				if (typeof optionsOrEncoding === "string") {
 					if (optionsOrEncoding !== "utf-8") {
 						throw new Error(
@@ -654,6 +661,7 @@ namespace WasiCoreImpl {
 						);
 					}
 					encoding = optionsOrEncoding.encoding;
+
 					if (optionsOrEncoding.eot) {
 						ctor = WritableStreamEOT;
 					}
@@ -673,7 +681,9 @@ namespace WasiCoreImpl {
 					| WebAssembly.Memory
 					| WebAssembly.MemoryDescriptor
 					| undefined;
+
 				let options: ProcessOptions | undefined;
+
 				if (
 					memoryOrOptions instanceof WebAssembly.Memory ||
 					MemoryDescriptor.is(memoryOrOptions)
@@ -693,6 +703,7 @@ namespace WasiCoreImpl {
 					options,
 				);
 				await result.initialize();
+
 				return result;
 			},
 			compile,

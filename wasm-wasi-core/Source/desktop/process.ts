@@ -64,6 +64,7 @@ export class NodeWasiProcess extends WasiProcess {
 			module instanceof WebAssembly.Module
 				? Promise.resolve(module)
 				: module;
+
 		if (memory instanceof WebAssembly.Memory) {
 			this.memory = memory;
 		} else {
@@ -87,14 +88,17 @@ export class NodeWasiProcess extends WasiProcess {
 				this.resolveRunPromise(exitCode);
 			}
 		});
+
 		const connection = new NodeServiceConnection(
 			wasiService,
 			this.mainWorker,
 			this.options.trace,
 		);
 		await connection.workerReady();
+
 		const module = await this.module;
 		this.importsMemory = this.doesImportMemory(module);
+
 		if (this.importsMemory) {
 			if (this.memoryDescriptor === undefined) {
 				throw new Error(
@@ -110,6 +114,7 @@ export class NodeWasiProcess extends WasiProcess {
 			trace: this.options.trace !== undefined,
 		};
 		connection.postMessage(message);
+
 		return Promise.resolve();
 	}
 
@@ -130,16 +135,19 @@ export class NodeWasiProcess extends WasiProcess {
 			this.baseUri,
 			"./dist/desktop/threadWorker.js",
 		).fsPath;
+
 		const worker = new Worker(filename);
 		worker.on("exit", () => {
 			this.threadWorkers.delete(tid);
 		});
+
 		const connection = new NodeServiceConnection(
 			wasiService,
 			worker,
 			this.options.trace,
 		);
 		await connection.workerReady();
+
 		const message: StartThreadMessage = {
 			method: "startThread",
 			module: await this.module,
@@ -150,6 +158,7 @@ export class NodeWasiProcess extends WasiProcess {
 		};
 		connection.postMessage(message);
 		this.threadWorkers.set(tid, worker);
+
 		return Promise.resolve();
 	}
 
@@ -162,12 +171,14 @@ export class NodeWasiProcess extends WasiProcess {
 
 	public async terminate(): Promise<number> {
 		let result = 0;
+
 		if (this.mainWorker !== undefined) {
 			result = await this.mainWorker.terminate();
 		}
 		await this.cleanUpWorkers();
 		await this.destroyStreams();
 		await this.cleanupFileDescriptors();
+
 		return result;
 	}
 
@@ -180,6 +191,7 @@ export class NodeWasiProcess extends WasiProcess {
 
 	protected async threadEnded(tid: u32): Promise<void> {
 		const worker = this.threadWorkers.get(tid);
+
 		if (worker !== undefined) {
 			this.threadWorkers.delete(tid);
 			await worker.terminate();
@@ -188,6 +200,7 @@ export class NodeWasiProcess extends WasiProcess {
 
 	private doesImportMemory(module: WebAssembly.Module): boolean {
 		const imports = WebAssembly.Module.imports(module);
+
 		for (const item of imports) {
 			if (item.kind === "memory" && item.name === "memory") {
 				return true;

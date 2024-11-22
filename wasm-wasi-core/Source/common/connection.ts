@@ -8,12 +8,15 @@ import { ptr, u32 } from "./baseTypes";
 
 export namespace Offsets {
 	export const lock_size = 4;
+
 	export const lock_index = 0;
 	// Method to call.
 	export const method_size = 4;
+
 	export const method_index = lock_index + lock_size;
 	// Errno
 	export const errno_size = 2;
+
 	export const errno_index = method_index + method_size;
 	// params
 	export const params_index = errno_index + errno_size + 2; // 4 bytes alignment
@@ -29,6 +32,7 @@ export interface StartMainMessage {
 export namespace StartMainMessage {
 	export function is(message: ServiceMessage): message is StartMainMessage {
 		const candidate = message as StartMainMessage;
+
 		return candidate && candidate.method === "startMain";
 	}
 }
@@ -44,6 +48,7 @@ export interface StartThreadMessage {
 export namespace StartThreadMessage {
 	export function is(message: ServiceMessage): message is StartThreadMessage {
 		const candidate = message as StartThreadMessage;
+
 		return candidate && candidate.method === "startThread";
 	}
 }
@@ -59,6 +64,7 @@ export interface WorkerReadyMessage {
 export namespace WorkerReadyMessage {
 	export function is(message: WorkerMessage): message is WorkerReadyMessage {
 		const candidate = message as WorkerReadyMessage;
+
 		return candidate && candidate.method === "workerReady";
 	}
 }
@@ -69,6 +75,7 @@ export interface WorkerDoneMessage {
 export namespace WorkerDoneMessage {
 	export function is(message: WorkerMessage): message is WorkerReadyMessage {
 		const candidate = message as WorkerDoneMessage;
+
 		return candidate && candidate.method === "workerDone";
 	}
 }
@@ -81,6 +88,7 @@ export interface TraceMessage {
 export namespace TraceMessage {
 	export function is(message: WorkerMessage): message is TraceMessage {
 		const candidate = message as TraceMessage;
+
 		return candidate && candidate.method === "trace";
 	}
 }
@@ -92,6 +100,7 @@ export interface TraceSummaryMessage {
 export namespace TraceSummaryMessage {
 	export function is(message: WorkerMessage): message is TraceSummaryMessage {
 		const candidate = message as TraceSummaryMessage;
+
 		return candidate && candidate.method === "traceSummary";
 	}
 }

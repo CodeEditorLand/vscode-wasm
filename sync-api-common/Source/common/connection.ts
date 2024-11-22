@@ -87,6 +87,7 @@ export type Request = {
 export namespace Request {
 	export function is(value: any): value is Request {
 		const candidate: Request = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -100,6 +101,7 @@ export type Notification = Message;
 export namespace Notification {
 	export function is(value: any): value is Notification {
 		const candidate: Notification = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -125,6 +127,7 @@ export type RequestType = MessageType & {
 
 class NoResult {
 	public static readonly kind = 0 as const;
+
 	constructor() {}
 	get kind() {
 		return NoResult.kind;
@@ -502,25 +505,34 @@ namespace TypedArrayResult {
 		switch (kind) {
 			case Uint8Result.kind:
 				return Uint8Result.fromByteLength(byteLength);
+
 			case Int8Result.kind:
 				return Int8Result.fromByteLength(byteLength);
+
 			case Uint16Result.kind:
 				return Uint16Result.fromByteLength(byteLength);
+
 			case Int16Result.kind:
 				return Int16Result.fromByteLength(byteLength);
+
 			case Uint32Result.kind:
 				return Uint32Result.fromByteLength(byteLength);
+
 			case Int32Result.kind:
 				return Int32Result.fromByteLength(byteLength);
+
 			case Uint64Result.kind:
 				return Uint64Result.fromByteLength(byteLength);
+
 			case Int64Result.kind:
 				return Int64Result.fromByteLength(byteLength);
+
 			case VariableResult.kind:
 				// send another request to get the result.
 				throw new Error(
 					`No result array for variable results result type.`,
 				);
+
 			default:
 				throw new Error(`Unknown result kind ${kind}`);
 		}
@@ -750,10 +762,15 @@ export abstract class BaseClientConnection<
 		arg3?: number,
 	): { errno: 0; data: any } | { errno: RPCErrno } {
 		const id = this.id++;
+
 		const request: Request = { id: id, method };
+
 		let params: Params | undefined = undefined;
+
 		let resultType: ResultType = new NoResult();
+
 		let timeout: number | undefined = undefined;
+
 		if (ResultType.is(arg1)) {
 			resultType = arg1;
 		} else if (typeof arg1 === "number") {
@@ -771,6 +788,7 @@ export abstract class BaseClientConnection<
 		}
 		if (params !== undefined) {
 			request.params = {};
+
 			for (const property of Object.keys(params)) {
 				if (property !== "binary") {
 					request.params[property] = params[property];
@@ -783,16 +801,22 @@ export abstract class BaseClientConnection<
 		const requestData = this.textEncoder.encode(
 			JSON.stringify(request, undefined, 0),
 		);
+
 		const binaryData = params?.binary;
+
 		const binaryDataLength =
 			binaryData !== undefined ? binaryData.byteLength : 0;
+
 		const requestOffset = SyncSize.total + HeaderSize.total;
+
 		const binaryOffset = requestOffset + requestData.byteLength;
 
 		const resultByteLength = resultType.byteLength;
+
 		const resultPadding = resultType.getPadding(
 			binaryOffset + binaryDataLength,
 		);
+
 		const resultOffset = binaryOffset + binaryDataLength + resultPadding;
 
 		const sharedArrayBufferLength =
@@ -802,6 +826,7 @@ export abstract class BaseClientConnection<
 			binaryDataLength +
 			resultPadding +
 			resultByteLength;
+
 		const sharedArrayBuffer: SharedArrayBuffer = new SharedArrayBuffer(
 			sharedArrayBufferLength,
 		);
@@ -822,6 +847,7 @@ export abstract class BaseClientConnection<
 
 		const raw = new Uint8Array(sharedArrayBuffer);
 		raw.set(requestData, requestOffset);
+
 		if (binaryData !== undefined) {
 			raw.set(binaryData, binaryOffset);
 		}
@@ -834,9 +860,11 @@ export abstract class BaseClientConnection<
 
 		// Wait for the answer
 		const result = Atomics.wait(sync, 0, 0, timeout);
+
 		switch (result) {
 			case "timed-out":
 				return { errno: RPCErrno.TimedOut };
+
 			case "not-equal":
 				const value = Atomics.load(sync, 0);
 				// If the value === 1 the service has already
@@ -848,15 +876,18 @@ export abstract class BaseClientConnection<
 		}
 
 		const errno: RPCErrno = header[HeaderIndex.errno];
+
 		if (errno !== 0) {
 			return { errno };
 		} else {
 			switch (resultType.kind) {
 				case NoResult.kind:
 					return { errno: 0 };
+
 				case VariableResult.kind:
 					const lazyResultLength =
 						header[HeaderIndex.resultByteLength];
+
 					if (lazyResultLength === 0) {
 						return {
 							errno: 0,
@@ -872,6 +903,7 @@ export abstract class BaseClientConnection<
 						Uint8Result.fromLength(lazyResultLength),
 						timeout,
 					);
+
 					if (lazyResult.errno !== 0) {
 						return { errno: lazyResult.errno };
 					}
@@ -892,9 +924,11 @@ export abstract class BaseClientConnection<
 												).slice(),
 											),
 										);
+
 							return { errno: 0, data };
 						} catch (error) {
 							RAL().console.error(error);
+
 							return { errno: RPCErrno.LazyResultFailed };
 						}
 					} else {
@@ -1001,6 +1035,7 @@ export namespace RequestResult {
 		value: { errno: RPCErrno } | { errno: 0; data: T },
 	): value is { errno: 0; data: T } {
 		const candidate: { errno: RPCErrno; data?: T | null } = value;
+
 		return candidate.errno === 0 && candidate.data !== undefined;
 	}
 }
@@ -1042,6 +1077,7 @@ export abstract class BaseServiceConnection<
 
 	private _onRequest(method: string, handler: RequestHandler): Disposable {
 		this.requestHandlers.set(method, handler);
+
 		return {
 			dispose: () => this.requestHandlers.delete(method),
 		};
@@ -1055,7 +1091,9 @@ export abstract class BaseServiceConnection<
 			SyncSize.total,
 			HeaderSize.total / 4,
 		);
+
 		const requestOffset = header[HeaderIndex.messageOffset];
+
 		const requestLength = header[HeaderIndex.messageByteLength];
 
 		try {
@@ -1069,14 +1107,19 @@ export abstract class BaseServiceConnection<
 					).slice(),
 				),
 			);
+
 			if (Request.is(message)) {
 				if (message.method === "$/fetchResult") {
 					const resultId: number = message.params!.resultId as number;
+
 					const result = this.requestResults.get(resultId);
 					this.requestResults.delete(resultId);
+
 					const resultOffset = header[HeaderIndex.resultOffset];
+
 					const resultByteLength =
 						header[HeaderIndex.resultByteLength];
+
 					if (
 						result !== undefined &&
 						result.byteLength === resultByteLength
@@ -1090,8 +1133,10 @@ export abstract class BaseServiceConnection<
 					if (message.params?.binary === null) {
 						const binaryParamsLength =
 							header[HeaderIndex.binaryParamByteLength];
+
 						const binaryParamsOffset =
 							header[HeaderIndex.binaryParamOffset];
+
 						const binary = new Uint8Array(
 							sharedArrayBuffer,
 							binaryParamsOffset,
@@ -1101,15 +1146,21 @@ export abstract class BaseServiceConnection<
 						message.params.binary = binary;
 					}
 					const handler = this.requestHandlers.get(message.method);
+
 					if (handler !== undefined) {
 						const resultKind = header[HeaderIndex.resultKind];
+
 						const resultOffset = header[HeaderIndex.resultOffset];
+
 						const resultByteLength =
 							header[HeaderIndex.resultByteLength];
+
 						let handlerResult:
 							| RequestResult
 							| Promise<RequestResult>;
+
 						let requestResult: RequestResult;
+
 						switch (resultKind) {
 							case NoResult.kind:
 								handlerResult =
@@ -1121,7 +1172,9 @@ export abstract class BaseServiceConnection<
 										? await handlerResult
 										: handlerResult;
 								header[HeaderIndex.errno] = requestResult.errno;
+
 								break;
+
 							case VariableResult.kind:
 								handlerResult =
 									message.params !== undefined
@@ -1132,9 +1185,11 @@ export abstract class BaseServiceConnection<
 										? await handlerResult
 										: handlerResult;
 								header[HeaderIndex.errno] = requestResult.errno;
+
 								if (requestResult.errno === 0) {
 									if (RequestResult.hasData(requestResult)) {
 										const data = requestResult.data;
+
 										const buffer = TypedArray.is(data)
 											? data
 											: this.textEncoder.encode(
@@ -1157,12 +1212,14 @@ export abstract class BaseServiceConnection<
 									}
 								}
 								break;
+
 							default:
 								const typedResult =
 									TypedArrayResult.fromByteLength(
 										resultKind,
 										resultByteLength,
 									);
+
 								const resultBuffer =
 									typedResult.createResultArray(
 										sharedArrayBuffer,

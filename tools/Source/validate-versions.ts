@@ -54,6 +54,7 @@ const packages: Package[] = [
 	wasmWasi,
 	wasmWasiTests,
 ];
+
 const root = path.join(__dirname, "..", "..");
 
 interface ValidationEntry {
@@ -75,15 +76,18 @@ function check(): void {
 			version: json.version,
 			violations: [],
 		});
+
 		if (pack.dependsOn !== undefined) {
 			for (const dependency of pack.dependsOn) {
 				const version =
 					dependency.kind === "release"
 						? json.dependencies[dependency.package.name]
 						: json.devDependencies[dependency.package.name];
+
 				const validationEntry = validations.get(
 					dependency.package.name,
 				)!;
+
 				if (version === undefined) {
 					validationEntry.violations.push({
 						package: pack,
@@ -109,6 +113,7 @@ function printResult(): void {
 		process.stdout.write(
 			`Package ${entry.package.name} at version ${entry.version} is incorrectly referenced in the following packages:\n`,
 		);
+
 		for (const violation of entry.violations) {
 			process.stdout.write(
 				`\t ${violation.package.name} with version ${violation.version}\n`,

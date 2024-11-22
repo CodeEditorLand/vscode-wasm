@@ -132,6 +132,7 @@ export async function runServerProcess(
 	}
 
 	const reader = new ReadableStreamImpl(readable);
+
 	const writer = new WritableStreamImpl(writable);
 
 	process.run().then(

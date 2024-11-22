@@ -16,7 +16,9 @@ export async function activate(
 		"debug",
 		"calculator.wasm",
 	);
+
 	const bits = await vscode.workspace.fs.readFile(filename);
+
 	const module = await WebAssembly.compile(bits);
 
 	const service: calculator.Imports = {

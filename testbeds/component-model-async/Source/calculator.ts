@@ -14,50 +14,61 @@ export namespace Types {
 
 	export namespace Operation {
 		export const add = "add" as const;
+
 		export type Add = {
 			readonly tag: typeof add;
 			readonly value: Operands;
 		} & _common;
+
 		export function Add(value: Operands): Add {
 			return new VariantImpl(add, value) as Add;
 		}
 
 		export const sub = "sub" as const;
+
 		export type Sub = {
 			readonly tag: typeof sub;
 			readonly value: Operands;
 		} & _common;
+
 		export function Sub(value: Operands): Sub {
 			return new VariantImpl(sub, value) as Sub;
 		}
 
 		export const mul = "mul" as const;
+
 		export type Mul = {
 			readonly tag: typeof mul;
 			readonly value: Operands;
 		} & _common;
+
 		export function Mul(value: Operands): Mul {
 			return new VariantImpl(mul, value) as Mul;
 		}
 
 		export const div = "div" as const;
+
 		export type Div = {
 			readonly tag: typeof div;
 			readonly value: Operands;
 		} & _common;
+
 		export function Div(value: Operands): Div {
 			return new VariantImpl(div, value) as Div;
 		}
 
 		export type _tt = typeof add | typeof sub | typeof mul | typeof div;
+
 		export type _vt = Operands | Operands | Operands | Operands;
 		type _common = Omit<VariantImpl, "tag" | "value">;
+
 		export function _ctor(t: _tt, v: _vt): Operation {
 			return new VariantImpl(t, v) as Operation;
 		}
 		class VariantImpl {
 			private readonly _tag: _tt;
 			private readonly _value: _vt;
+
 			constructor(t: _tt, value: _vt) {
 				this._tag = t;
 				this._value = value;
@@ -95,6 +106,7 @@ export namespace Types {
 		export type Statics = {
 			$new?(level: u32): Interface;
 		};
+
 		export type Class = Statics & {
 			new (level: u32): Interface;
 		};
@@ -124,6 +136,7 @@ export namespace ReverseNotation {
 		export type Statics = {
 			$new?(): Interface;
 		};
+
 		export type Class = Statics & {
 			new (): Interface;
 		};
@@ -135,11 +148,13 @@ export type ReverseNotation = {
 };
 export namespace calculator {
 	export type Operation = Types.Operation;
+
 	export type Imports = {
 		log: (msg: string) => void;
 		generate: () => string;
 		types: Types;
 	};
+
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
 	}
@@ -151,6 +166,7 @@ export namespace calculator {
 		msg: () => string;
 		reverseNotation: ReverseNotation;
 	};
+
 	export namespace Exports {
 		export type Promisified = $wcm.$exports.Promisify<Exports>;
 	}
@@ -164,6 +180,7 @@ export namespace Types.$ {
 		["left", $wcm.u32],
 		["right", $wcm.u32],
 	]);
+
 	export const Operation = new $wcm.VariantType<
 		Types.Operation,
 		Types.Operation._tt,
@@ -177,10 +194,12 @@ export namespace Types.$ {
 		],
 		Types.Operation._ctor,
 	);
+
 	export const Channel = new $wcm.ResourceType<Types.Channel>(
 		"channel",
 		"vscode:example/types/channel",
 	);
+
 	export const Channel_Handle = new $wcm.ResourceHandleType("channel");
 	Channel.addDestructor(
 		"$drop",
@@ -205,7 +224,9 @@ export namespace Types.$ {
 }
 export namespace Types._ {
 	export const id = "vscode:example/types" as const;
+
 	export const witName = "types" as const;
+
 	export namespace Channel {
 		export type WasmInterface = {
 			"[constructor]channel": (level: i32) => i32;
@@ -215,6 +236,7 @@ export namespace Types._ {
 				msg_len: i32,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = Channel.WasmInterface & {
 				"[resource-drop]channel": (self: i32) => void;
@@ -234,11 +256,14 @@ export namespace Types._ {
 		["Operation", $.Operation],
 		["Channel", $.Channel],
 	]);
+
 	export const resources: Map<string, $wcm.ResourceType> = new Map<
 		string,
 		$wcm.ResourceType
 	>([["Channel", $.Channel]]);
+
 	export type WasmInterface = {};
+
 	export namespace imports {
 		export type WasmInterface = _.WasmInterface &
 			Channel.imports.WasmInterface;
@@ -246,6 +271,7 @@ export namespace Types._ {
 	export namespace exports {
 		export type WasmInterface = _.WasmInterface &
 			Channel.exports.WasmInterface;
+
 		export namespace imports {
 			export type WasmInterface = {
 				"[resource-new]channel": (rep: i32) => i32;
@@ -263,10 +289,12 @@ export namespace ReverseNotation.$ {
 		"mul",
 		"div",
 	]);
+
 	export const Engine = new $wcm.ResourceType<ReverseNotation.Engine>(
 		"engine",
 		"vscode:example/reverse-notation/engine",
 	);
+
 	export const Engine_Handle = new $wcm.ResourceHandleType("engine");
 	Engine.addDestructor(
 		"$drop",
@@ -307,7 +335,9 @@ export namespace ReverseNotation.$ {
 }
 export namespace ReverseNotation._ {
 	export const id = "vscode:example/reverse-notation" as const;
+
 	export const witName = "reverse-notation" as const;
+
 	export namespace Engine {
 		export type WasmInterface = {
 			"[constructor]engine": () => i32;
@@ -318,6 +348,7 @@ export namespace ReverseNotation._ {
 			) => void;
 			"[method]engine.execute": (self: i32) => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = Engine.WasmInterface & {
 				"[resource-drop]engine": (self: i32) => void;
@@ -336,11 +367,14 @@ export namespace ReverseNotation._ {
 		["Operation", $.Operation],
 		["Engine", $.Engine],
 	]);
+
 	export const resources: Map<string, $wcm.ResourceType> = new Map<
 		string,
 		$wcm.ResourceType
 	>([["Engine", $.Engine]]);
+
 	export type WasmInterface = {};
+
 	export namespace imports {
 		export type WasmInterface = _.WasmInterface &
 			Engine.imports.WasmInterface;
@@ -348,6 +382,7 @@ export namespace ReverseNotation._ {
 	export namespace exports {
 		export type WasmInterface = _.WasmInterface &
 			Engine.exports.WasmInterface;
+
 		export namespace imports {
 			export type WasmInterface = {
 				"[resource-new]engine": (rep: i32) => i32;
@@ -359,12 +394,14 @@ export namespace ReverseNotation._ {
 }
 export namespace calculator.$ {
 	export const Operation = Types.$.Operation;
+
 	export namespace imports {
 		export const log = new $wcm.FunctionType<calculator.Imports["log"]>(
 			"log",
 			[["msg", $wcm.wstring]],
 			undefined,
 		);
+
 		export const generate = new $wcm.FunctionType<
 			calculator.Imports["generate"]
 		>("generate", [], $wcm.wstring);
@@ -375,6 +412,7 @@ export namespace calculator.$ {
 			[["o", Operation]],
 			$wcm.u32,
 		);
+
 		export const msg = new $wcm.FunctionType<calculator.Exports["msg"]>(
 			"msg",
 			[],
@@ -384,20 +422,25 @@ export namespace calculator.$ {
 }
 export namespace calculator._ {
 	export const id = "vscode:example/calculator" as const;
+
 	export const witName = "calculator" as const;
+
 	export type $Root = {
 		"log": (msg_ptr: i32, msg_len: i32) => void;
 		"generate": (result: ptr<string>) => void;
 	};
+
 	export namespace imports {
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["log", $.imports.log],
 			["generate", $.imports.generate],
 		]);
+
 		export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 			string,
 			$wcm.InterfaceType
 		>([["Types", Types._]]);
+
 		export function create(
 			service: calculator.Imports,
 			context: $wcm.WasmContext,
@@ -416,15 +459,18 @@ export namespace calculator._ {
 		"vscode:example/types": Types._.imports.WasmInterface;
 		"[export]vscode:example/reverse-notation": ReverseNotation._.exports.imports.WasmInterface;
 	};
+
 	export namespace exports {
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["calc", $.exports.calc],
 			["msg", $.exports.msg],
 		]);
+
 		export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 			string,
 			$wcm.InterfaceType
 		>([["ReverseNotation", ReverseNotation._]]);
+
 		export function bind(
 			exports: Exports,
 			context: $wcm.WasmContext,
@@ -452,17 +498,20 @@ export namespace calculator._ {
 			self: i32,
 		) => i32;
 	};
+
 	export function bind(
 		service: calculator.Imports,
 		code: $wcm.Code,
 		context?: $wcm.ComponentModelContext,
 	): Promise<calculator.Exports>;
+
 	export function bind(
 		service: calculator.Imports.Promisified,
 		code: $wcm.Code,
 		port: $wcm.RAL.ConnectionPort,
 		context?: $wcm.ComponentModelContext,
 	): Promise<calculator.Exports.Promisified>;
+
 	export function bind(
 		service: calculator.Imports | calculator.Imports.Promisified,
 		code: $wcm.Code,

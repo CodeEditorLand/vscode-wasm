@@ -13,6 +13,7 @@ runSingle((client, folder) => {
 	const oldName = folder.uri.with({
 		path: path.join(folder.uri.path, "directory"),
 	});
+
 	const newName = folder.uri.with({
 		path: path.join(folder.uri.path, "directory_new"),
 	});

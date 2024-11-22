@@ -12,16 +12,19 @@ export async function activate(_context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
 	commands.registerCommand("testbed-rust.run", async () => {
 		const pty = wasm.createPseudoterminal();
+
 		const terminal = window.createTerminal({
 			name: "Rust",
 			pty,
 			isTransient: true,
 		});
 		terminal.show(true);
+
 		const options: ProcessOptions = {
 			stdio: pty.stdio,
 			mountPoints: [{ kind: "workspaceFolder" }],
 		};
+
 		const module = await WebAssembly.compile(
 			await fs.readFile(
 				path.join(
@@ -34,6 +37,7 @@ export async function activate(_context: ExtensionContext) {
 				),
 			),
 		);
+
 		const process = await wasm.createProcess("test-rust", module, options);
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);

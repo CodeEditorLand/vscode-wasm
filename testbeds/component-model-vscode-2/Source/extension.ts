@@ -15,7 +15,9 @@ export async function activate(
 		"debug",
 		"vscode_example.wasm",
 	);
+
 	const bits = await vscode.workspace.fs.readFile(filename);
+
 	const module = await WebAssembly.compile(bits);
 	vscode_rust.activate(context, module);
 }

@@ -14,6 +14,7 @@ runSingle((client, folder) => {
 	const filename = folder.uri.with({
 		path: path.join(folder.uri.path, "test.txt"),
 	});
+
 	const stat = client.vscode.workspace.fileSystem.stat(filename);
 	assert.strictEqual(stat.type, FileType.File);
 	assert.strictEqual(stat.size, 12);

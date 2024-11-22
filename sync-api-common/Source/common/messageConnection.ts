@@ -27,6 +27,7 @@ interface _Request extends AbstractMessage {
 namespace _Request {
 	export function is(value: any): value is _Request {
 		const candidate: _Request = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -43,6 +44,7 @@ interface _Notification extends AbstractMessage {}
 namespace _Notification {
 	export function is(value: any): value is _NotificationType {
 		const candidate: _NotificationType & { id: undefined } = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -63,6 +65,7 @@ interface _Response {
 namespace _Response {
 	export function is(value: any): value is _Response {
 		const candidate: _Response = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -232,7 +235,9 @@ export abstract class BaseMessageConnection<
 		}
 		return new Promise((resolve, reject) => {
 			const id = this.id++;
+
 			const request: _Request = { id, method };
+
 			if (params !== undefined) {
 				request.params = params;
 			}
@@ -272,6 +277,7 @@ export abstract class BaseMessageConnection<
 			return;
 		}
 		const notification: _Notification = { method };
+
 		if (params !== undefined) {
 			notification.params = params;
 		}
@@ -302,7 +308,9 @@ export abstract class BaseMessageConnection<
 	protected async handleMessage(message: _Message): Promise<void> {
 		if (_Request.is(message)) {
 			const id = message.id;
+
 			const handler = this.requestHandlers.get(message.method);
+
 			if (handler !== undefined) {
 				try {
 					const result = await handler(message.params);
@@ -313,14 +321,18 @@ export abstract class BaseMessageConnection<
 			}
 		} else if (_Notification.is(message)) {
 			const handler = this.notificationHandlers.get(message.method);
+
 			if (handler !== undefined) {
 				handler(message.params);
 			}
 		} else if (_Response.is(message)) {
 			const id = message.id;
+
 			const promise = this.responsePromises.get(id);
+
 			if (promise !== undefined) {
 				this.responsePromises.delete(id);
+
 				if (message.result !== undefined) {
 					promise.resolve(message.result);
 				} else if (message.error !== undefined) {
@@ -364,13 +376,22 @@ export abstract class BaseMessageConnection<
 
 export namespace BaseMessageConnection {
 	export type MessageType = _MessageType;
+
 	export type RequestType = _RequestType;
+
 	export type NotificationType = _NotificationType;
+
 	export type Request = _Request;
+
 	export const Request = _Request;
+
 	export type Notification = _Notification;
+
 	export const Notification = _Notification;
+
 	export type Response = _Response;
+
 	export const Response = _Response;
+
 	export type Message = _Message;
 }

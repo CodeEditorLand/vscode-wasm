@@ -21,6 +21,7 @@ export class MainConnection extends BaseMainConnection {
 
 	public dispose(): void {
 		this.port.removeAllListeners("message");
+
 		if (this.port instanceof MessagePort) {
 			this.port.close();
 		}
@@ -58,6 +59,7 @@ export class WorkerConnection extends BaseWorkerConnection {
 
 	public dispose(): void {
 		this.port.removeAllListeners("message");
+
 		super.dispose();
 	}
 

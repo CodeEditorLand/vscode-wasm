@@ -23,10 +23,14 @@ export default async function runSingle(
 		AllRequests,
 		ApiClientConnection.ReadyParams
 	>();
+
 	const client = new ApiClient(connection);
 	await client.serviceReady();
+
 	const workspaceFolders = client.vscode.workspace.workspaceFolders;
+
 	const folder = workspaceFolders[0];
+
 	try {
 		test(client, folder);
 		client.process.procExit(0);

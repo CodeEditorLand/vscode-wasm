@@ -37,9 +37,13 @@ export async function activate(
 		"debug",
 		"test.wasm",
 	);
+
 	const bits = await vscode.workspace.fs.readFile(filename);
+
 	const module = await WebAssembly.compile(bits);
+
 	const wasmContext: WasmContext.Default = new WasmContext.Default();
+
 	const service: test.Imports = {
 		window: {
 			TestResource: TestResourceImpl,
@@ -48,9 +52,12 @@ export async function activate(
 			},
 		},
 	};
+
 	const imports = test._.imports.create(service, wasmContext);
+
 	const instance = await WebAssembly.instantiate(module, imports);
 	wasmContext.initialize(new Memory.Default(instance.exports));
+
 	const api = test._.exports.bind(
 		instance.exports as test._.Exports,
 		wasmContext,
@@ -62,9 +69,12 @@ export async function activate(
 			let start = Date.now();
 			api.run();
 			console.log(`Executing from WASM took: ${Date.now() - start}ms`);
+
 			const testResource = service.window.createTestResource();
 			start = Date.now();
+
 			let result: number = 0;
+
 			for (let i = 0; i < 100000; i++) {
 				result += testResource.call(i);
 			}

@@ -13,9 +13,11 @@ import {
 
 export async function activate(context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
+
 	let out: LogOutputChannel = window.createOutputChannel("big-buffer-write", {
 		log: true,
 	});
+
 	let conv = new TextDecoder("utf-8");
 
 	commands.registerCommand("big-buffer-write.run-full", async (n: number) => {
@@ -23,10 +25,12 @@ export async function activate(context: ExtensionContext) {
 			"workbench.output.action.switchBetweenOutputs",
 			"lambdageek.big-buffer-write.big-buffer-write",
 		);
+
 		try {
 			const rootFileSystem = await wasm.createRootFileSystem([
 				{ kind: "workspaceFolder" },
 			]);
+
 			const options: ProcessOptions = {
 				stdio: {
 					in: { "kind": "pipeIn" },
@@ -36,13 +40,17 @@ export async function activate(context: ExtensionContext) {
 				rootFileSystem,
 				args: [n.toString()],
 			};
+
 			const path = Uri.joinPath(
 				context.extensionUri,
 				"dist",
 				"program-wasi.wasm",
 			);
+
 			const wasiWasm = await workspace.fs.readFile(path);
+
 			const module = await WebAssembly.compile(wasiWasm);
+
 			const process = await wasm.createProcess(
 				"program-wasi",
 				module,
@@ -53,10 +61,12 @@ export async function activate(context: ExtensionContext) {
 			});
 			process.stdout?.onData((buf) => {
 				out.info(`// stdout received ${buf.byteLength} bytes`);
+
 				if (buf.byteLength < 1024) {
 					out.trace(`stdout: ${conv.decode(buf)}`);
 				}
 			});
+
 			const exitCode = await process.run();
 			out.info(`process terminated with exit code ${exitCode}`);
 		} catch (err: any) {
@@ -65,6 +75,7 @@ export async function activate(context: ExtensionContext) {
 	});
 	commands.registerCommand("big-buffer-write.run", async () => {
 		const items = [20, 16383, 16384, 16385, 32767];
+
 		const qp = await window.showQuickPick(
 			items.map((v) => {
 				return {

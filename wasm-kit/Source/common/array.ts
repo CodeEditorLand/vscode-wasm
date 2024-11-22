@@ -35,11 +35,13 @@ export class SharedArray<T> extends ObjectProperty {
 		memory: SharedMemory,
 		capacity?: u32,
 	);
+
 	constructor(
 		elementType: ValueType<T>,
 		memoryRange: MemoryRange,
 		context?: SharedObjectContext,
 	);
+
 	constructor(
 		elementType: ValueType<T>,
 		arg1: SharedMemory | MemoryRange,
@@ -62,9 +64,12 @@ export class SharedArray<T> extends ObjectProperty {
 				];
 			}
 		})();
+
 		super(memoryRange);
 		this.elementType = elementType;
+
 		const access = SharedArray.properties.load(memoryRange, 0, context);
+
 		if (context.mode === SharedObjectContext.Mode.new) {
 			access.state = 0;
 			access.start = 0;
@@ -86,6 +91,7 @@ export class SharedArray<T> extends ObjectProperty {
 
 	private get capacity(): number {
 		const result = this.access.elements.size / ptr.size;
+
 		if (!Number.isInteger(result)) {
 			throw new Error(`Capacity must me an integer, but got [${result}]`);
 		}
@@ -102,8 +108,11 @@ export class SharedArray<T> extends ObjectProperty {
 
 	public at(index: number): T | undefined {
 		const access = this.access;
+
 		const start = access.start;
+
 		const next = access.next;
+
 		if (index < 0 || index >= next - start) {
 			return undefined;
 		}
@@ -112,16 +121,22 @@ export class SharedArray<T> extends ObjectProperty {
 
 	push(...items: T[]): void {
 		const memory = this.memory;
+
 		const access = this.access;
 		access.state = access.state + 1;
+
 		const numberOfItems = items.length;
+
 		const currentCapacity = this.capacity;
+
 		if (access.next + numberOfItems > currentCapacity) {
 			const currentElements = access.elements;
+
 			const newCapacity = Math.max(
 				currentCapacity * 2,
 				currentCapacity + numberOfItems,
 			);
+
 			const newElements = memory.alloc(
 				u32.alignment,
 				newCapacity * u32.size,
@@ -131,6 +146,7 @@ export class SharedArray<T> extends ObjectProperty {
 			currentElements.free();
 		}
 		let next = access.next;
+
 		for (const value of items) {
 			const range = memory.alloc(
 				this.elementType.alignment,
@@ -150,23 +166,32 @@ export class SharedArray<T> extends ObjectProperty {
 
 	public pop(): T | undefined {
 		const memory = this.memory;
+
 		const access = this.access;
+
 		const start = access.start;
+
 		const next = access.next;
+
 		if (next === start) {
 			return undefined;
 		}
 		access.state = access.state + 1;
+
 		const [value, range] = this.loadElementAndPtr(next - 1);
 		memory.free(range);
 		access.next = next - 1;
+
 		return value;
 	}
 
 	public *keys(): IterableIterator<number> {
 		const access = this.access;
+
 		const state = access.state;
+
 		const length = access.next - access.start;
+
 		for (let i = 0; i < length; i++) {
 			if (access.state !== state) {
 				throw new ConcurrentModificationError(
@@ -179,8 +204,11 @@ export class SharedArray<T> extends ObjectProperty {
 
 	public *values(): IterableIterator<T> {
 		const access = this.access;
+
 		const state = access.state;
+
 		let current = access.start;
+
 		while (current < access.next) {
 			yield this.loadElement(current, state);
 			current = current + 1;
@@ -189,10 +217,15 @@ export class SharedArray<T> extends ObjectProperty {
 
 	public *entries(): IterableIterator<[number, T]> {
 		const access = this.access;
+
 		const state = access.state;
+
 		const start = access.start;
+
 		let current = start;
+
 		let index = 0;
+
 		while (current < access.next) {
 			yield [index, this.loadElement(current, state)];
 			current = current + 1;
@@ -202,9 +235,13 @@ export class SharedArray<T> extends ObjectProperty {
 
 	public asArray(): T[] {
 		const access = this.access;
+
 		const start = access.start;
+
 		const next = access.next;
+
 		const result: T[] = [];
+
 		for (let i = start; i < next; i++) {
 			result.push(this.loadElement(i));
 		}
@@ -217,23 +254,29 @@ export class SharedArray<T> extends ObjectProperty {
 
 	private loadElement(index: number, state?: number): T {
 		const access = this.access;
+
 		if (state !== undefined && access.state !== state) {
 			throw new ConcurrentModificationError(
 				`Array got modified during access.`,
 			);
 		}
 		const ptr = access.elements.getPtr(u32.size * index);
+
 		const range = this.memory.readonly(ptr, access.elementSize);
+
 		return this.elementType.load(range, 0, SharedObject.Context.existing);
 	}
 
 	private loadElementAndPtr(index: number, state?: number): [T, MemoryRange] {
 		const access = this.access;
+
 		if (state !== undefined && access.state !== state) {
 			throw new Error(`Array got modified during access.`);
 		}
 		const ptr = access.elements.getPtr(u32.size * index);
+
 		const range = this.memory.preAllocated(ptr, access.elementSize);
+
 		return [
 			this.elementType.load(range, 0, SharedObject.Context.existing),
 			range,
@@ -263,6 +306,7 @@ export namespace SharedArray {
 	}
 
 	export type Synchronized<T> = Synchronize.WithRunLocked<SharedArray<T>>;
+
 	export function synchronized<T>(
 		memory: SharedMemory | Lock,
 		array: SharedArray<T>,
@@ -274,6 +318,7 @@ export namespace SharedArray {
 		public size: size;
 		public alignment: Alignment;
 		private elementType: ValueType<T>;
+
 		constructor(elementType: ValueType<T>) {
 			this.elementType = elementType;
 			this.size = properties.size;
@@ -285,7 +330,9 @@ export namespace SharedArray {
 			context: SharedObjectContext,
 		): SharedArray<any> {
 			memory.assertAlignment(this.alignment, offset);
+
 			const arrayMemory = memory.range(offset, this.size);
+
 			return new SharedArray<T>(this.elementType, arrayMemory, context);
 		}
 	}

@@ -43,6 +43,7 @@ export namespace Cancellation {
 			throw new Error(`Message already has a property $cancellationData`);
 		}
 		const data = new SharedArrayBuffer(4);
+
 		const typedArray = new Int32Array(data, 0, 1);
 		typedArray[0] = 0;
 		(message as MessageWithCancellationData).$cancellationData = data;
@@ -64,10 +65,12 @@ export namespace Cancellation {
 	 */
 	export function retrieveCheck(message: object): () => boolean {
 		const candidate = message as MessageWithCancellationData;
+
 		if (!(candidate.$cancellationData instanceof SharedArrayBuffer)) {
 			return () => false;
 		}
 		const typedArray = new Int32Array(candidate.$cancellationData, 0, 1);
+
 		return () => {
 			return Atomics.load(typedArray, 0) === 1;
 		};

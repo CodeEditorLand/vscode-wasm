@@ -35,9 +35,13 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 	protected async handleMessage(message: ServiceMessage): Promise<void> {
 		if (StartThreadMessage.is(message)) {
 			const module = message.module;
+
 			const memory = message.memory;
+
 			let host = WasiHost.create(this);
+
 			let tracer: Tracer | undefined;
+
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
 				host = tracer.tracer;
@@ -53,6 +57,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 				message.start_arg,
 			);
 			host.thread_exit(message.tid);
+
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
@@ -63,6 +68,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 
 async function main(port: MessagePort | Worker): Promise<void> {
 	const connection = new ThreadNodeHostConnection(port);
+
 	const ready: WorkerReadyMessage = { method: "workerReady" };
 	connection.postMessage(ready);
 	await connection.done();

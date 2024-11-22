@@ -151,6 +151,7 @@ export async function startServer(
 	}
 
 	const reader = new ReadableStreamImpl(readable);
+
 	const writer = new WritableStreamImpl(writable);
 
 	process.run().then(
@@ -184,11 +185,14 @@ export function createUriConverters():
 	  }
 	| undefined {
 	const folders = vscode.workspace.workspaceFolders;
+
 	if (folders === undefined || folders.length === 0) {
 		return undefined;
 	}
 	const c2p: Map<string, string> = new Map();
+
 	const p2c: Map<string, string> = new Map();
+
 	if (folders.length === 1) {
 		const folder = folders[0];
 		c2p.set(folder.uri.toString(), "file:///workspace");
@@ -203,6 +207,7 @@ export function createUriConverters():
 	return {
 		code2Protocol: (uri: vscode.Uri) => {
 			const str = uri.toString();
+
 			for (const key of c2p.keys()) {
 				if (str.startsWith(key)) {
 					return str.replace(key, c2p.get(key) ?? "");

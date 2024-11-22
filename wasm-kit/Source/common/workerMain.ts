@@ -12,7 +12,9 @@ export namespace Worker {
 	): Promise<void> {
 		try {
 			const port = RAL().Worker.getPort();
+
 			const args = RAL().Worker.getArgs();
+
 			const connection = AnyConnection.create(port);
 			new constructor(connection, args.slice(1));
 			connection.listen();

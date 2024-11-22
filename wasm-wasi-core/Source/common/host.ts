@@ -107,6 +107,7 @@ export abstract class HostConnection {
 		transfers?: MemoryTransfer,
 	): errno {
 		const signature = func.signature;
+
 		if (signature.params.length !== args.length) {
 			throw new WasiError(Errno.inval);
 		}
@@ -118,7 +119,9 @@ export abstract class HostConnection {
 				wasmMemory,
 				transfers,
 			);
+
 		const result = this.doCall(paramBuffer, resultBuffer);
+
 		if (
 			result !== Errno.success ||
 			resultBuffer === wasmMemory ||
@@ -129,16 +132,20 @@ export abstract class HostConnection {
 
 		// Copy the results back into the WASM memory.
 		const targetMemory = new Uint8Array(wasmMemory);
+
 		if (ReverseTransfer.isCustom(reverseTransfer)) {
 			reverseTransfer.copy();
 		} else if (ReverseTransfer.isArguments(reverseTransfer)) {
 			let reverseIndex = 0;
+
 			for (let i = 0; i < args.length; i++) {
 				const param = signature.params[i];
+
 				if (param.kind !== ParamKind.ptr) {
 					continue;
 				}
 				const reverse = reverseTransfer[reverseIndex++];
+
 				if (reverse !== undefined) {
 					if (Array.isArray(reverse)) {
 						for (const single of reverse) {
@@ -177,9 +184,11 @@ export abstract class HostConnection {
 
 		// Wait for the answer
 		const result = Atomics.wait(sync, 0, 0, this.timeout);
+
 		switch (result) {
 			case "timed-out":
 				return Errno.timedout;
+
 			case "not-equal":
 				const value = Atomics.load(sync, 0);
 				// If the value === 1 the service has already
@@ -203,6 +212,7 @@ export abstract class HostConnection {
 		const paramBuffer = new SharedArrayBuffer(
 			Offsets.header_size + signature.memorySize,
 		);
+
 		const paramView = new DataView(paramBuffer);
 		paramView.setUint32(
 			Offsets.method_index,
@@ -213,6 +223,7 @@ export abstract class HostConnection {
 		// So no need to copy data into yet another shared array.
 		if (wasmMemory instanceof SharedArrayBuffer) {
 			let offset = Offsets.header_size;
+
 			for (let i = 0; i < args.length; i++) {
 				const param = signature.params[i];
 				param.write(paramView, offset, args[i] as number & bigint);
@@ -221,9 +232,13 @@ export abstract class HostConnection {
 			return [paramBuffer, wasmMemory, []];
 		} else {
 			const resultBuffer = new SharedArrayBuffer(transfer?.size ?? 0);
+
 			let reverse: ReverseTransfer | undefined = undefined;
+
 			let offset = Offsets.header_size;
+
 			let result_ptr = 0;
+
 			if (MemoryTransfer.isCustom(transfer)) {
 				reverse = transfer.copy(
 					wasmMemory,
@@ -235,11 +250,15 @@ export abstract class HostConnection {
 			} else if (MemoryTransfer.isArguments(transfer)) {
 				let transferIndex = 0;
 				reverse = [];
+
 				for (let i = 0; i < args.length; i++) {
 					const param = signature.params[i];
+
 					if (param.kind === ParamKind.ptr) {
 						param.write(paramView, offset, result_ptr);
+
 						const transferItem = transfer?.items[transferIndex++];
+
 						if (transferItem === undefined) {
 							throw new WasiError(Errno.inval);
 						}
@@ -281,8 +300,10 @@ declare namespace WebAssembly {
 	}
 	interface Table {
 		readonly length: number;
+
 		get(index: number): any;
 		grow(delta: number, value?: any): number;
+
 		set(index: number, value?: any): void;
 	}
 	interface Memory {
@@ -312,8 +333,11 @@ export interface WasiHost extends WASI {
 export namespace WasiHost {
 	export function create(connection: HostConnection): WasiHost {
 		let $instance: WebAssembly.Instance | undefined;
+
 		let $memory: WebAssembly.Memory | undefined;
+
 		const args_size = { count: 0, bufferSize: 0 };
+
 		const environ_size = { count: 0, bufferSize: 0 };
 
 		function memory(): ArrayBuffer {
@@ -377,12 +401,14 @@ export namespace WasiHost {
 				try {
 					args_size.count = 0;
 					args_size.bufferSize = 0;
+
 					const result = connection.call(
 						args_sizes_get,
 						[argvCount_ptr, argvBufSize_ptr],
 						memory(),
 						args_sizes_get.transfers(),
 					);
+
 					if (result === Errno.success) {
 						const view = memoryView();
 						args_size.count = view.getUint32(argvCount_ptr, true);
@@ -453,12 +479,14 @@ export namespace WasiHost {
 				try {
 					environ_size.count = 0;
 					environ_size.bufferSize = 0;
+
 					const result = connection.call(
 						environ_sizes_get,
 						[environCount_ptr, environBufSize_ptr],
 						memory(),
 						environ_sizes_get.transfers(),
 					);
+
 					if (result === Errno.success) {
 						const view = memoryView();
 						environ_size.count = view.getUint32(
@@ -1157,10 +1185,12 @@ export namespace TraceWasiHost {
 	export function create(connection: HostConnection, host: WasiHost): Tracer {
 		const timePerFunction: Map<string, { count: number; time: number }> =
 			new Map();
+
 		const traceMessage = TraceMessage.create();
 
 		function printSummary(): void {
 			const summary: string[] = [];
+
 			for (const [name, { count, time }] of timePerFunction.entries()) {
 				summary.push(
 					`${name} was called ${count} times and took ${time}ms in total. Average time: ${time / count}ms.`,
@@ -1179,17 +1209,22 @@ export namespace TraceWasiHost {
 				receiver: any,
 			) => {
 				const value = Reflect.get(target, property, receiver);
+
 				const propertyName = property.toString();
+
 				if (typeof value === "function") {
 					return (...args: any[]) => {
 						if (propertyName === "proc_exit") {
 							printSummary();
 						}
 						const start = Date.now();
+
 						const result = value.apply(target, args);
+
 						const timeTaken = Date.now() - start;
 
 						const traceFunction = traceMessage[propertyName];
+
 						const message =
 							traceFunction !== undefined
 								? traceFunction(
@@ -1211,6 +1246,7 @@ export namespace TraceWasiHost {
 							let perFunction = timePerFunction.get(
 								property.toString(),
 							);
+
 							if (perFunction === undefined) {
 								perFunction = { count: 0, time: 0 };
 								timePerFunction.set(
@@ -1228,6 +1264,7 @@ export namespace TraceWasiHost {
 				}
 			},
 		});
+
 		return {
 			tracer: proxy,
 			printSummary: printSummary,

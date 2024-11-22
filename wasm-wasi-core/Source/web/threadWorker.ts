@@ -29,9 +29,13 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 	protected async handleMessage(message: ServiceMessage): Promise<void> {
 		if (StartThreadMessage.is(message)) {
 			const module = message.module;
+
 			const memory = message.memory;
+
 			let host = WasiHost.create(this);
+
 			let tracer: Tracer | undefined;
+
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
 				host = tracer.tracer;
@@ -47,6 +51,7 @@ class ThreadBrowserHostConnection extends BrowserHostConnection {
 				message.start_arg,
 			);
 			host.thread_exit(message.tid);
+
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
@@ -59,6 +64,7 @@ async function main(
 	port: MessagePort | Worker | DedicatedWorkerGlobalScope,
 ): Promise<void> {
 	const connection = new ThreadBrowserHostConnection(port);
+
 	try {
 		const ready: WorkerReadyMessage = { method: "workerReady" };
 		connection.postMessage(ready);

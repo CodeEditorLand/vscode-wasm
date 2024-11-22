@@ -22,11 +22,13 @@ async function run(options: Options): Promise<number> {
 
 	if (options.version) {
 		process.stdout.write(`${require("../../package.json").version}\n`);
+
 		return 0;
 	}
 
 	if (!Options.validate(options)) {
 		yargs.showHelp();
+
 		return 1;
 	} else {
 	}
@@ -43,6 +45,7 @@ async function run(options: Options): Promise<number> {
 			});
 		} else {
 			const stat = await fs.stat(options.input, { bigint: true });
+
 			if (stat.isFile() && path.extname(options.input) === ".json") {
 				const content: Document = JSON.parse(
 					await fs.readFile(options.input, { encoding: "utf8" }),
@@ -58,20 +61,26 @@ async function run(options: Options): Promise<number> {
 						["--version"],
 						{ shell: true, encoding: "utf8" },
 					);
+
 					const version = output.trim().split(" ")[1];
+
 					const semVersion = semverParse(version);
+
 					if (semVersion === null) {
 						process.stderr.write(
 							`wasm-tools --version didn't provide a parsable version number. Output was ${output}.\n`,
 						);
+
 						return 1;
 					} else if (!semverGte(semVersion, "1.200.0")) {
 						process.stderr.write(
 							`wit2ts required wasm-tools >= 1.200.0, but found version ${version}.\n`,
 						);
+
 						return 1;
 					}
 					let data: string;
+
 					try {
 						data = cp.execFileSync(
 							"wasm-tools",
@@ -89,10 +98,12 @@ async function run(options: Options): Promise<number> {
 					process.stderr.write(
 						`Failed to process document\n${error.stack}\n`,
 					);
+
 					return 1;
 				}
 			} else {
 				process.stderr.write(`${options.input} doesn't exist.\n`);
+
 				return 1;
 			}
 		}
@@ -102,6 +113,7 @@ async function run(options: Options): Promise<number> {
 		process.stderr.write(
 			`Creating TypeScript file failed\n${error.toString()}\n`,
 		);
+
 		return 1;
 	}
 }
@@ -178,7 +190,9 @@ export async function main(): Promise<number> {
 		.strict();
 
 	const parsed = await yargs.argv;
+
 	const options: Options = Object.assign({}, Options.defaults, parsed);
+
 	return run(options);
 }
 

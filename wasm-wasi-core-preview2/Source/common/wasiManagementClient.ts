@@ -49,12 +49,14 @@ class _WasiManagementClient extends WorkerClientBase {
 
 	public async createConnection(): Promise<WasiConnectionInfo> {
 		const [port1, port2] = AnyConnection.createPorts();
+
 		const id = _WasiManagementClient.id++;
 		await this.connection.callAsync(
 			"connection/create",
 			{ id, port: port2 },
 			[port2],
 		);
+
 		return { id, port: port1 };
 	}
 

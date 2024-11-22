@@ -35,6 +35,7 @@ type _SharedObjectResult = {
 namespace _SharedObjectResult {
 	export function is(value: any): value is _SharedObjectResult {
 		const candidate: _SharedObjectResult = value;
+
 		return (
 			candidate !== undefined &&
 			candidate !== null &&
@@ -309,6 +310,7 @@ type NotifyHandlerSignatures<Notifications extends _NotifyType | undefined> = [
 export class TimeoutError extends Error {
 	public readonly method: string;
 	public readonly timeout: number;
+
 	constructor(message: string, method: string, timeout: number) {
 		super(message);
 		this.name = "TimeoutError";
@@ -320,6 +322,7 @@ export class TimeoutError extends Error {
 export class SyncCallError extends Error {
 	public readonly method: string;
 	public readonly errorCode: number;
+
 	constructor(message: string, method: string, errorCode: number) {
 		super(message);
 		this.name = "SyncCallError";
@@ -382,11 +385,13 @@ export abstract class BaseConnection<
 	): Promise<any> {
 		return new Promise((resolve, reject) => {
 			const id = this.id++;
+
 			const request: _AsyncCall = {
 				kind: MessageKind.AsyncCall,
 				id,
 				method,
 			};
+
 			if (params !== undefined) {
 				request.params = params;
 			}
@@ -418,6 +423,7 @@ export abstract class BaseConnection<
 		}
 		this.memory = memory;
 		this.syncMemoryRange = memory.alloc(s32.alignment, 2 * s32.size);
+
 		const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
 		Atomics.store(syncCallBuffer, BaseConnection.sync, 0);
 		Atomics.store(syncCallBuffer, BaseConnection.error, 0);
@@ -455,16 +461,20 @@ export abstract class BaseConnection<
 			);
 		}
 		const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
+
 		const memory = this.memory;
+
 		const call: _SyncCall = {
 			kind: MessageKind.SyncCall,
 			method,
 			sync: this.syncLocation,
 		};
+
 		if (params !== undefined) {
 			call.params = params;
 		}
 		let resultRange: MemoryRange | undefined;
+
 		if (result !== undefined && result !== null) {
 			resultRange = result.alloc(this.memory);
 			call.result = MemoryLocation.from(resultRange);
@@ -472,14 +482,17 @@ export abstract class BaseConnection<
 		this.postMessage(call, transferList);
 		syncCallBuffer[BaseConnection.error] = 0;
 		Atomics.store(syncCallBuffer, BaseConnection.sync, 0);
+
 		const wait = Atomics.wait(
 			syncCallBuffer,
 			BaseConnection.sync,
 			0,
 			timeout,
 		);
+
 		const handleResult = (): SharedObject | undefined => {
 			const error = syncCallBuffer[BaseConnection.error];
+
 			if (error === 0) {
 				if (
 					result === undefined ||
@@ -501,20 +514,24 @@ export abstract class BaseConnection<
 				);
 			}
 		};
+
 		switch (wait) {
 			case "ok":
 				return handleResult();
+
 			case "timed-out":
 				throw new TimeoutError(
 					`Sync call ${method} timed out after ${timeout}ms`,
 					method,
 					timeout!,
 				);
+
 			case "not-equal":
 				const current = Atomics.load(
 					syncCallBuffer,
 					BaseConnection.sync,
 				);
+
 				if (current === 1) {
 					return handleResult();
 				} else {
@@ -549,6 +566,7 @@ export abstract class BaseConnection<
 			kind: MessageKind.Notification,
 			method,
 		};
+
 		if (params !== undefined) {
 			notification.params = params;
 		}
@@ -575,7 +593,9 @@ export abstract class BaseConnection<
 	protected async handleMessage(message: _Message): Promise<void> {
 		if (_AsyncCall.is(message)) {
 			const id = message.id;
+
 			const handler = this.asyncCallHandlers.get(message.method);
+
 			if (handler !== undefined) {
 				try {
 					const result = await handler(message.params);
@@ -586,9 +606,12 @@ export abstract class BaseConnection<
 			}
 		} else if (_AsyncResponse.is(message)) {
 			const id = message.id;
+
 			const promise = this.asyncCallResultPromises.get(id);
+
 			if (promise !== undefined) {
 				this.asyncCallResultPromises.delete(id);
+
 				if (message.error !== undefined) {
 					promise.reject(
 						typeof message.error === "string"
@@ -601,6 +624,7 @@ export abstract class BaseConnection<
 			}
 		} else if (_SyncCall.is(message)) {
 			const handler = this.syncCallHandlers.get(message.method);
+
 			if (handler !== undefined) {
 				if (
 					this.memory === undefined ||
@@ -611,7 +635,9 @@ export abstract class BaseConnection<
 					);
 				}
 				const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
+
 				let errorCode: number = 0;
+
 				try {
 					errorCode =
 						(await handler(
@@ -634,6 +660,7 @@ export abstract class BaseConnection<
 			}
 		} else if (_Notification.is(message)) {
 			const handler = this.notifyHandlers.get(message.method);
+
 			if (handler !== undefined) {
 				try {
 					handler(message.params);
@@ -670,18 +697,31 @@ export abstract class BaseConnection<
 
 export namespace BaseConnection {
 	export type MessageType = _MessageType;
+
 	export type AsyncCallType = _AsyncCallType;
+
 	export type AsyncCallHandler = _AsyncCallHandler;
+
 	export type SyncCallType = _SyncCallType;
+
 	export type SyncCallHandler = _SyncCallHandler;
+
 	export type NotifyType = _NotifyType;
+
 	export type NotifyHandler = _NotifyHandler;
+
 	export type Request = _AsyncCall;
+
 	export const Request = _AsyncCall;
+
 	export type Notification = _Notification;
+
 	export const Notification = _Notification;
+
 	export type Response = _AsyncResponse;
+
 	export const Response = _AsyncResponse;
+
 	export type Message = _Message;
 }
 
@@ -695,8 +735,11 @@ export type AnyConnection = BaseConnection<
 >;
 export namespace AnyConnection {
 	export type AsyncCall = { method: string; params: any; result: any };
+
 	export type SyncCall = { method: string; params: any; result: void };
+
 	export type Notification = { method: string; params: any };
+
 	export function cast<T>(connection: AnyConnection): T {
 		return connection as unknown as T;
 	}

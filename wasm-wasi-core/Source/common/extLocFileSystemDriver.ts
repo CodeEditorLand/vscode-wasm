@@ -47,6 +47,7 @@ const DirectoryBaseRights: rights =
 	Rights.fd_readdir |
 	Rights.path_filestat_get |
 	Rights.fd_filestat_get;
+
 const FileBaseRights: rights =
 	Rights.fd_read |
 	Rights.fd_seek |
@@ -54,8 +55,11 @@ const FileBaseRights: rights =
 	Rights.fd_advise |
 	Rights.fd_filestat_get |
 	Rights.poll_fd_readwrite;
+
 const DirectoryInheritingRights: rights = DirectoryBaseRights | FileBaseRights;
+
 const DirectoryOnlyBaseRights: rights = DirectoryBaseRights & ~FileBaseRights;
+
 const FileOnlyBaseRights: rights = FileBaseRights & DirectoryBaseRights;
 
 enum NodeKind {
@@ -227,6 +231,7 @@ class FileSystem {
 
 	public unrefNode(node: Node): void {
 		node.refs--;
+
 		if (node.refs === 0 && node.kind === NodeKind.File) {
 			node.content = undefined;
 		}
@@ -238,9 +243,12 @@ class FileSystem {
 		}
 		try {
 			const segments = this.getSegmentsFromNode(node);
+
 			const vscode_fs = Uri.joinPath(this.baseUri, ...segments);
+
 			const content = await workspace.fs.readFile(vscode_fs);
 			node.content = content;
+
 			return node.content;
 		} catch (error) {
 			throw new WasiError(Errno.noent);
@@ -249,6 +257,7 @@ class FileSystem {
 
 	public findNode(parent: DirectoryNode, path: string): Node | undefined {
 		const parts = this.getSegmentsFromPath(path);
+
 		if (parts.length === 1) {
 			if (parts[0] === ".") {
 				return parent;
@@ -257,12 +266,15 @@ class FileSystem {
 			}
 		}
 		let current: FileNode | DirectoryNode | undefined = parent;
+
 		for (let i = 0; i < parts.length; i++) {
 			switch (current.kind) {
 				case NodeKind.File:
 					return undefined;
+
 				case NodeKind.Directory:
 					current = current.entries.get(parts[i]);
+
 					if (current === undefined) {
 						return undefined;
 					}
@@ -274,11 +286,14 @@ class FileSystem {
 
 	private getSegmentsFromNode(node: Node): string[] {
 		const parts: string[] = [];
+
 		let current: FileNode | DirectoryNode | undefined = node;
+
 		do {
 			parts.push(current.name);
 			current = current.parent;
 		} while (current !== undefined);
+
 		return parts.reverse();
 	}
 
@@ -294,6 +309,7 @@ class FileSystem {
 
 	private parseDump(dump: Dump.DirectoryNode): DirectoryNode {
 		let inodeCounter = 1n;
+
 		const root = DirectoryNode.create(
 			undefined,
 			inodeCounter++,
@@ -302,6 +318,7 @@ class FileSystem {
 			BigInt(dump.size),
 		);
 		this.processDirectoryNode(dump, root, inodeCounter);
+
 		return root;
 	}
 
@@ -484,10 +501,12 @@ export function create(
 		buffers: Uint8Array[],
 	): size {
 		let totalBytesRead = 0;
+
 		for (const buffer of buffers) {
 			const toRead = Math.min(buffer.length, content.byteLength - offset);
 			buffer.set(content.subarray(offset, offset + toRead));
 			totalBytesRead += toRead;
+
 			if (toRead < buffer.length) {
 				break;
 			}
@@ -516,6 +535,7 @@ export function create(
 		fd_create_prestat_fd(fd: fd): Promise<FileDescriptor> {
 			const root = $fs.getRoot();
 			$fs.refNode(root);
+
 			return Promise.resolve(
 				new DirectoryFileDescriptor(
 					deviceId,
@@ -541,6 +561,7 @@ export function create(
 		fd_close(fileDescriptor: FileDescriptor): Promise<void> {
 			assertDescriptor(fileDescriptor);
 			$fs.unrefNode(fileDescriptor.node);
+
 			return Promise.resolve();
 		},
 		fd_fdstat_get(
@@ -551,6 +572,7 @@ export function create(
 			result.fs_flags = fileDescriptor.fdflags;
 			result.fs_rights_base = fileDescriptor.rights_base;
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
+
 			return Promise.resolve();
 		},
 		fd_filestat_get(
@@ -559,6 +581,7 @@ export function create(
 		): Promise<void> {
 			assertFileDescriptor(fileDescriptor);
 			assignStat(result, fileDescriptor.node);
+
 			return Promise.resolve();
 		},
 		async fd_pread(
@@ -570,8 +593,11 @@ export function create(
 				return 0;
 			}
 			assertFileDescriptor(fileDescriptor);
+
 			const offset = BigInts.asNumber(_offset);
+
 			const content = await $fs.getContent(fileDescriptor.node);
+
 			return read(content, offset, buffers);
 		},
 		async fd_read(
@@ -582,8 +608,11 @@ export function create(
 				return 0;
 			}
 			assertFileDescriptor(fileDescriptor);
+
 			const content = await $fs.getContent(fileDescriptor.node);
+
 			const offset = fileDescriptor.cursor;
+
 			const totalBytesRead = read(
 				content,
 				BigInts.asNumber(offset),
@@ -591,12 +620,14 @@ export function create(
 			);
 			fileDescriptor.cursor =
 				fileDescriptor.cursor + BigInt(totalBytesRead);
+
 			return totalBytesRead;
 		},
 		fd_readdir(fileDescriptor: FileDescriptor): Promise<ReaddirEntry[]> {
 			assertDirectoryDescriptor(fileDescriptor);
 
 			const result: ReaddirEntry[] = [];
+
 			for (const entry of fileDescriptor.node.entries.values()) {
 				result.push({
 					d_ino: entry.inode,
@@ -619,23 +650,30 @@ export function create(
 			switch (whence) {
 				case Whence.set:
 					fileDescriptor.cursor = offset;
+
 					break;
+
 				case Whence.cur:
 					fileDescriptor.cursor = fileDescriptor.cursor + offset;
+
 					break;
+
 				case Whence.end:
 					const size = fileDescriptor.node.size;
 					fileDescriptor.cursor = BigInts.max(0n, size - offset);
+
 					break;
 			}
 			return BigInt(fileDescriptor.cursor);
 		},
 		fd_renumber(fileDescriptor: FileDescriptor, _to: fd): Promise<void> {
 			assertDescriptor(fileDescriptor);
+
 			return Promise.resolve();
 		},
 		fd_tell(fileDescriptor: FileDescriptor): Promise<u64> {
 			assertFileDescriptor(fileDescriptor);
+
 			return Promise.resolve(fileDescriptor.cursor);
 		},
 		async path_filestat_get(
@@ -645,7 +683,9 @@ export function create(
 			result: filestat,
 		): Promise<void> {
 			assertDirectoryDescriptor(fileDescriptor);
+
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
@@ -664,6 +704,7 @@ export function create(
 			assertDirectoryDescriptor(fileDescriptor);
 
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				if (Oflags.creatOn(oflags)) {
 					throw new WasiError(Errno.perm);
@@ -694,6 +735,7 @@ export function create(
 						Rights.fd_allocate |
 						Rights.fd_filestat_set_size)) !==
 				0n;
+
 			if (write) {
 				throw new WasiError(Errno.perm);
 			}
@@ -718,6 +760,7 @@ export function create(
 							target,
 						);
 			$fs.refNode(target);
+
 			return Promise.resolve(result);
 		},
 		path_readlink(
@@ -725,7 +768,9 @@ export function create(
 			path: string,
 		): Promise<string> {
 			assertDirectoryDescriptor(fileDescriptor);
+
 			const target = $fs.findNode(fileDescriptor.node, path);
+
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
@@ -733,6 +778,7 @@ export function create(
 		},
 		fd_bytesAvailable(fileDescriptor: FileDescriptor): Promise<filesize> {
 			assertFileDescriptor(fileDescriptor);
+
 			return Promise.resolve(
 				BigInts.max(
 					0n,

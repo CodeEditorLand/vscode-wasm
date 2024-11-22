@@ -41,6 +41,7 @@ export type PtrParam = {
 export type Param = PtrParam | NumberParam | BigintParam;
 
 const ptr_size = 4 as const;
+
 const PtrParam: PtrParam = {
 	kind: ParamKind.ptr,
 	size: ptr_size,
@@ -62,6 +63,7 @@ export namespace WasiFunctionSignature {
 	}
 	function getMemorySize(params: Param[]): number {
 		let result: number = 0;
+
 		for (const param of params) {
 			result += param.size;
 		}
@@ -118,6 +120,7 @@ export namespace ArgumentsTransfer {
 
 	function getMemorySize(transfers: ArgumentTransfer[]): number {
 		let result: number = 0;
+
 		for (const transfer of transfers) {
 			result += transfer.memorySize;
 		}
@@ -146,6 +149,7 @@ export namespace MemoryTransfer {
 		transfer: MemoryTransfer | undefined,
 	): transfer is CustomMemoryTransfer {
 		const candidate = transfer as CustomMemoryTransfer;
+
 		return (
 			candidate &&
 			typeof candidate.copy === "function" &&
@@ -156,6 +160,7 @@ export namespace MemoryTransfer {
 		transfer: MemoryTransfer | undefined,
 	): transfer is ArgumentsTransfer {
 		const candidate = transfer as ArgumentsTransfer;
+
 		return (
 			candidate &&
 			Array.isArray(candidate.items) &&
@@ -170,12 +175,14 @@ export namespace ReverseTransfer {
 		transfer: ReverseTransfer | undefined,
 	): transfer is ReverseCustomTransfer {
 		const candidate = transfer as ReverseCustomTransfer;
+
 		return candidate && typeof candidate.copy === "function";
 	}
 	export function isArguments(
 		transfer: ReverseTransfer | undefined,
 	): transfer is ReverseArgumentsTransfer {
 		const candidate = transfer as ReverseArgumentsTransfer;
+
 		return candidate && Array.isArray(candidate);
 	}
 }
@@ -191,7 +198,9 @@ export type WasiFunction = {
 
 namespace _WasiFunctions {
 	const callbacks: WasiFunction[] = [];
+
 	const name2Index: Map<string, number> = new Map();
+
 	const index2Name: Map<number, string> = new Map();
 
 	export function functionAt(index: number): WasiFunction {
@@ -203,6 +212,7 @@ namespace _WasiFunctions {
 
 	export function get(name: string): WasiFunction {
 		const index = name2Index.get(name);
+
 		if (index === undefined) {
 			throw new Error("Should never happen");
 		}
@@ -211,6 +221,7 @@ namespace _WasiFunctions {
 
 	export function getIndex(name: string): number {
 		const result = name2Index.get(name);
+
 		if (result === undefined) {
 			throw new Error("Should never happen");
 		}
@@ -219,6 +230,7 @@ namespace _WasiFunctions {
 
 	export function getName(index: number): string {
 		const result = index2Name.get(index);
+
 		if (result === undefined) {
 			throw new Error("Should never happen");
 		}
@@ -235,16 +247,22 @@ namespace _WasiFunctions {
 
 export type WasiFunctions = {
 	add(wasiFunction: WasiFunction): void;
+
 	functionAt(index: number): WasiFunction;
+
 	get(name: string): WasiFunction;
+
 	getIndex(name: string): number;
+
 	getName(index: number): string;
 };
 export const WasiFunctions: WasiFunctions = _WasiFunctions;
 
 export namespace U8 {
 	export const size = 1 as const;
+
 	export const $ptr = PtrParam;
+
 	export const $param: NumberParam = {
 		kind: ParamKind.number,
 		size,
@@ -257,6 +275,7 @@ export const Byte = U8;
 
 export namespace Bytes {
 	export const $ptr = PtrParam;
+
 	export function createTransfer(
 		length: number,
 		direction: MemoryTransferDirection,
@@ -282,7 +301,9 @@ export namespace Bytes {
 
 export namespace U16 {
 	export const size = 2 as const;
+
 	export const $ptr = PtrParam;
+
 	export const $param: NumberParam = {
 		kind: ParamKind.number,
 		size,
@@ -293,13 +314,16 @@ export namespace U16 {
 
 export namespace U32 {
 	export const size = 4 as const;
+
 	export const $ptr = PtrParam;
+
 	export const $param: NumberParam = {
 		kind: ParamKind.number,
 		size,
 		write: (view, offset, value) => view.setUint32(offset, value, true),
 		read: (view, offset) => view.getUint32(offset, true),
 	};
+
 	export const $transfer: ArgumentTransfer = {
 		memorySize: size,
 		copy: (_wasmMemory, from, _transferMemory, to) => {
@@ -314,13 +338,16 @@ export const Size = U32;
 
 export namespace U64 {
 	export const size = 8 as const;
+
 	export const $ptr = PtrParam;
+
 	export const $param: BigintParam = {
 		kind: ParamKind.bigint,
 		size,
 		write: (view, offset, value) => view.setBigUint64(offset, value, true),
 		read: (view, offset) => view.getBigUint64(offset, true),
 	};
+
 	export const $transfer: ArgumentTransfer = {
 		memorySize: size,
 		copy: (_wasmMemory, from, _transferMemory, to) => {
@@ -333,7 +360,9 @@ export namespace U64 {
 
 export namespace S64 {
 	export const size = 8 as const;
+
 	export const $ptr = PtrParam;
+
 	export const $param: BigintParam = {
 		kind: ParamKind.bigint,
 		size,
@@ -344,6 +373,7 @@ export namespace S64 {
 
 export namespace Ptr {
 	export const size = 4 as const;
+
 	export const $param = PtrParam;
 
 	export function createTransfer(

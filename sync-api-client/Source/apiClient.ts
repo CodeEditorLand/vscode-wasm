@@ -129,6 +129,7 @@ class ByteSourceImpl implements ByteSource {
 			{ uri: uri.toJSON(), maxBytesToRead },
 			new VariableResult<Uint8Array>("binary"),
 		);
+
 		if (RequestResult.hasData(result)) {
 			return result.data;
 		}
@@ -149,6 +150,7 @@ class ByteSinkImpl implements ByteSink {
 			{ uri: uri.toJSON(), binary: value },
 			Uint32Result.fromLength(1),
 		);
+
 		if (RequestResult.hasData(result)) {
 			return result.data[0];
 		}
@@ -208,15 +210,19 @@ class FileSystemImpl implements FileSystem {
 			{ uri: uri.toJSON() },
 			DTOs.Stat.typedResult,
 		);
+
 		if (RequestResult.hasData(requestResult)) {
 			const stat = DTOs.Stat.create(requestResult.data);
+
 			const permission = stat.permission;
+
 			const result: vscode.FileStat = {
 				type: stat.type,
 				ctime: stat.ctime,
 				mtime: stat.mtime,
 				size: stat.size,
 			};
+
 			if (permission !== 0) {
 				result.permissions = permission;
 			}
@@ -231,6 +237,7 @@ class FileSystemImpl implements FileSystem {
 			{ uri: uri.toJSON() },
 			new VariableResult<Uint8Array>("binary"),
 		);
+
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
 		}
@@ -242,6 +249,7 @@ class FileSystemImpl implements FileSystem {
 			"fileSystem/writeFile",
 			{ uri: uri.toJSON(), binary: content },
 		);
+
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
@@ -253,6 +261,7 @@ class FileSystemImpl implements FileSystem {
 			{ uri: uri.toJSON() },
 			new VariableResult<DTOs.DirectoryEntries>("json"),
 		);
+
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
 		}
@@ -264,6 +273,7 @@ class FileSystemImpl implements FileSystem {
 			"fileSystem/createDirectory",
 			{ uri: uri.toJSON() },
 		);
+
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
@@ -277,6 +287,7 @@ class FileSystemImpl implements FileSystem {
 			uri: uri.toJSON(),
 			options,
 		});
+
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(requestResult.errno, uri);
 		}
@@ -292,6 +303,7 @@ class FileSystemImpl implements FileSystem {
 			target: target.toJSON(),
 			options,
 		});
+
 		if (requestResult.errno !== RPCErrno.Success) {
 			throw this.asFileSystemError(
 				requestResult.errno,
@@ -307,14 +319,19 @@ class FileSystemImpl implements FileSystem {
 		switch (errno) {
 			case DTOs.FileSystemError.FileNotFound:
 				return vscode.FileSystemError.FileNotFound(uri);
+
 			case DTOs.FileSystemError.FileExists:
 				return vscode.FileSystemError.FileExists(uri);
+
 			case DTOs.FileSystemError.FileNotADirectory:
 				return vscode.FileSystemError.FileNotADirectory(uri);
+
 			case DTOs.FileSystemError.FileIsADirectory:
 				return vscode.FileSystemError.FileIsADirectory(uri);
+
 			case DTOs.FileSystemError.NoPermissions:
 				return vscode.FileSystemError.NoPermissions(uri);
+
 			case DTOs.FileSystemError.Unavailable:
 				return vscode.FileSystemError.Unavailable(uri);
 		}
@@ -336,6 +353,7 @@ class WorkspaceImpl implements Workspace {
 			"workspace/workspaceFolders",
 			new VariableResult<DTOs.WorkspaceFolder[]>("json"),
 		);
+
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data.map((folder) => {
 				return {
@@ -380,9 +398,11 @@ export class ApiClient implements ApiShape {
 		this.encoder = RAL().TextEncoder.create();
 		this.timer = new TimerImpl(this.connection);
 		this.process = new ProcessImpl(this.connection);
+
 		const byteSource = (this.byteSource = new ByteSourceImpl(
 			this.connection,
 		));
+
 		const byteSink = (this.byteSink = new ByteSinkImpl(this.connection));
 		this.console = new ConsoleImpl(byteSink, this.encoder);
 		this.tty = {
@@ -400,6 +420,7 @@ export class ApiClient implements ApiShape {
 
 	public async serviceReady(): Promise<ApiClientConnection.ReadyParams> {
 		const params = await this.connection.serviceReady();
+
 		return {
 			stdio: {
 				stdin: this.asFileDescriptorDescription(params.stdio.stdin),
@@ -419,11 +440,13 @@ export class ApiClient implements ApiShape {
 					uri: URI.from(fileDescriptor.uri),
 					path: fileDescriptor.path,
 				};
+
 			case "terminal":
 				return {
 					kind: fileDescriptor.kind,
 					uri: URI.from(fileDescriptor.uri),
 				};
+
 			case "console":
 				return {
 					kind: fileDescriptor.kind,

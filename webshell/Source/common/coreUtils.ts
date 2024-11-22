@@ -355,6 +355,7 @@ export class CoreUtils {
 			"coreutils.wasm",
 		);
 		this.coreUtils = RAL().webAssembly.compile(uri);
+
 		return this.coreUtils;
 	}
 
@@ -368,17 +369,22 @@ export class CoreUtils {
 		rootFileSystem: RootFileSystem,
 	): Promise<number> {
 		const module = await this.getCoreUtils();
+
 		const path = RAL().path;
+
 		let fileFound: boolean = false;
+
 		const newArgs = args.map((arg) => {
 			if (arg.startsWith("-")) {
 				return arg;
 			} else {
 				fileFound = true;
+
 				return path.isAbsolute(arg) ? arg : path.join(cwd, arg);
 			}
 		});
 		newArgs.unshift(command);
+
 		if (!fileFound && addCwd) {
 			newArgs.push(cwd);
 		}
@@ -388,8 +394,11 @@ export class CoreUtils {
 			rootFileSystem,
 			trace: true,
 		};
+
 		const process = await wasm.createProcess("coreutils", module, options);
+
 		const result = await process.run();
+
 		return result;
 	}
 
@@ -400,13 +409,17 @@ export class CoreUtils {
 		stdio: Stdio,
 	): Promise<number> {
 		const module = await this.getCoreUtils();
+
 		const newArgs = [command].concat(args);
+
 		const process = await wasm.createProcess("coreutils", module, {
 			stdio: stdio,
 			args: newArgs,
 			trace: true,
 		});
+
 		const result = await process.run();
+
 		return result;
 	}
 }

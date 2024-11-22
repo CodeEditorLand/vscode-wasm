@@ -183,32 +183,39 @@ export namespace sockets {
 
 		export namespace IpAddress {
 			export const ipv4 = "ipv4" as const;
+
 			export type Ipv4 = {
 				readonly tag: typeof ipv4;
 				readonly value: Ipv4Address;
 			} & _common;
+
 			export function Ipv4(value: Ipv4Address): Ipv4 {
 				return new VariantImpl(ipv4, value) as Ipv4;
 			}
 
 			export const ipv6 = "ipv6" as const;
+
 			export type Ipv6 = {
 				readonly tag: typeof ipv6;
 				readonly value: Ipv6Address;
 			} & _common;
+
 			export function Ipv6(value: Ipv6Address): Ipv6 {
 				return new VariantImpl(ipv6, value) as Ipv6;
 			}
 
 			export type _tt = typeof ipv4 | typeof ipv6;
+
 			export type _vt = Ipv4Address | Ipv6Address;
 			type _common = Omit<VariantImpl, "tag" | "value">;
+
 			export function _ctor(t: _tt, v: _vt): IpAddress {
 				return new VariantImpl(t, v) as IpAddress;
 			}
 			class VariantImpl {
 				private readonly _tag: _tt;
 				private readonly _value: _vt;
+
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
 					this._value = value;
@@ -265,32 +272,39 @@ export namespace sockets {
 
 		export namespace IpSocketAddress {
 			export const ipv4 = "ipv4" as const;
+
 			export type Ipv4 = {
 				readonly tag: typeof ipv4;
 				readonly value: Ipv4SocketAddress;
 			} & _common;
+
 			export function Ipv4(value: Ipv4SocketAddress): Ipv4 {
 				return new VariantImpl(ipv4, value) as Ipv4;
 			}
 
 			export const ipv6 = "ipv6" as const;
+
 			export type Ipv6 = {
 				readonly tag: typeof ipv6;
 				readonly value: Ipv6SocketAddress;
 			} & _common;
+
 			export function Ipv6(value: Ipv6SocketAddress): Ipv6 {
 				return new VariantImpl(ipv6, value) as Ipv6;
 			}
 
 			export type _tt = typeof ipv4 | typeof ipv6;
+
 			export type _vt = Ipv4SocketAddress | Ipv6SocketAddress;
 			type _common = Omit<VariantImpl, "tag" | "value">;
+
 			export function _ctor(t: _tt, v: _vt): IpSocketAddress {
 				return new VariantImpl(t, v) as IpSocketAddress;
 			}
 			class VariantImpl {
 				private readonly _tag: _tt;
 				private readonly _value: _vt;
+
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
 					this._value = value;
@@ -316,6 +330,7 @@ export namespace sockets {
 		export namespace Network {
 			export interface Interface extends $wcm.Resource {}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type Network = Network.Interface;
@@ -343,9 +358,11 @@ export namespace sockets {
 		export type Network = sockets.Network.Network;
 
 		export type ErrorCode = sockets.Network.ErrorCode;
+
 		export const ErrorCode = sockets.Network.ErrorCode;
 
 		export type IpAddress = sockets.Network.IpAddress;
+
 		export const IpAddress = sockets.Network.IpAddress;
 
 		export namespace ResolveAddressStream {
@@ -378,6 +395,7 @@ export namespace sockets {
 				subscribe(): Pollable;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type ResolveAddressStream = ResolveAddressStream.Interface;
@@ -428,12 +446,15 @@ export namespace sockets {
 		export type Network = sockets.Network.Network;
 
 		export type ErrorCode = sockets.Network.ErrorCode;
+
 		export const ErrorCode = sockets.Network.ErrorCode;
 
 		export type IpSocketAddress = sockets.Network.IpSocketAddress;
+
 		export const IpSocketAddress = sockets.Network.IpSocketAddress;
 
 		export type IpAddressFamily = sockets.Network.IpAddressFamily;
+
 		export const IpAddressFamily = sockets.Network.IpAddressFamily;
 
 		export enum ShutdownType {
@@ -880,6 +901,7 @@ export namespace sockets {
 				shutdown(shutdownType: ShutdownType): void;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type TcpSocket = TcpSocket.Interface;
@@ -892,9 +914,11 @@ export namespace sockets {
 		export type Network = sockets.Network.Network;
 
 		export type ErrorCode = sockets.Network.ErrorCode;
+
 		export const ErrorCode = sockets.Network.ErrorCode;
 
 		export type IpAddressFamily = sockets.Network.IpAddressFamily;
+
 		export const IpAddressFamily = sockets.Network.IpAddressFamily;
 
 		export type TcpSocket = sockets.Tcp.TcpSocket;
@@ -937,12 +961,15 @@ export namespace sockets {
 		export type Network = sockets.Network.Network;
 
 		export type ErrorCode = sockets.Network.ErrorCode;
+
 		export const ErrorCode = sockets.Network.ErrorCode;
 
 		export type IpSocketAddress = sockets.Network.IpSocketAddress;
+
 		export const IpSocketAddress = sockets.Network.IpSocketAddress;
 
 		export type IpAddressFamily = sockets.Network.IpAddressFamily;
+
 		export const IpAddressFamily = sockets.Network.IpAddressFamily;
 
 		/**
@@ -1179,6 +1206,7 @@ export namespace sockets {
 				subscribe(): Pollable;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type UdpSocket = UdpSocket.Interface;
@@ -1223,6 +1251,7 @@ export namespace sockets {
 				subscribe(): Pollable;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type IncomingDatagramStream = IncomingDatagramStream.Interface;
@@ -1295,6 +1324,7 @@ export namespace sockets {
 				subscribe(): Pollable;
 			}
 			export type Statics = {};
+
 			export type Class = Statics & {};
 		}
 		export type OutgoingDatagramStream = OutgoingDatagramStream.Interface;
@@ -1309,9 +1339,11 @@ export namespace sockets {
 		export type Network = sockets.Network.Network;
 
 		export type ErrorCode = sockets.Network.ErrorCode;
+
 		export const ErrorCode = sockets.Network.ErrorCode;
 
 		export type IpAddressFamily = sockets.Network.IpAddressFamily;
+
 		export const IpAddressFamily = sockets.Network.IpAddressFamily;
 
 		export type UdpSocket = sockets.Udp.UdpSocket;
@@ -1355,7 +1387,9 @@ export namespace sockets {
 			"network",
 			"wasi:sockets@0.2.1/network/network",
 		);
+
 		export const Network_Handle = new $wcm.ResourceHandleType("network");
+
 		export const ErrorCode = new $wcm.EnumType<sockets.Network.ErrorCode>([
 			"unknown",
 			"accessDenied",
@@ -1379,17 +1413,20 @@ export namespace sockets {
 			"temporaryResolverFailure",
 			"permanentResolverFailure",
 		]);
+
 		export const IpAddressFamily =
 			new $wcm.EnumType<sockets.Network.IpAddressFamily>([
 				"ipv4",
 				"ipv6",
 			]);
+
 		export const Ipv4Address = new $wcm.TupleType<[u8, u8, u8, u8]>([
 			$wcm.u8,
 			$wcm.u8,
 			$wcm.u8,
 			$wcm.u8,
 		]);
+
 		export const Ipv6Address = new $wcm.TupleType<
 			[u16, u16, u16, u16, u16, u16, u16, u16]
 		>([
@@ -1402,6 +1439,7 @@ export namespace sockets {
 			$wcm.u16,
 			$wcm.u16,
 		]);
+
 		export const IpAddress = new $wcm.VariantType<
 			sockets.Network.IpAddress,
 			sockets.Network.IpAddress._tt,
@@ -1413,11 +1451,13 @@ export namespace sockets {
 			],
 			sockets.Network.IpAddress._ctor,
 		);
+
 		export const Ipv4SocketAddress =
 			new $wcm.RecordType<sockets.Network.Ipv4SocketAddress>([
 				["port", $wcm.u16],
 				["address", Ipv4Address],
 			]);
+
 		export const Ipv6SocketAddress =
 			new $wcm.RecordType<sockets.Network.Ipv6SocketAddress>([
 				["port", $wcm.u16],
@@ -1425,6 +1465,7 @@ export namespace sockets {
 				["address", Ipv6Address],
 				["scopeId", $wcm.u32],
 			]);
+
 		export const IpSocketAddress = new $wcm.VariantType<
 			sockets.Network.IpSocketAddress,
 			sockets.Network.IpSocketAddress._tt,
@@ -1445,9 +1486,12 @@ export namespace sockets {
 	}
 	export namespace Network._ {
 		export const id = "wasi:sockets/network@0.2.1" as const;
+
 		export const witName = "network" as const;
+
 		export namespace Network {
 			export type WasmInterface = {};
+
 			export namespace imports {
 				export type WasmInterface = Network.WasmInterface & {
 					"[resource-drop]network": (self: i32) => void;
@@ -1473,11 +1517,14 @@ export namespace sockets {
 			["IpSocketAddress", $.IpSocketAddress],
 			["Network", $.Network],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["Network", $.Network]]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				Network.imports.WasmInterface;
@@ -1485,6 +1532,7 @@ export namespace sockets {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Network.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]network": (rep: i32) => i32;
@@ -1497,6 +1545,7 @@ export namespace sockets {
 
 	export namespace InstanceNetwork.$ {
 		export const Network = sockets.Network.$.Network;
+
 		export const instanceNetwork =
 			new $wcm.FunctionType<sockets.InstanceNetwork.instanceNetwork>(
 				"instance-network",
@@ -1506,17 +1555,22 @@ export namespace sockets {
 	}
 	export namespace InstanceNetwork._ {
 		export const id = "wasi:sockets/instance-network@0.2.1" as const;
+
 		export const witName = "instance-network" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["Network", $.Network]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["instanceNetwork", $.instanceNetwork],
 		]);
+
 		export type WasmInterface = {
 			"instance-network": () => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -1527,14 +1581,19 @@ export namespace sockets {
 
 	export namespace IpNameLookup.$ {
 		export const Pollable = io.Poll.$.Pollable;
+
 		export const Network = sockets.Network.$.Network;
+
 		export const ErrorCode = sockets.Network.$.ErrorCode;
+
 		export const IpAddress = sockets.Network.$.IpAddress;
+
 		export const ResolveAddressStream =
 			new $wcm.ResourceType<sockets.IpNameLookup.ResolveAddressStream>(
 				"resolve-address-stream",
 				"wasi:sockets@0.2.1/ip-name-lookup/resolve-address-stream",
 			);
+
 		export const ResolveAddressStream_Handle = new $wcm.ResourceHandleType(
 			"resolve-address-stream",
 		);
@@ -1572,6 +1631,7 @@ export namespace sockets {
 				new $wcm.OwnType<sockets.IpNameLookup.Pollable>(Pollable),
 			),
 		);
+
 		export const resolveAddresses =
 			new $wcm.FunctionType<sockets.IpNameLookup.resolveAddresses>(
 				"resolve-addresses",
@@ -1597,7 +1657,9 @@ export namespace sockets {
 	}
 	export namespace IpNameLookup._ {
 		export const id = "wasi:sockets/ip-name-lookup@0.2.1" as const;
+
 		export const witName = "ip-name-lookup" as const;
+
 		export namespace ResolveAddressStream {
 			export type WasmInterface = {
 				"[method]resolve-address-stream.resolve-next-address": (
@@ -1606,6 +1668,7 @@ export namespace sockets {
 				) => void;
 				"[method]resolve-address-stream.subscribe": (self: i32) => i32;
 			};
+
 			export namespace imports {
 				export type WasmInterface =
 					ResolveAddressStream.WasmInterface & {
@@ -1631,13 +1694,16 @@ export namespace sockets {
 			["IpAddress", $.IpAddress],
 			["ResolveAddressStream", $.ResolveAddressStream],
 		]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["resolveAddresses", $.resolveAddresses],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["ResolveAddressStream", $.ResolveAddressStream]]);
+
 		export type WasmInterface = {
 			"resolve-addresses": (
 				network: i32,
@@ -1646,6 +1712,7 @@ export namespace sockets {
 				result: ptr<result<ResolveAddressStream, ErrorCode>>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				ResolveAddressStream.imports.WasmInterface;
@@ -1653,6 +1720,7 @@ export namespace sockets {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				ResolveAddressStream.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]resolve-address-stream": (rep: i32) => i32;
@@ -1669,20 +1737,30 @@ export namespace sockets {
 
 	export namespace Tcp.$ {
 		export const InputStream = io.Streams.$.InputStream;
+
 		export const OutputStream = io.Streams.$.OutputStream;
+
 		export const Pollable = io.Poll.$.Pollable;
+
 		export const Duration = clocks.MonotonicClock.$.Duration;
+
 		export const Network = sockets.Network.$.Network;
+
 		export const ErrorCode = sockets.Network.$.ErrorCode;
+
 		export const IpSocketAddress = sockets.Network.$.IpSocketAddress;
+
 		export const IpAddressFamily = sockets.Network.$.IpAddressFamily;
+
 		export const ShutdownType = new $wcm.EnumType<sockets.Tcp.ShutdownType>(
 			["receive", "send", "both"],
 		);
+
 		export const TcpSocket = new $wcm.ResourceType<sockets.Tcp.TcpSocket>(
 			"tcp-socket",
 			"wasi:sockets@0.2.1/tcp/tcp-socket",
 		);
+
 		export const TcpSocket_Handle = new $wcm.ResourceHandleType(
 			"tcp-socket",
 		);
@@ -2069,7 +2147,9 @@ export namespace sockets {
 	}
 	export namespace Tcp._ {
 		export const id = "wasi:sockets/tcp@0.2.1" as const;
+
 		export const witName = "tcp" as const;
+
 		export namespace TcpSocket {
 			export type WasmInterface = {
 				"[method]tcp-socket.start-bind": (
@@ -2216,6 +2296,7 @@ export namespace sockets {
 					result: ptr<result<void, ErrorCode>>,
 				) => void;
 			};
+
 			export namespace imports {
 				export type WasmInterface = TcpSocket.WasmInterface & {
 					"[resource-drop]tcp-socket": (self: i32) => void;
@@ -2242,11 +2323,14 @@ export namespace sockets {
 			["ShutdownType", $.ShutdownType],
 			["TcpSocket", $.TcpSocket],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
 		>([["TcpSocket", $.TcpSocket]]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				TcpSocket.imports.WasmInterface;
@@ -2254,6 +2338,7 @@ export namespace sockets {
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TcpSocket.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]tcp-socket": (rep: i32) => i32;
@@ -2266,9 +2351,13 @@ export namespace sockets {
 
 	export namespace TcpCreateSocket.$ {
 		export const Network = sockets.Network.$.Network;
+
 		export const ErrorCode = sockets.Network.$.ErrorCode;
+
 		export const IpAddressFamily = sockets.Network.$.IpAddressFamily;
+
 		export const TcpSocket = sockets.Tcp.$.TcpSocket;
+
 		export const createTcpSocket =
 			new $wcm.FunctionType<sockets.TcpCreateSocket.createTcpSocket>(
 				"create-tcp-socket",
@@ -2286,7 +2375,9 @@ export namespace sockets {
 	}
 	export namespace TcpCreateSocket._ {
 		export const id = "wasi:sockets/tcp-create-socket@0.2.1" as const;
+
 		export const witName = "tcp-create-socket" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -2296,15 +2387,18 @@ export namespace sockets {
 			["IpAddressFamily", $.IpAddressFamily],
 			["TcpSocket", $.TcpSocket],
 		]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["createTcpSocket", $.createTcpSocket],
 		]);
+
 		export type WasmInterface = {
 			"create-tcp-socket": (
 				addressFamily_IpAddressFamily_IpAddressFamily: i32,
 				result: ptr<result<TcpSocket, ErrorCode>>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -2315,15 +2409,21 @@ export namespace sockets {
 
 	export namespace Udp.$ {
 		export const Pollable = io.Poll.$.Pollable;
+
 		export const Network = sockets.Network.$.Network;
+
 		export const ErrorCode = sockets.Network.$.ErrorCode;
+
 		export const IpSocketAddress = sockets.Network.$.IpSocketAddress;
+
 		export const IpAddressFamily = sockets.Network.$.IpAddressFamily;
+
 		export const IncomingDatagram =
 			new $wcm.RecordType<sockets.Udp.IncomingDatagram>([
 				["data", new $wcm.Uint8ArrayType()],
 				["remoteAddress", IpSocketAddress],
 			]);
+
 		export const OutgoingDatagram =
 			new $wcm.RecordType<sockets.Udp.OutgoingDatagram>([
 				["data", new $wcm.Uint8ArrayType()],
@@ -2334,25 +2434,31 @@ export namespace sockets {
 					),
 				],
 			]);
+
 		export const UdpSocket = new $wcm.ResourceType<sockets.Udp.UdpSocket>(
 			"udp-socket",
 			"wasi:sockets@0.2.1/udp/udp-socket",
 		);
+
 		export const UdpSocket_Handle = new $wcm.ResourceHandleType(
 			"udp-socket",
 		);
+
 		export const IncomingDatagramStream =
 			new $wcm.ResourceType<sockets.Udp.IncomingDatagramStream>(
 				"incoming-datagram-stream",
 				"wasi:sockets@0.2.1/udp/incoming-datagram-stream",
 			);
+
 		export const IncomingDatagramStream_Handle =
 			new $wcm.ResourceHandleType("incoming-datagram-stream");
+
 		export const OutgoingDatagramStream =
 			new $wcm.ResourceType<sockets.Udp.OutgoingDatagramStream>(
 				"outgoing-datagram-stream",
 				"wasi:sockets@0.2.1/udp/outgoing-datagram-stream",
 			);
+
 		export const OutgoingDatagramStream_Handle =
 			new $wcm.ResourceHandleType("outgoing-datagram-stream");
 		UdpSocket.addDestructor(
@@ -2629,7 +2735,9 @@ export namespace sockets {
 	}
 	export namespace Udp._ {
 		export const id = "wasi:sockets/udp@0.2.1" as const;
+
 		export const witName = "udp" as const;
+
 		export namespace UdpSocket {
 			export type WasmInterface = {
 				"[method]udp-socket.start-bind": (
@@ -2713,6 +2821,7 @@ export namespace sockets {
 				) => void;
 				"[method]udp-socket.subscribe": (self: i32) => i32;
 			};
+
 			export namespace imports {
 				export type WasmInterface = UdpSocket.WasmInterface & {
 					"[resource-drop]udp-socket": (self: i32) => void;
@@ -2735,6 +2844,7 @@ export namespace sockets {
 					self: i32,
 				) => i32;
 			};
+
 			export namespace imports {
 				export type WasmInterface =
 					IncomingDatagramStream.WasmInterface & {
@@ -2766,6 +2876,7 @@ export namespace sockets {
 					self: i32,
 				) => i32;
 			};
+
 			export namespace imports {
 				export type WasmInterface =
 					OutgoingDatagramStream.WasmInterface & {
@@ -2796,6 +2907,7 @@ export namespace sockets {
 			["IncomingDatagramStream", $.IncomingDatagramStream],
 			["OutgoingDatagramStream", $.OutgoingDatagramStream],
 		]);
+
 		export const resources: Map<string, $wcm.ResourceType> = new Map<
 			string,
 			$wcm.ResourceType
@@ -2804,7 +2916,9 @@ export namespace sockets {
 			["IncomingDatagramStream", $.IncomingDatagramStream],
 			["OutgoingDatagramStream", $.OutgoingDatagramStream],
 		]);
+
 		export type WasmInterface = {};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface &
 				UdpSocket.imports.WasmInterface &
@@ -2816,6 +2930,7 @@ export namespace sockets {
 				UdpSocket.exports.WasmInterface &
 				IncomingDatagramStream.exports.WasmInterface &
 				OutgoingDatagramStream.exports.WasmInterface;
+
 			export namespace imports {
 				export type WasmInterface = {
 					"[resource-new]udp-socket": (rep: i32) => i32;
@@ -2842,9 +2957,13 @@ export namespace sockets {
 
 	export namespace UdpCreateSocket.$ {
 		export const Network = sockets.Network.$.Network;
+
 		export const ErrorCode = sockets.Network.$.ErrorCode;
+
 		export const IpAddressFamily = sockets.Network.$.IpAddressFamily;
+
 		export const UdpSocket = sockets.Udp.$.UdpSocket;
+
 		export const createUdpSocket =
 			new $wcm.FunctionType<sockets.UdpCreateSocket.createUdpSocket>(
 				"create-udp-socket",
@@ -2862,7 +2981,9 @@ export namespace sockets {
 	}
 	export namespace UdpCreateSocket._ {
 		export const id = "wasi:sockets/udp-create-socket@0.2.1" as const;
+
 		export const witName = "udp-create-socket" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -2872,15 +2993,18 @@ export namespace sockets {
 			["IpAddressFamily", $.IpAddressFamily],
 			["UdpSocket", $.UdpSocket],
 		]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["createUdpSocket", $.createUdpSocket],
 		]);
+
 		export type WasmInterface = {
 			"create-udp-socket": (
 				addressFamily_IpAddressFamily_IpAddressFamily: i32,
 				result: ptr<result<UdpSocket, ErrorCode>>,
 			) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -2892,8 +3016,11 @@ export namespace sockets {
 
 export namespace sockets._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:sockets@0.2.1" as const;
+
 	export const witName = "sockets" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType

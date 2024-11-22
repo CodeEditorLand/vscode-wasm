@@ -55,10 +55,12 @@ interface RAL {
 			ms: number,
 			...args: any[]
 		): Disposable;
+
 		setImmediate(
 			callback: (...args: any[]) => void,
 			...args: any[]
 		): Disposable;
+
 		setInterval(
 			callback: (...args: any[]) => void,
 			ms: number,
@@ -97,8 +99,11 @@ function RAL(): RAL {
 
 namespace RAL {
 	export const Type = _RALType;
+
 	export type TextEncoder = _TextEncoder;
+
 	export type TextDecoder = _TextDecoder;
+
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);

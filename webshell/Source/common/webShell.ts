@@ -41,6 +41,7 @@ export class WebShell {
 		this.contributions = contributions;
 		this.commandHandlers = new Map<string, CommandHandler>();
 		this.userBin = await wasm.createMemoryFileSystem();
+
 		const fsContributions: ExtensionLocationDescriptor[] =
 			WebShell.contributions.getDirectoryMountPoints().map((entry) => ({
 				kind: "extensionLocation",
@@ -48,6 +49,7 @@ export class WebShell {
 				path: entry.path,
 				mountPoint: entry.mountPoint,
 			}));
+
 		const mountPoints: MountPointDescriptor[] = [
 			{ kind: "workspaceFolder" },
 			{
@@ -58,6 +60,7 @@ export class WebShell {
 			...fsContributions,
 		];
 		this.rootFs = await wasm.createRootFileSystem(mountPoints);
+
 		for (const contribution of this.contributions.getCommandMountPoints()) {
 			this.registerCommandContribution(contribution);
 		}
@@ -75,7 +78,9 @@ export class WebShell {
 		contribution: CommandMountPoint,
 	): void {
 		const basename = paths.basename(contribution.mountPoint);
+
 		const dirname = paths.dirname(contribution.mountPoint);
+
 		if (dirname === "/usr/bin") {
 			this.registerCommandHandler(
 				basename,
@@ -87,6 +92,7 @@ export class WebShell {
 					rootFileSystem: RootFileSystem,
 				): Promise<number> => {
 					await contribution.extension.activate();
+
 					return commands.executeCommand<number>(
 						contribution.command,
 						command,
@@ -146,26 +152,36 @@ export class WebShell {
 	public async runCommandLoop(): Promise<void> {
 		while (true) {
 			void this.pty.prompt(this.getPrompt());
+
 			const line = await this.pty.readline();
 			await this.pty.write(vscSeq("C")); // Command executed
 			const { command, args } = this.parseCommand(line);
+
 			if (command.trim().length === 0) {
 				continue; // no-op
 			}
 			let exitCode: number;
+
 			switch (command) {
 				case "exit":
 					this.terminal.dispose();
+
 					return;
+
 				case "pwd":
 					void this.pty.write(`${this.cwd}\r\n`);
 					exitCode = 0;
+
 					break;
+
 				case "cd":
 					exitCode = await this.handleCd(args);
+
 					break;
+
 				default:
 					const handler = WebShell.commandHandlers.get(command);
+
 					if (handler !== undefined) {
 						try {
 							exitCode = await handler(
@@ -198,17 +214,22 @@ export class WebShell {
 	private async handleCd(args: string[]): Promise<number> {
 		if (args.length > 1) {
 			void this.pty.write(`-wesh: cd: too many arguments\r\n`);
+
 			return 1;
 		}
 		const path = RAL().path;
+
 		let target = args[0];
+
 		if (!path.isAbsolute(target)) {
 			target = path.join(this.cwd, target);
 		}
 		try {
 			const stat = await WebShell.rootFs.stat(target);
+
 			if (stat.filetype === Filetype.directory) {
 				this.cwd = target;
+
 				return 0;
 			}
 		} catch (error) {
@@ -217,6 +238,7 @@ export class WebShell {
 		await this.pty.write(
 			`-wesh: cd: ${target}: No such file or directory\r\n`,
 		);
+
 		return 1;
 	}
 
@@ -225,6 +247,7 @@ export class WebShell {
 			line = line.slice(0, -1);
 		}
 		const items = line.split(" ");
+
 		return {
 			command: items[0],
 			args: items

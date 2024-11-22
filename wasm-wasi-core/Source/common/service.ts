@@ -158,7 +158,9 @@ export abstract class ServiceConnection {
 		} else if (this.logChannel !== undefined) {
 			if (TraceMessage.is(message)) {
 				const timeTaken = message.timeTaken;
+
 				const final = `${message.message} (${timeTaken}ms)`;
+
 				if (timeTaken > 10) {
 					this.logChannel.error(final);
 				} else if (timeTaken > 5) {
@@ -181,14 +183,19 @@ export abstract class ServiceConnection {
 		message: WasiCallMessage,
 	): Promise<void> {
 		const [paramBuffer, wasmMemory] = message;
+
 		const paramView = new DataView(paramBuffer);
+
 		try {
 			const method = paramView.getUint32(Offsets.method_index, true);
+
 			const func: WasiFunction = WasiFunctions.functionAt(method);
+
 			if (func === undefined) {
 				throw new WasiError(Errno.inval);
 			}
 			const params = this.getParams(func.signature, paramBuffer);
+
 			const result = await this.wasiService[func.name](
 				wasmMemory,
 				...params,
@@ -212,8 +219,11 @@ export abstract class ServiceConnection {
 		paramBuffer: SharedArrayBuffer,
 	): (number & bigint)[] {
 		const paramView = new DataView(paramBuffer);
+
 		const params: (number | bigint)[] = [];
+
 		let offset = Offsets.header_size;
+
 		for (let i = 0; i < signature.params.length; i++) {
 			const param = signature.params[i];
 			params.push(param.read(paramView, offset));
@@ -323,6 +333,7 @@ export namespace EnvironmentWasiService {
 		const $encoder: RAL.TextEncoder = RAL().TextEncoder.create(
 			options?.encoding,
 		);
+
 		const $preStatDirnames: Map<fd, string> = new Map();
 
 		const result: EnvironmentWasiService = {
@@ -332,19 +343,23 @@ export namespace EnvironmentWasiService {
 				argvBufSize_ptr: ptr<u32>,
 			): Promise<errno> => {
 				let count = 0;
+
 				let size = 0;
+
 				function processValue(str: string): void {
 					const value = `${str}\0`;
 					size += $encoder.encode(value).byteLength;
 					count++;
 				}
 				processValue(programName);
+
 				for (const arg of options.args ?? []) {
 					processValue(arg);
 				}
 				const view = new DataView(memory);
 				view.setUint32(argvCount_ptr, count, true);
 				view.setUint32(argvBufSize_ptr, size, true);
+
 				return Promise.resolve(Errno.success);
 			},
 			args_get: (
@@ -353,8 +368,11 @@ export namespace EnvironmentWasiService {
 				argvBuf_ptr: ptr<cstring>,
 			): Promise<errno> => {
 				const memoryView = new DataView(memory);
+
 				const memoryBytes = new Uint8Array(memory);
+
 				let entryOffset = argv_ptr;
+
 				let valueOffset = argvBuf_ptr;
 
 				function processValue(str: string): void {
@@ -365,6 +383,7 @@ export namespace EnvironmentWasiService {
 					valueOffset += data.byteLength;
 				}
 				processValue(programName);
+
 				for (const arg of options.args ?? []) {
 					processValue(arg);
 				}
@@ -376,7 +395,9 @@ export namespace EnvironmentWasiService {
 				environBufSize_ptr: ptr<u32>,
 			): Promise<errno> => {
 				let count = 0;
+
 				let size = 0;
+
 				for (const entry of Object.entries(options.env ?? {})) {
 					const value = `${entry[0]}=${entry[1]}\0`;
 					size += $encoder.encode(value).byteLength;
@@ -385,6 +406,7 @@ export namespace EnvironmentWasiService {
 				const view = new DataView(memory);
 				view.setUint32(environCount_ptr, count, true);
 				view.setUint32(environBufSize_ptr, size, true);
+
 				return Promise.resolve(Errno.success);
 			},
 			environ_get: (
@@ -393,9 +415,13 @@ export namespace EnvironmentWasiService {
 				environBuf_ptr: ptr<cstring>,
 			): Promise<errno> => {
 				const view = new DataView(memory);
+
 				const bytes = new Uint8Array(memory);
+
 				let entryOffset = environ_ptr;
+
 				let valueOffset = environBuf_ptr;
+
 				for (const entry of Object.entries(options.env ?? {})) {
 					const data = $encoder.encode(`${entry[0]}=${entry[1]}\0`);
 					view.setUint32(entryOffset, valueOffset, true);
@@ -412,20 +438,26 @@ export namespace EnvironmentWasiService {
 			): Promise<errno> => {
 				try {
 					const next = preStats.next();
+
 					if (next.done === true) {
 						fileDescriptors.switchToRunning(fd);
+
 						return Errno.badf;
 					}
 					const [mountPoint, driver] = next.value;
+
 					const fileDescriptor =
 						await driver.fd_create_prestat_fd(fd);
 					fileDescriptors.add(fileDescriptor);
 					fileDescriptors.setRoot(driver, fileDescriptor);
 					$preStatDirnames.set(fileDescriptor.fd, mountPoint);
+
 					const view = new DataView(memory);
+
 					const prestat = Prestat.create(view, bufPtr);
 					prestat.preopentype = Preopentype.dir;
 					prestat.len = $encoder.encode(mountPoint).byteLength;
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -439,16 +471,20 @@ export namespace EnvironmentWasiService {
 			): Promise<errno> => {
 				try {
 					const fileDescriptor = fileDescriptors.get(fd);
+
 					const dirname = $preStatDirnames.get(fileDescriptor.fd);
+
 					if (dirname === undefined) {
 						return Promise.resolve(Errno.badf);
 					}
 					const bytes = $encoder.encode(dirname);
+
 					if (bytes.byteLength !== pathLen) {
 						Errno.badmsg;
 					}
 					const raw = new Uint8Array(memory, pathPtr);
 					raw.set(bytes);
+
 					return Promise.resolve(Errno.success);
 				} catch (error) {
 					return Promise.resolve(handleError(error));
@@ -476,15 +512,19 @@ export interface Clock {
 export namespace Clock {
 	export function create(): Clock {
 		const thread_start = RAL().clock.realtime();
+
 		function now(id: clockid, _precision: timestamp): bigint {
 			switch (id) {
 				case Clockid.realtime:
 					return RAL().clock.realtime();
+
 				case Clockid.monotonic:
 					return RAL().clock.monotonic();
+
 				case Clockid.process_cputime_id:
 				case Clockid.thread_cputime_id:
 					return RAL().clock.monotonic() - thread_start;
+
 				default:
 					throw new WasiError(Errno.inval);
 			}
@@ -498,6 +538,7 @@ export namespace Clock {
 export namespace ClockWasiService {
 	export function create(clock: Clock): ClockWasiService {
 		const $clock = clock;
+
 		const result: ClockWasiService = {
 			clock_res_get: (
 				memory: ArrayBuffer,
@@ -505,15 +546,19 @@ export namespace ClockWasiService {
 				timestamp_ptr: ptr<u64>,
 			): Promise<errno> => {
 				const view = new DataView(memory);
+
 				switch (id) {
 					case Clockid.realtime:
 					case Clockid.monotonic:
 					case Clockid.process_cputime_id:
 					case Clockid.thread_cputime_id:
 						view.setBigUint64(timestamp_ptr, 1n, true);
+
 						return Promise.resolve(Errno.success);
+
 					default:
 						view.setBigUint64(timestamp_ptr, 0n, true);
+
 						return Promise.resolve(Errno.inval);
 				}
 			},
@@ -524,11 +569,14 @@ export namespace ClockWasiService {
 				timestamp_ptr: ptr<u64>,
 			): Promise<errno> => {
 				const time: bigint = $clock.now(id, precision);
+
 				const view = new DataView(memory);
 				view.setBigUint64(timestamp_ptr, time, true);
+
 				return Promise.resolve(Errno.success);
 			},
 		};
+
 		return result;
 	}
 }
@@ -544,14 +592,17 @@ export namespace DeviceWasiService {
 		options: DeviceOptions,
 	): DeviceWasiService {
 		const $directoryEntries: Map<fd, ReaddirEntry[]> = new Map();
+
 		const $clock: Clock = clock;
 
 		const $encoder: RAL.TextEncoder = RAL().TextEncoder.create(
 			options?.encoding,
 		);
+
 		const $decoder: RAL.TextDecoder = RAL().TextDecoder.create(
 			options?.encoding,
 		);
+
 		const $path = RAL().path;
 
 		const result: DeviceWasiService = {
@@ -572,6 +623,7 @@ export namespace DeviceWasiService {
 						length,
 						advise,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -592,6 +644,7 @@ export namespace DeviceWasiService {
 						offset,
 						len,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -599,15 +652,18 @@ export namespace DeviceWasiService {
 			},
 			fd_close: async (_memory: ArrayBuffer, fd: fd): Promise<errno> => {
 				const fileDescriptor = getFileDescriptor(fd);
+
 				try {
 					await getDeviceDriver(fileDescriptor).fd_close(
 						fileDescriptor,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
 				} finally {
 					fileDescriptors.delete(fileDescriptor);
+
 					if (fileDescriptor.dispose !== undefined) {
 						await fileDescriptor.dispose();
 					}
@@ -624,6 +680,7 @@ export namespace DeviceWasiService {
 					await getDeviceDriver(fileDescriptor).fd_datasync(
 						fileDescriptor,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -641,6 +698,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						Fdstat.create(new DataView(memory), fdstat_ptr),
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -659,6 +717,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						fdflags,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -677,6 +736,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						Filestat.create(new DataView(memory), filestat_ptr),
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error, Errno.perm);
@@ -697,6 +757,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						size,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -721,6 +782,7 @@ export namespace DeviceWasiService {
 						mtim,
 						fst_flags,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -741,11 +803,14 @@ export namespace DeviceWasiService {
 					);
 
 					const view = new DataView(memory);
+
 					const buffers = read_iovs(memory, iovs_ptr, iovs_len);
+
 					const bytesRead = await getDeviceDriver(
 						fileDescriptor,
 					).fd_pread(fileDescriptor, offset, buffers);
 					view.setUint32(bytesRead_ptr, bytesRead, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -766,11 +831,14 @@ export namespace DeviceWasiService {
 					);
 
 					const view = new DataView(memory);
+
 					const buffers = read_ciovs(memory, ciovs_ptr, ciovs_len);
+
 					const bytesWritten = await getDeviceDriver(
 						fileDescriptor,
 					).fd_pwrite(fileDescriptor, offset, buffers);
 					view.setUint32(bytesWritten_ptr, bytesWritten, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -788,11 +856,14 @@ export namespace DeviceWasiService {
 					fileDescriptor.assertBaseRights(Rights.fd_read);
 
 					const view = new DataView(memory);
+
 					const buffers = read_iovs(memory, iovs_ptr, iovs_len);
+
 					const bytesRead = await getDeviceDriver(
 						fileDescriptor,
 					).fd_read(fileDescriptor, buffers);
 					view.setUint32(bytesRead_ptr, bytesRead, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -812,6 +883,7 @@ export namespace DeviceWasiService {
 					fileDescriptor.assertIsDirectory();
 
 					const driver = getDeviceDriver(fileDescriptor);
+
 					const view = new DataView(memory);
 
 					// We have a cookie > 0 but no directory entries. So return end  of list
@@ -828,6 +900,7 @@ export namespace DeviceWasiService {
 						!$directoryEntries.has(fileDescriptor.fd)
 					) {
 						view.setUint32(buf_used_ptr, 0, true);
+
 						return Errno.success;
 					}
 					if (cookie === 0n) {
@@ -838,26 +911,34 @@ export namespace DeviceWasiService {
 					}
 					const entries: ReaddirEntry[] | undefined =
 						$directoryEntries.get(fileDescriptor.fd);
+
 					if (entries === undefined) {
 						throw new WasiError(Errno.badmsg);
 					}
 					let i = Number(cookie);
+
 					let ptr: ptr = buf_ptr;
+
 					let spaceLeft = buf_len;
+
 					for (
 						;
 						i < entries.length && spaceLeft >= Dirent.size;
 						i++
 					) {
 						const entry = entries[i];
+
 						const name = entry.d_name;
+
 						const nameBytes = $encoder.encode(name);
+
 						const dirent: dirent = Dirent.create(view, ptr);
 						dirent.d_next = BigInt(i + 1);
 						dirent.d_ino = entry.d_ino;
 						dirent.d_type = entry.d_type;
 						dirent.d_namlen = nameBytes.byteLength;
 						spaceLeft -= Dirent.size;
+
 						const spaceForName = Math.min(
 							spaceLeft,
 							nameBytes.byteLength,
@@ -890,6 +971,7 @@ export namespace DeviceWasiService {
 			): Promise<errno> => {
 				try {
 					const fileDescriptor = getFileDescriptor(fd);
+
 					if (
 						whence === Whence.cur &&
 						offset === 0n &&
@@ -902,10 +984,12 @@ export namespace DeviceWasiService {
 					}
 
 					const view = new DataView(memory);
+
 					const newOffset = await getDeviceDriver(
 						fileDescriptor,
 					).fd_seek(fileDescriptor, offset, whence);
 					view.setBigUint64(new_offset_ptr, BigInt(newOffset), true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -927,9 +1011,11 @@ export namespace DeviceWasiService {
 						return Promise.resolve(Errno.badf);
 					}
 					const fileDescriptor = getFileDescriptor(fd);
+
 					const toFileDescriptor = fileDescriptor.with({ fd: to });
 					fileDescriptors.delete(fileDescriptor);
 					fileDescriptors.add(toFileDescriptor);
+
 					return Promise.resolve(Errno.success);
 				} catch (error) {
 					return Promise.resolve(handleError(error));
@@ -943,6 +1029,7 @@ export namespace DeviceWasiService {
 					await getDeviceDriver(fileDescriptor).fd_sync(
 						fileDescriptor,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -960,11 +1047,13 @@ export namespace DeviceWasiService {
 					);
 
 					const view = new DataView(memory);
+
 					const offset =
 						await getDeviceDriver(fileDescriptor).fd_tell(
 							fileDescriptor,
 						);
 					view.setBigUint64(offset_ptr, BigInt(offset), true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -982,11 +1071,14 @@ export namespace DeviceWasiService {
 					fileDescriptor.assertBaseRights(Rights.fd_write);
 
 					const view = new DataView(memory);
+
 					const buffers = read_ciovs(memory, ciovs_ptr, ciovs_len);
+
 					const bytesWritten = await getDeviceDriver(
 						fileDescriptor,
 					).fd_write(fileDescriptor, buffers);
 					view.setUint32(bytesWritten_ptr, bytesWritten, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1012,6 +1104,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(
 							Rights.path_create_directory,
@@ -1022,6 +1115,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						path,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1049,6 +1143,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(
 							Rights.path_filestat_get,
@@ -1061,6 +1156,7 @@ export namespace DeviceWasiService {
 						path,
 						Filestat.create(new DataView(memory), filestat_ptr),
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1090,6 +1186,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(
 							Rights.path_filestat_get,
@@ -1104,6 +1201,7 @@ export namespace DeviceWasiService {
 						mtim,
 						fst_flags,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1151,6 +1249,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					const [newDeviceDriver, newFileDescriptor, newPath] =
 						getDeviceDriverWithPath(
 							newParentFileDescriptor,
@@ -1162,6 +1261,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					if (
 						oldDeviceDriver !== newDeviceDriver ||
 						oldFileDescriptor.deviceId !==
@@ -1189,6 +1289,7 @@ export namespace DeviceWasiService {
 						newFileDescriptor,
 						newPath,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1219,6 +1320,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(Rights.path_open);
 						fileDescriptor.assertFdflags(fdflags);
@@ -1235,8 +1337,10 @@ export namespace DeviceWasiService {
 						fileDescriptors,
 					);
 					fileDescriptors.add(result);
+
 					const view = new DataView(memory);
 					view.setUint32(fd_ptr, result.fd, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1263,6 +1367,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(Rights.path_readlink);
 						fileDescriptor.assertIsDirectory();
@@ -1270,6 +1375,7 @@ export namespace DeviceWasiService {
 					const target = $encoder.encode(
 						await deviceDriver.path_readlink(fileDescriptor, path),
 					);
+
 					if (target.byteLength > buf_len) {
 						return Errno.inval;
 					}
@@ -1279,6 +1385,7 @@ export namespace DeviceWasiService {
 						target.byteLength,
 						true,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1304,6 +1411,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(
 							Rights.path_remove_directory,
@@ -1314,6 +1422,7 @@ export namespace DeviceWasiService {
 						fileDescriptor,
 						path,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1352,6 +1461,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					const [newDeviceDriver, newFileDescriptor, newPath] =
 						getDeviceDriverWithPath(
 							newParentFileDescriptor,
@@ -1363,6 +1473,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					if (oldDeviceDriver !== newDeviceDriver) {
 						return Errno.nosys;
 					}
@@ -1384,6 +1495,7 @@ export namespace DeviceWasiService {
 						newFileDescriptor,
 						newPath,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1414,6 +1526,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					const [newDeviceDriver, newFileDescriptor, newPath] =
 						getDeviceDriverWithPath(
 							parentFileDescriptor,
@@ -1425,6 +1538,7 @@ export namespace DeviceWasiService {
 								),
 							),
 						);
+
 					if (
 						oldDeviceDriver !== newDeviceDriver ||
 						oldFileDescriptor !== newFileDescriptor
@@ -1440,6 +1554,7 @@ export namespace DeviceWasiService {
 						oldFileDescriptor,
 						newPath,
 					);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1465,6 +1580,7 @@ export namespace DeviceWasiService {
 								new Uint8Array(memory, path_ptr, path_len),
 							),
 						);
+
 					if (fileDescriptor !== parentFileDescriptor) {
 						fileDescriptor.assertBaseRights(
 							Rights.path_unlink_file,
@@ -1472,6 +1588,7 @@ export namespace DeviceWasiService {
 						fileDescriptor.assertIsDirectory();
 					}
 					await deviceDriver.path_unlink_file(fileDescriptor, path);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1486,11 +1603,13 @@ export namespace DeviceWasiService {
 			): Promise<errno> => {
 				try {
 					const view = new DataView(memory);
+
 					let { events, timeout } = await handleSubscriptions(
 						view,
 						input,
 						subscriptions,
 					);
+
 					if (timeout !== undefined && timeout !== 0n) {
 						// Timeout is in ns but sleep API is in ms.
 						await new Promise((resolve) => {
@@ -1509,6 +1628,7 @@ export namespace DeviceWasiService {
 						).events;
 					}
 					let event_offset = output;
+
 					for (const item of events) {
 						const event = Event.create(view, event_offset);
 						event.userdata = item.userdata;
@@ -1519,6 +1639,7 @@ export namespace DeviceWasiService {
 						event_offset += Event.size;
 					}
 					view.setUint32(result_size_ptr, events.length, true);
+
 					return Errno.success;
 				} catch (error) {
 					return handleError(error);
@@ -1540,6 +1661,7 @@ export namespace DeviceWasiService {
 			): Promise<errno> => {
 				const random = RAL().crypto.randomGet(buf_len);
 				new Uint8Array(memory, buf, buf_len).set(random);
+
 				return Promise.resolve(Errno.success);
 			},
 			sock_accept: (
@@ -1598,30 +1720,40 @@ export namespace DeviceWasiService {
 			subscriptions: size,
 		) {
 			let subscription_offset: ptr = input;
+
 			const events: Literal<event>[] = [];
+
 			let timeout: bigint | undefined;
+
 			for (let i = 0; i < subscriptions; i++) {
 				const subscription = Subscription.create(
 					memory,
 					subscription_offset,
 				);
+
 				const u = subscription.u;
+
 				switch (u.type) {
 					case Eventtype.clock:
 						const clockResult =
 							handleClockSubscription(subscription);
 						timeout = clockResult.timeout;
 						events.push(clockResult.event);
+
 						break;
+
 					case Eventtype.fd_read:
 						const readEvent =
 							await handleReadSubscription(subscription);
 						events.push(readEvent);
+
 						break;
+
 					case Eventtype.fd_write:
 						const writeEvent =
 							handleWriteSubscription(subscription);
 						events.push(writeEvent);
+
 						break;
 				}
 				subscription_offset += Subscription.size;
@@ -1642,9 +1774,11 @@ export namespace DeviceWasiService {
 					flags: 0,
 				},
 			};
+
 			const clock = subscription.u.clock;
 			// Timeout is in ns.
 			let timeout: bigint;
+
 			if (
 				(clock.flags & Subclockflags.subscription_clock_abstime) !==
 				0
@@ -1663,8 +1797,10 @@ export namespace DeviceWasiService {
 			subscription: subscription,
 		): Promise<Literal<event>> {
 			const fd = subscription.u.fd_read.file_descriptor;
+
 			try {
 				const fileDescriptor = getFileDescriptor(fd);
+
 				if (
 					!fileDescriptor.containsBaseRights(
 						Rights.poll_fd_readwrite,
@@ -1678,6 +1814,7 @@ export namespace DeviceWasiService {
 					await getDeviceDriver(fileDescriptor).fd_bytesAvailable(
 						fileDescriptor,
 					);
+
 				return {
 					userdata: subscription.userdata,
 					type: Eventtype.fd_read,
@@ -1704,8 +1841,10 @@ export namespace DeviceWasiService {
 			subscription: subscription,
 		): Literal<event> {
 			const fd = subscription.u.fd_write.file_descriptor;
+
 			try {
 				const fileDescriptor = getFileDescriptor(fd);
+
 				if (
 					!fileDescriptor.containsBaseRights(
 						Rights.poll_fd_readwrite,
@@ -1754,7 +1893,9 @@ export namespace DeviceWasiService {
 			const view = new DataView(memory);
 
 			const buffers: Uint8Array[] = [];
+
 			let ptr: ptr = iovs;
+
 			for (let i = 0; i < iovsLen; i++) {
 				const vec = Ciovec.create(view, ptr);
 				// We need to copy the underlying memory since if it is a shared buffer
@@ -1776,7 +1917,9 @@ export namespace DeviceWasiService {
 			const view = new DataView(memory);
 
 			const buffers: Uint8Array[] = [];
+
 			let ptr: ptr = iovs;
+
 			for (let i = 0; i < iovsLen; i++) {
 				const vec = Iovec.create(view, ptr);
 				// We need a view onto the memory since we write the result into it.
@@ -1795,6 +1938,7 @@ export namespace DeviceWasiService {
 			path: string,
 		): [DeviceDriver, FileDescriptor, string] {
 			const result = deviceDrivers.get(fileDescriptor.deviceId);
+
 			if (
 				!$path.isAbsolute(path) &&
 				virtualRootFileSystem !== undefined &&
@@ -1802,17 +1946,20 @@ export namespace DeviceWasiService {
 				FileSystemDeviceDriver.is(result)
 			) {
 				path = $path.normalize(path);
+
 				if (path.startsWith("..")) {
 					const virtualPath = virtualRootFileSystem.makeVirtualPath(
 						result,
 						path,
 					);
+
 					if (virtualPath === undefined) {
 						throw new WasiError(Errno.noent);
 					}
 					const rootDescriptor = fileDescriptors.getRoot(
 						virtualRootFileSystem,
 					);
+
 					if (rootDescriptor === undefined) {
 						throw new WasiError(Errno.noent);
 					}
@@ -1824,6 +1971,7 @@ export namespace DeviceWasiService {
 
 		function getFileDescriptor(fd: fd): FileDescriptor {
 			const result = fileDescriptors.get(fd);
+
 			if (result === undefined) {
 				throw new WasiError(Errno.badf);
 			}
@@ -1849,6 +1997,7 @@ export namespace FileSystemService {
 		options: DeviceOptions,
 	): FileSystemService {
 		const clock = Clock.create();
+
 		return Object.assign(
 			{},
 			EnvironmentWasiService.create(

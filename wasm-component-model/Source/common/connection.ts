@@ -42,8 +42,11 @@ class ConnectionMemory implements Memory {
 	private next: Uint32Array;
 
 	constructor();
+
 	constructor(size: number);
+
 	constructor(buffer: SharedArrayBuffer, id: string);
+
 	constructor(
 		sizeOrBuffer?: number | SharedArrayBuffer | undefined,
 		id?: string,
@@ -83,8 +86,10 @@ class ConnectionMemory implements Memory {
 
 	public alloc(align: Alignment, size: number): MemoryRange {
 		const next = this.next[0];
+
 		const result = Alignment.align(next, align);
 		this.next[0] = result + size;
+
 		return new MemoryRange(this, result, size);
 	}
 
@@ -122,6 +127,7 @@ export abstract class Connection {
 		params: readonly WasmType[],
 	): (number | string)[] {
 		const result: (number | string)[] = [];
+
 		for (const param of params) {
 			if (typeof param === "number") {
 				result.push(param);
@@ -136,6 +142,7 @@ export abstract class Connection {
 		params: readonly (string | number)[],
 	): WasmType[] {
 		const result: WasmType[] = [];
+
 		for (const param of params) {
 			if (typeof param === "string") {
 				result.push(BigInt(param));
@@ -174,28 +181,34 @@ export abstract class Connection {
 			0,
 			ConnectionMemory.Header.end.offset,
 		);
+
 		const resultType = view.getUint32(
 			ConnectionMemory.Header.resultType.offset,
 			true,
 		);
+
 		switch (resultType) {
 			case Connection.WasmTypeKind.undefined:
 				return;
+
 			case Connection.WasmTypeKind.float:
 				return view.getFloat64(
 					ConnectionMemory.Header.result.offset,
 					true,
 				);
+
 			case Connection.WasmTypeKind.signed:
 				return view.getBigInt64(
 					ConnectionMemory.Header.result.offset,
 					true,
 				);
+
 			case Connection.WasmTypeKind.unsigned:
 				return view.getBigUint64(
 					ConnectionMemory.Header.result.offset,
 					true,
 				);
+
 			default:
 				throw new ComponentModelTrap(
 					`Unexpected result type ${resultType}`,
@@ -212,6 +225,7 @@ export abstract class Connection {
 			0,
 			ConnectionMemory.Header.end.offset,
 		);
+
 		if (result === undefined) {
 			view.setUint32(
 				ConnectionMemory.Header.resultType.offset,
@@ -344,12 +358,14 @@ export abstract class BaseWorkerConnection
 
 	public callMain(name: string, params: WasmType[]): WasmType | void {
 		const buffer = this.memory.buffer;
+
 		const sync = new Int32Array(
 			buffer,
 			ConnectionMemory.Header.sync.offset,
 			1,
 		);
 		Atomics.store(sync, 0, 0);
+
 		const message: Connection.MainCallMessage = {
 			method: "callMain",
 			name: name,
@@ -359,11 +375,13 @@ export abstract class BaseWorkerConnection
 		this.postMessage(message);
 		// Wait for the answer
 		const result = Atomics.wait(sync, 0, 0, this.timeout);
+
 		switch (result) {
 			case "timed-out":
 				throw new ComponentModelTrap(
 					`Call ${name} to main thread timed out`,
 				);
+
 			case "not-equal":
 				const value = Atomics.load(sync, 0);
 				// If the value === 1 the service has already provided the result.
@@ -382,11 +400,13 @@ export abstract class BaseWorkerConnection
 	protected handleMessage(message: Connection.WorkerMessages): void {
 		if (message.method === "initializeWorker") {
 			const wasmContext = new WasmContext.Default(message.options);
+
 			const imports = $imports.worker.create(
 				this,
 				this.world,
 				wasmContext,
 			);
+
 			if (message.memory !== undefined) {
 				(imports as any).env.memory = message.memory;
 			}
@@ -417,12 +437,14 @@ export abstract class BaseWorkerConnection
 				});
 		} else if (message.method === "callWorker") {
 			const handler = this.handlers.get(message.name);
+
 			if (handler === undefined) {
 				this.postMessage({
 					method: "reportResult",
 					name: message.name,
 					error: `No handler found for ${message.name}`,
 				});
+
 				return;
 			}
 			try {
@@ -430,6 +452,7 @@ export abstract class BaseWorkerConnection
 					message.memory.buffer,
 					message.memory.id,
 				);
+
 				const result = handler(
 					memory,
 					Connection.deserializeParams(message.params),
@@ -498,8 +521,11 @@ export abstract class BaseMainConnection
 			module: WebAssembly_.Module;
 			memory?: WebAssembly_.Memory;
 		};
+
 		let module: WebAssembly_.Module;
+
 		let memory: WebAssembly_.Memory | undefined = undefined;
+
 		if ((code as literal).module !== undefined) {
 			module = (code as literal).module;
 			memory = (code as literal).memory;
@@ -526,6 +552,7 @@ export abstract class BaseMainConnection
 			throw new ComponentModelTrap("Call already in progress");
 		}
 		this.currentCall = CapturedPromise.create();
+
 		const message: Connection.WorkerCallMessage = {
 			method: "callWorker",
 			name: name,
@@ -533,6 +560,7 @@ export abstract class BaseMainConnection
 			memory: { buffer: this.memory.buffer, id: this.memory.id },
 		};
 		this.postMessage(message);
+
 		return this.currentCall.promise;
 	}
 
@@ -551,11 +579,13 @@ export abstract class BaseMainConnection
 	protected handleMessage(message: Connection.MainMessages): void {
 		if (message.method === "callMain") {
 			const buffer = message.memory.buffer;
+
 			const sync = new Int32Array(
 				buffer,
 				ConnectionMemory.Header.sync.offset,
 				1,
 			);
+
 			const view = new DataView(
 				buffer,
 				0,
@@ -563,6 +593,7 @@ export abstract class BaseMainConnection
 			);
 
 			const handler = this.handlers.get(message.name);
+
 			if (handler === undefined) {
 				view.setUint32(
 					ConnectionMemory.Header.errorCode.offset,
@@ -571,11 +602,15 @@ export abstract class BaseMainConnection
 				);
 				Atomics.store(sync, 0, 1);
 				Atomics.notify(sync, 0);
+
 				return;
 			} else {
 				const memory = new ConnectionMemory(buffer, message.memory.id);
+
 				const params = Connection.deserializeParams(message.params);
+
 				const result = handler(memory, params);
+
 				if (result instanceof Promise) {
 					result
 						.then((value) => {

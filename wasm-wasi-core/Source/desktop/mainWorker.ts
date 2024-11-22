@@ -35,9 +35,13 @@ class MainNodeHostConnection extends NodeHostConnection {
 	protected async handleMessage(message: ServiceMessage): Promise<void> {
 		if (StartMainMessage.is(message)) {
 			const module = message.module;
+
 			const memory = message.memory;
+
 			let host = WasiHost.create(this);
+
 			let tracer: Tracer | undefined;
+
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
 				host = tracer.tracer;
@@ -46,6 +50,7 @@ class MainNodeHostConnection extends NodeHostConnection {
 				wasi_snapshot_preview1: host,
 				wasi: host,
 			};
+
 			if (memory !== undefined) {
 				imports.env = {
 					memory: memory,
@@ -54,6 +59,7 @@ class MainNodeHostConnection extends NodeHostConnection {
 			const instance = await WebAssembly.instantiate(module, imports);
 			host.initialize(memory ?? instance);
 			(instance.exports._start as Function)();
+
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
@@ -64,6 +70,7 @@ class MainNodeHostConnection extends NodeHostConnection {
 
 async function main(port: MessagePort | Worker): Promise<void> {
 	const connection = new MainNodeHostConnection(port);
+
 	const ready: WorkerReadyMessage = { method: "workerReady" };
 	connection.postMessage(ready);
 	await connection.done();

@@ -36,29 +36,35 @@ export async function run(options: Options): Promise<number> {
 
 	if (options.version) {
 		process.stdout.write(`${require("../package.json").version}\n`);
+
 		return 0;
 	}
 
 	if (options.wasm === undefined) {
 		process.stderr.write(`No wasm file specified.\n`);
+
 		return 1;
 	}
 
 	try {
 		const stat = await fs.stat(options.wasm, { bigint: true });
+
 		if (!stat.isFile()) {
 			process.stderr.write(`${options.wasm} is not a file.\n`);
+
 			return 1;
 		}
 	} catch (error: any) {
 		if (error.code === "ENOENT") {
 			process.stderr.write(`${options.wasm} does not exist.\n`);
+
 			return 1;
 		} else {
 			throw error;
 		}
 	}
 	const bytes = await fs.readFile(options.wasm);
+
 	const buffer: string[] = [];
 	buffer.push(
 		`/* --------------------------------------------------------------------------------------------`,
@@ -72,10 +78,14 @@ export async function run(options: Options): Promise<number> {
 	);
 	buffer.push(``);
 	buffer.push(`const bytes = new Uint8Array([`);
+
 	let line: string[] = [];
+
 	const lines: string[] = [];
+
 	for (let i = 0; i < bytes.length; i++) {
 		line.push(`0x${bytes[i].toString(16)}`);
+
 		if ((i + 1) % 16 === 0) {
 			lines.push(`\t${line.join(", ")}`);
 			line = [];
@@ -128,6 +138,7 @@ async function main(): Promise<number> {
 		});
 
 	const parsed = await yargs.argv;
+
 	const options: Options = Object.assign({}, Options.defaults, parsed);
 	options.wasm = parsed._[0] as string;
 

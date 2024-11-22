@@ -191,6 +191,7 @@ export namespace FileSystemDeviceDriver {
 	export function is(value: DeviceDriver): value is FileSystemDeviceDriver {
 		const candidate: FileSystemDeviceDriver =
 			value as FileSystemDeviceDriver;
+
 		return candidate.kind === DeviceDriverKind.fileSystem;
 	}
 }

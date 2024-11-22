@@ -16,8 +16,11 @@ export interface Documentation {
 
 export interface World {
 	name: string;
+
 	docs?: Documentation | undefined;
+
 	imports: NameMap<ObjectKind>;
+
 	exports: NameMap<ObjectKind>;
 	package: number;
 }
@@ -40,6 +43,7 @@ export interface PackageNameParts {
 
 export interface Package {
 	name: string;
+
 	docs?: Documentation | undefined;
 	interfaces: References;
 	worlds: References;
@@ -57,8 +61,10 @@ export namespace Package {
 
 export interface Interface {
 	name: string;
+
 	docs?: Documentation;
 	types: References;
+
 	functions: NameMap<Callable>;
 	world?: {
 		ref: number;
@@ -82,10 +88,12 @@ export type Callable = Func | Method | StaticMethod | Constructor;
 export namespace Callable {
 	export function isFunction(value: Callable): value is Func {
 		const candidate = value as Func;
+
 		return candidate.kind === "freestanding";
 	}
 	export function isStaticMethod(value: Callable): value is StaticMethod {
 		const candidate = value as StaticMethod;
+
 		return (
 			typeof candidate.kind === "object" &&
 			typeof candidate.kind.static === "number"
@@ -93,6 +101,7 @@ export namespace Callable {
 	}
 	export function isConstructor(value: Callable): value is Constructor {
 		const candidate = value as Constructor;
+
 		return (
 			typeof candidate.kind === "object" &&
 			typeof candidate.kind.constructor === "number"
@@ -100,6 +109,7 @@ export namespace Callable {
 	}
 	export function isMethod(value: Callable): value is Method {
 		const candidate = value as Method;
+
 		return (
 			typeof candidate.kind === "object" &&
 			typeof candidate.kind.method === "number"
@@ -129,6 +139,7 @@ export namespace Callable {
 
 interface AbstractCallable {
 	name: string;
+
 	docs?: Documentation | undefined;
 	params: Param[];
 	results: TypeObject[];
@@ -234,6 +245,7 @@ export namespace Type {
 
 export interface AbstractType {
 	name: string | null;
+
 	docs?: Documentation | undefined;
 	owner: Owner | null;
 }
@@ -337,6 +349,7 @@ export namespace TypeKind {
 	}
 	export function isTypeObject(kind: TypeKind): kind is TypeObject {
 		const candidate = kind as TypeObject;
+
 		return (
 			typeof candidate.type === "number" ||
 			typeof candidate.type === "string"
@@ -347,22 +360,27 @@ export namespace TypeKind {
 	}
 	export function isVariant(kind: TypeKind): kind is VariantKind {
 		const candidate = kind as VariantKind;
+
 		return typeof candidate.variant === "object";
 	}
 	export function isEnum(kind: TypeKind): kind is EnumKind {
 		const candidate = kind as EnumKind;
+
 		return typeof candidate.enum === "object";
 	}
 	export function isFlags(kind: TypeKind): kind is FlagsKind {
 		const candidate = kind as FlagsKind;
+
 		return typeof candidate.flags === "object";
 	}
 	export function isTuple(kind: TypeKind): kind is TupleKind {
 		const candidate = kind as TupleKind;
+
 		return typeof candidate.tuple === "object";
 	}
 	export function isList(kind: TypeKind): kind is ListKind {
 		const candidate = kind as ListKind;
+
 		return (
 			typeof candidate.list === "number" ||
 			typeof candidate.list === "string"
@@ -370,6 +388,7 @@ export namespace TypeKind {
 	}
 	export function isOption(kind: TypeKind): kind is OptionKind {
 		const candidate = kind as OptionKind;
+
 		return (
 			typeof candidate.option === "number" ||
 			typeof candidate.option === "string"
@@ -377,8 +396,11 @@ export namespace TypeKind {
 	}
 	export function isResult(kind: TypeKind): kind is ResultKind {
 		const candidate = kind as ResultKind;
+
 		const ok = candidate.result?.ok;
+
 		const err = candidate.result?.err;
+
 		return (
 			ok !== undefined &&
 			(typeof ok === "number" || typeof ok === "string" || ok === null) &&
@@ -388,6 +410,7 @@ export namespace TypeKind {
 	}
 	export function isBorrowHandle(kind: TypeKind): kind is BorrowHandleKind {
 		const candidate = kind as BorrowHandleKind;
+
 		return (
 			typeof candidate.handle === "object" &&
 			TypeReference.is(candidate.handle.borrow)
@@ -395,6 +418,7 @@ export namespace TypeKind {
 	}
 	export function isOwnHandle(kind: TypeKind): kind is OwnHandleKind {
 		const candidate = kind as OwnHandleKind;
+
 		return (
 			typeof candidate.handle === "object" &&
 			TypeReference.is(candidate.handle.own)
@@ -421,6 +445,7 @@ export interface RecordKind {
 
 export interface Field {
 	name: string;
+
 	docs: Documentation;
 	type: TypeReference;
 }
@@ -433,6 +458,7 @@ export interface VariantKind {
 
 export interface VariantCase {
 	name: string;
+
 	docs: Documentation;
 	type: TypeReference | null;
 }
@@ -445,6 +471,7 @@ export interface EnumKind {
 
 export interface EnumCase {
 	name: string;
+
 	docs: Documentation;
 }
 
@@ -456,6 +483,7 @@ export interface FlagsKind {
 
 export interface Flag {
 	name: string;
+
 	docs: Documentation;
 }
 
@@ -538,6 +566,7 @@ export type TypeReference = number | string;
 export namespace TypeReference {
 	export function is(value: TypeReference | Type): value is TypeReference {
 		const candidate = value as TypeReference;
+
 		return isNumber(candidate) || isString(candidate);
 	}
 	export function isNumber(ref: TypeReference): ref is number {
@@ -562,10 +591,12 @@ export interface NameMap<T> {
 export namespace Member {
 	export function isCallable(member: Callable | Type): member is Callable {
 		const candidate = member as Callable;
+
 		return Callable.is(candidate);
 	}
 	export function isType(member: Callable | Type): member is Type {
 		const candidate = member as Type;
+
 		return Type.is(candidate);
 	}
 }

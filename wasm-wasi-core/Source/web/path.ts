@@ -34,9 +34,11 @@ const CHAR_FORWARD_SLASH = 47; /* / */
 
 class ErrorInvalidArgType extends Error {
 	code: "ERR_INVALID_ARG_TYPE";
+
 	constructor(name: string, expected: string, actual: unknown) {
 		// determiner: 'must be' or 'must not be'
 		let determiner;
+
 		if (typeof expected === "string" && expected.indexOf("not ") === 0) {
 			determiner = "must not be";
 			expected = expected.replace(/^not /, "");
@@ -45,9 +47,11 @@ class ErrorInvalidArgType extends Error {
 		}
 
 		const type = name.indexOf(".") !== -1 ? "property" : "argument";
+
 		let msg = `The "${name}" ${type} ${determiner} of type ${expected}`;
 
 		msg += `. Received type ${typeof actual}`;
+
 		super(msg);
 
 		this.code = "ERR_INVALID_ARG_TYPE";
@@ -72,10 +76,15 @@ function normalizeString(
 	isPathSeparator: (code?: number) => boolean,
 ) {
 	let res = "";
+
 	let lastSegmentLength = 0;
+
 	let lastSlash = -1;
+
 	let dots = 0;
+
 	let code = 0;
+
 	for (let i = 0; i <= path.length; ++i) {
 		if (i < path.length) {
 			code = path.charCodeAt(i);
@@ -97,6 +106,7 @@ function normalizeString(
 				) {
 					if (res.length > 2) {
 						const lastSlashIndex = res.lastIndexOf(separator);
+
 						if (lastSlashIndex === -1) {
 							res = "";
 							lastSegmentLength = 0;
@@ -106,13 +116,17 @@ function normalizeString(
 								res.length - 1 - res.lastIndexOf(separator);
 						}
 						lastSlash = i;
+
 						dots = 0;
+
 						continue;
 					} else if (res.length !== 0) {
 						res = "";
 						lastSegmentLength = 0;
 						lastSlash = i;
+
 						dots = 0;
+
 						continue;
 					}
 				}
@@ -129,6 +143,7 @@ function normalizeString(
 				lastSegmentLength = i - lastSlash - 1;
 			}
 			lastSlash = i;
+
 			dots = 0;
 		} else if (code === CHAR_DOT && dots !== -1) {
 			++dots;
@@ -159,6 +174,7 @@ export const posix: IPath = {
 		}
 
 		const isAbsolute = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
+
 		const trailingSeparator =
 			path.charCodeAt(path.length - 1) === CHAR_FORWARD_SLASH;
 
@@ -180,6 +196,7 @@ export const posix: IPath = {
 
 	isAbsolute(path: string): boolean {
 		validateString(path, "path");
+
 		return path.length > 0 && path.charCodeAt(0) === CHAR_FORWARD_SLASH;
 	},
 
@@ -188,9 +205,11 @@ export const posix: IPath = {
 			return ".";
 		}
 		let joined;
+
 		for (let i = 0; i < paths.length; ++i) {
 			const arg = paths[i];
 			validateString(arg, "path");
+
 			if (arg.length > 0) {
 				if (joined === undefined) {
 					joined = arg;
@@ -207,16 +226,21 @@ export const posix: IPath = {
 
 	dirname(path: string): string {
 		validateString(path, "path");
+
 		if (path.length === 0) {
 			return ".";
 		}
 		const hasRoot = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		for (let i = path.length - 1; i >= 1; --i) {
 			if (path.charCodeAt(i) === CHAR_FORWARD_SLASH) {
 				if (!matchedSlash) {
 					end = i;
+
 					break;
 				}
 			} else {
@@ -241,8 +265,11 @@ export const posix: IPath = {
 		validateString(path, "path");
 
 		let start = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		let i;
 
 		if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
@@ -250,14 +277,18 @@ export const posix: IPath = {
 				return "";
 			}
 			let extIdx = ext.length - 1;
+
 			let firstNonSlashEnd = -1;
+
 			for (i = path.length - 1; i >= 0; --i) {
 				const code = path.charCodeAt(i);
+
 				if (code === CHAR_FORWARD_SLASH) {
 					// If we reached a path separator that was not part of a set of path
 					// separators at the end of the string, stop now
 					if (!matchedSlash) {
 						start = i + 1;
+
 						break;
 					}
 				} else {
@@ -298,6 +329,7 @@ export const posix: IPath = {
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					start = i + 1;
+
 					break;
 				}
 			} else if (end === -1) {
@@ -316,20 +348,27 @@ export const posix: IPath = {
 
 	extname(path: string): string {
 		validateString(path, "path");
+
 		let startDot = -1;
+
 		let startPart = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
 		// Track the state of characters (if any) we see before our first dot and
 		// after any path separator we find
 		let preDotState = 0;
+
 		for (let i = path.length - 1; i >= 0; --i) {
 			const code = path.charCodeAt(i);
+
 			if (code === CHAR_FORWARD_SLASH) {
 				// If we reached a path separator that was not part of a set of path
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					startPart = i + 1;
+
 					break;
 				}
 				continue;

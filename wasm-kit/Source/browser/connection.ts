@@ -37,6 +37,7 @@ export class Connection<
 
 	public dispose(): void {
 		this.port.onmessage = null;
+
 		if (this.port instanceof MessagePort) {
 			this.port.close();
 		}

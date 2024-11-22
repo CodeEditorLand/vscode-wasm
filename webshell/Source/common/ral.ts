@@ -34,6 +34,7 @@ function RAL(): RAL {
 
 namespace RAL {
 	export type Path = _Path;
+
 	export function install(ral: RAL): void {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);

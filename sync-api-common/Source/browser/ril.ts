@@ -12,6 +12,7 @@ interface RIL extends RAL {}
 
 // In Browser environments we can only encode / decode utf-8
 const encoder: RAL.TextEncoder = new TextEncoder();
+
 const decoder: RAL.TextDecoder = new TextDecoder();
 
 class TestServiceConnection<
@@ -19,15 +20,19 @@ class TestServiceConnection<
 	ReadyParams extends Params | undefined = undefined,
 > extends ServiceConnection<RequestHandlers, ReadyParams> {
 	private readonly worker: Worker;
+
 	constructor(script: string, testCase?: string) {
 		const url =
 			testCase !== undefined ? `${script}?toRun=${testCase}` : script;
+
 		const worker = new Worker(url);
+
 		super(worker);
 		this.worker = worker;
 	}
 	public terminate(): Promise<number> {
 		this.worker.terminate();
+
 		return Promise.resolve(0);
 	}
 }
@@ -52,6 +57,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, ms, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setImmediate(
@@ -59,6 +65,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setTimeout(callback, 0, ...args);
+
 			return { dispose: () => clearTimeout(handle) };
 		},
 		setInterval(
@@ -67,6 +74,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			...args: any[]
 		): Disposable {
 			const handle = setInterval(callback, ms, ...args);
+
 			return { dispose: () => clearInterval(handle) };
 		},
 	}),
@@ -92,7 +100,9 @@ const _ril: RIL = Object.freeze<RIL>({
 		}),
 		get testCase() {
 			const location = self.location;
+
 			const search = location.search;
+
 			return search.substring("?toRun=".length);
 		},
 	}),

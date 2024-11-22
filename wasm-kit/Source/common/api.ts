@@ -19,10 +19,12 @@ export { RAL };
 export namespace WorkerMessages {
 	export namespace Client {
 		export type AsyncCalls = _Client.AsyncCalls;
+
 		export type ConnectionType = _Client.ConnectionType;
 	}
 	export namespace Service {
 		export type Notifications = _Service.Notifications;
+
 		export type ConnectionType = _Service.ConnectionType;
 	}
 }

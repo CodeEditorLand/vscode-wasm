@@ -89,28 +89,36 @@ export class ApiService {
 			await new Promise((resolve) => {
 				RAL().timer.setTimeout(resolve, params.ms);
 			});
+
 			return { errno: 0 };
 		});
 
 		this.connection.onRequest("byteSource/read", async (params) => {
 			const uri: vscode.Uri = vscode.Uri.from(params.uri);
+
 			const source = this.byteSources.get(uri.toString(true));
+
 			if (source === undefined) {
 				return { errno: RPCErrno.NoHandlerFound };
 			}
 			const contents = await source.read(params.maxBytesToRead);
+
 			return { errno: 0, data: contents };
 		});
 
 		this.connection.onRequest("byteSink/write", async (params) => {
 			const uri: vscode.Uri = vscode.Uri.from(params.uri);
+
 			const sink = this.byteSinks.get(uri.toString(true));
+
 			if (sink === undefined) {
 				return { errno: RPCErrno.NoHandlerFound };
 			}
 			const bytesWritten = await sink.write(params.binary);
+
 			const result = new Uint32Array(1);
 			result[0] = bytesWritten;
+
 			return { errno: 0, data: result };
 		});
 
@@ -119,13 +127,16 @@ export class ApiService {
 			async (params, resultBuffer) => {
 				try {
 					const uri = vscode.Uri.from(params.uri);
+
 					const vStat: vscode.FileStat =
 						await vscode.workspace.fs.stat(uri);
+
 					const stat = DTOs.Stat.create(resultBuffer);
 					stat.type = vStat.type;
 					stat.ctime = vStat.mtime;
 					stat.mtime = vStat.mtime;
 					stat.size = vStat.size;
+
 					if (vStat.permissions !== undefined) {
 						stat.permission = vStat.permissions;
 					}
@@ -139,7 +150,9 @@ export class ApiService {
 		this.connection.onRequest("fileSystem/readFile", async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
+
 				const contents = await vscode.workspace.fs.readFile(uri);
+
 				return { errno: 0, data: contents };
 			} catch (error) {
 				return handleError(error);
@@ -150,6 +163,7 @@ export class ApiService {
 			try {
 				const uri = vscode.Uri.from(params.uri);
 				await vscode.workspace.fs.writeFile(uri, params.binary);
+
 				return { errno: 0 };
 			} catch (error) {
 				return handleError(error);
@@ -161,8 +175,10 @@ export class ApiService {
 			async (params) => {
 				try {
 					const uri = vscode.Uri.from(params.uri);
+
 					const entries =
 						await vscode.workspace.fs.readDirectory(uri);
+
 					return { errno: 0, data: entries };
 				} catch (error) {
 					return handleError(error);
@@ -176,6 +192,7 @@ export class ApiService {
 				try {
 					const uri = vscode.Uri.from(params.uri);
 					await vscode.workspace.fs.createDirectory(uri);
+
 					return { errno: 0 };
 				} catch (error) {
 					return handleError(error);
@@ -187,6 +204,7 @@ export class ApiService {
 			try {
 				const uri = vscode.Uri.from(params.uri);
 				await vscode.workspace.fs.delete(uri, params.options);
+
 				return { errno: 0 };
 			} catch (error) {
 				return handleError(error);
@@ -196,12 +214,14 @@ export class ApiService {
 		this.connection.onRequest("fileSystem/rename", async (params) => {
 			try {
 				const source = vscode.Uri.from(params.source);
+
 				const target = vscode.Uri.from(params.target);
 				await vscode.workspace.fs.rename(
 					source,
 					target,
 					params.options,
 				);
+
 				return { errno: 0 };
 			} catch (error) {
 				return handleError(error);
@@ -210,6 +230,7 @@ export class ApiService {
 
 		this.connection.onRequest("workspace/workspaceFolders", () => {
 			const folders = vscode.workspace.workspaceFolders ?? [];
+
 			return {
 				errno: 0,
 				data: folders.map((folder) => {
@@ -286,16 +307,22 @@ export class ApiService {
 		switch (error.code) {
 			case "FileNotFound":
 				return DTOs.FileSystemError.FileNotFound;
+
 			case "FileExists":
 				return DTOs.FileSystemError.FileExists;
+
 			case "FileNotADirectory":
 				return DTOs.FileSystemError.FileNotADirectory;
+
 			case "FileIsADirectory":
 				return DTOs.FileSystemError.FileIsADirectory;
+
 			case "NoPermissions":
 				return DTOs.FileSystemError.NoPermissions;
+
 			case "Unavailable":
 				return DTOs.FileSystemError.Unavailable;
+
 			default:
 				return RPCErrno.UnknownError;
 		}
@@ -311,11 +338,13 @@ export class ApiService {
 					uri: fileDescriptor.uri.toJSON(),
 					path: fileDescriptor.path,
 				};
+
 			case "terminal":
 				return {
 					kind: fileDescriptor.kind,
 					uri: fileDescriptor.uri.toJSON(),
 				};
+
 			case "console":
 				return {
 					kind: fileDescriptor.kind,
@@ -347,6 +376,7 @@ class ConsoleTerminal implements CharacterDeviceDriver {
 
 	write(bytes: Uint8Array): Promise<number> {
 		RAL().console.log(this.decoder.decode(bytes.slice()));
+
 		return Promise.resolve(bytes.byteLength);
 	}
 }

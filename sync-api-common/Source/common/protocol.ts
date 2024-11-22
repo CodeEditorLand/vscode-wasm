@@ -30,6 +30,7 @@ export namespace DTOs {
 		  };
 
 	export type FileSystemError = u32;
+
 	export namespace FileSystemError {
 		/**
 		 * Create an error to signal that a file or folder wasn't found.
@@ -65,6 +66,7 @@ export namespace DTOs {
 	}
 
 	export type fileType = u32;
+
 	export enum FileType {
 		/**
 		 * The file type is unknown.
@@ -88,6 +90,7 @@ export namespace DTOs {
 	}
 
 	export type filePermission = u32;
+
 	export enum FilePermission {
 		/**
 		 * The file is readonly.
@@ -105,6 +108,7 @@ export namespace DTOs {
 
 	export namespace Stat {
 		export const typedResult = Uint32Result.fromLength(5);
+
 		export function create(memory: Uint32Array): Stat {
 			return {
 				get type() {

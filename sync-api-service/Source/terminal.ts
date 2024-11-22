@@ -12,6 +12,7 @@ import { CharacterDeviceDriver, FileDescriptorDescription } from "./device";
 class LineBuffer {
 	private cursor: number;
 	private content: string[];
+
 	constructor() {
 		this.cursor = 0;
 		this.content = [];
@@ -50,6 +51,7 @@ class LineBuffer {
 			return false;
 		}
 		this.content.splice(this.cursor, 1);
+
 		return true;
 	}
 
@@ -59,15 +61,18 @@ class LineBuffer {
 		}
 		this.cursor -= 1;
 		this.content.splice(this.cursor, 1);
+
 		return true;
 	}
 
 	public moveCursorRelative(characters: number): boolean {
 		const newValue = this.cursor + characters;
+
 		if (newValue < 0 || newValue > this.content.length) {
 			return false;
 		}
 		this.cursor = newValue;
+
 		return true;
 	}
 
@@ -76,6 +81,7 @@ class LineBuffer {
 			return false;
 		}
 		this.cursor = 0;
+
 		return true;
 	}
 
@@ -84,6 +90,7 @@ class LineBuffer {
 			return false;
 		}
 		this.cursor = this.content.length;
+
 		return true;
 	}
 
@@ -95,6 +102,7 @@ class LineBuffer {
 		// check if we are at the beginning of a word
 		if (this.content[this.cursor - 1] === " ") {
 			index = this.cursor - 2;
+
 			while (index > 0) {
 				if (this.content[index] === " ") {
 					index--;
@@ -107,18 +115,21 @@ class LineBuffer {
 		}
 		if (index === 0) {
 			this.cursor = index;
+
 			return true;
 		}
 		// On the first character that is not space
 		while (index > 0) {
 			if (this.content[index] === " ") {
 				index++;
+
 				break;
 			} else {
 				index--;
 			}
 		}
 		this.cursor = index;
+
 		return true;
 	}
 
@@ -127,8 +138,10 @@ class LineBuffer {
 			return false;
 		}
 		let index: number;
+
 		if (this.content[this.cursor] === " ") {
 			index = this.cursor + 1;
+
 			while (index < this.content.length) {
 				if (this.content[index] === " ") {
 					index++;
@@ -141,6 +154,7 @@ class LineBuffer {
 		}
 		if (index === this.content.length) {
 			this.cursor = index;
+
 			return true;
 		}
 
@@ -152,6 +166,7 @@ class LineBuffer {
 			}
 		}
 		this.cursor = index;
+
 		return true;
 	}
 }
@@ -170,6 +185,7 @@ export interface ServicePseudoTerminal
 	readonly onAnyKey: Event<void>;
 
 	setMode(mode: TerminalMode): void;
+
 	setName(name: string): void;
 	writeString(str: string): void;
 	readline(): Promise<string>;
@@ -259,6 +275,7 @@ class ServiceTerminalImpl
 
 	public open(): void {
 		this.isOpen = true;
+
 		if (this.nameBuffer !== undefined) {
 			this._onDidChangeName.fire(this.nameBuffer);
 			this.nameBuffer = undefined;
@@ -277,6 +294,7 @@ class ServiceTerminalImpl
 
 	public async read(_maxBytesToRead: number): Promise<Uint8Array> {
 		const value = await this.readline();
+
 		return this.encoder.encode(value);
 	}
 
@@ -294,6 +312,7 @@ class ServiceTerminalImpl
 
 	public write(bytes: Uint8Array): Promise<number> {
 		this.writeString(this.getString(bytes));
+
 		return Promise.resolve(bytes.byteLength);
 	}
 
@@ -311,13 +330,17 @@ class ServiceTerminalImpl
 	public handleInput(data: string): void {
 		if (this.mode === TerminalMode.idle) {
 			this._onAnyKey.fire();
+
 			return;
 		}
 		const previousCursor = this.lineBuffer.getCursor();
+
 		switch (data) {
 			case "\x03": // ctrl+C
 				this._onDidCtrlC.fire();
+
 				break;
+
 			case "\x06": // ctrl+f
 			case "\x1b[C": // right
 				this.adjustCursor(
@@ -325,7 +348,9 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1bf": // alt+f
 			case "\x1b[1;5C": // ctrl+right
 				this.adjustCursor(
@@ -333,7 +358,9 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x02": // ctrl+b
 			case "\x1b[D": // left
 				this.adjustCursor(
@@ -341,7 +368,9 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1bb": // alt+b
 			case "\x1b[1;5D": // ctrl+left
 				this.adjustCursor(
@@ -349,7 +378,9 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x01": // ctrl+a
 			case "\x1b[H": // home
 				this.adjustCursor(
@@ -357,7 +388,9 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x05": // ctrl+e
 			case "\x1b[F": // end
 				this.adjustCursor(
@@ -365,29 +398,42 @@ class ServiceTerminalImpl
 					previousCursor,
 					this.lineBuffer.getCursor(),
 				);
+
 				break;
+
 			case "\x1b[A": // up
 				this.bell();
+
 				break;
+
 			case "\x1b[B": // down
 				this.bell();
+
 				break;
+
 			case "\x08": // shift+backspace
 			case "\x7F": // backspace
 				this.lineBuffer.backspace()
 					? this._onDidWrite.fire("\x1b[D\x1b[P")
 					: this.bell();
+
 				break;
+
 			case "\x1b[3~": // delete key
 				this.lineBuffer.del()
 					? this._onDidWrite.fire("\x1b[P")
 					: this.bell();
+
 				break;
+
 			case "\r": // enter
 				this.handleEnter();
+
 				break;
+
 			default:
 				this.lineBuffer.insert(data);
+
 				if (!this.lineBuffer.isCursorAtEnd()) {
 					this._onDidWrite.fire("\x1b[@");
 				}
@@ -397,9 +443,11 @@ class ServiceTerminalImpl
 
 	private handleEnter(): void {
 		this._onDidWrite.fire("\r\n");
+
 		const line = this.lineBuffer.getLine();
 		this.lineBuffer.clear();
 		this.lines.push(line);
+
 		if (this.readlineCallback !== undefined) {
 			this.readlineCallback(`${this.lines.shift()!}\n`);
 			this.readlineCallback = undefined;
@@ -413,11 +461,14 @@ class ServiceTerminalImpl
 	): void {
 		if (!success) {
 			this.bell();
+
 			return;
 		}
 
 		const change = oldCursor - newCursor;
+
 		const code = change > 0 ? "D" : "C";
+
 		const sequence = `\x1b[${code}`.repeat(Math.abs(change));
 		this._onDidWrite.fire(sequence);
 	}

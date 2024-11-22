@@ -29,6 +29,7 @@ export function WorkerClient<C>(
 		public async launch(memory: SharedMemory): Promise<void> {
 			return new Promise<void>((resolve, reject) => {
 				this.worker = new Worker(workerLocation.fsPath, { argv: args });
+
 				const connection = new Connection<
 					Messages.Client.AsyncCalls,
 					undefined,

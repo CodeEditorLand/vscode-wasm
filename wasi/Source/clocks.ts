@@ -125,25 +125,31 @@ export namespace clocks {
 export namespace clocks {
 	export namespace MonotonicClock.$ {
 		export const Pollable = io.Poll.$.Pollable;
+
 		export const Instant = $wcm.u64;
+
 		export const Duration = $wcm.u64;
+
 		export const now = new $wcm.FunctionType<clocks.MonotonicClock.now>(
 			"now",
 			[],
 			Instant,
 		);
+
 		export const resolution =
 			new $wcm.FunctionType<clocks.MonotonicClock.resolution>(
 				"resolution",
 				[],
 				Duration,
 			);
+
 		export const subscribeInstant =
 			new $wcm.FunctionType<clocks.MonotonicClock.subscribeInstant>(
 				"subscribe-instant",
 				[["when", Instant]],
 				new $wcm.OwnType<clocks.MonotonicClock.Pollable>(Pollable),
 			);
+
 		export const subscribeDuration =
 			new $wcm.FunctionType<clocks.MonotonicClock.subscribeDuration>(
 				"subscribe-duration",
@@ -153,7 +159,9 @@ export namespace clocks {
 	}
 	export namespace MonotonicClock._ {
 		export const id = "wasi:clocks/monotonic-clock@0.2.1" as const;
+
 		export const witName = "monotonic-clock" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -162,18 +170,21 @@ export namespace clocks {
 			["Instant", $.Instant],
 			["Duration", $.Duration],
 		]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["now", $.now],
 			["resolution", $.resolution],
 			["subscribeInstant", $.subscribeInstant],
 			["subscribeDuration", $.subscribeDuration],
 		]);
+
 		export type WasmInterface = {
 			"now": () => i64;
 			"resolution": () => i64;
 			"subscribe-instant": (when: i64) => i32;
 			"subscribe-duration": (when: i64) => i32;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -187,11 +198,13 @@ export namespace clocks {
 			["seconds", $wcm.u64],
 			["nanoseconds", $wcm.u32],
 		]);
+
 		export const now = new $wcm.FunctionType<clocks.WallClock.now>(
 			"now",
 			[],
 			Datetime,
 		);
+
 		export const resolution =
 			new $wcm.FunctionType<clocks.WallClock.resolution>(
 				"resolution",
@@ -201,19 +214,24 @@ export namespace clocks {
 	}
 	export namespace WallClock._ {
 		export const id = "wasi:clocks/wall-clock@0.2.1" as const;
+
 		export const witName = "wall-clock" as const;
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
 		>([["Datetime", $.Datetime]]);
+
 		export const functions: Map<string, $wcm.FunctionType> = new Map([
 			["now", $.now],
 			["resolution", $.resolution],
 		]);
+
 		export type WasmInterface = {
 			"now": (result: ptr<Datetime>) => void;
 			"resolution": (result: ptr<Datetime>) => void;
 		};
+
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -225,8 +243,11 @@ export namespace clocks {
 
 export namespace clocks._ {
 	export const version = "0.2.1" as const;
+
 	export const id = "wasi:clocks@0.2.1" as const;
+
 	export const witName = "clocks" as const;
+
 	export const interfaces: Map<string, $wcm.InterfaceType> = new Map<
 		string,
 		$wcm.InterfaceType
