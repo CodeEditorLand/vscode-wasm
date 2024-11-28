@@ -37,6 +37,7 @@ for (let i = 0; i < 1000000; i++) {
 	store();
 	sum += view.getInt32(4, true);
 }
+
 const end = Date.now();
 console.log(
 	`Time taken to call 1000000 times: ${end - start}ms. Sum value: ${sum}`,

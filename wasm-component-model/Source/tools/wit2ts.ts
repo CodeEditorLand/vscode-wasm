@@ -453,6 +453,7 @@ namespace _TypeScriptNameProvider {
 		}
 	}
 }
+
 const TypeScriptNameProvider: NameProvider = _TypeScriptNameProvider;
 
 namespace _WitNameProvider {
@@ -611,6 +612,7 @@ namespace _WitNameProvider {
 		}
 	}
 }
+
 const WitNameProvider: NameProvider = _WitNameProvider;
 
 class Types {

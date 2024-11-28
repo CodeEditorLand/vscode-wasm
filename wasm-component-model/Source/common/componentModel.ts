@@ -67,6 +67,7 @@ export namespace Alignment {
 		return Alignment.byte;
 	}
 }
+
 const align = Alignment.align;
 
 export interface Memory {
