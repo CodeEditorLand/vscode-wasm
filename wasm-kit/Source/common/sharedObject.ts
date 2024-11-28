@@ -292,6 +292,7 @@ export type MemoryLocation = {
 	ptr: ptr;
 	size: u32;
 };
+
 export namespace MemoryLocation {
 	export function from(memRange: BaseMemoryRange): MemoryLocation {
 		return {

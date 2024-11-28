@@ -85,6 +85,7 @@ export namespace Interface {
 }
 
 export type Callable = Func | Method | StaticMethod | Constructor;
+
 export namespace Callable {
 	export function isFunction(value: Callable): value is Func {
 		const candidate = value as Func;
@@ -181,6 +182,7 @@ export type Type =
 	| ResourceType
 	| BorrowHandleType
 	| OwnHandleType;
+
 export namespace Type {
 	export function isBaseType(type: Type): type is BaseType {
 		return TypeKind.isBase(type.kind);
@@ -320,6 +322,7 @@ export namespace Owner {
 	}
 }
 export type Owner = { world: number } | { interface: number };
+
 export enum OwnerKind {
 	World = "world",
 	Interface = "interface",
@@ -340,6 +343,7 @@ export type TypeKind =
 	| BaseKind
 	| ReferenceKind
 	| "resource";
+
 export namespace TypeKind {
 	export function isBase(kind: TypeKind): kind is BaseKind {
 		return typeof (kind as BaseKind).type === "string";
@@ -521,6 +525,7 @@ export interface OwnHandleKind {
 }
 
 export type ObjectKind = TypeObject | FuncObject | InterfaceObject;
+
 export namespace ObjectKind {
 	export function isTypeObject(kind: ObjectKind): kind is TypeObject {
 		return typeof (kind as TypeObject).type === "number";
@@ -544,6 +549,7 @@ export interface FuncObject {
 }
 
 export type InterfaceObjectId = number | { id: number };
+
 export namespace InterfaceObjectId {
 	export function isNumber(value: InterfaceObjectId): value is number {
 		return typeof value === "number";
@@ -563,6 +569,7 @@ export interface InterfaceObject {
 }
 
 export type TypeReference = number | string;
+
 export namespace TypeReference {
 	export function is(value: TypeReference | Type): value is TypeReference {
 		const candidate = value as TypeReference;

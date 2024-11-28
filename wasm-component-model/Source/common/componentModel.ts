@@ -106,6 +106,7 @@ type BigArrayClazz<
 };
 
 export type offset<_T = undefined> = u32;
+
 export abstract class BaseMemoryRange {
 	protected readonly _memory: Memory;
 	private readonly _ptr: ptr;
@@ -690,6 +691,7 @@ export namespace Memory {
 }
 
 export type Encodings = "utf-8" | "utf-16" | "latin1+utf-16";
+
 export interface Options {
 	encoding: Encodings;
 	keepOption?: boolean;
@@ -1171,6 +1173,7 @@ interface ResultErrorConstructor<V extends JType> {
 }
 
 export type bool = number;
+
 export namespace bool {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.bool;
 
@@ -1243,6 +1246,7 @@ export namespace bool {
 ComponentModelType.satisfies(bool);
 
 export type u8 = number;
+
 export namespace u8 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.u8;
 
@@ -1327,6 +1331,7 @@ export namespace u8 {
 ComponentModelType.satisfies(u8);
 
 export type u16 = number;
+
 export namespace u16 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.u16;
 
@@ -1415,6 +1420,7 @@ export namespace u16 {
 ComponentModelType.satisfies(u16);
 
 export type u32 = number;
+
 export namespace u32 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.u32;
 
@@ -1510,6 +1516,7 @@ export namespace u32 {
 ComponentModelType.satisfies(u32);
 
 export type u64 = bigint;
+
 export namespace u64 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.u64;
 
@@ -1591,6 +1598,7 @@ export namespace u64 {
 ComponentModelType.satisfies(u64);
 
 export type s8 = number;
+
 export namespace s8 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.s8;
 
@@ -1681,6 +1689,7 @@ export namespace s8 {
 ComponentModelType.satisfies(s8);
 
 export type s16 = number;
+
 export namespace s16 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.s16;
 
@@ -1769,6 +1778,7 @@ export namespace s16 {
 ComponentModelType.satisfies(s16);
 
 export type s32 = number;
+
 export namespace s32 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.s32;
 
@@ -1857,6 +1867,7 @@ export namespace s32 {
 ComponentModelType.satisfies(s32);
 
 export type s64 = bigint;
+
 export namespace s64 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.s64;
 
@@ -1944,6 +1955,7 @@ export namespace s64 {
 ComponentModelType.satisfies(s64);
 
 export type float32 = number;
+
 export namespace float32 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.float32;
 
@@ -2027,6 +2039,7 @@ export namespace float32 {
 ComponentModelType.satisfies(float32);
 
 export type float64 = number;
+
 export namespace float64 {
 	export const kind: ComponentModelTypeKind = ComponentModelTypeKind.float64;
 
@@ -2110,6 +2123,7 @@ export namespace float64 {
 ComponentModelType.satisfies(float64);
 
 export type byte = u8;
+
 export const byte: ComponentModelType<byte> = {
 	kind: u8.kind,
 	size: u8.size,
@@ -2126,6 +2140,7 @@ export const byte: ComponentModelType<byte> = {
 };
 
 export type size = u32;
+
 export const size: ComponentModelType<size> = {
 	kind: u32.kind,
 	size: u32.size,
@@ -2142,6 +2157,7 @@ export const size: ComponentModelType<size> = {
 };
 
 export type ptr<_type = ArrayBuffer> = u32;
+
 export const ptr: ComponentModelType<size> = {
 	kind: u32.kind,
 	size: u32.size,
@@ -2468,6 +2484,7 @@ export namespace wstring {
 ComponentModelType.satisfies(wstring);
 
 export type JArray = JType[];
+
 export class ListType<T> implements ComponentModelType<T[]> {
 	private static readonly offsets = {
 		data: 0,
@@ -3815,6 +3832,7 @@ export class VariantType<T extends JVariantCase, I, V extends JType>
 }
 
 export type JEnum = string;
+
 export class EnumType<T extends JEnum> implements ComponentModelType<T> {
 	private readonly discriminantType:
 		| ComponentModelType<u8>
@@ -4023,6 +4041,7 @@ export namespace option {
 	}
 }
 export type option<T extends JType> = option.None<T> | option.Some<T>;
+
 export class OptionType<T extends JType>
 	implements ComponentModelType<T | option<T> | undefined>
 {
@@ -4294,6 +4313,7 @@ export namespace result {
 export type result<O extends JType, E extends JType = void> =
 	| result.Ok<O, E>
 	| result.Error<O, E>;
+
 export class ResultType<
 	O extends JType,
 	E extends JType = void,
@@ -4356,6 +4376,7 @@ export namespace Resource {
 }
 
 export type ResourceRepresentation = u32;
+
 export interface ResourceManager<T extends Resource = Resource> {
 	// Handle management
 
@@ -4745,12 +4766,14 @@ export type CallableParameter = [
 ];
 
 export type JFunction = (...params: JType[]) => JType;
+
 export type JClass = {
 	new (...params: JType[]): Resource;
 	[key: string]: JFunction;
 };
 
 export type JFunctionAsync = (...params: JType[]) => Promise<JType> | JType;
+
 export type JClassAsync = {
 	$new(...params: JType[]): Promise<Resource>;
 	[key: string]: JFunctionAsync;
@@ -4774,6 +4797,7 @@ export interface WorkerConnection {
 export type Code =
 	| WebAssembly_.Module
 	| { module: WebAssembly_.Module; memory?: WebAssembly_.Memory };
+
 export interface MainConnection {
 	initialize(code: Code, options: Options): Promise<void>;
 	dispose(): void;
@@ -5709,6 +5733,7 @@ export type ResourceCallable<T extends JFunction = JFunction> =
 	| DestructorType;
 
 export type ResourceHandle<_T extends Resource = Resource> = u32;
+
 export class ResourceHandleType implements ComponentModelType<ResourceHandle> {
 	public readonly kind: ComponentModelTypeKind;
 	public readonly size: size;
@@ -5952,6 +5977,7 @@ class AbstractWrapperType<T extends NonNullable<JType>>
 }
 
 export type borrow<T extends NonNullable<JType>> = T;
+
 export class BorrowType<
 	T extends NonNullable<JType>,
 > extends AbstractWrapperType<T> {
@@ -5961,6 +5987,7 @@ export class BorrowType<
 }
 
 export type own<T extends NonNullable<JType>> = T;
+
 export class OwnType<
 	T extends NonNullable<JType>,
 > extends AbstractWrapperType<T> {
@@ -5976,6 +6003,7 @@ export type InterfaceType = {
 	readonly functions?: Map<string, FunctionType<JFunction>>;
 	readonly resources?: Map<string, ResourceType>;
 };
+
 export namespace InterfaceType {
 	export function is(value: any): value is InterfaceType {
 		return (
@@ -5990,18 +6018,23 @@ export namespace InterfaceType {
 }
 
 export type WasmModuleImports = Record<string, WasmFunction>;
+
 export type WasmImports = Record<string, WasmModuleImports>;
+
 export type WasmExports = Record<string, Function>;
 
 export type ServiceInterface = Record<string, JFunction | JClass>;
+
 export type WorldServiceInterface = Record<
 	string,
 	JFunction | ServiceInterface
 >;
+
 export type ServiceInterfaceAsync = Record<
 	string,
 	JFunctionAsync | JClassAsync
 >;
+
 export type WorldServiceInterfaceAsync = Record<
 	string,
 	JFunction | ServiceInterfaceAsync
@@ -6059,6 +6092,7 @@ export type PackageType = {
 	readonly interfaces?: Map<string, InterfaceType>;
 	readonly worlds?: Map<string, WorldType>;
 };
+
 export namespace PackageType {
 	export function is(value: any): value is PackageType {
 		return (

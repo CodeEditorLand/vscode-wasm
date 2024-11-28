@@ -23,6 +23,7 @@ export type Window = {
 	TestResource: Window.TestResource.Class;
 	createTestResource: Window.createTestResource;
 };
+
 export namespace test {
 	export type Imports = {
 		window: Window;

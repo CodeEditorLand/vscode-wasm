@@ -68,6 +68,7 @@ export const uri: Uri = Uri.from({
 	scheme: "wasi-console",
 	authority: "f36f1dd6-913a-417f-a53c-360730fde485",
 });
+
 export function create(deviceId: DeviceId): CharacterDeviceDriver {
 	let inodeCounter: bigint = 0n;
 

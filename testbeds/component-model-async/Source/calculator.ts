@@ -146,6 +146,7 @@ export namespace ReverseNotation {
 export type ReverseNotation = {
 	Engine: ReverseNotation.Engine.Class;
 };
+
 export namespace calculator {
 	export type Operation = Types.Operation;
 

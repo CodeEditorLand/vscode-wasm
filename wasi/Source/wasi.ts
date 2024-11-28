@@ -26,4 +26,5 @@ namespace wasi._ {
 	]);
 }
 export { io, clocks, filesystem, sockets, random, cli };
+
 export default wasi;

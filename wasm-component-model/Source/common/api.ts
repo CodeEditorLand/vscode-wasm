@@ -94,5 +94,7 @@ export {
 	u8,
 	wstring,
 } from "./componentModel";
+
 export { Connection } from "./connection";
+
 export { RAL };

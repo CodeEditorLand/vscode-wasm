@@ -106,6 +106,7 @@ export namespace TraceSummaryMessage {
 }
 
 export type WasiCallMessage = [SharedArrayBuffer, SharedArrayBuffer];
+
 export namespace WasiCallMessage {
 	export function is(message: WorkerMessage): message is WasiCallMessage {
 		return (

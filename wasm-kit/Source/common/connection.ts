@@ -733,6 +733,7 @@ export type AnyConnection = BaseConnection<
 	AnyConnection.SyncCall,
 	AnyConnection.Notification
 >;
+
 export namespace AnyConnection {
 	export type AsyncCall = { method: string; params: any; result: any };
 

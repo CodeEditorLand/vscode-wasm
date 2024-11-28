@@ -7,9 +7,13 @@ import { Disposable } from "./disposable";
 import RAL from "./ral";
 
 export type u8 = number;
+
 export type u16 = number;
+
 export type u32 = number;
+
 export type u64 = number;
+
 export type size = u32;
 
 export type Message = {
@@ -1030,6 +1034,7 @@ type HandleRequestSignatures<Requests extends RequestType | undefined> = [
 	: undefined;
 
 type RequestResult = { errno: 0; data: object } | { errno: RPCErrno };
+
 export namespace RequestResult {
 	export function hasData<T>(
 		value: { errno: RPCErrno } | { errno: 0; data: T },

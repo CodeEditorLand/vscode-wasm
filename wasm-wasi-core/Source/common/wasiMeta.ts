@@ -144,6 +144,7 @@ export type CustomMemoryTransfer = {
 };
 
 export type MemoryTransfer = ArgumentsTransfer | CustomMemoryTransfer;
+
 export namespace MemoryTransfer {
 	export function isCustom(
 		transfer: MemoryTransfer | undefined,
@@ -170,6 +171,7 @@ export namespace MemoryTransfer {
 }
 
 export type ReverseTransfer = ReverseArgumentsTransfer | ReverseCustomTransfer;
+
 export namespace ReverseTransfer {
 	export function isCustom(
 		transfer: ReverseTransfer | undefined,
@@ -256,6 +258,7 @@ export type WasiFunctions = {
 
 	getName(index: number): string;
 };
+
 export const WasiFunctions: WasiFunctions = _WasiFunctions;
 
 export namespace U8 {

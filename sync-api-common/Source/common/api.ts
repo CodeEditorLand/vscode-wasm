@@ -6,8 +6,11 @@ import RAL from "./ral";
  * ------------------------------------------------------------------------------------------ */
 
 export * from "./connection";
+
 export * from "./protocol";
 
 export { RAL };
+
 export { Cancellation } from "./messageCancellation";
+
 export { BaseMessageConnection } from "./messageConnection";

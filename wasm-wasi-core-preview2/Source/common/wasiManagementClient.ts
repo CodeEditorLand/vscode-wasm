@@ -69,6 +69,7 @@ export type WasiManagementClient = WorkerClient & {
 	createConnection(): Promise<WasiConnectionInfo>;
 	dropConnection(id: number): Promise<void>;
 };
+
 export const WasiManagementClient = WorkerClient<_WasiManagementClient>(
 	_WasiManagementClient,
 	RAL().Worker.getWorkerUri("common/preview2/wasiWorker.js"),

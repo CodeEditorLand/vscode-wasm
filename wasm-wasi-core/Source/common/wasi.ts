@@ -172,6 +172,7 @@ namespace Exitcode {
 }
 
 export type errno = u16;
+
 export namespace Errno {
 	/**
 	 * No error occurred. System call completed successfully.
@@ -807,6 +808,7 @@ export class WasiError extends Error {
 }
 
 export type rights = u64;
+
 export namespace Rights {
 	/**
 	 * The right to invoke fd_datasync. If path_open is set, includes the right
@@ -1182,6 +1184,7 @@ namespace Dircookie {
 }
 
 export type fdflags = u16;
+
 export namespace Fdflags {
 	/**
 	 * No flags.
@@ -1266,6 +1269,7 @@ export namespace Fdflags {
 }
 
 export type lookupflags = u32;
+
 export namespace Lookupflags {
 	/**
 	 * No flags.
@@ -1299,6 +1303,7 @@ export namespace Lookupflags {
 }
 
 export type oflags = u16;
+
 export namespace Oflags {
 	/**
 	 * No flags.
@@ -1370,6 +1375,7 @@ export namespace Oflags {
 }
 
 export type clockid = u32;
+
 export namespace Clockid {
 	/**
 	 * The clock measuring real time. Time value zero corresponds with
@@ -1421,6 +1427,7 @@ export namespace Clockid {
 }
 
 export type preopentype = u8;
+
 export namespace Preopentype {
 	/**
 	 * A pre-opened directory.
@@ -1429,6 +1436,7 @@ export namespace Preopentype {
 }
 
 export type filetype = u8;
+
 export namespace Filetype {
 	/**
 	 * The type of the file descriptor or file is unknown or is different from
@@ -1576,6 +1584,7 @@ export namespace Advise {
 }
 
 export type filesize = u64;
+
 export namespace Filesize {
 	export const $ptr = Ptr.$param;
 
@@ -1774,6 +1783,7 @@ namespace Filedelta {
  * The position relative to which to set the offset of the file descriptor.
  */
 export type whence = u8;
+
 export namespace Whence {
 	/**
 	 * Seek relative to start-of-file.
@@ -1911,6 +1921,7 @@ export namespace Fdstat {
 }
 
 export type fstflags = u16;
+
 export namespace Fstflags {
 	/**
 	 * Adjust the last data access timestamp to the value stored in
@@ -2298,6 +2309,7 @@ export namespace Ciovec {
 export type ciovec_array = ciovec[];
 
 export type dirnamlen = u32;
+
 export type dirent = {
 	/**
 	 * The memory location of the allocated struct.
@@ -2388,6 +2400,7 @@ export namespace Dirent {
  * Type of a subscription to an event or its occurrence.
  */
 export type eventtype = u8;
+
 export namespace Eventtype {
 	/**
 	 * The time value of clock subscription_clock::id has reached timestamp
@@ -2413,6 +2426,7 @@ export namespace Eventtype {
  * eventtype::fd_write.
  */
 export type eventrwflags = u16;
+
 export namespace Eventrwflags {
 	/**
 	 * The peer of this socket has closed or disconnected.
@@ -2490,6 +2504,7 @@ export type event = {
 	 */
 	get fd_readwrite(): event_fd_readwrite;
 };
+
 export namespace Event {
 	export const size = 32;
 
@@ -2535,6 +2550,7 @@ export namespace Event {
 }
 
 export type subclockflags = u16;
+
 export namespace Subclockflags {
 	/**
 	 * If set, treat the timestamp provided in subscription_clock::timeout as an
@@ -2570,6 +2586,7 @@ export type subscription_clock = {
 	 */
 	get flags(): subclockflags;
 };
+
 export namespace Subscription_clock {
 	export const size = 32;
 
@@ -2710,6 +2727,7 @@ export type subscription = {
 	 */
 	get u(): subscription_u;
 };
+
 export namespace Subscription {
 	export const size = 48;
 
@@ -2843,6 +2861,7 @@ export type args_sizes_get = (
 	argvCount_ptr: ptr<u32>,
 	argvBufSize_ptr: ptr<u32>,
 ) => errno;
+
 export namespace args_sizes_get {
 	export const name: string = "args_sizes_get";
 
@@ -2873,6 +2892,7 @@ export type args_get = (
 	argv_ptr: ptr<ptr<cstring>[]>,
 	argvBuf_ptr: ptr<bytes>,
 ) => errno;
+
 export namespace args_get {
 	export const name: string = "args_get";
 
@@ -2971,6 +2991,7 @@ export type clock_res_get = (
 	id: clockid,
 	timestamp_ptr: ptr<timestamp>,
 ) => errno;
+
 export namespace clock_res_get {
 	export const name: string = "clock_res_get";
 
@@ -3006,6 +3027,7 @@ export type clock_time_get = (
 	precision: timestamp,
 	timestamp_ptr: ptr<u64>,
 ) => errno;
+
 export namespace clock_time_get {
 	export const name: string = "clock_time_get";
 
@@ -3039,6 +3061,7 @@ export type environ_sizes_get = (
 	environCount_ptr: ptr<u32>,
 	environBufSize_ptr: ptr<u32>,
 ) => errno;
+
 export namespace environ_sizes_get {
 	export const name: string = "environ_sizes_get";
 
@@ -3069,6 +3092,7 @@ export type environ_get = (
 	environ_ptr: ptr<ptr<cstring>[]>,
 	environBuf_ptr: ptr<bytes>,
 ) => errno;
+
 export namespace environ_get {
 	export const name: string = "environ_get";
 
@@ -3171,6 +3195,7 @@ export type fd_advise = (
 	length: filesize,
 	advise: advise,
 ) => errno;
+
 export namespace fd_advise {
 	export const name: string = "fd_advise";
 
@@ -3200,6 +3225,7 @@ export namespace fd_advise {
  * @param len The length of the area that is allocated.
  */
 export type fd_allocate = (fd: fd, offset: filesize, len: filesize) => errno;
+
 export namespace fd_allocate {
 	export const name: string = "fd_allocate";
 
@@ -3224,6 +3250,7 @@ export namespace fd_allocate {
  * @param fd The file descriptor.
  */
 export type fd_close = (fd: fd) => errno;
+
 export namespace fd_close {
 	export const name: string = "fd_close";
 
@@ -3243,6 +3270,7 @@ export namespace fd_close {
  * @param fd The file descriptor.
  */
 export type fd_datasync = (fd: fd) => errno;
+
 export namespace fd_datasync {
 	export const name: string = "fd_datasync";
 
@@ -3263,6 +3291,7 @@ export namespace fd_datasync {
  * @param fdstat_ptr A pointer to store the result.
  */
 export type fd_fdstat_get = (fd: fd, fdstat_ptr: ptr<fdstat>) => errno;
+
 export namespace fd_fdstat_get {
 	export const name: string = "fd_fdstat_get";
 
@@ -3292,6 +3321,7 @@ export namespace fd_fdstat_get {
  * @param fdflags The desired values of the file descriptor flags.
  */
 export type fd_fdstat_set_flags = (fd: fd, fdflags: fdflags) => errno;
+
 export namespace fd_fdstat_set_flags {
 	export const name: string = "fd_fdstat_set_flags";
 
@@ -3315,6 +3345,7 @@ export namespace fd_fdstat_set_flags {
  * @param filestat_ptr The buffer where the file's attributes are stored.
  */
 export type fd_filestat_get = (fd: fd, filestat_ptr: ptr<filestat>) => errno;
+
 export namespace fd_filestat_get {
 	export const name: string = "fd_filestat_get";
 
@@ -3345,6 +3376,7 @@ export namespace fd_filestat_get {
  * @param size: The desired file size.
  */
 export type fd_filestat_set_size = (fd: fd, size: filesize) => errno;
+
 export namespace fd_filestat_set_size {
 	export const name: string = "fd_filestat_set_size";
 
@@ -3376,6 +3408,7 @@ export type fd_filestat_set_times = (
 	mtim: timestamp,
 	fst_flags: fstflags,
 ) => errno;
+
 export namespace fd_filestat_set_times {
 	export const name: string = "fd_filestat_set_times";
 
@@ -3413,6 +3446,7 @@ export type fd_pread = (
 	offset: filesize,
 	bytesRead_ptr: ptr<u32>,
 ) => errno;
+
 export namespace fd_pread {
 	export const name: string = "fd_pread";
 
@@ -3452,6 +3486,7 @@ export namespace fd_pread {
  * @param bufPtr A pointer to store the pre stat information.
  */
 export type fd_prestat_get = (fd: fd, bufPtr: ptr<prestat>) => errno;
+
 export namespace fd_prestat_get {
 	export const name: string = "fd_prestat_get";
 
@@ -3485,6 +3520,7 @@ export type fd_prestat_dir_name = (
 	pathPtr: ptr<byte[]>,
 	pathLen: size,
 ) => errno;
+
 export namespace fd_prestat_dir_name {
 	export const name: string = "fd_prestat_dir_name";
 
@@ -3529,6 +3565,7 @@ export type fd_pwrite = (
 	offset: filesize,
 	bytesWritten_ptr: ptr<u32>,
 ) => errno;
+
 export namespace fd_pwrite {
 	export const name: string = "fd_pwrite";
 
@@ -3575,6 +3612,7 @@ export type fd_read = (
 	iovs_len: u32,
 	bytesRead_ptr: ptr<u32>,
 ) => errno;
+
 export namespace fd_read {
 	export const name: string = "fd_read";
 
@@ -3630,6 +3668,7 @@ export type fd_readdir = (
 	cookie: dircookie,
 	buf_used_ptr: ptr<u32>,
 ) => errno;
+
 export namespace fd_readdir {
 	export const name: string = "fd_readdir";
 
@@ -3672,6 +3711,7 @@ export namespace fd_readdir {
  * descriptors, which would disappear if dup2() were to be removed entirely.
  */
 export type fd_renumber = (fd: fd, to: fd) => errno;
+
 export namespace fd_renumber {
 	export const name: string = "fd_renumber";
 
@@ -3703,6 +3743,7 @@ export type fd_seek = (
 	whence: whence,
 	new_offset_ptr: ptr<u64>,
 ) => errno;
+
 export namespace fd_seek {
 	export const name: string = "fd_seek";
 
@@ -3738,6 +3779,7 @@ export namespace fd_seek {
  * @param fd The file descriptor.
  */
 export type fd_sync = (fd: fd) => errno;
+
 export namespace fd_sync {
 	export const name: string = "fd_sync";
 
@@ -3760,6 +3802,7 @@ export namespace fd_sync {
  * file descriptor, relative to the start of the file.
  */
 export type fd_tell = (fd: fd, offset_ptr: ptr<u64>) => errno;
+
 export namespace fd_tell {
 	export const name: string = "fd_tell";
 
@@ -3797,6 +3840,7 @@ export type fd_write = (
 	ciovs_len: u32,
 	bytesWritten_ptr: ptr<u32>,
 ) => errno;
+
 export namespace fd_write {
 	export const name: string = "fd_write";
 
@@ -3839,6 +3883,7 @@ export type path_create_directory = (
 	path_ptr: ptr<byte[]>,
 	path_len: size,
 ) => errno;
+
 export namespace path_create_directory {
 	export const name: string = "path_create_directory";
 
@@ -3883,6 +3928,7 @@ export type path_filestat_get = (
 	path_len: size,
 	filestat_ptr: ptr,
 ) => errno;
+
 export namespace path_filestat_get {
 	export const name: string = "path_filestat_get";
 
@@ -3936,6 +3982,7 @@ export type path_filestat_set_times = (
 	mtim: timestamp,
 	fst_flags: fstflags,
 ) => errno;
+
 export namespace path_filestat_set_times {
 	export const name: string = "path_filestat_set_times";
 
@@ -3994,6 +4041,7 @@ export type path_link = (
 	new_path_ptr: ptr<byte[]>,
 	new_path_len: size,
 ) => errno;
+
 export namespace path_link {
 	export const name: string = "path_link";
 
@@ -4074,6 +4122,7 @@ export type path_open = (
 	fdflags: fdflags,
 	fd_ptr: ptr<fd>,
 ) => errno;
+
 export namespace path_open {
 	export const name: string = "path_open";
 
@@ -4134,6 +4183,7 @@ export type path_readlink = (
 	buf_len: size,
 	result_size_ptr: ptr<u32>,
 ) => errno;
+
 export namespace path_readlink {
 	export const name: string = "path_readlink";
 
@@ -4184,6 +4234,7 @@ export type path_remove_directory = (
 	path_ptr: ptr<byte[]>,
 	path_len: size,
 ) => errno;
+
 export namespace path_remove_directory {
 	export const name: string = "path_remove_directory";
 
@@ -4232,6 +4283,7 @@ export type path_rename = (
 	new_path_ptr: ptr<byte[]>,
 	new_path_len: size,
 ) => errno;
+
 export namespace path_rename {
 	export const name: string = "path_rename";
 
@@ -4292,6 +4344,7 @@ export type path_symlink = (
 	new_path_ptr: ptr<byte[]>,
 	new_path_len: size,
 ) => errno;
+
 export namespace path_symlink {
 	export const name: string = "path_symlink";
 
@@ -4345,6 +4398,7 @@ export type path_unlink_file = (
 	path_ptr: ptr<byte[]>,
 	path_len: size,
 ) => errno;
+
 export namespace path_unlink_file {
 	export const name: string = "path_unlink_file";
 
@@ -4386,6 +4440,7 @@ export type poll_oneoff = (
 	subscriptions: size,
 	result_size_ptr: ptr<u32>,
 ) => errno;
+
 export namespace poll_oneoff {
 	export const name: string = "poll_oneoff";
 
@@ -4426,6 +4481,7 @@ export namespace poll_oneoff {
  * @param rval The exit code returned by the process.
  */
 export type proc_exit = (rval: exitcode) => void;
+
 export namespace proc_exit {
 	export const name: string = "proc_exit";
 
@@ -4443,6 +4499,7 @@ export namespace proc_exit {
  * to sched_yield in POSIX.
  */
 export type sched_yield = () => errno;
+
 export namespace sched_yield {
 	export const name: string = "sched_yield";
 
@@ -4464,6 +4521,7 @@ export namespace sched_yield {
  * @param buf_len The size of the buffer.
  */
 export type random_get = (buf: ptr<byte[]>, buf_len: size) => errno;
+
 export namespace random_get {
 	export const name: string = "random_get";
 
@@ -4502,6 +4560,7 @@ export type sock_accept = (
 	flags: fdflags,
 	result_fd_ptr: ptr<fd>,
 ) => errno;
+
 export namespace sock_accept {
 	export const name: string = "sock_accept";
 
@@ -4575,6 +4634,7 @@ export type sock_send = (
  * @param sdflags Which channels on the socket to shut down.
  */
 export type sock_shutdown = (fd: fd, sdflags: sdflags) => errno;
+
 export namespace sock_shutdown {
 	export const name: string = "sock_shutdown";
 
@@ -4600,6 +4660,7 @@ export type tid = u32;
  * @param start_args_ptr A memory location that holds the start arguments.
  */
 export type thread_spawn = (start_args_ptr: ptr<u32>) => tid;
+
 export namespace thread_spawn {
 	export const name: string = "thread-spawn";
 
@@ -4618,6 +4679,7 @@ export namespace thread_spawn {
 }
 
 export type thread_exit = (tid: tid) => errno;
+
 export namespace thread_exit {
 	export const name: string = "thread_exit";
 

@@ -413,10 +413,17 @@ export const posix: IPath = {
 };
 
 export const normalize = posix.normalize;
+
 export const isAbsolute = posix.isAbsolute;
+
 export const join = posix.join;
+
 export const dirname = posix.dirname;
+
 export const basename = posix.basename;
+
 export const extname = posix.extname;
+
 export const sep = posix.sep;
+
 export const delimiter = posix.delimiter;

@@ -221,6 +221,7 @@ class CommandRegistry {
 const commandRegistry = new CommandRegistry();
 
 let instance: WebAssembly_.Instance;
+
 export async function activate(
 	_context: vscode.ExtensionContext,
 	module: WebAssembly_.Module,

@@ -9,11 +9,17 @@ import _Client = wm.Client;
 import _Service = wm.Service;
 
 export * from "./sharedObject";
+
 export * from "./array";
+
 export * from "./connection";
+
 export * from "./workerClient";
+
 export * from "./workerService";
+
 export * from "./workerMain";
+
 export { RAL };
 
 export namespace WorkerMessages {
