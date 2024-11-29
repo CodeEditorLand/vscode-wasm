@@ -33,12 +33,15 @@ export async function activate(
 		console.log(
 			`Add ${api.calc(Types.Operation.Add({ left: 1, right: 2 }))}`,
 		);
+
 		console.log(
 			`Sub ${api.calc(Types.Operation.Sub({ left: 10, right: 8 }))}`,
 		);
+
 		console.log(
 			`Mul ${api.calc(Types.Operation.Mul({ left: 3, right: 7 }))}`,
 		);
+
 		console.log(
 			`Div ${api.calc(Types.Operation.Div({ left: 10, right: 2 }))}`,
 		);

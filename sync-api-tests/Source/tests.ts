@@ -5,10 +5,15 @@
 
 export type AssertionErrorData = {
 	message: string;
+
 	actual: unknown;
+
 	expected: unknown;
+
 	operator: string;
+
 	generatedMessage: boolean;
+
 	code: string;
 };
 
@@ -19,11 +24,15 @@ export type ErrorData = {
 export type TestRequests =
 	| {
 			method: "testing/assertionError";
+
 			params: AssertionErrorData;
+
 			result: null;
 	  }
 	| {
 			method: "testing/error";
+
 			params: ErrorData;
+
 			result: null;
 	  };

@@ -25,8 +25,10 @@ class TestServiceConnection<
 		);
 
 		super(worker);
+
 		this.worker = worker;
 	}
+
 	public terminate(): Promise<number> {
 		return this.worker.terminate();
 	}
@@ -88,6 +90,7 @@ const _ril: RIL = Object.freeze<RIL>({
 						`No parent port defined. Shouldn't happen in test setup`,
 					);
 				}
+
 				return new ClientConnection<Requests, ReadyParams>(parentPort);
 			},
 		}),

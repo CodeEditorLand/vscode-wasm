@@ -28,10 +28,12 @@ type ConnectionType = BaseConnection<
 
 export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 	private memory!: SharedMemory;
+
 	private readonly timeouts: Map<number, Disposable>;
 
 	constructor(connection: AnyConnection) {
 		super(AnyConnection.cast<BaseWorker.ConnectionType>(connection));
+
 		this.timeouts = new Map();
 	}
 
@@ -41,7 +43,9 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 
 	protected createConnection(port: ConnectionPort): Promise<ConnectionType> {
 		const connection: ConnectionType = AnyConnection.create(port);
+
 		connection.initializeSyncCall(this.connection.getSharedMemory());
+
 		connection.onNotify("setTimeout", async (params) => {
 			const signal = new Signal(
 				this.memory.range.fromLocation(params.signal),
@@ -59,6 +63,7 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 				}, ms);
 			}
 		});
+
 		connection.onNotify("pollable/setTimeout", async (params) => {
 			const memoryRange = this.memory.range.fromLocation(params.pollable);
 
@@ -77,9 +82,11 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 				const disposable = RAL().timer.setTimeout(() => {
 					pollable.resolve();
 				}, ms);
+
 				this.timeouts.set(pollable.$handle, disposable);
 			}
 		});
+
 		connection.onSyncCall("pollable/clearTimeout", async (params) => {
 			const key = params.pollable.id;
 
@@ -87,9 +94,11 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 
 			if (disposable !== undefined) {
 				this.timeouts.delete(key);
+
 				disposable.dispose();
 			}
 		});
+
 		connection.onNotify("pollables/race", async (params) => {
 			const signal = new Signal(
 				this.memory.range.fromLocation(params.signal),
@@ -115,13 +124,16 @@ export class WasiWorker extends MultiConnectionWorker<ConnectionType> {
 					break;
 				}
 			}
+
 			if (isReady || promises.length === 0) {
 				signal.resolve();
 			} else {
 				await Promise.race(promises);
+
 				signal.resolve();
 			}
 		});
+
 		connection.listen();
 
 		return Promise.resolve(connection);

@@ -5,7 +5,9 @@
 
 export interface CapturedPromise<T> {
 	promise: Promise<T>;
+
 	resolve: (value: T | PromiseLike<T>) => void;
+
 	reject: (reason?: any) => void;
 }
 
@@ -17,6 +19,7 @@ export namespace CapturedPromise {
 
 		const promise: Promise<T> = new Promise<T>((resolve, reject) => {
 			_resolve = resolve;
+
 			_reject = reject;
 		});
 

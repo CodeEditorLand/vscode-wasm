@@ -54,7 +54,9 @@ import { Errno, exitcode, Lookupflags } from "./wasi";
 
 type $Stdio = {
 	in: NonNullable<Stdio["in"]> | { kind: "console" };
+
 	out: NonNullable<Stdio["out"]>;
+
 	err: NonNullable<Stdio["err"]>;
 };
 
@@ -63,8 +65,11 @@ namespace MapDirDescriptor {
 		descriptors: MountPointDescriptor[] | undefined,
 	): {
 		workspaceFolders: WorkspaceFolderDescriptor | undefined;
+
 		extensions: ExtensionLocationDescriptor[];
+
 		vscodeFileSystems: VSCodeFileSystemDescriptor[];
+
 		memoryFileSystems: MemoryFileSystemDescriptor[];
 	} {
 		let workspaceFolders: WorkspaceFolderDescriptor | undefined;
@@ -83,6 +88,7 @@ namespace MapDirDescriptor {
 				memoryFileSystems,
 			};
 		}
+
 		for (const descriptor of descriptors) {
 			if (descriptor.kind === "workspaceFolder") {
 				workspaceFolders = descriptor;
@@ -94,6 +100,7 @@ namespace MapDirDescriptor {
 				memoryFileSystems.push(descriptor);
 			}
 		}
+
 		return {
 			workspaceFolders,
 			extensions,
@@ -129,6 +136,7 @@ function channel(): LogOutputChannel {
 	if ($channel === undefined) {
 		$channel = window.createOutputChannel("Wasm Core", { log: true });
 	}
+
 	return $channel;
 }
 
@@ -139,27 +147,40 @@ export abstract class WasiProcess {
 		| "running"
 		| "exiting"
 		| "exited";
+
 	private readonly programName: string;
+
 	protected readonly options: Omit<ProcessOptions, "trace"> & {
 		trace: LogOutputChannel | undefined;
 	};
+
 	private localDeviceDrivers: DeviceDrivers;
+
 	private resolveCallback: ((value: number) => void) | undefined;
+
 	private threadIdCounter: number;
+
 	private readonly fileDescriptors: FileDescriptors;
+
 	private environmentService!: EnvironmentWasiService;
+
 	private processService!: ProcessWasiService;
+
 	private readonly preOpenDirectories: Map<string, FileSystemDeviceDriver>;
+
 	private virtualRootFileSystem: vrfs.RootFileSystemDeviceDriver | undefined;
 
 	private _stdin: WritableStream | undefined;
+
 	private _stdout: ReadableStream | undefined;
+
 	private _stderr: ReadableStream | undefined;
 
 	constructor(programName: string, options: ProcessOptions = {}) {
 		this.programName = programName;
 
 		let opt = Object.assign({}, options);
+
 		delete opt.trace;
 
 		if (options.trace === true) {
@@ -167,13 +188,21 @@ export abstract class WasiProcess {
 		} else {
 			this.options = Object.assign({}, opt, { trace: undefined });
 		}
+
 		this.threadIdCounter = 2;
+
 		this.localDeviceDrivers = WasiKernel.createLocalDeviceDrivers();
+
 		this.fileDescriptors = new FileDescriptors();
+
 		this.preOpenDirectories = new Map();
+
 		this._state = "created";
+
 		this._stdin = undefined;
+
 		this._stdout = undefined;
+
 		this._stderr = undefined;
 	}
 
@@ -219,6 +248,7 @@ export abstract class WasiProcess {
 					}
 				}
 			}
+
 			if (extensions.length > 0) {
 				for (const descriptor of extensions) {
 					const extensionFS =
@@ -226,12 +256,14 @@ export abstract class WasiProcess {
 							this.localDeviceDrivers,
 							descriptor,
 						);
+
 					this.preOpenDirectories.set(
 						descriptor.mountPoint,
 						extensionFS,
 					);
 				}
 			}
+
 			if (vscodeFileSystems.length > 0) {
 				for (const descriptor of vscodeFileSystems) {
 					const fs =
@@ -239,9 +271,11 @@ export abstract class WasiProcess {
 							this.localDeviceDrivers,
 							descriptor,
 						);
+
 					this.preOpenDirectories.set(descriptor.mountPoint, fs);
 				}
 			}
+
 			if (memoryFileSystems.length > 0) {
 				for (const descriptor of memoryFileSystems) {
 					const dd =
@@ -249,6 +283,7 @@ export abstract class WasiProcess {
 							this.localDeviceDrivers,
 							descriptor,
 						);
+
 					this.preOpenDirectories.set(descriptor.mountPoint, dd);
 				}
 			}
@@ -266,15 +301,19 @@ export abstract class WasiProcess {
 					needsRootFs = true;
 				}
 			}
+
 			if (needsRootFs) {
 				const mountPoints: Map<string, FileSystemDeviceDriver> =
 					new Map(Array.from(this.preOpenDirectories.entries()));
+
 				this.virtualRootFileSystem = vrfs.create(
 					WasiKernel.nextDeviceId(),
 					this.fileDescriptors,
 					mountPoints,
 				);
+
 				this.preOpenDirectories.set("/", this.virtualRootFileSystem);
+
 				this.localDeviceDrivers.add(this.virtualRootFileSystem);
 			}
 		} else if (RootFileSystemOptions.is(this.options)) {
@@ -282,16 +321,19 @@ export abstract class WasiProcess {
 
 			const preOpens =
 				this.options.rootFileSystem.getPreOpenDirectories();
+
 			this.virtualRootFileSystem =
 				this.options.rootFileSystem.getVirtualRootFileSystem();
 
 			for (const entry of preOpens) {
 				this.preOpenDirectories.set(entry[0], entry[1]);
 			}
+
 			for (const device of devices) {
 				this.localDeviceDrivers.add(device);
 			}
 		}
+
 		const args: undefined | string[] =
 			this.options.args !== undefined ? [] : undefined;
 
@@ -306,8 +348,10 @@ export abstract class WasiProcess {
 				if (!vsc_uri.endsWith(path.sep)) {
 					vsc_uri += path.sep;
 				}
+
 				uriToMountPoint.push([vsc_uri, mountPoint]);
 			}
+
 			for (const arg of this.options.args) {
 				if (typeof arg === "string") {
 					args.push(arg);
@@ -324,11 +368,13 @@ export abstract class WasiProcess {
 									arg_str.substring(uri.length),
 								),
 							);
+
 							mapped = true;
 
 							break;
 						}
 					}
+
 					if (!mapped) {
 						throw new Error(
 							`Could not map argument ${arg_str} to a mount point.`,
@@ -347,12 +393,17 @@ export abstract class WasiProcess {
 			{ in: con, out: con, err: con },
 			this.options.stdio,
 		);
+
 		await this.handleConsole(stdio);
+
 		await this.handleTerminal(stdio);
+
 		await this.handleFiles(stdio);
+
 		await this.handlePipes(stdio);
 
 		const noArgsOptions = Object.assign({}, this.options);
+
 		delete noArgsOptions.args;
 
 		const options: EnvironmentOptions = Object.assign({}, noArgsOptions, {
@@ -365,10 +416,13 @@ export abstract class WasiProcess {
 			this.preOpenDirectories.entries(),
 			options,
 		);
+
 		this.processService = {
 			proc_exit: async (_memory, exitCode: exitcode) => {
 				this._state = "exiting";
+
 				await this.procExit();
+
 				this.resolveRunPromise(exitCode);
 
 				return Promise.resolve(Errno.success);
@@ -397,6 +451,7 @@ export abstract class WasiProcess {
 						),
 						this.processService,
 					);
+
 					await this.startThread(wasiService, tid, start_args);
 
 					return Promise.resolve(tid);
@@ -405,6 +460,7 @@ export abstract class WasiProcess {
 				}
 			},
 		};
+
 		this._state = "initialized";
 	}
 
@@ -412,6 +468,7 @@ export abstract class WasiProcess {
 		if (this._state !== "initialized") {
 			throw new Error("WasiProcess is not initialized");
 		}
+
 		return new Promise<number>(async (resolve, reject) => {
 			this.resolveCallback = resolve;
 
@@ -430,7 +487,9 @@ export abstract class WasiProcess {
 				),
 				this.processService,
 			);
+
 			this.startMain(wasiService).catch(reject);
+
 			this._state = "running";
 		}).then((exitCode) => {
 			this._state = "exited";
@@ -446,14 +505,19 @@ export abstract class WasiProcess {
 	protected async destroyStreams(): Promise<void> {
 		if (this._stdin !== undefined) {
 			await this._stdin.destroy();
+
 			this._stdin = undefined;
 		}
+
 		if (this._stdout !== undefined) {
 			await this._stdout.destroy();
+
 			this._stdout = undefined;
 		}
+
 		if (this._stderr !== undefined) {
 			await this._stderr.destroy();
+
 			this._stderr = undefined;
 		}
 	}
@@ -504,6 +568,7 @@ export abstract class WasiProcess {
 			this.localDeviceDrivers,
 			{ kind: "vscodeFileSystem", uri: vscode_fs, mountPoint },
 		);
+
 		this.preOpenDirectories.set(mountPoint, fs);
 	}
 
@@ -513,11 +578,13 @@ export abstract class WasiProcess {
 				WasiKernel.console.createStdioFileDescriptor(0),
 			);
 		}
+
 		if (stdio.out.kind === "console") {
 			this.fileDescriptors.add(
 				WasiKernel.console.createStdioFileDescriptor(1),
 			);
 		}
+
 		if (stdio.out.kind === "console") {
 			this.fileDescriptors.add(
 				WasiKernel.console.createStdioFileDescriptor(2),
@@ -537,6 +604,7 @@ export abstract class WasiProcess {
 				).createStdioFileDescriptor(0),
 			);
 		}
+
 		if (stdio.out.kind === "terminal") {
 			this.fileDescriptors.add(
 				this.getTerminalDevice(
@@ -545,6 +613,7 @@ export abstract class WasiProcess {
 				).createStdioFileDescriptor(1),
 			);
 		}
+
 		if (stdio.err.kind === "terminal") {
 			this.fileDescriptors.add(
 				this.getTerminalDevice(
@@ -563,9 +632,12 @@ export abstract class WasiProcess {
 
 		if (result === undefined) {
 			result = tdd.create(WasiKernel.nextDeviceId(), terminal);
+
 			devices.set(terminal, result);
+
 			this.localDeviceDrivers.add(result);
 		}
+
 		return result;
 	}
 
@@ -573,9 +645,11 @@ export abstract class WasiProcess {
 		if (stdio.in.kind === "file") {
 			await this.handleFileDescriptor(stdio.in, 0);
 		}
+
 		if (stdio.out.kind === "file") {
 			await this.handleFileDescriptor(stdio.out, 1);
 		}
+
 		if (stdio.err.kind === "file") {
 			await this.handleFileDescriptor(stdio.err, 2);
 		}
@@ -594,6 +668,7 @@ export abstract class WasiProcess {
 				entry[0] = mountPoint + "/";
 			}
 		}
+
 		preOpened.sort((a, b) => b[0].length - a[0].length);
 
 		for (const preOpenEntry of preOpened) {
@@ -610,6 +685,7 @@ export abstract class WasiProcess {
 					descriptor.openFlags,
 					fd,
 				);
+
 				this.fileDescriptors.add(fileDescriptor);
 
 				break;
@@ -623,14 +699,17 @@ export abstract class WasiProcess {
 				(stdio.in.pipe as WritableStream) ??
 				new WritableStream(this.options.encoding);
 		}
+
 		if (stdio.out.kind === "pipeOut") {
 			this._stdout =
 				(stdio.out.pipe as ReadableStream) ?? new ReadableStream();
 		}
+
 		if (stdio.err.kind === "pipeOut") {
 			this._stderr =
 				(stdio.err.pipe as ReadableStream) ?? new ReadableStream();
 		}
+
 		if (
 			this._stdin === undefined &&
 			this._stdout === undefined &&
@@ -638,6 +717,7 @@ export abstract class WasiProcess {
 		) {
 			return;
 		}
+
 		const pipeDevice = pdd.create(
 			WasiKernel.nextDeviceId(),
 			this._stdin as WritableStream | undefined,
@@ -648,12 +728,15 @@ export abstract class WasiProcess {
 		if (this._stdin !== undefined) {
 			this.fileDescriptors.add(pipeDevice.createStdioFileDescriptor(0));
 		}
+
 		if (this._stdout !== undefined) {
 			this.fileDescriptors.add(pipeDevice.createStdioFileDescriptor(1));
 		}
+
 		if (this._stderr !== undefined) {
 			this.fileDescriptors.add(pipeDevice.createStdioFileDescriptor(2));
 		}
+
 		this.localDeviceDrivers.add(pipeDevice);
 	}
 }

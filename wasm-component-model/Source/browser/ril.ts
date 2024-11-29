@@ -75,6 +75,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			if (port === undefined) {
 				port = self;
 			}
+
 			if (
 				!(port instanceof MessagePort) &&
 				!(port instanceof DedicatedWorkerGlobalScope)
@@ -83,12 +84,14 @@ const _ril: RIL = Object.freeze<RIL>({
 					`Expected MessagePort or DedicatedWorkerGlobalScope`,
 				);
 			}
+
 			return new connection.WorkerConnection(port, world, timeout);
 		},
 		async createMain(port: unknown): Promise<MainConnection> {
 			if (!(port instanceof MessagePort) && !(port instanceof Worker)) {
 				throw new Error(`Expected MessagePort or Worker`);
 			}
+
 			return new connection.MainConnection(port);
 		},
 	}),

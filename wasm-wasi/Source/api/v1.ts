@@ -236,7 +236,9 @@ export type OpenFlags = number;
  */
 export type StdioFileDescriptor = {
 	kind: "file";
+
 	path: string;
+
 	openFlags?: OpenFlags;
 };
 
@@ -245,6 +247,7 @@ export type StdioFileDescriptor = {
  */
 export type StdioTerminalDescriptor = {
 	kind: "terminal";
+
 	terminal: WasmPseudoterminal;
 };
 
@@ -254,6 +257,7 @@ export type StdioTerminalDescriptor = {
  */
 export type StdioPipeInDescriptor = {
 	kind: "pipeIn";
+
 	pipe?: Writable;
 };
 
@@ -263,6 +267,7 @@ export type StdioPipeInDescriptor = {
  */
 export type StdioPipeOutDescriptor = {
 	kind: "pipeOut";
+
 	pipe?: Readable;
 };
 
@@ -278,11 +283,13 @@ export type StdioConsoleDescriptor = {
  */
 export type Stdio = {
 	in?: StdioFileDescriptor | StdioTerminalDescriptor | StdioPipeInDescriptor;
+
 	out?:
 		| StdioFileDescriptor
 		| StdioTerminalDescriptor
 		| StdioConsoleDescriptor
 		| StdioPipeOutDescriptor;
+
 	err?:
 		| StdioFileDescriptor
 		| StdioTerminalDescriptor
@@ -304,8 +311,11 @@ export type WorkspaceFolderDescriptor = {
  */
 export type ExtensionLocationDescriptor = {
 	kind: "extensionLocation";
+
 	extension: ExtensionContext | Extension<any>;
+
 	path: string;
+
 	mountPoint: string;
 };
 
@@ -315,7 +325,9 @@ export type ExtensionLocationDescriptor = {
  */
 export type VSCodeFileSystemDescriptor = {
 	kind: "vscodeFileSystem";
+
 	uri: Uri;
+
 	mountPoint: string;
 };
 
@@ -325,7 +337,9 @@ export type VSCodeFileSystemDescriptor = {
  */
 export type MemoryFileSystemDescriptor = {
 	kind: "memoryFileSystem";
+
 	fileSystem: MemoryFileSystem;
+
 	mountPoint: string;
 };
 
@@ -445,13 +459,16 @@ export enum Filetype {
  */
 export interface MemoryFileSystem {
 	createDirectory(path: string): void;
+
 	createFile(
 		path: string,
 		content:
 			| Uint8Array
 			| { size: bigint; reader: () => Promise<Uint8Array> },
 	): void;
+
 	createReadable(path: string): Readable;
+
 	createWritable(path: string, encoding?: "utf-8"): Writable;
 }
 
@@ -573,11 +590,13 @@ export namespace Wasm {
 		if ($api === null) {
 			throw new Error(`Unable to activate WASM WASI Core extension`);
 		}
+
 		if ($api === undefined) {
 			throw new Error(
 				`Wasm API not yet loaded. Call await Wasm.load() first.`,
 			);
 		}
+
 		return $api;
 	}
 
@@ -585,9 +604,11 @@ export namespace Wasm {
 		if ($promise === null) {
 			throw new Error(`Unable to activate WASM WASI Core extension`);
 		}
+
 		if ($promise !== undefined) {
 			return $promise;
 		}
+
 		const wasiCoreExt = Extensions.getExtension<APILoader>(
 			"ms-vscode.wasm-wasi-core",
 		);
@@ -613,15 +634,18 @@ export namespace Wasm {
 
 				if (isAPILoader(loader)) {
 					api = loader.load(1);
+
 					extVersion = semverParse(api.versions.extension);
 				} else if (isWasmLiteral(loader)) {
 					api = ensureVersions(loader, 1);
+
 					extVersion = semverParse(api.versions.extension);
 				} else {
 					throw new Error(
 						`Invalid WASM WASI Core extension API. Expected to find a 'load' function or a WASM namespace literal.`,
 					);
 				}
+
 				if (extVersion === null) {
 					throw new Error(
 						`Unable to parse WASM WASI Core extension version: ${api.versions.extension}`,
@@ -671,6 +695,7 @@ export namespace Wasm {
 	function ensureVersions(wasm: Wasm, api: number): Wasm {
 		type InternalWasm = {
 			version: string;
+
 			versions: { api: number; extension: string };
 		};
 
@@ -682,8 +707,10 @@ export namespace Wasm {
 					`Invalid WASM WASI Core API. Expected to find a 'version' property.`,
 				);
 			}
+
 			value.versions = { api: api, extension: value.version };
 		}
+
 		return wasm;
 	}
 }

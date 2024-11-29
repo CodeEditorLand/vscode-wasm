@@ -17,11 +17,13 @@ export async function activate(context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const channel = window.createOutputChannel("Python WASM Trace", {
 			log: true,
 		});
+
 		channel.info(`Running ${name}...`);
 
 		const options: ProcessOptions = {
@@ -58,6 +60,7 @@ export async function activate(context: ExtensionContext) {
 			const module = await WebAssembly.compile(bits);
 
 			const process = await wasm.createProcess("python", module, options);
+
 			await process.run();
 		} catch (err: any) {
 			void pty.write(`Launching python failed: ${err.toString()}`);
@@ -70,6 +73,7 @@ export async function activate(context: ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
+
 		const document = editor.document;
 
 		if (document.languageId !== "python") {
@@ -78,9 +82,11 @@ export async function activate(context: ExtensionContext) {
 
 		await run(`Python File`, document.uri);
 	});
+
 	commands.registerCommand("testbed-python.runInteractive", async () => {
 		await run(`Python Repl`);
 	});
+
 	commands.registerCommand(
 		"testbed-python.webshell.python",
 		async (
@@ -118,6 +124,7 @@ export async function activate(context: ExtensionContext) {
 					args[i] = `${cwd}/${arg}`;
 				}
 			}
+
 			const options: ProcessOptions = {
 				stdio,
 				rootFileSystem,

@@ -17,12 +17,14 @@ export async function activate(
 ): Promise<void> {
 	// The channel for printing the result.
 	const channel = vscode.window.createOutputChannel("Calculator");
+
 	context.subscriptions.push(channel);
 
 	// The channel for printing the log.
 	const log = vscode.window.createOutputChannel("Calculator - Log", {
 		log: true,
 	});
+
 	context.subscriptions.push(log);
 
 	class ChannelImpl
@@ -31,15 +33,19 @@ export async function activate(
 	{
 		public static $resources: ResourceManager =
 			new ResourceManager.Default<ChannelImpl>();
+
 		public static $new(level: u32): Promise<ChannelImpl> {
 			return Promise.resolve(new ChannelImpl(level));
 		}
+
 		private readonly level: u32;
 
 		constructor(level: u32) {
 			super(ChannelImpl.$resources);
+
 			this.level = level;
 		}
+
 		send(msg: string): Promise<void> {
 			channel.appendLine(msg);
 
@@ -77,6 +83,7 @@ export async function activate(
 	);
 
 	const api = await calculator._.bind(service, module, worker);
+
 	vscode.commands.registerCommand(
 		"testbed-component-model-async.run",
 		async () => {

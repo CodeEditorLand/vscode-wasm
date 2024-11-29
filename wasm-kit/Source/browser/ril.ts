@@ -92,6 +92,7 @@ const _ril: RIL = Object.freeze<RIL>(
 						`Expected MessagePort, Worker or DedicatedWorkerGlobalScope.`,
 					);
 				}
+
 				return new AnyConnection(
 					port,
 				) as commonConnection.AnyConnection;

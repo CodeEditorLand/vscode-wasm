@@ -5,11 +5,13 @@
 
 type _MessageType = {
 	method: string;
+
 	params?: null | object;
 };
 
 type _RequestType = _MessageType & {
 	result: null | undefined | void | any;
+
 	error?: undefined;
 };
 
@@ -17,6 +19,7 @@ type _NotificationType = _MessageType;
 
 interface AbstractMessage {
 	method: string;
+
 	params?: null | undefined | object;
 }
 
@@ -58,7 +61,9 @@ type NotificationHandler = (params: any) => void;
 
 interface _Response {
 	id: number;
+
 	result?: any;
+
 	error?: any;
 }
 
@@ -79,7 +84,9 @@ type _Message = _Request | _Notification | _Response;
 
 type ResponsePromise = {
 	method: string;
+
 	resolve: (response: any) => void;
+
 	reject: (error: any) => void;
 };
 
@@ -211,14 +218,20 @@ export abstract class BaseMessageConnection<
 	TLI = unknown,
 > {
 	private id: number;
+
 	private readonly responsePromises: Map<number, ResponsePromise>;
+
 	private readonly requestHandlers: Map<string, RequestHandler>;
+
 	private readonly notificationHandlers: Map<string, NotificationHandler>;
 
 	constructor() {
 		this.id = 1;
+
 		this.responsePromises = new Map();
+
 		this.requestHandlers = new Map();
+
 		this.notificationHandlers = new Map();
 	}
 
@@ -233,6 +246,7 @@ export abstract class BaseMessageConnection<
 		if (method === undefined) {
 			return Promise.resolve();
 		}
+
 		return new Promise((resolve, reject) => {
 			const id = this.id++;
 
@@ -241,11 +255,13 @@ export abstract class BaseMessageConnection<
 			if (params !== undefined) {
 				request.params = params;
 			}
+
 			this.responsePromises.set(id, {
 				resolve,
 				reject,
 				method: request.method,
 			});
+
 			this.postMessage(request, transferList);
 		});
 	}
@@ -257,6 +273,7 @@ export abstract class BaseMessageConnection<
 		if (method === undefined || handler === undefined) {
 			return;
 		}
+
 		this.requestHandlers.set(method, handler);
 	}
 
@@ -276,11 +293,13 @@ export abstract class BaseMessageConnection<
 		if (method === undefined) {
 			return;
 		}
+
 		const notification: _Notification = { method };
 
 		if (params !== undefined) {
 			notification.params = params;
 		}
+
 		this.postMessage(notification, transferList);
 	}
 
@@ -295,6 +314,7 @@ export abstract class BaseMessageConnection<
 		if (method === undefined || handler === undefined) {
 			return;
 		}
+
 		this.notificationHandlers.set(method, handler);
 	}
 
@@ -314,6 +334,7 @@ export abstract class BaseMessageConnection<
 			if (handler !== undefined) {
 				try {
 					const result = await handler(message.params);
+
 					this.sendResultResponse(id, result);
 				} catch (error) {
 					this.sendErrorResponse(id, error);
@@ -357,6 +378,7 @@ export abstract class BaseMessageConnection<
 			id,
 			result: result === undefined ? null : result,
 		};
+
 		this.postMessage(response);
 	}
 
@@ -370,6 +392,7 @@ export abstract class BaseMessageConnection<
 						? error.message
 						: error,
 		};
+
 		this.postMessage(response);
 	}
 }

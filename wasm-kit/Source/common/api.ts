@@ -28,6 +28,7 @@ export namespace WorkerMessages {
 
 		export type ConnectionType = _Client.ConnectionType;
 	}
+
 	export namespace Service {
 		export type Notifications = _Service.Notifications;
 

@@ -20,6 +20,7 @@ export async function activate(context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		// Load the WASM module. It is stored alongside the extension JS code.

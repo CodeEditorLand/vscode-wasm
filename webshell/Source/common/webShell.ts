@@ -25,13 +25,17 @@ const paths = RAL().path;
 
 type CommandLine = {
 	command: string;
+
 	args: string[];
 };
 
 export class WebShell {
 	private static contributions: WebShellContributions;
+
 	private static commandHandlers: Map<string, CommandHandler>;
+
 	private static rootFs: RootFileSystem;
+
 	private static userBin: MemoryFileSystem;
 
 	public static async initialize(
@@ -39,7 +43,9 @@ export class WebShell {
 		contributions: WebShellContributions,
 	): Promise<void> {
 		this.contributions = contributions;
+
 		this.commandHandlers = new Map<string, CommandHandler>();
+
 		this.userBin = await wasm.createMemoryFileSystem();
 
 		const fsContributions: ExtensionLocationDescriptor[] =
@@ -59,15 +65,18 @@ export class WebShell {
 			},
 			...fsContributions,
 		];
+
 		this.rootFs = await wasm.createRootFileSystem(mountPoints);
 
 		for (const contribution of this.contributions.getCommandMountPoints()) {
 			this.registerCommandContribution(contribution);
 		}
+
 		this.contributions.onChanged((event) => {
 			for (const add of event.commands.added) {
 				this.registerCommandContribution(add);
 			}
+
 			for (const remove of event.commands.removed) {
 				this.unregisterCommandContribution(remove);
 			}
@@ -110,6 +119,7 @@ export class WebShell {
 		contribution: CommandMountPoint,
 	): void {
 		const basename = paths.basename(contribution.mountPoint);
+
 		this.unregisterCommandHandler(basename);
 	}
 
@@ -123,6 +133,7 @@ export class WebShell {
 				throw new Error("No permissions");
 			},
 		});
+
 		this.commandHandlers.set(command, handler);
 	}
 
@@ -131,21 +142,30 @@ export class WebShell {
 	}
 
 	private readonly wasm: Wasm;
+
 	private readonly pty: WasmPseudoterminal;
+
 	private readonly terminal: Terminal;
+
 	private readonly prompt;
+
 	private cwd: string;
 
 	constructor(wasm: Wasm, cwd: string, prompt: string = "$ ") {
 		this.wasm = wasm;
+
 		this.prompt = prompt;
+
 		this.pty = this.wasm.createPseudoterminal({ history: true });
+
 		this.terminal = window.createTerminal({
 			name: "wesh",
 			pty: this.pty,
 			isTransient: true,
 		});
+
 		this.terminal.show();
+
 		this.cwd = cwd;
 	}
 
@@ -154,12 +174,14 @@ export class WebShell {
 			void this.pty.prompt(this.getPrompt());
 
 			const line = await this.pty.readline();
+
 			await this.pty.write(vscSeq("C")); // Command executed
 			const { command, args } = this.parseCommand(line);
 
 			if (command.trim().length === 0) {
 				continue; // no-op
 			}
+
 			let exitCode: number;
 
 			switch (command) {
@@ -170,6 +192,7 @@ export class WebShell {
 
 				case "pwd":
 					void this.pty.write(`${this.cwd}\r\n`);
+
 					exitCode = 0;
 
 					break;
@@ -193,19 +216,24 @@ export class WebShell {
 							);
 						} catch (error: any) {
 							const message = error.message ?? error.toString();
+
 							void this.pty.write(
 								`-wesh: executing ${command} failed: ${message}\r\n`,
 							);
+
 							exitCode = 1;
 						}
 					} else {
 						void this.pty.write(
 							`-wesh: ${command}: command not found\r\n`,
 						);
+
 						exitCode = 1;
 					}
+
 					break;
 			}
+
 			await this.pty.write(vscSeq(`E;${line}`)); // Command line
 			await this.pty.write(vscSeq(`D;${exitCode}`)); // Command finished
 		}
@@ -217,6 +245,7 @@ export class WebShell {
 
 			return 1;
 		}
+
 		const path = RAL().path;
 
 		let target = args[0];
@@ -224,6 +253,7 @@ export class WebShell {
 		if (!path.isAbsolute(target)) {
 			target = path.join(this.cwd, target);
 		}
+
 		try {
 			const stat = await WebShell.rootFs.stat(target);
 
@@ -235,6 +265,7 @@ export class WebShell {
 		} catch (error) {
 			// Do nothing
 		}
+
 		await this.pty.write(
 			`-wesh: cd: ${target}: No such file or directory\r\n`,
 		);
@@ -246,6 +277,7 @@ export class WebShell {
 		if (line.endsWith("\n")) {
 			line = line.slice(0, -1);
 		}
+
 		const items = line.split(" ");
 
 		return {

@@ -14,6 +14,7 @@ export async function activate(context: ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
+
 		const document = editor.document;
 
 		if (document.languageId !== "php") {
@@ -27,6 +28,7 @@ export async function activate(context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const options: ProcessOptions = {
@@ -46,6 +48,7 @@ export async function activate(context: ExtensionContext) {
 		const module = await WebAssembly.compile(bits);
 
 		const process = await wasm.createProcess("php-cgi", module, options);
+
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});

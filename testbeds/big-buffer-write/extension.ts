@@ -56,9 +56,11 @@ export async function activate(context: ExtensionContext) {
 				module,
 				options,
 			);
+
 			process.stderr?.onData((buf) => {
 				out.error(`stderr: ${conv.decode(buf)}`);
 			});
+
 			process.stdout?.onData((buf) => {
 				out.info(`// stdout received ${buf.byteLength} bytes`);
 
@@ -68,11 +70,13 @@ export async function activate(context: ExtensionContext) {
 			});
 
 			const exitCode = await process.run();
+
 			out.info(`process terminated with exit code ${exitCode}`);
 		} catch (err: any) {
 			out.error(err.message);
 		}
 	});
+
 	commands.registerCommand("big-buffer-write.run", async () => {
 		const items = [20, 16383, 16384, 16385, 32767];
 
@@ -87,6 +91,7 @@ export async function activate(context: ExtensionContext) {
 				title: "buffer size",
 			},
 		);
+
 		await commands.executeCommand("big-buffer-write.run-full", qp?.value);
 	});
 }

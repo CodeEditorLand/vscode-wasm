@@ -15,9 +15,12 @@ export abstract class BaseWorker {
 
 	constructor(connection: BaseWorker.ConnectionType) {
 		this.connection = connection;
+
 		this.connection.onAsyncCall("initialize", async (params) => {
 			const memory = await SharedMemory.createFrom(params.sharedMemory);
+
 			this.connection.initializeSyncCall(memory);
+
 			this.initialize(memory);
 		});
 	}
@@ -39,21 +42,27 @@ export abstract class MultiConnectionWorker<C> extends BaseWorker {
 
 	constructor(connection: BaseWorker.ConnectionType) {
 		super(connection);
+
 		this.connections = new Map();
+
 		connection.onAsyncCall("connection/create", async (params) => {
 			const connection = await this.createConnection(params.port);
+
 			this.connections.set(params.id, connection);
 		});
+
 		connection.onAsyncCall("connection/drop", async (params) => {
 			const connection = this.connections.get(params.id);
 
 			if (connection !== undefined) {
 				this.connections.delete(params.id);
+
 				await this.dropConnection(connection);
 			}
 		});
 	}
 
 	protected abstract createConnection(port: ConnectionPort): Promise<C>;
+
 	protected abstract dropConnection(connection: C): Promise<void>;
 }

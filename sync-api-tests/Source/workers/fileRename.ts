@@ -17,5 +17,6 @@ runSingle((client, folder) => {
 	const newName = folder.uri.with({
 		path: path.join(folder.uri.path, "testNew.txt"),
 	});
+
 	client.vscode.workspace.fileSystem.rename(oldName, newName);
 }).catch(console.error);

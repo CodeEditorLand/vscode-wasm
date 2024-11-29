@@ -56,6 +56,7 @@ export async function activate(
 	const imports = test._.imports.create(service, wasmContext);
 
 	const instance = await WebAssembly.instantiate(module, imports);
+
 	wasmContext.initialize(new Memory.Default(instance.exports));
 
 	const api = test._.exports.bind(
@@ -67,10 +68,13 @@ export async function activate(
 		"testbed-component-model-performance.run",
 		() => {
 			let start = Date.now();
+
 			api.run();
+
 			console.log(`Executing from WASM took: ${Date.now() - start}ms`);
 
 			const testResource = service.window.createTestResource();
+
 			start = Date.now();
 
 			let result: number = 0;
@@ -78,6 +82,7 @@ export async function activate(
 			for (let i = 0; i < 100000; i++) {
 				result += testResource.call(i);
 			}
+
 			console.log(
 				`Executing from JS took: ${Date.now() - start}ms. Result: ${result}`,
 			);

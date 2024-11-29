@@ -9,6 +9,7 @@ import type { i32, ptr, u32 } from "@vscode/wasm-component-model";
 export namespace Types {
 	export type Operands = {
 		left: u32;
+
 		right: u32;
 	};
 
@@ -17,6 +18,7 @@ export namespace Types {
 
 		export type Add = {
 			readonly tag: typeof add;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -28,6 +30,7 @@ export namespace Types {
 
 		export type Sub = {
 			readonly tag: typeof sub;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -39,6 +42,7 @@ export namespace Types {
 
 		export type Mul = {
 			readonly tag: typeof mul;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -50,6 +54,7 @@ export namespace Types {
 
 		export type Div = {
 			readonly tag: typeof div;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -60,39 +65,50 @@ export namespace Types {
 		export type _tt = typeof add | typeof sub | typeof mul | typeof div;
 
 		export type _vt = Operands | Operands | Operands | Operands;
+
 		type _common = Omit<VariantImpl, "tag" | "value">;
 
 		export function _ctor(t: _tt, v: _vt): Operation {
 			return new VariantImpl(t, v) as Operation;
 		}
+
 		class VariantImpl {
 			private readonly _tag: _tt;
+
 			private readonly _value: _vt;
 
 			constructor(t: _tt, value: _vt) {
 				this._tag = t;
+
 				this._value = value;
 			}
+
 			get tag(): _tt {
 				return this._tag;
 			}
+
 			get value(): _vt {
 				return this._value;
 			}
+
 			isAdd(): this is Add {
 				return this._tag === Operation.add;
 			}
+
 			isSub(): this is Sub {
 				return this._tag === Operation.sub;
 			}
+
 			isMul(): this is Mul {
 				return this._tag === Operation.mul;
 			}
+
 			isDiv(): this is Div {
 				return this._tag === Operation.div;
 			}
 		}
 	}
+
 	export type Operation =
 		| Operation.Add
 		| Operation.Sub
@@ -111,17 +127,21 @@ export namespace calculator {
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
 	}
+
 	export namespace imports {
 		export type Promisify<T> = $wcm.$imports.Promisify<T>;
 	}
+
 	export type Exports = {
 		calc: (o: Operation) => u32;
+
 		msg: () => string;
 	};
 
 	export namespace Exports {
 		export type Promisified = $wcm.$exports.Promisify<Exports>;
 	}
+
 	export namespace exports {
 		export type Promisify<T> = $wcm.$exports.Promisify<T>;
 	}
@@ -170,6 +190,7 @@ export namespace calculator.$ {
 			calculator.Imports["generate"]
 		>("generate", [], $wcm.wstring);
 	}
+
 	export namespace exports {
 		export const calc = new $wcm.FunctionType<calculator.Exports["calc"]>(
 			"calc",
@@ -209,6 +230,7 @@ export namespace calculator._ {
 		): Imports {
 			return $wcm.$imports.create<Imports>(_, service, context);
 		}
+
 		export function loop(
 			service: calculator.Imports,
 			context: $wcm.WasmContext,
@@ -216,6 +238,7 @@ export namespace calculator._ {
 			return $wcm.$imports.loop<calculator.Imports>(_, service, context);
 		}
 	}
+
 	export type Imports = {
 		"$root": $Root;
 	};
@@ -233,6 +256,7 @@ export namespace calculator._ {
 			return $wcm.$exports.bind<calculator.Exports>(_, exports, context);
 		}
 	}
+
 	export type Exports = {
 		"calc": (
 			o_Operation_case: i32,

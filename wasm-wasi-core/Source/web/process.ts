@@ -25,7 +25,9 @@ export class BrowserServiceConnection extends ServiceConnection {
 		logChannel?: LogOutputChannel | undefined,
 	) {
 		super(wasiService, logChannel);
+
 		this.port = port;
+
 		this.port.onmessage = (event: MessageEvent<WorkerMessage>) => {
 			this.handleMessage(event.data).catch((error) =>
 				RAL().console.error(error),
@@ -44,13 +46,17 @@ export class BrowserServiceConnection extends ServiceConnection {
 
 export class BrowserWasiProcess extends WasiProcess {
 	private readonly baseUri: Uri;
+
 	private readonly module: Promise<WebAssembly.Module>;
 
 	private importsMemory: boolean | undefined;
+
 	private readonly memoryDescriptor: WebAssembly.MemoryDescriptor | undefined;
+
 	private memory: WebAssembly.Memory | undefined;
 
 	private mainWorker: Worker | undefined;
+
 	private threadWorkers: Map<u32, Worker>;
 
 	constructor(
@@ -61,8 +67,11 @@ export class BrowserWasiProcess extends WasiProcess {
 		options: ProcessOptions = {},
 	) {
 		super(programName, options);
+
 		this.baseUri = baseUri;
+
 		this.threadWorkers = new Map();
+
 		this.module =
 			module instanceof WebAssembly.Module
 				? Promise.resolve(module)
@@ -79,13 +88,17 @@ export class BrowserWasiProcess extends WasiProcess {
 		if (this.mainWorker !== undefined) {
 			this.mainWorker.terminate();
 		}
+
 		await this.cleanUpWorkers();
+
 		await this.destroyStreams();
+
 		await this.cleanupFileDescriptors();
 	}
 
 	public async terminate(): Promise<number> {
 		const result = 0;
+
 		await this.procExit();
 
 		// when terminated, web workers silently exit, and there are no events
@@ -101,6 +114,7 @@ export class BrowserWasiProcess extends WasiProcess {
 			this.baseUri,
 			"./dist/web/mainWorker.js",
 		).toString();
+
 		this.mainWorker = new Worker(filename);
 
 		const connection = new BrowserServiceConnection(
@@ -108,9 +122,11 @@ export class BrowserWasiProcess extends WasiProcess {
 			this.mainWorker,
 			this.options.trace,
 		);
+
 		await connection.workerReady();
 
 		const module = await this.module;
+
 		this.importsMemory = this.doesImportMemory(module);
 
 		if (this.importsMemory && this.memory === undefined) {
@@ -119,20 +135,26 @@ export class BrowserWasiProcess extends WasiProcess {
 					"Web assembly imports memory but no memory descriptor was provided.",
 				);
 			}
+
 			this.memory = new WebAssembly.Memory(this.memoryDescriptor);
 		}
+
 		const message: StartMainMessage = {
 			method: "startMain",
 			module: await this.module,
 			memory: this.memory,
 			trace: this.options.trace !== undefined,
 		};
+
 		connection.postMessage(message);
+
 		connection
 			.workerDone()
 			.then(async () => {
 				await this.cleanUpWorkers();
+
 				await this.cleanupFileDescriptors();
+
 				this.resolveRunPromise(0);
 			})
 			.catch((error) => {
@@ -150,11 +172,13 @@ export class BrowserWasiProcess extends WasiProcess {
 		if (this.mainWorker === undefined) {
 			throw new Error("Main worker not started");
 		}
+
 		if (!this.importsMemory || this.memory === undefined) {
 			throw new Error(
 				"Multi threaded applications need to import shared memory.",
 			);
 		}
+
 		const filename = Uri.joinPath(
 			this.baseUri,
 			"./dist/web/threadWorker.js",
@@ -167,6 +191,7 @@ export class BrowserWasiProcess extends WasiProcess {
 			worker,
 			this.options.trace,
 		);
+
 		await connection.workerReady();
 
 		const message: StartThreadMessage = {
@@ -177,7 +202,9 @@ export class BrowserWasiProcess extends WasiProcess {
 			start_arg,
 			trace: this.options.trace !== undefined,
 		};
+
 		connection.postMessage(message);
+
 		this.threadWorkers.set(tid, worker);
 
 		return Promise.resolve();
@@ -187,6 +214,7 @@ export class BrowserWasiProcess extends WasiProcess {
 		for (const worker of this.threadWorkers.values()) {
 			await worker.terminate();
 		}
+
 		this.threadWorkers.clear();
 	}
 
@@ -195,6 +223,7 @@ export class BrowserWasiProcess extends WasiProcess {
 
 		if (worker !== undefined) {
 			this.threadWorkers.delete(tid);
+
 			worker.terminate();
 		}
 	}
@@ -207,6 +236,7 @@ export class BrowserWasiProcess extends WasiProcess {
 				return true;
 			}
 		}
+
 		return false;
 	}
 }

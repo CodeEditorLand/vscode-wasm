@@ -41,13 +41,17 @@ import {
 
 interface MemoryStruct<T> {
 	size: number;
+
 	create: (memory: DataView, ptr: ptr) => T;
 }
 
 class StructArray<T> {
 	private readonly memory: DataView;
+
 	private readonly ptr: ptr;
+
 	private readonly len: number;
+
 	private readonly struct: MemoryStruct<T>;
 
 	constructor(
@@ -57,8 +61,11 @@ class StructArray<T> {
 		struct: MemoryStruct<T>,
 	) {
 		this.memory = memory;
+
 		this.ptr = ptr;
+
 		this.len = len;
+
 		this.struct = struct;
 	}
 
@@ -95,6 +102,7 @@ class StructArray<T> {
 		if (index < 0 || index >= this.len) {
 			throw new WasiError(Errno.inval);
 		}
+
 		return this.struct.create(
 			this.memory,
 			this.ptr + index * this.struct.size,
@@ -104,12 +112,16 @@ class StructArray<T> {
 
 class PointerArray {
 	private readonly memory: DataView;
+
 	private readonly ptr: ptr;
+
 	private readonly len: number;
 
 	constructor(memory: DataView, ptr: ptr, len: number) {
 		this.memory = memory;
+
 		this.ptr = ptr;
+
 		this.len = len;
 	}
 
@@ -117,6 +129,7 @@ class PointerArray {
 		if (index < 0 || index >= this.len) {
 			throw new WasiError(Errno.inval);
 		}
+
 		return this.memory.getUint32(this.ptr + index * 4, true);
 	}
 
@@ -124,6 +137,7 @@ class PointerArray {
 		if (index < 0 || index >= this.len) {
 			throw new WasiError(Errno.inval);
 		}
+
 		this.memory.setUint32(this.ptr + index * 4, value, true);
 	}
 
@@ -803,6 +817,7 @@ export class WasiError extends Error {
 
 	constructor(errno: errno) {
 		super();
+
 		this.errno = errno;
 	}
 }
@@ -993,12 +1008,15 @@ export namespace Rights {
 		if (fdflags === Fdflags.none) {
 			return true;
 		}
+
 		if (Fdflags.dsyncOn(fdflags)) {
 			return contains(rights, Rights.fd_datasync | Rights.fd_sync);
 		}
+
 		if (Fdflags.rsyncOn(fdflags)) {
 			return contains(rights, Rights.fd_sync);
 		}
+
 		return true;
 	}
 
@@ -1012,12 +1030,15 @@ export namespace Rights {
 		if (oflags === Oflags.none) {
 			return true;
 		}
+
 		if (Oflags.creatOn(oflags)) {
 			return contains(rights, Rights.path_create_file);
 		}
+
 		if (Oflags.truncOn(oflags)) {
 			return contains(rights, Rights.path_filestat_set_size);
 		}
+
 		return true;
 	}
 
@@ -1081,96 +1102,127 @@ export namespace Rights {
 		if (contains(value, Rights.fd_datasync)) {
 			parts.push("fd_datasync");
 		}
+
 		if (contains(value, Rights.fd_read)) {
 			parts.push("fd_read");
 		}
+
 		if (contains(value, Rights.fd_seek)) {
 			parts.push("fd_seek");
 		}
+
 		if (contains(value, Rights.fd_fdstat_set_flags)) {
 			parts.push("fd_fdstat_set_flags");
 		}
+
 		if (contains(value, Rights.fd_sync)) {
 			parts.push("fd_sync");
 		}
+
 		if (contains(value, Rights.fd_tell)) {
 			parts.push("fd_tell");
 		}
+
 		if (contains(value, Rights.fd_write)) {
 			parts.push("fd_write");
 		}
+
 		if (contains(value, Rights.fd_advise)) {
 			parts.push("fd_advise");
 		}
+
 		if (contains(value, Rights.fd_allocate)) {
 			parts.push("fd_allocate");
 		}
+
 		if (contains(value, Rights.path_create_directory)) {
 			parts.push("path_create_directory");
 		}
+
 		if (contains(value, Rights.path_create_file)) {
 			parts.push("path_create_file");
 		}
+
 		if (contains(value, Rights.path_link_source)) {
 			parts.push("path_link_source");
 		}
+
 		if (contains(value, Rights.path_link_target)) {
 			parts.push("path_link_target");
 		}
+
 		if (contains(value, Rights.path_open)) {
 			parts.push("path_open");
 		}
+
 		if (contains(value, Rights.fd_readdir)) {
 			parts.push("fd_readdir");
 		}
+
 		if (contains(value, Rights.path_readlink)) {
 			parts.push("path_readlink");
 		}
+
 		if (contains(value, Rights.path_rename_source)) {
 			parts.push("path_rename_source");
 		}
+
 		if (contains(value, Rights.path_rename_target)) {
 			parts.push("path_rename_target");
 		}
+
 		if (contains(value, Rights.path_filestat_get)) {
 			parts.push("path_filestat_get");
 		}
+
 		if (contains(value, Rights.path_filestat_set_size)) {
 			parts.push("path_filestat_set_size");
 		}
+
 		if (contains(value, Rights.path_filestat_set_times)) {
 			parts.push("path_filestat_set_times");
 		}
+
 		if (contains(value, Rights.fd_filestat_get)) {
 			parts.push("fd_filestat_get");
 		}
+
 		if (contains(value, Rights.fd_filestat_set_size)) {
 			parts.push("fd_filestat_set_size");
 		}
+
 		if (contains(value, Rights.fd_filestat_set_times)) {
 			parts.push("fd_filestat_set_times");
 		}
+
 		if (contains(value, Rights.path_symlink)) {
 			parts.push("path_symlink");
 		}
+
 		if (contains(value, Rights.path_remove_directory)) {
 			parts.push("path_remove_directory");
 		}
+
 		if (contains(value, Rights.path_unlink_file)) {
 			parts.push("path_unlink_file");
 		}
+
 		if (contains(value, Rights.poll_fd_readwrite)) {
 			parts.push("poll_fd_readwrite");
 		}
+
 		if (contains(value, Rights.sock_shutdown)) {
 			parts.push("sock_shutdown");
 		}
+
 		if (contains(value, Rights.sock_accept)) {
 			parts.push("sock_accept");
 		}
+
 		if (parts.length === 0) {
 			return "none";
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -1246,21 +1298,27 @@ export namespace Fdflags {
 		if (appendOn(value)) {
 			parts.push("append");
 		}
+
 		if (dsyncOn(value)) {
 			parts.push("dsync");
 		}
+
 		if (nonblockOn(value)) {
 			parts.push("nonblock");
 		}
+
 		if (rsyncOn(value)) {
 			parts.push("rsync");
 		}
+
 		if (syncOn(value)) {
 			parts.push("sync");
 		}
+
 		if (parts.length === 0) {
 			return "none";
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -1292,9 +1350,11 @@ export namespace Lookupflags {
 		if (symlink_followOn(value)) {
 			parts.push("symlink_follow");
 		}
+
 		if (parts.length === 0) {
 			return "none";
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -1318,6 +1378,7 @@ export namespace Oflags {
 	export function creatOn(value: oflags): boolean {
 		return (value & creat) !== 0;
 	}
+
 	export function creatOff(value: oflags): boolean {
 		return (value & creat) === 0;
 	}
@@ -1355,18 +1416,23 @@ export namespace Oflags {
 		if (creatOn(value)) {
 			parts.push("creat");
 		}
+
 		if (directoryOn(value)) {
 			parts.push("directory");
 		}
+
 		if (exclOn(value)) {
 			parts.push("excl");
 		}
+
 		if (truncOn(value)) {
 			parts.push("trunc");
 		}
+
 		if (parts.length === 0) {
 			parts.push("none");
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -1969,15 +2035,19 @@ export namespace Fstflags {
 		if (atimOn(value)) {
 			parts.push("atim");
 		}
+
 		if (atim_nowOn(value)) {
 			parts.push("atim_now");
 		}
+
 		if (mtimOn(value)) {
 			parts.push("mtim");
 		}
+
 		if (mtim_nowOn(value)) {
 			parts.push("mtim_now");
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -2133,6 +2203,7 @@ export namespace Iovec {
 		).values()) {
 			dataSize += item.buf_len;
 		}
+
 		return {
 			memorySize: dataSize,
 			copy: (wasmMemory, from, transferMemory, to) => {
@@ -2141,6 +2212,7 @@ export namespace Iovec {
 						`IovecPtrParam needs to be used as an instance object`,
 					);
 				}
+
 				const forms = new StructArray<iovec>(
 					new DataView(wasmMemory),
 					from,
@@ -2163,17 +2235,21 @@ export namespace Iovec {
 					const fromIovec = forms.get(i);
 
 					const toIovec = tos.get(i);
+
 					toIovec.buf = bufferIndex;
+
 					toIovec.buf_len = fromIovec.buf_len;
 					// Iovecs are used to read data. So we don't need to copy anything into the
 					// transfer memory. We only need to copy the result back into the wasm memory
 					bufferIndex += toIovec.buf_len;
+
 					result.push({
 						from: toIovec.buf,
 						to: fromIovec.buf,
 						size: toIovec.buf_len,
 					});
 				}
+
 				return result;
 			},
 		};
@@ -2256,6 +2332,7 @@ export namespace Ciovec {
 		).values()) {
 			dataSize += item.buf_len;
 		}
+
 		return {
 			memorySize: dataSize,
 			copy: (wasmMemory, from, transferMemory, to) => {
@@ -2264,6 +2341,7 @@ export namespace Ciovec {
 						`CiovecPtrParam needs to be used as an instance object`,
 					);
 				}
+
 				const forms = new StructArray<ciovec>(
 					new DataView(wasmMemory),
 					from,
@@ -2286,8 +2364,11 @@ export namespace Ciovec {
 					const fromIovec = forms.get(i);
 
 					const toIovec = tos.get(i);
+
 					toIovec.buf = bufferIndex;
+
 					toIovec.buf_len = fromIovec.buf_len;
+
 					transferBuffer.set(
 						new Uint8Array(
 							wasmMemory,
@@ -2296,6 +2377,7 @@ export namespace Ciovec {
 						),
 						toIovec.buf,
 					);
+
 					bufferIndex += toIovec.buf_len;
 				}
 				// Ciovec is used to write data to disk. So no need to copy anything
@@ -2686,12 +2768,14 @@ export namespace Subscription_u {
 				if (memory.getUint8(ptr + offsets.type) !== Eventtype.clock) {
 					throw new WasiError(Errno.inval);
 				}
+
 				return Subscription_clock.create(memory, ptr + offsets.clock);
 			},
 			get fd_read(): subscription_fd_readwrite {
 				if (memory.getUint8(ptr + offsets.type) !== Eventtype.fd_read) {
 					throw new WasiError(Errno.inval);
 				}
+
 				return Subscription_fd_readwrite.create(
 					memory,
 					ptr + offsets.fd_read,
@@ -2703,6 +2787,7 @@ export namespace Subscription_u {
 				) {
 					throw new WasiError(Errno.inval);
 				}
+
 				return Subscription_fd_readwrite.create(
 					memory,
 					ptr + offsets.fd_write,
@@ -2827,9 +2912,11 @@ export namespace Sdflags {
 		if (value & rd) {
 			parts.push("rd");
 		}
+
 		if (value & wr) {
 			parts.push("wr");
 		}
+
 		return parts.join(" | ");
 	}
 }
@@ -2873,11 +2960,13 @@ export namespace args_sizes_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		argvCount_ptr: ptr<u32>,
 		argvBufSize_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(args_sizes_get);
 }
 
@@ -2924,6 +3013,7 @@ export namespace args_get {
 				const paramView = new DataView(paramBuffer);
 				// In the transfer memory the result is written at index 0
 				paramView.setUint32(paramIndex, transfer_argv_ptr, true);
+
 				paramView.setUint32(
 					paramIndex + Ptr.size,
 					transfer_argvBuf_ptr,
@@ -2971,11 +3061,13 @@ export namespace args_get {
 			},
 		};
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		argv_ptr: ptr<ptr<cstring>[]>,
 		argvBuf_ptr: ptr<bytes>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(args_get);
 }
 
@@ -3005,11 +3097,13 @@ export namespace clock_res_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		id: clockid,
 		timestamp_ptr: ptr<u64>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(clock_res_get);
 }
 
@@ -3042,12 +3136,14 @@ export namespace clock_time_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		id: clockid,
 		precision: timestamp,
 		timestamp_ptr: ptr<u64>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(clock_time_get);
 }
 
@@ -3072,11 +3168,13 @@ export namespace environ_sizes_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		environCount_ptr: ptr<u32>,
 		environBufSize_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(environ_sizes_get);
 }
 
@@ -3124,6 +3222,7 @@ export namespace environ_get {
 				const paramView = new DataView(paramBuffer);
 				// In the transfer memory the result is written at index 0
 				paramView.setUint32(paramIndex, transfer_environ_ptr, true);
+
 				paramView.setUint32(
 					paramIndex + Ptr.size,
 					transfer_environBuf_ptr,
@@ -3172,11 +3271,13 @@ export namespace environ_get {
 			},
 		};
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		environ_ptr: ptr<ptr<cstring>[]>,
 		environBuf_ptr: ptr<bytes>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(environ_get);
 }
 
@@ -3213,6 +3314,7 @@ export namespace fd_advise {
 		length: filesize,
 		advise: advise,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_advise);
 }
 
@@ -3241,6 +3343,7 @@ export namespace fd_allocate {
 		offset: filesize,
 		len: filesize,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_allocate);
 }
 
@@ -3260,6 +3363,7 @@ export namespace fd_close {
 		memory: ArrayBuffer,
 		fd: fd,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_close);
 }
 
@@ -3280,6 +3384,7 @@ export namespace fd_datasync {
 		memory: ArrayBuffer,
 		fd: fd,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_datasync);
 }
 
@@ -3305,11 +3410,13 @@ export namespace fd_fdstat_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		fdstat_ptr: ptr<fdstat>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_fdstat_get);
 }
 
@@ -3335,6 +3442,7 @@ export namespace fd_fdstat_set_flags {
 		fd: fd,
 		fdflags: fdflags,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_fdstat_set_flags);
 }
 
@@ -3359,11 +3467,13 @@ export namespace fd_filestat_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		filestat_ptr: ptr<filestat>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_filestat_get);
 }
 
@@ -3390,6 +3500,7 @@ export namespace fd_filestat_set_size {
 		fd: fd,
 		size: filesize,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_filestat_set_size);
 }
 
@@ -3426,6 +3537,7 @@ export namespace fd_filestat_set_times {
 		mtim: timestamp,
 		fst_flags: fstflags,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_filestat_set_times);
 }
 
@@ -3468,6 +3580,7 @@ export namespace fd_pread {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3476,6 +3589,7 @@ export namespace fd_pread {
 		offset: filesize,
 		bytesRead_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_pread);
 }
 
@@ -3500,11 +3614,13 @@ export namespace fd_prestat_get {
 	export function transfers(): ArgumentsTransfer {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		bufPtr: ptr<prestat>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_prestat_get);
 }
 
@@ -3539,12 +3655,14 @@ export namespace fd_prestat_dir_name {
 			WasiPath.createTransfer(pathLen, MemoryTransferDirection.result),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		pathPtr: ptr<byte[]>,
 		pathLen: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_prestat_dir_name);
 }
 
@@ -3587,6 +3705,7 @@ export namespace fd_pwrite {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3595,6 +3714,7 @@ export namespace fd_pwrite {
 		offset: filesize,
 		bytesWritten_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_pwrite);
 }
 
@@ -3633,6 +3753,7 @@ export namespace fd_read {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3640,6 +3761,7 @@ export namespace fd_read {
 		iovs_len: u32,
 		bytesRead_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_read);
 }
 
@@ -3690,6 +3812,7 @@ export namespace fd_readdir {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3698,6 +3821,7 @@ export namespace fd_readdir {
 		cookie: dircookie,
 		buf_used_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_readdir);
 }
 
@@ -3725,6 +3849,7 @@ export namespace fd_renumber {
 		fd: fd,
 		to: fd,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_renumber);
 }
 
@@ -3762,6 +3887,7 @@ export namespace fd_seek {
 	export function transfers() {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3769,6 +3895,7 @@ export namespace fd_seek {
 		whence: whence,
 		new_offset_ptr: ptr<u64>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_seek);
 }
 
@@ -3790,6 +3917,7 @@ export namespace fd_sync {
 		memory: ArrayBuffer,
 		fd: fd,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_sync);
 }
 
@@ -3818,11 +3946,13 @@ export namespace fd_tell {
 	export function transfers() {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		offset_ptr: ptr<u64>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_tell);
 }
 
@@ -3861,6 +3991,7 @@ export namespace fd_write {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3868,6 +3999,7 @@ export namespace fd_write {
 		ciovs_len: u32,
 		bytesWritten_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(fd_write);
 }
 
@@ -3902,12 +4034,14 @@ export namespace path_create_directory {
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
 		path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_create_directory);
 }
 
@@ -3950,6 +4084,7 @@ export namespace path_filestat_get {
 			Filestat.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -3958,6 +4093,7 @@ export namespace path_filestat_get {
 		path_len: size,
 		filestat_ptr: ptr,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_filestat_get);
 }
 
@@ -4005,6 +4141,7 @@ export namespace path_filestat_set_times {
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -4015,6 +4152,7 @@ export namespace path_filestat_set_times {
 		mtim: timestamp,
 		fst_flags: fstflags,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_filestat_set_times);
 }
 
@@ -4073,6 +4211,7 @@ export namespace path_link {
 			),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		old_fd: fd,
@@ -4083,6 +4222,7 @@ export namespace path_link {
 		new_path_ptr: ptr<byte[]>,
 		new_path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_link);
 }
 
@@ -4148,6 +4288,7 @@ export namespace path_open {
 			Fd.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -4160,6 +4301,7 @@ export namespace path_open {
 		fdflags: fdflags,
 		fd_ptr: ptr<fd>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_open);
 }
 
@@ -4209,6 +4351,7 @@ export namespace path_readlink {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -4218,6 +4361,7 @@ export namespace path_readlink {
 		buf_len: size,
 		result_size_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_readlink);
 }
 
@@ -4253,12 +4397,14 @@ export namespace path_remove_directory {
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
 		path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_remove_directory);
 }
 
@@ -4314,6 +4460,7 @@ export namespace path_rename {
 			),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
@@ -4323,6 +4470,7 @@ export namespace path_rename {
 		new_path_ptr: ptr<byte[]>,
 		new_path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_rename);
 }
 
@@ -4374,6 +4522,7 @@ export namespace path_symlink {
 			),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		old_path_ptr: ptr<byte[]>,
@@ -4382,6 +4531,7 @@ export namespace path_symlink {
 		new_path_ptr: ptr<byte[]>,
 		new_path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_symlink);
 }
 
@@ -4417,12 +4567,14 @@ export namespace path_unlink_file {
 			WasiPath.createTransfer(path_len, MemoryTransferDirection.param),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		path_ptr: ptr<byte[]>,
 		path_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(path_unlink_file);
 }
 
@@ -4463,6 +4615,7 @@ export namespace poll_oneoff {
 			U32.$transfer,
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		input: ptr<subscription[]>,
@@ -4470,6 +4623,7 @@ export namespace poll_oneoff {
 		subscriptions: size,
 		result_size_ptr: ptr<u32>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(poll_oneoff);
 }
 
@@ -4491,6 +4645,7 @@ export namespace proc_exit {
 		memory: ArrayBuffer,
 		rval: exitcode,
 	) => Promise<errno>;
+
 	WasiFunctions.add(proc_exit);
 }
 
@@ -4506,6 +4661,7 @@ export namespace sched_yield {
 	export const signature = WasiFunctionSignature.create([]);
 
 	export type ServiceSignature = (memory: ArrayBuffer) => Promise<errno>;
+
 	WasiFunctions.add(sched_yield);
 }
 
@@ -4539,11 +4695,13 @@ export namespace random_get {
 			Bytes.createTransfer(buf_len, MemoryTransferDirection.result),
 		]);
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		buf: ptr<byte[]>,
 		buf_len: size,
 	) => Promise<errno>;
+
 	WasiFunctions.add(random_get);
 }
 
@@ -4575,12 +4733,14 @@ export namespace sock_accept {
 	export function transfers() {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		fd: fd,
 		flags: fdflags,
 		result_fd_ptr: ptr<fd>,
 	) => Promise<errno>;
+
 	WasiFunctions.add(sock_accept);
 }
 
@@ -4648,6 +4808,7 @@ export namespace sock_shutdown {
 		fd: fd,
 		sdflags: sdflags,
 	) => Promise<errno>;
+
 	WasiFunctions.add(sock_shutdown);
 }
 
@@ -4671,10 +4832,12 @@ export namespace thread_spawn {
 	export function transfers() {
 		return _transfers;
 	}
+
 	export type ServiceSignature = (
 		memory: ArrayBuffer,
 		start_args_ptr: ptr<u32>,
 	) => Promise<tid>;
+
 	WasiFunctions.add(thread_spawn);
 }
 
@@ -4689,49 +4852,81 @@ export namespace thread_exit {
 		memory: ArrayBuffer,
 		tid: u32,
 	) => Promise<errno>;
+
 	WasiFunctions.add(thread_exit);
 }
 
 export interface WASI {
 	args_sizes_get: args_sizes_get;
+
 	args_get: args_get;
 
 	environ_sizes_get: environ_sizes_get;
+
 	environ_get: environ_get;
 
 	clock_res_get: clock_res_get;
+
 	clock_time_get: clock_time_get;
 
 	fd_advise: fd_advise;
+
 	fd_allocate: fd_allocate;
+
 	fd_close: fd_close;
+
 	fd_datasync: fd_datasync;
+
 	fd_fdstat_get: fd_fdstat_get;
+
 	fd_fdstat_set_flags: fd_fdstat_set_flags;
+
 	fd_filestat_get: fd_filestat_get;
+
 	fd_filestat_set_size: fd_filestat_set_size;
+
 	fd_filestat_set_times: fd_filestat_set_times;
+
 	fd_pread: fd_pread;
+
 	fd_prestat_get: fd_prestat_get;
+
 	fd_prestat_dir_name: fd_prestat_dir_name;
+
 	fd_pwrite: fd_pwrite;
+
 	fd_read: fd_read;
+
 	fd_readdir: fd_readdir;
+
 	fd_seek: fd_seek;
+
 	fd_renumber: fd_renumber;
+
 	fd_sync: fd_sync;
+
 	fd_tell: fd_tell;
+
 	fd_write: fd_write;
 
 	path_create_directory: path_create_directory;
+
 	path_filestat_get: path_filestat_get;
+
 	path_filestat_set_times: path_filestat_set_times;
+
 	path_link: path_link;
+
 	path_open: path_open;
+
 	path_readlink: path_readlink;
+
 	path_remove_directory: path_remove_directory;
+
 	path_rename: path_rename;
+
 	path_symlink: path_symlink;
+
 	path_unlink_file: path_unlink_file;
 
 	poll_oneoff: poll_oneoff;
@@ -4743,8 +4938,11 @@ export interface WASI {
 	random_get: random_get;
 
 	sock_accept: sock_accept;
+
 	sock_recv: sock_recv;
+
 	sock_send: sock_send;
+
 	sock_shutdown: sock_shutdown;
 
 	"thread-spawn": thread_spawn;

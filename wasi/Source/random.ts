@@ -35,6 +35,7 @@ export namespace random {
 		 */
 		export type insecureSeed = () => [u64, u64];
 	}
+
 	export type InsecureSeed = {
 		insecureSeed: InsecureSeed.insecureSeed;
 	};
@@ -66,6 +67,7 @@ export namespace random {
 		 */
 		export type getInsecureRandomU64 = () => u64;
 	}
+
 	export type Insecure = {
 		getInsecureRandomBytes: Insecure.getInsecureRandomBytes;
 
@@ -103,6 +105,7 @@ export namespace random {
 		 */
 		export type getRandomU64 = () => u64;
 	}
+
 	export type Random = {
 		getRandomBytes: Random.getRandomBytes;
 
@@ -119,6 +122,7 @@ export namespace random {
 				new $wcm.TupleType<[u64, u64]>([$wcm.u64, $wcm.u64]),
 			);
 	}
+
 	export namespace InsecureSeed._ {
 		export const id = "wasi:random/insecure-seed@0.2.1" as const;
 
@@ -135,6 +139,7 @@ export namespace random {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -155,6 +160,7 @@ export namespace random {
 				$wcm.u64,
 			);
 	}
+
 	export namespace Insecure._ {
 		export const id = "wasi:random/insecure@0.2.1" as const;
 
@@ -176,6 +182,7 @@ export namespace random {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -196,6 +203,7 @@ export namespace random {
 				$wcm.u64,
 			);
 	}
+
 	export namespace Random._ {
 		export const id = "wasi:random/random@0.2.1" as const;
 
@@ -214,6 +222,7 @@ export namespace random {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}

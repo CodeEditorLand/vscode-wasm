@@ -13,6 +13,7 @@ import {
 
 export interface CommandMountPointContribution {
 	mountPoint: string;
+
 	command: string;
 }
 export namespace CommandMountPointContribution {
@@ -32,6 +33,7 @@ export interface CommandMountPoint extends CommandMountPointContribution {
 
 export interface DirectoryMountPointContribution {
 	mountPoint: string;
+
 	path: string;
 }
 export namespace DirectoryMountPointContribution {
@@ -54,10 +56,13 @@ export interface DirectoryMountPoint extends DirectoryMountPointContribution {
 export interface ChangeEvent {
 	commands: {
 		added: CommandMountPoint[];
+
 		removed: CommandMountPoint[];
 	};
+
 	directories: {
 		added: DirectoryMountPoint[];
+
 		removed: DirectoryMountPoint[];
 	};
 }
@@ -72,12 +77,16 @@ export interface WebShellContributions {
 
 class WebShellContributionsImpl implements WebShellContributions {
 	private commandMountPoints: CommandMountPoint[];
+
 	private directoryMountPoints: DirectoryMountPoint[];
+
 	private readonly _onChanged: EventEmitter<ChangeEvent>;
 
 	constructor() {
 		this.commandMountPoints = [];
+
 		this.directoryMountPoints = [];
+
 		this._onChanged = new EventEmitter<ChangeEvent>();
 	}
 
@@ -87,8 +96,11 @@ class WebShellContributionsImpl implements WebShellContributions {
 
 	public initialize(): void {
 		const { commands, directories } = this.parseExtensions();
+
 		this.commandMountPoints = commands;
+
 		this.directoryMountPoints = directories;
+
 		Extensions.onDidChange(() => {
 			this.handleExtensionsChanged();
 		});
@@ -104,10 +116,12 @@ class WebShellContributionsImpl implements WebShellContributions {
 
 	private parseExtensions(): {
 		commands: CommandMountPoint[];
+
 		directories: DirectoryMountPoint[];
 	} {
 		const result: {
 			commands: CommandMountPoint[];
+
 			directories: DirectoryMountPoint[];
 		} = { commands: [], directories: [] };
 
@@ -130,6 +144,7 @@ class WebShellContributionsImpl implements WebShellContributions {
 				}
 			}
 		}
+
 		return result;
 	}
 
@@ -158,6 +173,7 @@ class WebShellContributionsImpl implements WebShellContributions {
 				addedCommands.push(newCommand);
 			}
 		}
+
 		for (const oldCommand of oldCommands.values()) {
 			removedCommands.push(oldCommand);
 		}
@@ -193,6 +209,7 @@ class WebShellContributionsImpl implements WebShellContributions {
 				addedDirectories.push(newDirectory);
 			}
 		}
+
 		for (const oldDirectory of oldDirectories.values()) {
 			removedDirectories.push(oldDirectory);
 		}

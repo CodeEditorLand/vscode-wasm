@@ -27,8 +27,11 @@ interface RAL {
 
 	readonly console: {
 		info(message?: any, ...optionalParams: any[]): void;
+
 		log(message?: any, ...optionalParams: any[]): void;
+
 		warn(message?: any, ...optionalParams: any[]): void;
+
 		error(message?: any, ...optionalParams: any[]): void;
 	};
 
@@ -69,10 +72,15 @@ interface RAL {
 
 	readonly path: {
 		readonly sep: string;
+
 		basename(path: string): string;
+
 		dirname(path: string): string;
+
 		join(...paths: string[]): string;
+
 		normalize(path: string): string;
+
 		isAbsolute(path: string): boolean;
 	};
 
@@ -87,6 +95,7 @@ function RAL(): RAL {
 	if (_ral === undefined) {
 		throw new Error(`No runtime abstraction layer installed`);
 	}
+
 	return _ral;
 }
 
@@ -99,8 +108,10 @@ namespace RAL {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);
 		}
+
 		_ral = ral;
 	}
+
 	export function isInstalled(): boolean {
 		return _ral !== undefined;
 	}

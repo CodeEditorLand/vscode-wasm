@@ -24,15 +24,20 @@ class ReadableStreamImpl implements RAL.ReadableStream {
 	private readonly errorEmitter: Emitter<
 		[Error, Message | undefined, number | undefined]
 	>;
+
 	private readonly closeEmitter: Emitter<void>;
+
 	private readonly endEmitter: Emitter<void>;
 
 	private readonly readable: Readable;
 
 	constructor(readable: Readable) {
 		this.errorEmitter = new Emitter<[Error, Message, number]>();
+
 		this.closeEmitter = new Emitter<void>();
+
 		this.endEmitter = new Emitter<void>();
+
 		this.readable = readable;
 	}
 
@@ -73,15 +78,20 @@ class WritableStreamImpl implements RAL.WritableStream {
 	private readonly errorEmitter: Emitter<
 		[Error, Message | undefined, number | undefined]
 	>;
+
 	private readonly closeEmitter: Emitter<void>;
+
 	private readonly endEmitter: Emitter<void>;
 
 	private readonly writable: Writable;
 
 	constructor(writable: Writable) {
 		this.errorEmitter = new Emitter<[Error, Message, number]>();
+
 		this.closeEmitter = new Emitter<void>();
+
 		this.endEmitter = new Emitter<void>();
+
 		this.writable = writable;
 	}
 
@@ -181,6 +191,7 @@ export async function startServer(
 export function createUriConverters():
 	| {
 			code2Protocol: (value: vscode.Uri) => string;
+
 			protocol2Code: (value: string) => vscode.Uri;
 	  }
 	| undefined {
@@ -189,21 +200,27 @@ export function createUriConverters():
 	if (folders === undefined || folders.length === 0) {
 		return undefined;
 	}
+
 	const c2p: Map<string, string> = new Map();
 
 	const p2c: Map<string, string> = new Map();
 
 	if (folders.length === 1) {
 		const folder = folders[0];
+
 		c2p.set(folder.uri.toString(), "file:///workspace");
+
 		p2c.set("file:///workspace", folder.uri.toString());
 	} else {
 		for (const folder of folders) {
 			const uri = folder.uri.toString();
+
 			c2p.set(uri, `file:///workspace/${folder.name}`);
+
 			p2c.set(`file:///workspace/${folder.name}`, uri);
 		}
 	}
+
 	return {
 		code2Protocol: (uri: vscode.Uri) => {
 			const str = uri.toString();
@@ -213,6 +230,7 @@ export function createUriConverters():
 					return str.replace(key, c2p.get(key) ?? "");
 				}
 			}
+
 			return str;
 		},
 		protocol2Code: (value: string) => {
@@ -223,6 +241,7 @@ export function createUriConverters():
 					);
 				}
 			}
+
 			return vscode.Uri.parse(value);
 		},
 	};

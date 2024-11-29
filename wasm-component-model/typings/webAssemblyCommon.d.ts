@@ -19,6 +19,7 @@ declare namespace WebAssembly_ {
 
 	var CompileError: {
 		prototype: CompileError;
+
 		new (message?: string): CompileError;
 		(message?: string): CompileError;
 	};
@@ -33,6 +34,7 @@ declare namespace WebAssembly_ {
 
 	var Global: {
 		prototype: Global;
+
 		new <T extends ValueType = ValueType>(
 			descriptor: GlobalDescriptor<T>,
 			v?: ValueTypeMap[T],
@@ -47,6 +49,7 @@ declare namespace WebAssembly_ {
 
 	var Instance: {
 		prototype: Instance;
+
 		new (module: Module, importObject?: Imports): Instance;
 	};
 
@@ -54,6 +57,7 @@ declare namespace WebAssembly_ {
 
 	var LinkError: {
 		prototype: LinkError;
+
 		new (message?: string): LinkError;
 		(message?: string): LinkError;
 	};
@@ -68,6 +72,7 @@ declare namespace WebAssembly_ {
 
 	var Memory: {
 		prototype: Memory;
+
 		new (descriptor: MemoryDescriptor): Memory;
 	};
 
@@ -76,6 +81,7 @@ declare namespace WebAssembly_ {
 
 	var Module: {
 		prototype: Module;
+
 		new (bytes: BufferSource): Module;
 		/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Module/customSections) */
 		customSections(
@@ -92,6 +98,7 @@ declare namespace WebAssembly_ {
 
 	var RuntimeError: {
 		prototype: RuntimeError;
+
 		new (message?: string): RuntimeError;
 		(message?: string): RuntimeError;
 	};
@@ -110,59 +117,82 @@ declare namespace WebAssembly_ {
 
 	var Table: {
 		prototype: Table;
+
 		new (descriptor: TableDescriptor, value?: any): Table;
 	};
 
 	interface GlobalDescriptor<T extends ValueType = ValueType> {
 		mutable?: boolean;
+
 		value: T;
 	}
 
 	interface MemoryDescriptor {
 		initial: number;
+
 		maximum?: number;
+
 		shared?: boolean;
 	}
 
 	interface ModuleExportDescriptor {
 		kind: ImportExportKind;
+
 		name: string;
 	}
 
 	interface ModuleImportDescriptor {
 		kind: ImportExportKind;
+
 		module: string;
+
 		name: string;
 	}
 
 	interface TableDescriptor {
 		element: TableKind;
+
 		initial: number;
+
 		maximum?: number;
 	}
 
 	interface ValueTypeMap {
 		anyfunc: Function;
+
 		externref: any;
+
 		f32: number;
+
 		f64: number;
+
 		i32: number;
+
 		i64: bigint;
+
 		v128: never;
 	}
 
 	interface WebAssemblyInstantiatedSource {
 		instance: Instance;
+
 		module: Module;
 	}
 
 	type ImportExportKind = "function" | "global" | "memory" | "table";
+
 	type TableKind = "anyfunc" | "externref";
+
 	type ExportValue = Function | Global | Memory | Table;
+
 	type Exports = Record<string, ExportValue>;
+
 	type ImportValue = ExportValue | number;
+
 	type Imports = Record<string, ModuleImports>;
+
 	type ModuleImports = Record<string, ImportValue>;
+
 	type ValueType = keyof ValueTypeMap;
 	/** [MDN Reference](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/compile) */
 	function compile(bytes: BufferSource): Promise<Module>;

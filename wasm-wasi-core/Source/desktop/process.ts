@@ -28,7 +28,9 @@ export class NodeServiceConnection extends ServiceConnection {
 		logChannel?: LogOutputChannel | undefined,
 	) {
 		super(wasiService, logChannel);
+
 		this.port = port;
+
 		this.port.on("message", (message: WorkerMessage) => {
 			this.handleMessage(message).catch(RAL().console.error);
 		});
@@ -41,13 +43,17 @@ export class NodeServiceConnection extends ServiceConnection {
 
 export class NodeWasiProcess extends WasiProcess {
 	private readonly baseUri: Uri;
+
 	private readonly module: Promise<WebAssembly.Module>;
 
 	private importsMemory: boolean | undefined;
+
 	private readonly memoryDescriptor: WebAssembly.MemoryDescriptor | undefined;
+
 	private memory: WebAssembly.Memory | undefined;
 
 	private mainWorker: Worker | undefined;
+
 	private threadWorkers: Map<u32, Worker>;
 
 	constructor(
@@ -58,8 +64,11 @@ export class NodeWasiProcess extends WasiProcess {
 		options: ProcessOptions = {},
 	) {
 		super(programName, options);
+
 		this.baseUri = baseUri;
+
 		this.threadWorkers = new Map();
+
 		this.module =
 			module instanceof WebAssembly.Module
 				? Promise.resolve(module)
@@ -77,9 +86,12 @@ export class NodeWasiProcess extends WasiProcess {
 			this.baseUri,
 			"./dist/desktop/mainWorker.js",
 		).fsPath;
+
 		this.mainWorker = new Worker(filename);
+
 		this.mainWorker.on("exit", async (exitCode: number) => {
 			this.cleanUpWorkers().catch((error) => RAL().console.error(error));
+
 			this.cleanupFileDescriptors().catch((error) =>
 				RAL().console.error(error),
 			);
@@ -94,9 +106,11 @@ export class NodeWasiProcess extends WasiProcess {
 			this.mainWorker,
 			this.options.trace,
 		);
+
 		await connection.workerReady();
 
 		const module = await this.module;
+
 		this.importsMemory = this.doesImportMemory(module);
 
 		if (this.importsMemory) {
@@ -105,14 +119,17 @@ export class NodeWasiProcess extends WasiProcess {
 					"Web assembly imports memory but no memory descriptor was provided.",
 				);
 			}
+
 			this.memory = new WebAssembly.Memory(this.memoryDescriptor);
 		}
+
 		const message: StartMainMessage = {
 			method: "startMain",
 			module: await this.module,
 			memory: this.memory,
 			trace: this.options.trace !== undefined,
 		};
+
 		connection.postMessage(message);
 
 		return Promise.resolve();
@@ -126,17 +143,20 @@ export class NodeWasiProcess extends WasiProcess {
 		if (this.mainWorker === undefined) {
 			throw new Error("Main worker not started");
 		}
+
 		if (!this.importsMemory || this.memory === undefined) {
 			throw new Error(
 				"Multi threaded applications need to import shared memory.",
 			);
 		}
+
 		const filename = Uri.joinPath(
 			this.baseUri,
 			"./dist/desktop/threadWorker.js",
 		).fsPath;
 
 		const worker = new Worker(filename);
+
 		worker.on("exit", () => {
 			this.threadWorkers.delete(tid);
 		});
@@ -146,6 +166,7 @@ export class NodeWasiProcess extends WasiProcess {
 			worker,
 			this.options.trace,
 		);
+
 		await connection.workerReady();
 
 		const message: StartThreadMessage = {
@@ -156,7 +177,9 @@ export class NodeWasiProcess extends WasiProcess {
 			start_arg,
 			trace: this.options.trace !== undefined,
 		};
+
 		connection.postMessage(message);
+
 		this.threadWorkers.set(tid, worker);
 
 		return Promise.resolve();
@@ -164,8 +187,11 @@ export class NodeWasiProcess extends WasiProcess {
 
 	protected async procExit(): Promise<void> {
 		await this.mainWorker?.terminate();
+
 		await this.cleanUpWorkers();
+
 		await this.destroyStreams();
+
 		await this.cleanupFileDescriptors();
 	}
 
@@ -175,8 +201,11 @@ export class NodeWasiProcess extends WasiProcess {
 		if (this.mainWorker !== undefined) {
 			result = await this.mainWorker.terminate();
 		}
+
 		await this.cleanUpWorkers();
+
 		await this.destroyStreams();
+
 		await this.cleanupFileDescriptors();
 
 		return result;
@@ -186,6 +215,7 @@ export class NodeWasiProcess extends WasiProcess {
 		for (const worker of this.threadWorkers.values()) {
 			await worker.terminate();
 		}
+
 		this.threadWorkers.clear();
 	}
 
@@ -194,6 +224,7 @@ export class NodeWasiProcess extends WasiProcess {
 
 		if (worker !== undefined) {
 			this.threadWorkers.delete(tid);
+
 			await worker.terminate();
 		}
 	}
@@ -206,6 +237,7 @@ export class NodeWasiProcess extends WasiProcess {
 				return true;
 			}
 		}
+
 		return false;
 	}
 }

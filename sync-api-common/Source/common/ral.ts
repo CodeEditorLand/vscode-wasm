@@ -44,8 +44,11 @@ interface RAL {
 
 	readonly console: {
 		info(message?: any, ...optionalParams: any[]): void;
+
 		log(message?: any, ...optionalParams: any[]): void;
+
 		warn(message?: any, ...optionalParams: any[]): void;
+
 		error(message?: any, ...optionalParams: any[]): void;
 	};
 
@@ -75,6 +78,7 @@ interface RAL {
 				ReadyParams extends Params | undefined = undefined,
 			>(): ClientConnection<Requests, ReadyParams>;
 		};
+
 		readonly ServiceConnection: {
 			create<
 				RequestHandlers extends RequestType | undefined = undefined,
@@ -84,6 +88,7 @@ interface RAL {
 				testCase?: string,
 			): _TestServiceConnection<RequestHandlers, ReadyParams>;
 		};
+
 		readonly testCase: string;
 	};
 }
@@ -94,6 +99,7 @@ function RAL(): RAL {
 	if (_ral === undefined) {
 		throw new Error(`No runtime abstraction layer installed`);
 	}
+
 	return _ral;
 }
 
@@ -108,6 +114,7 @@ namespace RAL {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);
 		}
+
 		_ral = ral;
 	}
 }

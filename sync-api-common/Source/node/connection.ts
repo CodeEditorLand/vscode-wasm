@@ -22,7 +22,9 @@ export class ClientConnection<
 
 	constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
+
 		this.port.on("message", (message: Message) => {
 			try {
 				this.handleMessage(message);
@@ -45,7 +47,9 @@ export class ServiceConnection<
 
 	constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
+
 		this.port.on(
 			"message",
 			async (sharedArrayBuffer: SharedArrayBuffer) => {

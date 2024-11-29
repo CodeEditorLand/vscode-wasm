@@ -13,24 +13,31 @@ export namespace Client {
 	export type AsyncCalls =
 		| {
 				method: "initialize";
+
 				params: {
 					sharedMemory: SharedMemory.Transferable;
 				};
+
 				result: void;
 		  }
 		| {
 				method: "connection/create";
+
 				params: {
 					id: number | string;
+
 					port: ConnectionPort;
 				};
+
 				result: void;
 		  }
 		| {
 				method: "connection/drop";
+
 				params: {
 					id: number | string;
 				};
+
 				result: void;
 		  };
 

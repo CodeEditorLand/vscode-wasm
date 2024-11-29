@@ -9,6 +9,7 @@ import type { i32, ptr, u32 } from "@vscode/wasm-component-model";
 export namespace Types {
 	export type Operands = {
 		left: u32;
+
 		right: u32;
 	};
 
@@ -17,6 +18,7 @@ export namespace Types {
 
 		export type Add = {
 			readonly tag: typeof add;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -28,6 +30,7 @@ export namespace Types {
 
 		export type Sub = {
 			readonly tag: typeof sub;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -39,6 +42,7 @@ export namespace Types {
 
 		export type Mul = {
 			readonly tag: typeof mul;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -50,6 +54,7 @@ export namespace Types {
 
 		export type Div = {
 			readonly tag: typeof div;
+
 			readonly value: Operands;
 		} & _common;
 
@@ -60,39 +65,50 @@ export namespace Types {
 		export type _tt = typeof add | typeof sub | typeof mul | typeof div;
 
 		export type _vt = Operands | Operands | Operands | Operands;
+
 		type _common = Omit<VariantImpl, "tag" | "value">;
 
 		export function _ctor(t: _tt, v: _vt): Operation {
 			return new VariantImpl(t, v) as Operation;
 		}
+
 		class VariantImpl {
 			private readonly _tag: _tt;
+
 			private readonly _value: _vt;
 
 			constructor(t: _tt, value: _vt) {
 				this._tag = t;
+
 				this._value = value;
 			}
+
 			get tag(): _tt {
 				return this._tag;
 			}
+
 			get value(): _vt {
 				return this._value;
 			}
+
 			isAdd(): this is Add {
 				return this._tag === Operation.add;
 			}
+
 			isSub(): this is Sub {
 				return this._tag === Operation.sub;
 			}
+
 			isMul(): this is Mul {
 				return this._tag === Operation.mul;
 			}
+
 			isDiv(): this is Div {
 				return this._tag === Operation.div;
 			}
 		}
 	}
+
 	export type Operation =
 		| Operation.Add
 		| Operation.Sub
@@ -103,6 +119,7 @@ export namespace Types {
 		export interface Interface extends $wcm.Resource {
 			send(msg: string): void;
 		}
+
 		export type Statics = {
 			$new?(level: u32): Interface;
 		};
@@ -111,6 +128,7 @@ export namespace Types {
 			new (level: u32): Interface;
 		};
 	}
+
 	export type Channel = Channel.Interface;
 }
 export type Types = {
@@ -133,6 +151,7 @@ export namespace ReverseNotation {
 
 			execute(): u32;
 		}
+
 		export type Statics = {
 			$new?(): Interface;
 		};
@@ -141,6 +160,7 @@ export namespace ReverseNotation {
 			new (): Interface;
 		};
 	}
+
 	export type Engine = Engine.Interface;
 }
 export type ReverseNotation = {
@@ -152,25 +172,32 @@ export namespace calculator {
 
 	export type Imports = {
 		log: (msg: string) => void;
+
 		generate: () => string;
+
 		types: Types;
 	};
 
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
 	}
+
 	export namespace imports {
 		export type Promisify<T> = $wcm.$imports.Promisify<T>;
 	}
+
 	export type Exports = {
 		calc: (o: Operation) => u32;
+
 		msg: () => string;
+
 		reverseNotation: ReverseNotation;
 	};
 
 	export namespace Exports {
 		export type Promisified = $wcm.$exports.Promisify<Exports>;
 	}
+
 	export namespace exports {
 		export type Promisify<T> = $wcm.$exports.Promisify<T>;
 	}
@@ -202,10 +229,12 @@ export namespace Types.$ {
 	);
 
 	export const Channel_Handle = new $wcm.ResourceHandleType("channel");
+
 	Channel.addDestructor(
 		"$drop",
 		new $wcm.DestructorType("[resource-drop]channel", [["inst", Channel]]),
 	);
+
 	Channel.addConstructor(
 		"constructor",
 		new $wcm.ConstructorType<Types.Channel.Class["constructor"]>(
@@ -214,6 +243,7 @@ export namespace Types.$ {
 			new $wcm.OwnType(Channel_Handle),
 		),
 	);
+
 	Channel.addMethod(
 		"send",
 		new $wcm.MethodType<Types.Channel.Interface["send"]>(
@@ -243,12 +273,14 @@ export namespace Types._ {
 				"[resource-drop]channel": (self: i32) => void;
 			};
 		}
+
 		export namespace exports {
 			export type WasmInterface = Channel.WasmInterface & {
 				"[dtor]channel": (self: i32) => void;
 			};
 		}
 	}
+
 	export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 		string,
 		$wcm.AnyComponentModelType
@@ -269,6 +301,7 @@ export namespace Types._ {
 		export type WasmInterface = _.WasmInterface &
 			Channel.imports.WasmInterface;
 	}
+
 	export namespace exports {
 		export type WasmInterface = _.WasmInterface &
 			Channel.exports.WasmInterface;
@@ -297,10 +330,12 @@ export namespace ReverseNotation.$ {
 	);
 
 	export const Engine_Handle = new $wcm.ResourceHandleType("engine");
+
 	Engine.addDestructor(
 		"$drop",
 		new $wcm.DestructorType("[resource-drop]engine", [["inst", Engine]]),
 	);
+
 	Engine.addConstructor(
 		"constructor",
 		new $wcm.ConstructorType<ReverseNotation.Engine.Class["constructor"]>(
@@ -309,6 +344,7 @@ export namespace ReverseNotation.$ {
 			new $wcm.OwnType(Engine_Handle),
 		),
 	);
+
 	Engine.addMethod(
 		"pushOperand",
 		new $wcm.MethodType<ReverseNotation.Engine.Interface["pushOperand"]>(
@@ -317,6 +353,7 @@ export namespace ReverseNotation.$ {
 			undefined,
 		),
 	);
+
 	Engine.addMethod(
 		"pushOperation",
 		new $wcm.MethodType<ReverseNotation.Engine.Interface["pushOperation"]>(
@@ -325,6 +362,7 @@ export namespace ReverseNotation.$ {
 			undefined,
 		),
 	);
+
 	Engine.addMethod(
 		"execute",
 		new $wcm.MethodType<ReverseNotation.Engine.Interface["execute"]>(
@@ -355,12 +393,14 @@ export namespace ReverseNotation._ {
 				"[resource-drop]engine": (self: i32) => void;
 			};
 		}
+
 		export namespace exports {
 			export type WasmInterface = Engine.WasmInterface & {
 				"[dtor]engine": (self: i32) => void;
 			};
 		}
 	}
+
 	export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 		string,
 		$wcm.AnyComponentModelType
@@ -380,6 +420,7 @@ export namespace ReverseNotation._ {
 		export type WasmInterface = _.WasmInterface &
 			Engine.imports.WasmInterface;
 	}
+
 	export namespace exports {
 		export type WasmInterface = _.WasmInterface &
 			Engine.exports.WasmInterface;
@@ -407,6 +448,7 @@ export namespace calculator.$ {
 			calculator.Imports["generate"]
 		>("generate", [], $wcm.wstring);
 	}
+
 	export namespace exports {
 		export const calc = new $wcm.FunctionType<calculator.Exports["calc"]>(
 			"calc",
@@ -448,6 +490,7 @@ export namespace calculator._ {
 		): Imports {
 			return $wcm.$imports.create<Imports>(_, service, context);
 		}
+
 		export function loop(
 			service: calculator.Imports,
 			context: $wcm.WasmContext,
@@ -455,6 +498,7 @@ export namespace calculator._ {
 			return $wcm.$imports.loop<calculator.Imports>(_, service, context);
 		}
 	}
+
 	export type Imports = {
 		"$root": $Root;
 		"vscode:example/types": Types._.imports.WasmInterface;
@@ -479,6 +523,7 @@ export namespace calculator._ {
 			return $wcm.$exports.bind<calculator.Exports>(_, exports, context);
 		}
 	}
+
 	export type Exports = {
 		"calc": (
 			o_Operation_case: i32,

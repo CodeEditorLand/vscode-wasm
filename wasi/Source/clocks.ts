@@ -60,10 +60,14 @@ export namespace clocks {
 		 */
 		export type subscribeDuration = (when: Duration) => Pollable;
 	}
+
 	export type MonotonicClock = {
 		now: MonotonicClock.now;
+
 		resolution: MonotonicClock.resolution;
+
 		subscribeInstant: MonotonicClock.subscribeInstant;
+
 		subscribeDuration: MonotonicClock.subscribeDuration;
 	};
 
@@ -89,6 +93,7 @@ export namespace clocks {
 		 */
 		export type Datetime = {
 			seconds: u64;
+
 			nanoseconds: u32;
 		};
 
@@ -116,8 +121,10 @@ export namespace clocks {
 		 */
 		export type resolution = () => Datetime;
 	}
+
 	export type WallClock = {
 		now: WallClock.now;
+
 		resolution: WallClock.resolution;
 	};
 }
@@ -157,6 +164,7 @@ export namespace clocks {
 				new $wcm.OwnType<clocks.MonotonicClock.Pollable>(Pollable),
 			);
 	}
+
 	export namespace MonotonicClock._ {
 		export const id = "wasi:clocks/monotonic-clock@0.2.1" as const;
 
@@ -188,6 +196,7 @@ export namespace clocks {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -212,6 +221,7 @@ export namespace clocks {
 				Datetime,
 			);
 	}
+
 	export namespace WallClock._ {
 		export const id = "wasi:clocks/wall-clock@0.2.1" as const;
 
@@ -235,6 +245,7 @@ export namespace clocks {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}

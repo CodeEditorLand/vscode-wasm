@@ -5,20 +5,31 @@
 
 export type Options = {
 	help: boolean;
+
 	version: boolean;
+
 	outDir: string | undefined;
+
 	filter: string | undefined;
+
 	input: string | undefined;
+
 	target: "ts";
+
 	nameStyle: "ts" | "wit";
+
 	stdin: boolean;
+
 	structure: "auto" | "package" | "namespace";
+
 	singleWorld: boolean;
+
 	keep?: { result: boolean; option: boolean; own: boolean; borrow: boolean };
 };
 
 export type ResolvedOptions = Required<Options> & {
 	input: string;
+
 	outDir: string;
 };
 
@@ -42,11 +53,13 @@ export namespace Options {
 
 			return false;
 		}
+
 		if (!options.outDir) {
 			process.stderr.write("Missing outDir argument.\n");
 
 			return false;
 		}
+
 		if (!options.keep) {
 			options.keep = {
 				result: false,
@@ -55,6 +68,7 @@ export namespace Options {
 				borrow: false,
 			};
 		}
+
 		return true;
 	}
 }

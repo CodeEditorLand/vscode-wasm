@@ -21,12 +21,15 @@ export namespace io {
 				 */
 				toDebugString(): string;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type Error = Error.Interface;
 	}
+
 	export type Error = {
 		Error: Error.Error.Class;
 	};
@@ -54,10 +57,12 @@ export namespace io {
 				 */
 				block(): void;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type Pollable = Pollable.Interface;
 
 		/**
@@ -83,8 +88,10 @@ export namespace io {
 		 */
 		export type poll = (in_: Pollable[]) => Uint32Array;
 	}
+
 	export type Poll = {
 		Pollable: Poll.Pollable.Class;
+
 		poll: Poll.poll;
 	};
 
@@ -113,6 +120,7 @@ export namespace io {
 
 			export type LastOperationFailed = {
 				readonly tag: typeof lastOperationFailed;
+
 				readonly value: Error;
 			} & _common;
 
@@ -141,33 +149,42 @@ export namespace io {
 			export type _tt = typeof lastOperationFailed | typeof closed;
 
 			export type _vt = Error | undefined;
+
 			type _common = Omit<VariantImpl, "tag" | "value">;
 
 			export function _ctor(t: _tt, v: _vt): StreamError {
 				return new VariantImpl(t, v) as StreamError;
 			}
+
 			class VariantImpl {
 				private readonly _tag: _tt;
+
 				private readonly _value?: _vt;
 
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
+
 					this._value = value;
 				}
+
 				get tag(): _tt {
 					return this._tag;
 				}
+
 				get value(): _vt {
 					return this._value;
 				}
+
 				isLastOperationFailed(): this is LastOperationFailed {
 					return this._tag === StreamError.lastOperationFailed;
 				}
+
 				isClosed(): this is Closed {
 					return this._tag === StreamError.closed;
 				}
 			}
 		}
+
 		export type StreamError =
 			| StreamError.LastOperationFailed
 			| StreamError.Closed;
@@ -250,10 +267,12 @@ export namespace io {
 				 */
 				subscribe(): Pollable;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type InputStream = InputStream.Interface;
 
 		export namespace OutputStream {
@@ -432,14 +451,18 @@ export namespace io {
 				 */
 				blockingSplice(src: InputStream, len: u64): u64;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type OutputStream = OutputStream.Interface;
 	}
+
 	export type Streams = {
 		InputStream: Streams.InputStream.Class;
+
 		OutputStream: Streams.OutputStream.Class;
 	};
 }
@@ -452,10 +475,12 @@ export namespace io {
 		);
 
 		export const Error_Handle = new $wcm.ResourceHandleType("error");
+
 		Error.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]error", [["inst", Error]]),
 		);
+
 		Error.addMethod(
 			"toDebugString",
 			new $wcm.MethodType<io.Error.Error.Interface["toDebugString"]>(
@@ -465,6 +490,7 @@ export namespace io {
 			),
 		);
 	}
+
 	export namespace Error._ {
 		export const id = "wasi:io/error@0.2.1" as const;
 
@@ -483,12 +509,14 @@ export namespace io {
 					"[resource-drop]error": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = Error.WasmInterface & {
 					"[dtor]error": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -505,6 +533,7 @@ export namespace io {
 			export type WasmInterface = _.WasmInterface &
 				Error.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Error.exports.WasmInterface;
@@ -526,12 +555,14 @@ export namespace io {
 		);
 
 		export const Pollable_Handle = new $wcm.ResourceHandleType("pollable");
+
 		Pollable.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]pollable", [
 				["inst", Pollable],
 			]),
 		);
+
 		Pollable.addMethod(
 			"ready",
 			new $wcm.MethodType<io.Poll.Pollable.Interface["ready"]>(
@@ -540,6 +571,7 @@ export namespace io {
 				$wcm.bool,
 			),
 		);
+
 		Pollable.addMethod(
 			"block",
 			new $wcm.MethodType<io.Poll.Pollable.Interface["block"]>(
@@ -562,6 +594,7 @@ export namespace io {
 			new $wcm.Uint32ArrayType(),
 		);
 	}
+
 	export namespace Poll._ {
 		export const id = "wasi:io/poll@0.2.1" as const;
 
@@ -578,12 +611,14 @@ export namespace io {
 					"[resource-drop]pollable": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = Pollable.WasmInterface & {
 					"[dtor]pollable": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -610,6 +645,7 @@ export namespace io {
 			export type WasmInterface = _.WasmInterface &
 				Pollable.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Pollable.exports.WasmInterface;
@@ -663,12 +699,14 @@ export namespace io {
 		export const OutputStream_Handle = new $wcm.ResourceHandleType(
 			"output-stream",
 		);
+
 		InputStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]input-stream", [
 				["inst", InputStream],
 			]),
 		);
+
 		InputStream.addMethod(
 			"read",
 			new $wcm.MethodType<io.Streams.InputStream.Interface["read"]>(
@@ -681,6 +719,7 @@ export namespace io {
 				),
 			),
 		);
+
 		InputStream.addMethod(
 			"blockingRead",
 			new $wcm.MethodType<
@@ -695,6 +734,7 @@ export namespace io {
 				),
 			),
 		);
+
 		InputStream.addMethod(
 			"skip",
 			new $wcm.MethodType<io.Streams.InputStream.Interface["skip"]>(
@@ -707,6 +747,7 @@ export namespace io {
 				),
 			),
 		);
+
 		InputStream.addMethod(
 			"blockingSkip",
 			new $wcm.MethodType<
@@ -721,6 +762,7 @@ export namespace io {
 				),
 			),
 		);
+
 		InputStream.addMethod(
 			"subscribe",
 			new $wcm.MethodType<io.Streams.InputStream.Interface["subscribe"]>(
@@ -729,12 +771,14 @@ export namespace io {
 				new $wcm.OwnType<io.Streams.Pollable>(Pollable),
 			),
 		);
+
 		OutputStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]output-stream", [
 				["inst", OutputStream],
 			]),
 		);
+
 		OutputStream.addMethod(
 			"checkWrite",
 			new $wcm.MethodType<
@@ -749,6 +793,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"write",
 			new $wcm.MethodType<io.Streams.OutputStream.Interface["write"]>(
@@ -761,6 +806,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"blockingWriteAndFlush",
 			new $wcm.MethodType<
@@ -775,6 +821,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"flush",
 			new $wcm.MethodType<io.Streams.OutputStream.Interface["flush"]>(
@@ -787,6 +834,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"blockingFlush",
 			new $wcm.MethodType<
@@ -801,6 +849,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"subscribe",
 			new $wcm.MethodType<io.Streams.OutputStream.Interface["subscribe"]>(
@@ -809,6 +858,7 @@ export namespace io {
 				new $wcm.OwnType<io.Streams.Pollable>(Pollable),
 			),
 		);
+
 		OutputStream.addMethod(
 			"writeZeroes",
 			new $wcm.MethodType<
@@ -823,6 +873,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"blockingWriteZeroesAndFlush",
 			new $wcm.MethodType<
@@ -837,6 +888,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"splice",
 			new $wcm.MethodType<io.Streams.OutputStream.Interface["splice"]>(
@@ -857,6 +909,7 @@ export namespace io {
 				),
 			),
 		);
+
 		OutputStream.addMethod(
 			"blockingSplice",
 			new $wcm.MethodType<
@@ -880,6 +933,7 @@ export namespace io {
 			),
 		);
 	}
+
 	export namespace Streams._ {
 		export const id = "wasi:io/streams@0.2.1" as const;
 
@@ -915,12 +969,14 @@ export namespace io {
 					"[resource-drop]input-stream": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = InputStream.WasmInterface & {
 					"[dtor]input-stream": (self: i32) => void;
 				};
 			}
 		}
+
 		export namespace OutputStream {
 			export type WasmInterface = {
 				"[method]output-stream.check-write": (
@@ -977,12 +1033,14 @@ export namespace io {
 					"[resource-drop]output-stream": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = OutputStream.WasmInterface & {
 					"[dtor]output-stream": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -1009,6 +1067,7 @@ export namespace io {
 				InputStream.imports.WasmInterface &
 				OutputStream.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				InputStream.exports.WasmInterface &

@@ -24,6 +24,7 @@ type ConnectionType = BaseConnection<
 
 export type WasiConnectionInfo = {
 	id: number;
+
 	port: ConnectionPort;
 };
 
@@ -44,6 +45,7 @@ class _WasiManagementClient extends WorkerClientBase {
 		if (this._connection === undefined) {
 			throw new Error("Connection is not initialized.");
 		}
+
 		return this._connection;
 	}
 
@@ -51,6 +53,7 @@ class _WasiManagementClient extends WorkerClientBase {
 		const [port1, port2] = AnyConnection.createPorts();
 
 		const id = _WasiManagementClient.id++;
+
 		await this.connection.callAsync(
 			"connection/create",
 			{ id, port: port2 },
@@ -67,6 +70,7 @@ class _WasiManagementClient extends WorkerClientBase {
 
 export type WasiManagementClient = WorkerClient & {
 	createConnection(): Promise<WasiConnectionInfo>;
+
 	dropConnection(id: number): Promise<void>;
 };
 

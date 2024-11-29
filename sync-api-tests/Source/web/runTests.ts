@@ -46,6 +46,7 @@ async function go() {
 		});
 	} catch (err) {
 		console.error("Failed to run tests", err);
+
 		process.exitCode = 1;
 	}
 }

@@ -26,6 +26,7 @@ class OutputChannelProxy extends Resource.Default implements OutputChannel {
 
 	constructor(name: string, languageId?: string) {
 		super(OutputChannelProxy.$resources);
+
 		this.channel = vscode.window.createOutputChannel(name, languageId);
 	}
 
@@ -36,15 +37,19 @@ class OutputChannelProxy extends Resource.Default implements OutputChannel {
 	name(): string {
 		return this.channel.name;
 	}
+
 	append(value: string): void {
 		this.channel.append(value);
 	}
+
 	appendLine(value: string): void {
 		this.channel.appendLine(value);
 	}
+
 	clear(): void {
 		this.channel.clear();
 	}
+
 	show(): void {
 		this.channel.show();
 	}
@@ -58,6 +63,7 @@ class TextDocumentProxy extends Resource.Default implements TextDocument {
 
 	constructor(document: vscode.TextDocument) {
 		super(TextDocumentProxy.$resources);
+
 		this.textDocument = document;
 	}
 
@@ -84,6 +90,7 @@ class TextDocumentProxy extends Resource.Default implements TextDocument {
 
 class CommandRegistry {
 	private commands: Map<string, vscode.Disposable> = new Map();
+
 	private callback!: api.Callbacks.executeCommand;
 
 	constructor() {}
@@ -96,6 +103,7 @@ class CommandRegistry {
 		const disposable = vscode.commands.registerCommand(command, () => {
 			this.callback(command);
 		});
+
 		this.commands.set(command, disposable);
 	}
 
@@ -153,12 +161,14 @@ export async function activate(
 	const imports = api.all._.imports.create(service, wasmContext);
 
 	const instance = await WebAssembly.instantiate(module, imports);
+
 	wasmContext.initialize(new Memory.Default(instance.exports));
 
 	const exports = api.all._.exports.bind(
 		instance.exports as api.all._.Exports,
 		wasmContext,
 	);
+
 	commandRegistry.initialize(exports.callbacks.executeCommand);
 
 	exports.activate();

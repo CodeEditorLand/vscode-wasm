@@ -19,5 +19,6 @@ runSingle((client, folder) => {
 	const content = RAL()
 		.TextDecoder.create()
 		.decode(client.vscode.workspace.fileSystem.readFile(filename).slice());
+
 	assert.strictEqual(content, "test content");
 }).catch(console.error);

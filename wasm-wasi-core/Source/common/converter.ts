@@ -23,6 +23,7 @@ export namespace code2Wasi {
 				return wasi.Filetype.unknown;
 		}
 	}
+
 	export function asErrno(code: string): wasi.errno {
 		switch (code) {
 			case "FileNotFound":
@@ -56,8 +57,10 @@ export namespace BigInts {
 		if (value > MAX_VALUE_AS_BIGINT) {
 			throw new wasi.WasiError(wasi.Errno.fbig);
 		}
+
 		return Number(value);
 	}
+
 	export function max(...args: bigint[]): bigint {
 		return args.reduce((m, e) => (e > m ? e : m));
 	}

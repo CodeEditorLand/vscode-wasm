@@ -157,6 +157,7 @@ export namespace sockets {
 			 */
 			permanentResolverFailure = "permanentResolverFailure",
 		}
+
 		export namespace ErrorCode {
 			export class Error_ extends $wcm.ResultError<ErrorCode> {
 				constructor(value: ErrorCode) {
@@ -186,6 +187,7 @@ export namespace sockets {
 
 			export type Ipv4 = {
 				readonly tag: typeof ipv4;
+
 				readonly value: Ipv4Address;
 			} & _common;
 
@@ -197,6 +199,7 @@ export namespace sockets {
 
 			export type Ipv6 = {
 				readonly tag: typeof ipv6;
+
 				readonly value: Ipv6Address;
 			} & _common;
 
@@ -207,33 +210,42 @@ export namespace sockets {
 			export type _tt = typeof ipv4 | typeof ipv6;
 
 			export type _vt = Ipv4Address | Ipv6Address;
+
 			type _common = Omit<VariantImpl, "tag" | "value">;
 
 			export function _ctor(t: _tt, v: _vt): IpAddress {
 				return new VariantImpl(t, v) as IpAddress;
 			}
+
 			class VariantImpl {
 				private readonly _tag: _tt;
+
 				private readonly _value: _vt;
 
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
+
 					this._value = value;
 				}
+
 				get tag(): _tt {
 					return this._tag;
 				}
+
 				get value(): _vt {
 					return this._value;
 				}
+
 				isIpv4(): this is Ipv4 {
 					return this._tag === IpAddress.ipv4;
 				}
+
 				isIpv6(): this is Ipv6 {
 					return this._tag === IpAddress.ipv6;
 				}
 			}
 		}
+
 		export type IpAddress = IpAddress.Ipv4 | IpAddress.Ipv6;
 
 		export type Ipv4SocketAddress = {
@@ -275,6 +287,7 @@ export namespace sockets {
 
 			export type Ipv4 = {
 				readonly tag: typeof ipv4;
+
 				readonly value: Ipv4SocketAddress;
 			} & _common;
 
@@ -286,6 +299,7 @@ export namespace sockets {
 
 			export type Ipv6 = {
 				readonly tag: typeof ipv6;
+
 				readonly value: Ipv6SocketAddress;
 			} & _common;
 
@@ -296,45 +310,57 @@ export namespace sockets {
 			export type _tt = typeof ipv4 | typeof ipv6;
 
 			export type _vt = Ipv4SocketAddress | Ipv6SocketAddress;
+
 			type _common = Omit<VariantImpl, "tag" | "value">;
 
 			export function _ctor(t: _tt, v: _vt): IpSocketAddress {
 				return new VariantImpl(t, v) as IpSocketAddress;
 			}
+
 			class VariantImpl {
 				private readonly _tag: _tt;
+
 				private readonly _value: _vt;
 
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
+
 					this._value = value;
 				}
+
 				get tag(): _tt {
 					return this._tag;
 				}
+
 				get value(): _vt {
 					return this._value;
 				}
+
 				isIpv4(): this is Ipv4 {
 					return this._tag === IpSocketAddress.ipv4;
 				}
+
 				isIpv6(): this is Ipv6 {
 					return this._tag === IpSocketAddress.ipv6;
 				}
 			}
 		}
+
 		export type IpSocketAddress =
 			| IpSocketAddress.Ipv4
 			| IpSocketAddress.Ipv6;
 
 		export namespace Network {
 			export interface Interface extends $wcm.Resource {}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type Network = Network.Interface;
 	}
+
 	export type Network = {};
 
 	/**
@@ -348,6 +374,7 @@ export namespace sockets {
 		 */
 		export type instanceNetwork = () => Network;
 	}
+
 	export type InstanceNetwork = {
 		instanceNetwork: InstanceNetwork.instanceNetwork;
 	};
@@ -394,10 +421,12 @@ export namespace sockets {
 				 */
 				subscribe(): Pollable;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type ResolveAddressStream = ResolveAddressStream.Interface;
 
 		/**
@@ -429,8 +458,10 @@ export namespace sockets {
 			name: string,
 		) => ResolveAddressStream;
 	}
+
 	export type IpNameLookup = {
 		ResolveAddressStream: IpNameLookup.ResolveAddressStream.Class;
+
 		resolveAddresses: IpNameLookup.resolveAddresses;
 	};
 
@@ -900,12 +931,15 @@ export namespace sockets {
 				 */
 				shutdown(shutdownType: ShutdownType): void;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type TcpSocket = TcpSocket.Interface;
 	}
+
 	export type Tcp = {
 		TcpSocket: Tcp.TcpSocket.Class;
 	};
@@ -951,6 +985,7 @@ export namespace sockets {
 			addressFamily: IpAddressFamily,
 		) => TcpSocket;
 	}
+
 	export type TcpCreateSocket = {
 		createTcpSocket: TcpCreateSocket.createTcpSocket;
 	};
@@ -1205,10 +1240,12 @@ export namespace sockets {
 				 */
 				subscribe(): Pollable;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type UdpSocket = UdpSocket.Interface;
 
 		export namespace IncomingDatagramStream {
@@ -1250,10 +1287,12 @@ export namespace sockets {
 				 */
 				subscribe(): Pollable;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type IncomingDatagramStream = IncomingDatagramStream.Interface;
 
 		export namespace OutgoingDatagramStream {
@@ -1323,15 +1362,20 @@ export namespace sockets {
 				 */
 				subscribe(): Pollable;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type OutgoingDatagramStream = OutgoingDatagramStream.Interface;
 	}
+
 	export type Udp = {
 		UdpSocket: Udp.UdpSocket.Class;
+
 		IncomingDatagramStream: Udp.IncomingDatagramStream.Class;
+
 		OutgoingDatagramStream: Udp.OutgoingDatagramStream.Class;
 	};
 
@@ -1376,6 +1420,7 @@ export namespace sockets {
 			addressFamily: IpAddressFamily,
 		) => UdpSocket;
 	}
+
 	export type UdpCreateSocket = {
 		createUdpSocket: UdpCreateSocket.createUdpSocket;
 	};
@@ -1477,6 +1522,7 @@ export namespace sockets {
 			],
 			sockets.Network.IpSocketAddress._ctor,
 		);
+
 		Network.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]network", [
@@ -1484,6 +1530,7 @@ export namespace sockets {
 			]),
 		);
 	}
+
 	export namespace Network._ {
 		export const id = "wasi:sockets/network@0.2.1" as const;
 
@@ -1497,12 +1544,14 @@ export namespace sockets {
 					"[resource-drop]network": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = Network.WasmInterface & {
 					"[dtor]network": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -1529,6 +1578,7 @@ export namespace sockets {
 			export type WasmInterface = _.WasmInterface &
 				Network.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Network.exports.WasmInterface;
@@ -1553,6 +1603,7 @@ export namespace sockets {
 				new $wcm.OwnType<sockets.InstanceNetwork.Network>(Network),
 			);
 	}
+
 	export namespace InstanceNetwork._ {
 		export const id = "wasi:sockets/instance-network@0.2.1" as const;
 
@@ -1574,6 +1625,7 @@ export namespace sockets {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -1597,12 +1649,14 @@ export namespace sockets {
 		export const ResolveAddressStream_Handle = new $wcm.ResourceHandleType(
 			"resolve-address-stream",
 		);
+
 		ResolveAddressStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]resolve-address-stream", [
 				["inst", ResolveAddressStream],
 			]),
 		);
+
 		ResolveAddressStream.addMethod(
 			"resolveNextAddress",
 			new $wcm.MethodType<
@@ -1621,6 +1675,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		ResolveAddressStream.addMethod(
 			"subscribe",
 			new $wcm.MethodType<
@@ -1655,6 +1710,7 @@ export namespace sockets {
 				),
 			);
 	}
+
 	export namespace IpNameLookup._ {
 		export const id = "wasi:sockets/ip-name-lookup@0.2.1" as const;
 
@@ -1677,6 +1733,7 @@ export namespace sockets {
 						) => void;
 					};
 			}
+
 			export namespace exports {
 				export type WasmInterface =
 					ResolveAddressStream.WasmInterface & {
@@ -1684,6 +1741,7 @@ export namespace sockets {
 					};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -1717,6 +1775,7 @@ export namespace sockets {
 			export type WasmInterface = _.WasmInterface &
 				ResolveAddressStream.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				ResolveAddressStream.exports.WasmInterface;
@@ -1764,12 +1823,14 @@ export namespace sockets {
 		export const TcpSocket_Handle = new $wcm.ResourceHandleType(
 			"tcp-socket",
 		);
+
 		TcpSocket.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]tcp-socket", [
 				["inst", TcpSocket],
 			]),
 		);
+
 		TcpSocket.addMethod(
 			"startBind",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["startBind"]>(
@@ -1787,6 +1848,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"finishBind",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["finishBind"]>(
@@ -1798,6 +1860,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"startConnect",
 			new $wcm.MethodType<
@@ -1817,6 +1880,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"finishConnect",
 			new $wcm.MethodType<
@@ -1840,6 +1904,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"startListen",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["startListen"]>(
@@ -1851,6 +1916,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"finishListen",
 			new $wcm.MethodType<
@@ -1864,6 +1930,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"accept",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["accept"]>(
@@ -1894,6 +1961,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"localAddress",
 			new $wcm.MethodType<
@@ -1907,6 +1975,7 @@ export namespace sockets {
 				>(IpSocketAddress, ErrorCode),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"remoteAddress",
 			new $wcm.MethodType<
@@ -1920,6 +1989,7 @@ export namespace sockets {
 				>(IpSocketAddress, ErrorCode),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"isListening",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["isListening"]>(
@@ -1928,12 +1998,14 @@ export namespace sockets {
 				$wcm.bool,
 			),
 		);
+
 		TcpSocket.addMethod(
 			"addressFamily",
 			new $wcm.MethodType<
 				sockets.Tcp.TcpSocket.Interface["addressFamily"]
 			>("[method]tcp-socket.address-family", [], IpAddressFamily),
 		);
+
 		TcpSocket.addMethod(
 			"setListenBacklogSize",
 			new $wcm.MethodType<
@@ -1947,6 +2019,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"keepAliveEnabled",
 			new $wcm.MethodType<
@@ -1960,6 +2033,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setKeepAliveEnabled",
 			new $wcm.MethodType<
@@ -1973,6 +2047,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"keepAliveIdleTime",
 			new $wcm.MethodType<
@@ -1986,6 +2061,7 @@ export namespace sockets {
 				>(Duration, ErrorCode),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setKeepAliveIdleTime",
 			new $wcm.MethodType<
@@ -1999,6 +2075,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"keepAliveInterval",
 			new $wcm.MethodType<
@@ -2012,6 +2089,7 @@ export namespace sockets {
 				>(Duration, ErrorCode),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setKeepAliveInterval",
 			new $wcm.MethodType<
@@ -2025,6 +2103,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"keepAliveCount",
 			new $wcm.MethodType<
@@ -2038,6 +2117,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setKeepAliveCount",
 			new $wcm.MethodType<
@@ -2051,6 +2131,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"hopLimit",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["hopLimit"]>(
@@ -2062,6 +2143,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setHopLimit",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["setHopLimit"]>(
@@ -2073,6 +2155,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"receiveBufferSize",
 			new $wcm.MethodType<
@@ -2086,6 +2169,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setReceiveBufferSize",
 			new $wcm.MethodType<
@@ -2099,6 +2183,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"sendBufferSize",
 			new $wcm.MethodType<
@@ -2112,6 +2197,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"setSendBufferSize",
 			new $wcm.MethodType<
@@ -2125,6 +2211,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"subscribe",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["subscribe"]>(
@@ -2133,6 +2220,7 @@ export namespace sockets {
 				new $wcm.OwnType<sockets.Tcp.Pollable>(Pollable),
 			),
 		);
+
 		TcpSocket.addMethod(
 			"shutdown",
 			new $wcm.MethodType<sockets.Tcp.TcpSocket.Interface["shutdown"]>(
@@ -2145,6 +2233,7 @@ export namespace sockets {
 			),
 		);
 	}
+
 	export namespace Tcp._ {
 		export const id = "wasi:sockets/tcp@0.2.1" as const;
 
@@ -2302,12 +2391,14 @@ export namespace sockets {
 					"[resource-drop]tcp-socket": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = TcpSocket.WasmInterface & {
 					"[dtor]tcp-socket": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -2335,6 +2426,7 @@ export namespace sockets {
 			export type WasmInterface = _.WasmInterface &
 				TcpSocket.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TcpSocket.exports.WasmInterface;
@@ -2373,6 +2465,7 @@ export namespace sockets {
 				),
 			);
 	}
+
 	export namespace TcpCreateSocket._ {
 		export const id = "wasi:sockets/tcp-create-socket@0.2.1" as const;
 
@@ -2402,6 +2495,7 @@ export namespace sockets {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -2461,12 +2555,14 @@ export namespace sockets {
 
 		export const OutgoingDatagramStream_Handle =
 			new $wcm.ResourceHandleType("outgoing-datagram-stream");
+
 		UdpSocket.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]udp-socket", [
 				["inst", UdpSocket],
 			]),
 		);
+
 		UdpSocket.addMethod(
 			"startBind",
 			new $wcm.MethodType<sockets.Udp.UdpSocket.Interface["startBind"]>(
@@ -2484,6 +2580,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"finishBind",
 			new $wcm.MethodType<sockets.Udp.UdpSocket.Interface["finishBind"]>(
@@ -2495,6 +2592,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"stream",
 			new $wcm.MethodType<sockets.Udp.UdpSocket.Interface["stream"]>(
@@ -2531,6 +2629,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"localAddress",
 			new $wcm.MethodType<
@@ -2544,6 +2643,7 @@ export namespace sockets {
 				>(IpSocketAddress, ErrorCode),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"remoteAddress",
 			new $wcm.MethodType<
@@ -2557,12 +2657,14 @@ export namespace sockets {
 				>(IpSocketAddress, ErrorCode),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"addressFamily",
 			new $wcm.MethodType<
 				sockets.Udp.UdpSocket.Interface["addressFamily"]
 			>("[method]udp-socket.address-family", [], IpAddressFamily),
 		);
+
 		UdpSocket.addMethod(
 			"unicastHopLimit",
 			new $wcm.MethodType<
@@ -2576,6 +2678,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"setUnicastHopLimit",
 			new $wcm.MethodType<
@@ -2589,6 +2692,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"receiveBufferSize",
 			new $wcm.MethodType<
@@ -2602,6 +2706,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"setReceiveBufferSize",
 			new $wcm.MethodType<
@@ -2615,6 +2720,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"sendBufferSize",
 			new $wcm.MethodType<
@@ -2628,6 +2734,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"setSendBufferSize",
 			new $wcm.MethodType<
@@ -2641,6 +2748,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		UdpSocket.addMethod(
 			"subscribe",
 			new $wcm.MethodType<sockets.Udp.UdpSocket.Interface["subscribe"]>(
@@ -2649,12 +2757,14 @@ export namespace sockets {
 				new $wcm.OwnType<sockets.Udp.Pollable>(Pollable),
 			),
 		);
+
 		IncomingDatagramStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]incoming-datagram-stream", [
 				["inst", IncomingDatagramStream],
 			]),
 		);
+
 		IncomingDatagramStream.addMethod(
 			"receive",
 			new $wcm.MethodType<
@@ -2673,6 +2783,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		IncomingDatagramStream.addMethod(
 			"subscribe",
 			new $wcm.MethodType<
@@ -2683,12 +2794,14 @@ export namespace sockets {
 				new $wcm.OwnType<sockets.Udp.Pollable>(Pollable),
 			),
 		);
+
 		OutgoingDatagramStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]outgoing-datagram-stream", [
 				["inst", OutgoingDatagramStream],
 			]),
 		);
+
 		OutgoingDatagramStream.addMethod(
 			"checkSend",
 			new $wcm.MethodType<
@@ -2702,6 +2815,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		OutgoingDatagramStream.addMethod(
 			"send",
 			new $wcm.MethodType<
@@ -2722,6 +2836,7 @@ export namespace sockets {
 				),
 			),
 		);
+
 		OutgoingDatagramStream.addMethod(
 			"subscribe",
 			new $wcm.MethodType<
@@ -2733,6 +2848,7 @@ export namespace sockets {
 			),
 		);
 	}
+
 	export namespace Udp._ {
 		export const id = "wasi:sockets/udp@0.2.1" as const;
 
@@ -2827,12 +2943,14 @@ export namespace sockets {
 					"[resource-drop]udp-socket": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = UdpSocket.WasmInterface & {
 					"[dtor]udp-socket": (self: i32) => void;
 				};
 			}
 		}
+
 		export namespace IncomingDatagramStream {
 			export type WasmInterface = {
 				"[method]incoming-datagram-stream.receive": (
@@ -2853,6 +2971,7 @@ export namespace sockets {
 						) => void;
 					};
 			}
+
 			export namespace exports {
 				export type WasmInterface =
 					IncomingDatagramStream.WasmInterface & {
@@ -2860,6 +2979,7 @@ export namespace sockets {
 					};
 			}
 		}
+
 		export namespace OutgoingDatagramStream {
 			export type WasmInterface = {
 				"[method]outgoing-datagram-stream.check-send": (
@@ -2885,6 +3005,7 @@ export namespace sockets {
 						) => void;
 					};
 			}
+
 			export namespace exports {
 				export type WasmInterface =
 					OutgoingDatagramStream.WasmInterface & {
@@ -2892,6 +3013,7 @@ export namespace sockets {
 					};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -2925,6 +3047,7 @@ export namespace sockets {
 				IncomingDatagramStream.imports.WasmInterface &
 				OutgoingDatagramStream.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				UdpSocket.exports.WasmInterface &
@@ -2979,6 +3102,7 @@ export namespace sockets {
 				),
 			);
 	}
+
 	export namespace UdpCreateSocket._ {
 		export const id = "wasi:sockets/udp-create-socket@0.2.1" as const;
 
@@ -3008,6 +3132,7 @@ export namespace sockets {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}

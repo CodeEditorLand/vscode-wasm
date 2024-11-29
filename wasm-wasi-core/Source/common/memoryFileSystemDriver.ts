@@ -53,12 +53,15 @@ function timeInNanoseconds(timeInMilliseconds: number): bigint {
 
 interface BaseNode {
 	readonly ctime: bigint;
+
 	readonly mtime: bigint;
+
 	readonly atime: bigint;
 }
 
 interface FileNode extends fs.FileNode, BaseNode {
 	readonly parent: DirectoryNode;
+
 	content: Uint8Array | { size: bigint; reader: () => Promise<Uint8Array> };
 }
 
@@ -84,6 +87,7 @@ namespace FileNode {
 			content: content,
 		};
 	}
+
 	export function size(node: FileNode): bigint {
 		if (node.content instanceof Uint8Array) {
 			return BigInt(node.content.length);
@@ -95,6 +99,7 @@ namespace FileNode {
 
 interface DirectoryNode extends BaseNode, fs.DirectoryNode {
 	readonly parent: DirectoryNode | undefined;
+
 	readonly entries: Map<string, Node>;
 }
 
@@ -117,6 +122,7 @@ namespace DirectoryNode {
 			entries: new Map(),
 		};
 	}
+
 	export function size(node: DirectoryNode): bigint {
 		return BigInt((Math.trunc((node.entries.size * 24) / 4096) + 1) * 4096);
 	}
@@ -124,6 +130,7 @@ namespace DirectoryNode {
 
 interface CharacterDeviceNode extends fs.CharacterDeviceNode, BaseNode {
 	readonly readable: ReadableStream | undefined;
+
 	readonly writable: WritableStream | undefined;
 }
 
@@ -186,6 +193,7 @@ export class MemoryFileSystem
 			basename,
 			timeInNanoseconds(Date.now()),
 		);
+
 		parent.entries.set(basename, node);
 	}
 
@@ -208,6 +216,7 @@ export class MemoryFileSystem
 			timeInNanoseconds(Date.now()),
 			content,
 		);
+
 		parent.entries.set(basename, node);
 	}
 
@@ -226,6 +235,7 @@ export class MemoryFileSystem
 			new ReadableStream(),
 			undefined,
 		);
+
 		parent.entries.set(basename, node);
 
 		return node.readable!;
@@ -246,6 +256,7 @@ export class MemoryFileSystem
 			undefined,
 			new WritableStream(encoding),
 		);
+
 		parent.entries.set(basename, node);
 
 		return node.writable!;
@@ -257,9 +268,11 @@ export class MemoryFileSystem
 		if (result === undefined) {
 			throw new Error(`ENOENT: no such directory ${path}`);
 		}
+
 		if (result.filetype !== Filetype.directory) {
 			throw new Error(`ENOTDIR: not a directory ${path}`);
 		}
+
 		return result;
 	}
 
@@ -294,6 +307,7 @@ export class MemoryFileSystem
 		const content = await this.getContent(node);
 
 		const [newContent, bytesWritten] = this.write(content, offset, buffers);
+
 		node.content = newContent;
 
 		return bytesWritten;
@@ -313,8 +327,10 @@ export class MemoryFileSystem
 
 		for (const b of buffers) {
 			buffer.set(b, offset);
+
 			offset += b.byteLength;
 		}
+
 		await node.readable.write(buffer);
 
 		return allBytes;
@@ -342,14 +358,18 @@ export class MemoryFileSystem
 
 		for (const buffer of buffers) {
 			const toRead = Math.min(buffer.length, content.byteLength - offset);
+
 			buffer.set(content.subarray(offset, offset + toRead));
+
 			totalBytesRead += toRead;
 
 			if (toRead < buffer.length) {
 				break;
 			}
+
 			offset += toRead;
 		}
+
 		return totalBytesRead;
 	}
 
@@ -369,12 +389,15 @@ export class MemoryFileSystem
 		// Do we need to increase the buffer
 		if (offset + bytesToWrite > content.byteLength) {
 			const newContent = new Uint8Array(offset + bytesToWrite);
+
 			newContent.set(content);
+
 			content = newContent;
 		}
 
 		for (const bytes of buffers) {
 			content.set(bytes, offset);
+
 			offset += bytes.length;
 		}
 
@@ -432,6 +455,7 @@ export function create(
 		) {
 			throw new WasiError(Errno.badf);
 		}
+
 		if (
 			fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor &&
 			(
@@ -455,6 +479,7 @@ export function create(
 		) {
 			throw new WasiError(Errno.badf);
 		}
+
 		if (
 			fileDescriptor instanceof fs.CharacterDeviceNodeDescriptor &&
 			(
@@ -503,12 +528,19 @@ export function create(
 
 	function assignStat(result: filestat, node: Node): void {
 		result.dev = deviceId;
+
 		result.ino = node.inode;
+
 		result.filetype = node.filetype;
+
 		result.nlink = 1n;
+
 		result.size = getSize(node);
+
 		result.atim = node.atime;
+
 		result.ctim = node.ctime;
+
 		result.mtim = node.mtime;
 	}
 
@@ -565,8 +597,11 @@ export function create(
 			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
+
 			result.fs_flags = fileDescriptor.fdflags;
+
 			result.fs_rights_base = fileDescriptor.rights_base;
+
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
 
 			return Promise.resolve();
@@ -576,6 +611,7 @@ export function create(
 			result: filestat,
 		): Promise<void> {
 			assertFileDescriptor(fileDescriptor);
+
 			assignStat(result, fileDescriptor.node);
 
 			return Promise.resolve();
@@ -588,6 +624,7 @@ export function create(
 			if (buffers.length === 0) {
 				return 0;
 			}
+
 			assertReadDescriptor(fileDescriptor);
 
 			if (fileDescriptor instanceof fs.FileNodeDescriptor) {
@@ -603,6 +640,7 @@ export function create(
 			if (buffers.length === 0) {
 				return 0;
 			}
+
 			assertReadDescriptor(fileDescriptor);
 
 			let totalBytesRead = 0;
@@ -613,6 +651,7 @@ export function create(
 					fileDescriptor.cursor,
 					buffers,
 				);
+
 				fileDescriptor.cursor =
 					fileDescriptor.cursor + BigInt(totalBytesRead);
 			} else {
@@ -621,6 +660,7 @@ export function create(
 					buffers,
 				);
 			}
+
 			return totalBytesRead;
 		},
 		fd_readdir(fileDescriptor: FileDescriptor): Promise<ReaddirEntry[]> {
@@ -635,6 +675,7 @@ export function create(
 					d_name: entry.name,
 				});
 			}
+
 			return Promise.resolve(result);
 		},
 		async fd_seek(
@@ -657,10 +698,12 @@ export function create(
 
 				case Whence.end:
 					const size = FileNode.size(fileDescriptor.node);
+
 					fileDescriptor.cursor = BigInts.max(0n, size - offset);
 
 					break;
 			}
+
 			return BigInt(fileDescriptor.cursor);
 		},
 		fd_renumber(fileDescriptor: FileDescriptor, _to: fd): Promise<void> {
@@ -694,6 +737,7 @@ export function create(
 					buffers,
 				);
 			}
+
 			return bytesWritten;
 		},
 		async fd_write(
@@ -712,11 +756,13 @@ export function create(
 						(await $fs.getContent(fileDescriptor.node)).byteLength,
 					);
 				}
+
 				bytesWritten = await $fs.writeFile(
 					fileDescriptor.node,
 					fileDescriptor.cursor,
 					buffers,
 				);
+
 				fileDescriptor.cursor =
 					fileDescriptor.cursor + BigInt(bytesWritten);
 			} else {
@@ -725,6 +771,7 @@ export function create(
 					buffers,
 				);
 			}
+
 			return bytesWritten;
 		},
 		async path_filestat_get(
@@ -740,6 +787,7 @@ export function create(
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
+
 			assignStat(result, target);
 		},
 		path_open(
@@ -760,17 +808,21 @@ export function create(
 				if (Oflags.creatOn(oflags)) {
 					throw new WasiError(Errno.perm);
 				}
+
 				throw new WasiError(Errno.noent);
 			}
+
 			if (
 				target.filetype !== Filetype.directory &&
 				Oflags.directoryOn(oflags)
 			) {
 				throw new WasiError(Errno.notdir);
 			}
+
 			if (Oflags.exclOn(oflags)) {
 				throw new WasiError(Errno.exist);
 			}
+
 			if (
 				target.filetype === Filetype.regular_file &&
 				(Oflags.truncOn(oflags) ||
@@ -832,6 +884,7 @@ export function create(
 							fs_rights_base,
 							FileOnlyBaseRights,
 						) | Rights.fd_write;
+
 					descriptor = new fs.CharacterDeviceNodeDescriptor(
 						deviceId,
 						fdProvider.next(),
@@ -843,9 +896,11 @@ export function create(
 
 					break;
 			}
+
 			if (descriptor === undefined) {
 				throw new WasiError(Errno.noent);
 			}
+
 			return Promise.resolve(descriptor);
 		},
 		path_readlink(
@@ -859,6 +914,7 @@ export function create(
 			if (target === undefined) {
 				throw new WasiError(Errno.noent);
 			}
+
 			throw new WasiError(Errno.nolink);
 		},
 		fd_bytesAvailable(fileDescriptor: FileDescriptor): Promise<filesize> {

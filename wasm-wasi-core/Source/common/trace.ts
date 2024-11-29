@@ -49,6 +49,7 @@ namespace wasi {
 
 	export type Uint32Array = {
 		readonly $ptr: ptr;
+
 		size: number;
 
 		get(index: number): number;
@@ -66,6 +67,7 @@ namespace wasi {
 
 	export type StructArray<T> = {
 		readonly $ptr: ptr;
+
 		size: number;
 
 		get(index: number): T;
@@ -74,12 +76,16 @@ namespace wasi {
 
 export class Memory {
 	private readonly raw: ArrayBuffer;
+
 	private readonly dataView: DataView;
+
 	private readonly decoder: RAL.TextDecoder;
 
 	constructor(raw: ArrayBuffer) {
 		this.raw = raw;
+
 		this.dataView = new DataView(this.raw);
+
 		this.decoder = RAL().TextDecoder.create();
 	}
 
@@ -130,6 +136,7 @@ export class Memory {
 		if (length === -1) {
 			throw new Error(`No null terminate character found`);
 		}
+
 		return this.decoder.decode(
 			new Uint8Array(this.raw, ptr, length).slice(0),
 		);
@@ -148,8 +155,10 @@ export class Memory {
 			if (bytes[index] === 0) {
 				return index - start;
 			}
+
 			index++;
 		}
+
 		return -1;
 	}
 }
@@ -201,7 +210,9 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					argvCount = memory.readUint32(argvCount_ptr);
+
 					argvBufSize = memory.readUint32(argvBufSize_ptr);
 
 					return `args_sizes_get() => [count: ${argvCount}, bufSize: ${argvBufSize}, result: ${Errno.toString(result)}]`;
@@ -228,8 +239,10 @@ export namespace TraceMessage {
 						const valueStartOffset = argv.get(i);
 
 						const arg = memory.readString(valueStartOffset);
+
 						buffer.push(`\t${i}: ${arg}`);
 					}
+
 					return buffer.join("\n");
 				} else {
 					return `args_get() => [result: ${Errno.toString(result)}]`;
@@ -243,7 +256,9 @@ export namespace TraceMessage {
 			): string => {
 				if (result === Errno.success) {
 					const memory = new Memory(_memory);
+
 					environCount = memory.readUint32(environCount_ptr);
+
 					environBufSize = memory.readUint32(environBufSize_ptr);
 
 					return `environ_sizes_get() => [envCount: ${environCount}, envBufSize: ${environBufSize}, result: ${Errno.toString(result)}]`;
@@ -273,8 +288,10 @@ export namespace TraceMessage {
 						const valueStartOffset = environ.get(i);
 
 						const env = memory.readString(valueStartOffset);
+
 						buffer.push(`\t${i}: ${env}`);
 					}
+
 					return buffer.join("\n");
 				} else {
 					return `environ_get() => [result: ${Errno.toString(result)}]`;
@@ -307,7 +324,9 @@ export namespace TraceMessage {
 					const memory = new Memory(_memory);
 
 					const path = memory.readString(pathPtr, pathLen);
+
 					preStats.set(fd, path);
+
 					fileDescriptors.set(fd, path);
 
 					return `fd_prestat_dir_name(fd: ${fd}) => [path: ${path}, result: ${Errno.toString(result)}]`;
@@ -365,6 +384,7 @@ export namespace TraceMessage {
 			},
 			fd_close: (_memory: ArrayBuffer, result: errno, fd: fd): string => {
 				const message = `fd_close(fd: ${fd} => ${getFileDescriptorPath(fd)}) => [result: ${Errno.toString(result)}]`;
+
 				fileDescriptors.delete(fd);
 
 				return message;
@@ -527,8 +547,10 @@ export namespace TraceMessage {
 
 				if (result === Errno.success) {
 					fileDescriptors.set(to, fileDescriptors.get(fd)!);
+
 					fileDescriptors.delete(fd);
 				}
+
 				return message;
 			},
 			fd_sync: (_memory: ArrayBuffer, result: errno, fd: fd): string => {
@@ -648,6 +670,7 @@ export namespace TraceMessage {
 
 					if (result === Errno.success) {
 						const parentPath = fileDescriptors.get(fd);
+
 						fileDescriptors.set(
 							resultFd,
 							parentPath !== undefined
@@ -655,6 +678,7 @@ export namespace TraceMessage {
 								: path,
 						);
 					}
+
 					return message;
 				} else {
 					return `path_open(fd: ${fd} => ${getFileDescriptorPath(fd)}, dirflags: ${Lookupflags.toString(dirflags)}, path: ${path}, oflags: ${Oflags.toString(oflags)}, fdflags: ${Fdflags.toString(fdflags)}) => [result: ${Errno.toString(result)}]`;

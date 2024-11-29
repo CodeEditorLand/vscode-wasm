@@ -16,6 +16,8 @@ runSingle((client, folder) => {
 	});
 
 	const stat = client.vscode.workspace.fileSystem.stat(filename);
+
 	assert.strictEqual(stat.type, FileType.File);
+
 	assert.strictEqual(stat.size, 12);
 }).catch(console.error);

@@ -14,6 +14,7 @@ export class MainConnection extends BaseMainConnection {
 
 	constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
 	}
 
@@ -23,6 +24,7 @@ export class MainConnection extends BaseMainConnection {
 		if (this.port instanceof MessagePort) {
 			this.port.close();
 		}
+
 		super.dispose();
 	}
 
@@ -55,6 +57,7 @@ export class WorkerConnection extends BaseWorkerConnection {
 		timeout?: number,
 	) {
 		super(world, timeout);
+
 		this.port = port;
 	}
 

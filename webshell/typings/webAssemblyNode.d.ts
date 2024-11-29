@@ -17,7 +17,9 @@ and limitations under the License.
 type BufferSource = ArrayBufferView | ArrayBuffer;
 declare namespace WebAssembly {
 	type ImportExportKind = "function" | "global" | "memory" | "table";
+
 	type TableKind = "anyfunc" | "externref";
+
 	type ValueType =
 		| "anyfunc"
 		| "externref"
@@ -26,31 +28,42 @@ declare namespace WebAssembly {
 		| "i32"
 		| "i64"
 		| "v128";
+
 	type ExportValue = Function | Global | Memory | Table;
+
 	type Exports = Record<string, ExportValue>;
+
 	type ImportValue = ExportValue | number;
+
 	type Imports = Record<string, ModuleImports>;
+
 	type ModuleImports = Record<string, ImportValue>;
 
 	interface GlobalDescriptor {
 		mutable?: boolean;
+
 		value: ValueType;
 	}
 
 	interface ModuleExportDescriptor {
 		kind: ImportExportKind;
+
 		name: string;
 	}
 
 	interface ModuleImportDescriptor {
 		kind: ImportExportKind;
+
 		module: string;
+
 		name: string;
 	}
 
 	interface TableDescriptor {
 		element: TableKind;
+
 		initial: number;
+
 		maximum?: number;
 	}
 
@@ -58,6 +71,7 @@ declare namespace WebAssembly {
 		readonly length: number;
 
 		get(index: number): any;
+
 		grow(delta: number, value?: any): number;
 
 		set(index: number, value?: any): void;
@@ -65,16 +79,19 @@ declare namespace WebAssembly {
 
 	var Table: {
 		prototype: Table;
+
 		new (descriptor: TableDescriptor, value?: any): Table;
 	};
 
 	interface Global {
 		value: any;
+
 		valueOf(): any;
 	}
 
 	var Global: {
 		prototype: Global;
+
 		new (descriptor: GlobalDescriptor, v?: any): Global;
 	};
 
@@ -84,12 +101,15 @@ declare namespace WebAssembly {
 
 	var Instance: {
 		prototype: Instance;
+
 		new (module: Module, importObject?: Imports): Instance;
 	};
 
 	var Module: {
 		prototype: Module;
+
 		new (bytes: BufferSource): Module;
+
 		customSections(
 			moduleObject: Module,
 			sectionName: string,
@@ -102,6 +122,7 @@ declare namespace WebAssembly {
 
 	interface WebAssemblyInstantiatedSource {
 		instance: Instance;
+
 		module: Module;
 	}
 

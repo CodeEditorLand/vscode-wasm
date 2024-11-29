@@ -38,15 +38,19 @@ export interface Sink {
 export type FileDescriptorDescription =
 	| {
 			kind: "fileSystem";
+
 			uri: Uri;
+
 			path: string;
 	  }
 	| {
 			kind: "terminal";
+
 			uri: Uri;
 	  }
 	| {
 			kind: "console";
+
 			uri: Uri;
 	  };
 

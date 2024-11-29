@@ -26,6 +26,7 @@ export class MessageConnection<
 
 	constructor(port: MessagePort | Worker | DedicatedWorkerGlobalScope) {
 		super();
+
 		this.port = port;
 	}
 

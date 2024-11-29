@@ -9,7 +9,9 @@ import { MemoryLocation, SharedMemory, SharedObject } from "./sharedObject";
 
 export interface ConnectionPort {
 	postMessage(message: any, ...args: any[]): void;
+
 	on?(event: "message", listener: (value: any) => void): this;
+
 	onmessage?: ((this: any, ev: any) => any) | null;
 }
 
@@ -19,17 +21,20 @@ type HandlerResult<T> = T | Promise<T>;
 
 type _MessageType = {
 	method: string;
+
 	params?: object | undefined;
 };
 
 type _AsyncCallType = _MessageType & {
 	result: void | null | any;
+
 	error?: undefined;
 };
 type _AsyncCallHandler = (params: any) => HandlerResult<any>;
 
 type _SharedObjectResult = {
 	new (location: MemoryRange): SharedObject;
+
 	alloc(memory: SharedMemory): MemoryRange;
 };
 namespace _SharedObjectResult {
@@ -64,12 +69,15 @@ const enum MessageKind {
 
 interface AbstractMessage {
 	kind: MessageKind;
+
 	method: string;
+
 	params?: null | undefined | object;
 }
 
 interface _AsyncCall extends AbstractMessage {
 	kind: MessageKind.AsyncCall;
+
 	id: number;
 }
 namespace _AsyncCall {
@@ -80,8 +88,11 @@ namespace _AsyncCall {
 
 interface _AsyncResponse {
 	kind: MessageKind.AsyncResponse;
+
 	id: number;
+
 	result?: any;
+
 	error?: any;
 }
 namespace _AsyncResponse {
@@ -92,7 +103,9 @@ namespace _AsyncResponse {
 
 interface _SyncCall extends AbstractMessage {
 	kind: MessageKind.SyncCall;
+
 	sync: MemoryLocation;
+
 	result?: MemoryLocation;
 }
 namespace _SyncCall {
@@ -114,7 +127,9 @@ type _Message = _AsyncCall | _AsyncResponse | _SyncCall | _Notification;
 
 type ResultPromise = {
 	method: string;
+
 	resolve: (response: any) => void;
+
 	reject: (error: any) => void;
 };
 
@@ -309,24 +324,32 @@ type NotifyHandlerSignatures<Notifications extends _NotifyType | undefined> = [
 
 export class TimeoutError extends Error {
 	public readonly method: string;
+
 	public readonly timeout: number;
 
 	constructor(message: string, method: string, timeout: number) {
 		super(message);
+
 		this.name = "TimeoutError";
+
 		this.method = method;
+
 		this.timeout = timeout;
 	}
 }
 
 export class SyncCallError extends Error {
 	public readonly method: string;
+
 	public readonly errorCode: number;
 
 	constructor(message: string, method: string, errorCode: number) {
 		super(message);
+
 		this.name = "SyncCallError";
+
 		this.method = method;
+
 		this.errorCode = errorCode;
 	}
 }
@@ -341,26 +364,36 @@ export abstract class BaseConnection<
 	TLI = TransferItems,
 > {
 	private static sync: number = 0;
+
 	private static error: number = 1;
 
 	private id: number;
+
 	private readonly asyncCallResultPromises: Map<number, ResultPromise>;
+
 	private readonly asyncCallHandlers: Map<string, _AsyncCallHandler>;
 
 	private memory: SharedMemory | undefined;
+
 	private syncMemoryRange: MemoryRange | undefined;
+
 	private syncLocation: MemoryLocation | undefined;
+
 	private readonly syncCallHandlers: Map<string, _SyncCallHandler>;
 
 	private readonly notifyHandlers: Map<string, _NotifyHandler>;
 
 	constructor() {
 		this.id = 1;
+
 		this.asyncCallResultPromises = new Map();
+
 		this.asyncCallHandlers = new Map();
 
 		this.memory = undefined;
+
 		this.syncMemoryRange = undefined;
+
 		this.syncCallHandlers = new Map();
 
 		this.notifyHandlers = new Map();
@@ -368,10 +401,15 @@ export abstract class BaseConnection<
 
 	public dispose(): void {
 		this.memory = undefined;
+
 		this.syncMemoryRange = undefined;
+
 		this.asyncCallResultPromises.clear();
+
 		this.asyncCallHandlers.clear();
+
 		this.syncCallHandlers.clear();
+
 		this.notifyHandlers.clear();
 	}
 
@@ -395,11 +433,13 @@ export abstract class BaseConnection<
 			if (params !== undefined) {
 				request.params = params;
 			}
+
 			this.asyncCallResultPromises.set(id, {
 				resolve,
 				reject,
 				method: request.method,
 			});
+
 			this.postMessage(request, transferList);
 		});
 	}
@@ -415,18 +455,25 @@ export abstract class BaseConnection<
 		if (this.memory !== undefined && this.memory.isSame(memory)) {
 			return;
 		}
+
 		if (this.memory !== undefined) {
 			throw new Error("Memory is already initialized.");
 		}
+
 		if (!(memory.buffer instanceof SharedArrayBuffer)) {
 			throw new Error("Memory is not a shared memory.");
 		}
+
 		this.memory = memory;
+
 		this.syncMemoryRange = memory.alloc(s32.alignment, 2 * s32.size);
 
 		const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
+
 		Atomics.store(syncCallBuffer, BaseConnection.sync, 0);
+
 		Atomics.store(syncCallBuffer, BaseConnection.error, 0);
+
 		this.syncLocation = {
 			memory: { id: memory.id },
 			ptr: this.syncMemoryRange.ptr,
@@ -438,6 +485,7 @@ export abstract class BaseConnection<
 		if (this.memory === undefined) {
 			throw new Error("Memory is not initialized.");
 		}
+
 		return this.memory;
 	}
 
@@ -460,6 +508,7 @@ export abstract class BaseConnection<
 				"Sync calls are not initialized with shared memory.",
 			);
 		}
+
 		const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
 
 		const memory = this.memory;
@@ -473,14 +522,19 @@ export abstract class BaseConnection<
 		if (params !== undefined) {
 			call.params = params;
 		}
+
 		let resultRange: MemoryRange | undefined;
 
 		if (result !== undefined && result !== null) {
 			resultRange = result.alloc(this.memory);
+
 			call.result = MemoryLocation.from(resultRange);
 		}
+
 		this.postMessage(call, transferList);
+
 		syncCallBuffer[BaseConnection.error] = 0;
+
 		Atomics.store(syncCallBuffer, BaseConnection.sync, 0);
 
 		const wait = Atomics.wait(
@@ -504,6 +558,7 @@ export abstract class BaseConnection<
 					if (resultRange.memory.id !== memory!.id) {
 						throw new Error("Memory mismatch");
 					}
+
 					return new result(resultRange);
 				}
 			} else {
@@ -551,6 +606,7 @@ export abstract class BaseConnection<
 				"Sync calls are not initialized with shared memory.",
 			);
 		}
+
 		this.syncCallHandlers.set(method, handler);
 	}
 
@@ -570,6 +626,7 @@ export abstract class BaseConnection<
 		if (params !== undefined) {
 			notification.params = params;
 		}
+
 		this.postMessage(notification, transferList);
 	}
 
@@ -580,6 +637,7 @@ export abstract class BaseConnection<
 		if (method === undefined || handler === undefined) {
 			return;
 		}
+
 		this.notifyHandlers.set(method, handler);
 	}
 
@@ -599,6 +657,7 @@ export abstract class BaseConnection<
 			if (handler !== undefined) {
 				try {
 					const result = await handler(message.params);
+
 					this.sendResultResponse(id, result);
 				} catch (error) {
 					this.sendErrorResponse(id, error);
@@ -634,6 +693,7 @@ export abstract class BaseConnection<
 						"Sync calls are not initialized with shared memory.",
 					);
 				}
+
 				const syncCallBuffer = this.syncMemoryRange.getInt32View(0);
 
 				let errorCode: number = 0;
@@ -654,7 +714,9 @@ export abstract class BaseConnection<
 					}
 				} finally {
 					syncCallBuffer[BaseConnection.error] = errorCode;
+
 					Atomics.store(syncCallBuffer, BaseConnection.sync, 1);
+
 					Atomics.notify(syncCallBuffer, BaseConnection.sync, 1);
 				}
 			}
@@ -677,6 +739,7 @@ export abstract class BaseConnection<
 			id,
 			result: result,
 		};
+
 		this.postMessage(response);
 	}
 
@@ -691,6 +754,7 @@ export abstract class BaseConnection<
 						? error.message
 						: error,
 		};
+
 		this.postMessage(response);
 	}
 }
@@ -744,9 +808,11 @@ export namespace AnyConnection {
 	export function cast<T>(connection: AnyConnection): T {
 		return connection as unknown as T;
 	}
+
 	export function create<T = AnyConnection>(port: ConnectionPort): T {
 		return RAL().AnyConnection.create(port) as unknown as T;
 	}
+
 	export function createPorts(): [ConnectionPort, ConnectionPort] {
 		return RAL().MessageChannel.create();
 	}

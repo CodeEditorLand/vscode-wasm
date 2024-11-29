@@ -33,10 +33,12 @@ export namespace cli {
 		 */
 		export type initialCwd = () => string | undefined;
 	}
+
 	export type Environment = {
 		getEnvironment: Environment.getEnvironment;
 
 		getArguments: Environment.getArguments;
+
 		initialCwd: Environment.initialCwd;
 	};
 
@@ -46,6 +48,7 @@ export namespace cli {
 		 */
 		export type exit = (status: result<void, void>) => void;
 	}
+
 	export type Exit = {
 		exit: Exit.exit;
 	};
@@ -56,6 +59,7 @@ export namespace cli {
 		 */
 		export type run = () => void;
 	}
+
 	export type Run = {
 		run: Run.run;
 	};
@@ -65,6 +69,7 @@ export namespace cli {
 
 		export type getStdin = () => InputStream;
 	}
+
 	export type Stdin = {
 		getStdin: Stdin.getStdin;
 	};
@@ -74,6 +79,7 @@ export namespace cli {
 
 		export type getStdout = () => OutputStream;
 	}
+
 	export type Stdout = {
 		getStdout: Stdout.getStdout;
 	};
@@ -83,6 +89,7 @@ export namespace cli {
 
 		export type getStderr = () => OutputStream;
 	}
+
 	export type Stderr = {
 		getStderr: Stderr.getStderr;
 	};
@@ -97,12 +104,15 @@ export namespace cli {
 	export namespace TerminalInput {
 		export namespace TerminalInput {
 			export interface Interface extends $wcm.Resource {}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type TerminalInput = TerminalInput.Interface;
 	}
+
 	export type TerminalInput = {};
 
 	/**
@@ -115,12 +125,15 @@ export namespace cli {
 	export namespace TerminalOutput {
 		export namespace TerminalOutput {
 			export interface Interface extends $wcm.Resource {}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type TerminalOutput = TerminalOutput.Interface;
 	}
+
 	export type TerminalOutput = {};
 
 	/**
@@ -136,6 +149,7 @@ export namespace cli {
 		 */
 		export type getTerminalStdin = () => TerminalInput | undefined;
 	}
+
 	export type TerminalStdin = {
 		getTerminalStdin: TerminalStdin.getTerminalStdin;
 	};
@@ -153,6 +167,7 @@ export namespace cli {
 		 */
 		export type getTerminalStdout = () => TerminalOutput | undefined;
 	}
+
 	export type TerminalStdout = {
 		getTerminalStdout: TerminalStdout.getTerminalStdout;
 	};
@@ -170,6 +185,7 @@ export namespace cli {
 		 */
 		export type getTerminalStderr = () => TerminalOutput | undefined;
 	}
+
 	export type TerminalStderr = {
 		getTerminalStderr: TerminalStderr.getTerminalStderr;
 	};
@@ -180,14 +196,17 @@ export namespace cli {
 		export namespace Imports {
 			export type Promisified = $wcm.$imports.Promisify<Imports>;
 		}
+
 		export namespace imports {
 			export type Promisify<T> = $wcm.$imports.Promisify<T>;
 		}
+
 		export type Exports = {};
 
 		export namespace Exports {
 			export type Promisified = $wcm.$exports.Promisify<Exports>;
 		}
+
 		export namespace exports {
 			export type Promisify<T> = $wcm.$exports.Promisify<T>;
 		}
@@ -222,6 +241,7 @@ export namespace cli {
 				new $wcm.OptionType<string>($wcm.wstring),
 			);
 	}
+
 	export namespace Environment._ {
 		export const id = "wasi:cli/environment@0.2.1" as const;
 
@@ -242,6 +262,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -254,6 +275,7 @@ export namespace cli {
 			undefined,
 		);
 	}
+
 	export namespace Exit._ {
 		export const id = "wasi:cli/exit@0.2.1" as const;
 
@@ -270,6 +292,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -282,6 +305,7 @@ export namespace cli {
 			new $wcm.ResultType<void, void>(undefined, undefined),
 		);
 	}
+
 	export namespace Run._ {
 		export const id = "wasi:cli/run@0.2.1" as const;
 
@@ -298,6 +322,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -312,6 +337,7 @@ export namespace cli {
 			new $wcm.OwnType<cli.Stdin.InputStream>(InputStream),
 		);
 	}
+
 	export namespace Stdin._ {
 		export const id = "wasi:cli/stdin@0.2.1" as const;
 
@@ -333,6 +359,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -347,6 +374,7 @@ export namespace cli {
 			new $wcm.OwnType<cli.Stdout.OutputStream>(OutputStream),
 		);
 	}
+
 	export namespace Stdout._ {
 		export const id = "wasi:cli/stdout@0.2.1" as const;
 
@@ -368,6 +396,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -382,6 +411,7 @@ export namespace cli {
 			new $wcm.OwnType<cli.Stderr.OutputStream>(OutputStream),
 		);
 	}
+
 	export namespace Stderr._ {
 		export const id = "wasi:cli/stderr@0.2.1" as const;
 
@@ -403,6 +433,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -418,6 +449,7 @@ export namespace cli {
 		export const TerminalInput_Handle = new $wcm.ResourceHandleType(
 			"terminal-input",
 		);
+
 		TerminalInput.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]terminal-input", [
@@ -425,6 +457,7 @@ export namespace cli {
 			]),
 		);
 	}
+
 	export namespace TerminalInput._ {
 		export const id = "wasi:cli/terminal-input@0.2.1" as const;
 
@@ -438,12 +471,14 @@ export namespace cli {
 					"[resource-drop]terminal-input": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = TerminalInput.WasmInterface & {
 					"[dtor]terminal-input": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -460,6 +495,7 @@ export namespace cli {
 			export type WasmInterface = _.WasmInterface &
 				TerminalInput.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalInput.exports.WasmInterface;
@@ -484,6 +520,7 @@ export namespace cli {
 		export const TerminalOutput_Handle = new $wcm.ResourceHandleType(
 			"terminal-output",
 		);
+
 		TerminalOutput.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]terminal-output", [
@@ -491,6 +528,7 @@ export namespace cli {
 			]),
 		);
 	}
+
 	export namespace TerminalOutput._ {
 		export const id = "wasi:cli/terminal-output@0.2.1" as const;
 
@@ -504,12 +542,14 @@ export namespace cli {
 					"[resource-drop]terminal-output": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = TerminalOutput.WasmInterface & {
 					"[dtor]terminal-output": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -526,6 +566,7 @@ export namespace cli {
 			export type WasmInterface = _.WasmInterface &
 				TerminalOutput.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TerminalOutput.exports.WasmInterface;
@@ -554,6 +595,7 @@ export namespace cli {
 				),
 			);
 	}
+
 	export namespace TerminalStdin._ {
 		export const id = "wasi:cli/terminal-stdin@0.2.1" as const;
 
@@ -577,6 +619,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -596,6 +639,7 @@ export namespace cli {
 				),
 			);
 	}
+
 	export namespace TerminalStdout._ {
 		export const id = "wasi:cli/terminal-stdout@0.2.1" as const;
 
@@ -619,6 +663,7 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -638,6 +683,7 @@ export namespace cli {
 				),
 			);
 	}
+
 	export namespace TerminalStderr._ {
 		export const id = "wasi:cli/terminal-stderr@0.2.1" as const;
 
@@ -661,11 +707,14 @@ export namespace cli {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
 	}
+
 	export namespace command.$ {}
+
 	export namespace command._ {
 		export const id = "wasi:cli/command@0.2.1" as const;
 

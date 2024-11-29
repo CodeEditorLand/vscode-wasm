@@ -43,6 +43,7 @@ namespace Converter {
 		if (value === undefined || value === null) {
 			return undefined;
 		}
+
 		switch (value.tag) {
 			case Types.GlobPattern.pattern:
 				return value.value;
@@ -52,6 +53,7 @@ namespace Converter {
 
 interface Extension {
 	activate?(): void;
+
 	deactivate?(): void;
 }
 
@@ -64,6 +66,7 @@ class OutputChannelResource extends Resource.Default implements OutputChannel {
 
 	constructor(name: string, languageId?: string) {
 		super(OutputChannelResource.$resources);
+
 		this.channel = vscode.window.createOutputChannel(name, languageId);
 	}
 
@@ -74,15 +77,19 @@ class OutputChannelResource extends Resource.Default implements OutputChannel {
 	name(): string {
 		return this.channel.name;
 	}
+
 	append(value: string): void {
 		this.channel.append(value);
 	}
+
 	appendLine(value: string): void {
 		this.channel.appendLine(value);
 	}
+
 	clear(): void {
 		this.channel.clear();
 	}
+
 	show(): void {
 		this.channel.show();
 	}
@@ -102,12 +109,14 @@ class TextDocumentResourceManager extends ResourceManager.Default<TextDocumentRe
 				return this.getResource(handle);
 			} else {
 				const resource = new TextDocumentResource(document, handle);
+
 				this.registerResource(resource, handle);
 
 				return resource;
 			}
 		} else {
 			const resource = new TextDocumentResource(document);
+
 			this.document2Handle.set(document, resource.$handle());
 
 			return resource;
@@ -136,6 +145,7 @@ class TextDocumentResource extends Resource.Default implements TextDocument {
 		} else {
 			super(TextDocumentResource.$resources);
 		}
+
 		this.textDocument = document;
 	}
 
@@ -167,6 +177,7 @@ class TextDocumentChangeEventResource
 
 	constructor(event: vscode.TextDocumentChangeEvent) {
 		super(TextDocumentChangeEventResource.$resources);
+
 		this.event = event;
 	}
 
@@ -187,6 +198,7 @@ class TextDocumentChangeEventResource
 
 class CommandRegistry {
 	private commands: Map<string, vscode.Disposable> = new Map();
+
 	private callback!: api.Callbacks.executeCommand;
 
 	constructor() {}
@@ -199,6 +211,7 @@ class CommandRegistry {
 		const disposable = vscode.commands.registerCommand(command, () => {
 			this.callback(command);
 		});
+
 		this.commands.set(command, disposable);
 	}
 
@@ -207,6 +220,7 @@ class CommandRegistry {
 
 		if (disposable !== undefined) {
 			this.commands.delete(command);
+
 			disposable.dispose();
 		}
 	}
@@ -235,6 +249,7 @@ export async function activate(
 			if (memory === undefined) {
 				throw new MemoryError(`Memory not yet initialized`);
 			}
+
 			return memory;
 		},
 	};
@@ -257,6 +272,7 @@ export async function activate(
 				if (textDocumentChangeListener !== undefined) {
 					return;
 				}
+
 				textDocumentChangeListener =
 					vscode.workspace.onDidChangeTextDocument((e) => {
 						const event = new TextDocumentChangeEventResource(e);
@@ -277,6 +293,7 @@ export async function activate(
 			unregisterOnDidChangeTextDocument: () => {
 				if (textDocumentChangeListener !== undefined) {
 					textDocumentChangeListener.dispose();
+
 					textDocumentChangeListener = undefined;
 				}
 			},
@@ -317,13 +334,16 @@ export async function activate(
 	};
 
 	const imports = api.all._.imports.create(service, wasmContext);
+
 	instance = await RAL().WebAssembly.instantiate(module, imports);
+
 	memory = new Memory.Default(instance.exports);
 
 	const $exports = api.all._.exports.bind(
 		instance.exports as api.all._.Exports,
 		wasmContext,
 	);
+
 	commandRegistry.initialize($exports.callbacks.executeCommand);
 
 	const extension = instance.exports as Extension;

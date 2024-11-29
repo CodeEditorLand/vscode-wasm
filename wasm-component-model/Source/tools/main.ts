@@ -36,11 +36,14 @@ async function run(options: Options): Promise<number> {
 	try {
 		if (options.stdin) {
 			let data: string = "";
+
 			process.stdin.on("data", async (chunk) => {
 				data = data + chunk.toString();
 			});
+
 			process.stdin.on("end", async () => {
 				const content: Document = JSON.parse(data);
+
 				processDocument(content, options);
 			});
 		} else {
@@ -50,6 +53,7 @@ async function run(options: Options): Promise<number> {
 				const content: Document = JSON.parse(
 					await fs.readFile(options.input, { encoding: "utf8" }),
 				);
+
 				processDocument(content, options);
 			} else if (
 				stat.isDirectory() ||
@@ -79,6 +83,7 @@ async function run(options: Options): Promise<number> {
 
 						return 1;
 					}
+
 					let data: string;
 
 					try {
@@ -92,7 +97,9 @@ async function run(options: Options): Promise<number> {
 						// we simply return a failure.
 						return 1;
 					}
+
 					const content: Document = JSON.parse(data);
+
 					processDocument(content, options);
 				} catch (error: any) {
 					process.stderr.write(
@@ -201,6 +208,7 @@ if (module === require.main) {
 		.then((exitCode) => (process.exitCode = exitCode))
 		.catch((error) => {
 			process.exitCode = 1;
+
 			process.stderr.write(`${error.toString()}`);
 		});
 }

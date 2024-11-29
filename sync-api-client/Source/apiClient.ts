@@ -36,44 +36,57 @@ export interface ByteSink {
 
 export interface Console {
 	log(message?: any, ...optionalParams: any[]): void;
+
 	error(message?: any, ...optionalParams: any[]): void;
 }
 
 export interface FileSystem {
 	stat(uri: URI): vscode.FileStat;
+
 	readFile(uri: URI): Uint8Array;
+
 	writeFile(uri: URI, content: Uint8Array): void;
+
 	readDirectory(uri: URI): DTOs.DirectoryEntries;
+
 	createDirectory(uri: URI): void;
+
 	delete(
 		uri: URI,
 		options?: { recursive?: boolean; useTrash?: boolean },
 	): void;
+
 	rename(source: URI, target: URI, options?: { overwrite?: boolean }): void;
 }
 
 export interface Workspace {
 	workspaceFolders: vscode.WorkspaceFolder[];
+
 	fileSystem: FileSystem;
 }
 
 export interface TTY {
 	write(uri: URI, value: Uint8Array): number;
+
 	read(uri: URI, maxBytesToRead: number): Uint8Array;
 }
 
 export type FileDescriptorDescription =
 	| {
 			kind: "fileSystem";
+
 			uri: URI;
+
 			path: string;
 	  }
 	| {
 			kind: "terminal";
+
 			uri: URI;
 	  }
 	| {
 			kind: "console";
+
 			uri: URI;
 	  };
 
@@ -81,7 +94,9 @@ export namespace ApiClientConnection {
 	export type ReadyParams = {
 		stdio: {
 			stdin: FileDescriptorDescription;
+
 			stdout: FileDescriptorDescription;
+
 			stderr: FileDescriptorDescription;
 		};
 	};
@@ -133,6 +148,7 @@ class ByteSourceImpl implements ByteSource {
 		if (RequestResult.hasData(result)) {
 			return result.data;
 		}
+
 		throw new RPCError(result.errno, `Should never happen`);
 	}
 }
@@ -154,18 +170,22 @@ class ByteSinkImpl implements ByteSink {
 		if (RequestResult.hasData(result)) {
 			return result.data[0];
 		}
+
 		throw new RPCError(result.errno, `Should never happen`);
 	}
 }
 
 class ConsoleImpl implements Console {
 	private static scheme = "stdio" as const;
+
 	private static authority = "console" as const;
+
 	private static stdout = URI.from({
 		scheme: ConsoleImpl.scheme,
 		authority: ConsoleImpl.authority,
 		path: "/stdout",
 	});
+
 	private static stderr = URI.from({
 		scheme: ConsoleImpl.scheme,
 		authority: ConsoleImpl.authority,
@@ -173,15 +193,18 @@ class ConsoleImpl implements Console {
 	});
 
 	private readonly byteTransfer: ByteSink;
+
 	private readonly encoder: RAL.TextEncoder;
 
 	constructor(byteSink: ByteSink, encoder: RAL.TextEncoder) {
 		this.byteTransfer = byteSink;
+
 		this.encoder = encoder;
 	}
 
 	log(message?: string): void {
 		message = message === undefined ? "\n" : `${message}\n`;
+
 		this.byteTransfer.write(
 			ConsoleImpl.stdout,
 			this.encoder.encode(message),
@@ -190,6 +213,7 @@ class ConsoleImpl implements Console {
 
 	error(message?: string): void {
 		message = message === undefined ? "\n" : `${message}\n`;
+
 		this.byteTransfer.write(
 			ConsoleImpl.stderr,
 			this.encoder.encode(message),
@@ -226,8 +250,10 @@ class FileSystemImpl implements FileSystem {
 			if (permission !== 0) {
 				result.permissions = permission;
 			}
+
 			return result;
 		}
+
 		throw this.asFileSystemError(requestResult.errno, uri);
 	}
 
@@ -241,6 +267,7 @@ class FileSystemImpl implements FileSystem {
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
 		}
+
 		throw this.asFileSystemError(requestResult.errno, uri);
 	}
 
@@ -265,6 +292,7 @@ class FileSystemImpl implements FileSystem {
 		if (RequestResult.hasData(requestResult)) {
 			return requestResult.data;
 		}
+
 		throw this.asFileSystemError(requestResult.errno, uri);
 	}
 
@@ -335,16 +363,19 @@ class FileSystemImpl implements FileSystem {
 			case DTOs.FileSystemError.Unavailable:
 				return vscode.FileSystemError.Unavailable(uri);
 		}
+
 		return vscode.FileSystemError.Unavailable(uri);
 	}
 }
 
 class WorkspaceImpl implements Workspace {
 	private readonly connection: ApiClientConnection;
+
 	public readonly fileSystem: FileSystem;
 
 	constructor(connection: ApiClientConnection) {
 		this.connection = connection;
+
 		this.fileSystem = new FileSystemImpl(this.connection);
 	}
 
@@ -363,17 +394,24 @@ class WorkspaceImpl implements Workspace {
 				};
 			});
 		}
+
 		throw new RPCError(RPCErrno.UnknownError);
 	}
 }
 
 export interface ApiShape {
 	readonly timer: Timer;
+
 	readonly process: Process;
+
 	readonly byteSource: ByteSource;
+
 	readonly byteSink: ByteSink;
+
 	readonly console: Console;
+
 	readonly tty: TTY;
+
 	readonly vscode: {
 		readonly workspace: Workspace;
 	};
@@ -381,22 +419,32 @@ export interface ApiShape {
 
 export class ApiClient implements ApiShape {
 	private readonly connection: ApiClientConnection;
+
 	private readonly encoder: RAL.TextEncoder;
 
 	public readonly timer: Timer;
+
 	public readonly process: Process;
+
 	public readonly byteSource: ByteSource;
+
 	public readonly byteSink: ByteSink;
+
 	public readonly console: Console;
+
 	public readonly tty: TTY;
+
 	public readonly vscode: {
 		readonly workspace: Workspace;
 	};
 
 	constructor(connection: ApiClientConnection) {
 		this.connection = connection;
+
 		this.encoder = RAL().TextEncoder.create();
+
 		this.timer = new TimerImpl(this.connection);
+
 		this.process = new ProcessImpl(this.connection);
 
 		const byteSource = (this.byteSource = new ByteSourceImpl(
@@ -404,7 +452,9 @@ export class ApiClient implements ApiShape {
 		));
 
 		const byteSink = (this.byteSink = new ByteSinkImpl(this.connection));
+
 		this.console = new ConsoleImpl(byteSink, this.encoder);
+
 		this.tty = {
 			read(uri, maxBytesToRead) {
 				return byteSource.read(uri, maxBytesToRead);
@@ -413,6 +463,7 @@ export class ApiClient implements ApiShape {
 				return byteSink.write(uri, value);
 			},
 		};
+
 		this.vscode = {
 			workspace: new WorkspaceImpl(this.connection),
 		};

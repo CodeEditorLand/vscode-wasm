@@ -25,8 +25,11 @@ export namespace Offsets {
 
 export interface StartMainMessage {
 	readonly method: "startMain";
+
 	readonly module: WebAssembly.Module;
+
 	readonly memory?: WebAssembly.Memory;
+
 	readonly trace?: boolean;
 }
 export namespace StartMainMessage {
@@ -39,10 +42,15 @@ export namespace StartMainMessage {
 
 export interface StartThreadMessage {
 	readonly method: "startThread";
+
 	readonly module: WebAssembly.Module;
+
 	readonly memory: WebAssembly.Memory;
+
 	readonly tid: u32;
+
 	readonly start_arg: ptr;
+
 	readonly trace?: boolean;
 }
 export namespace StartThreadMessage {
@@ -82,7 +90,9 @@ export namespace WorkerDoneMessage {
 
 export interface TraceMessage {
 	readonly method: "trace";
+
 	readonly message: string;
+
 	readonly timeTaken: number;
 }
 export namespace TraceMessage {
@@ -95,6 +105,7 @@ export namespace TraceMessage {
 
 export interface TraceSummaryMessage {
 	readonly method: "traceSummary";
+
 	readonly summary: string[];
 }
 export namespace TraceSummaryMessage {

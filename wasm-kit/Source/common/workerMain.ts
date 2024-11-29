@@ -16,11 +16,15 @@ export namespace Worker {
 			const args = RAL().Worker.getArgs();
 
 			const connection = AnyConnection.create(port);
+
 			new constructor(connection, args.slice(1));
+
 			connection.listen();
+
 			connection.notify("workerReady");
 		} catch (error) {
 			RAL().console.error(error);
+
 			RAL().Worker.exitCode = -1;
 		}
 	}

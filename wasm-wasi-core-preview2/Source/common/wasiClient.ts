@@ -18,33 +18,43 @@ export namespace Client {
 	export type Jobs =
 		| {
 				method: "setTimeout";
+
 				params: {
 					signal: MemoryLocation;
+
 					currentTime: number;
+
 					timeout: number;
 				};
 		  }
 		| {
 				method: "pollable/setTimeout";
+
 				params: {
 					pollable: SharedObject.Location;
+
 					currentTime: number;
+
 					timeout: number;
 				};
 		  }
 		| {
 				method: "pollables/race";
+
 				params: {
 					signal: MemoryLocation;
+
 					pollables: SharedObject.Location[];
 				};
 		  };
 
 	export type SyncCalls = {
 		method: "pollable/clearTimeout";
+
 		params: {
 			pollable: SharedObject.Location;
 		};
+
 		result: void;
 	};
 }
@@ -63,7 +73,9 @@ export class WasiClient {
 
 	constructor(memory: SharedMemory, port: ConnectionPort) {
 		this.connection = AnyConnection.create(port);
+
 		this.connection.initializeSyncCall(memory);
+
 		this.connection.listen();
 	}
 
@@ -73,6 +85,7 @@ export class WasiClient {
 
 	public rawSetTimeout(signal: Signal, timeout: bigint): void {
 		const ms = Number(timeout / 1000000n);
+
 		this.connection.notify("setTimeout", {
 			signal: signal.location(),
 			currentTime: Date.now(),
@@ -82,6 +95,7 @@ export class WasiClient {
 
 	public setTimeout(pollable: Pollable, timeout: bigint): void {
 		const ms = Number(timeout / 1000000n);
+
 		this.connection.notify("pollable/setTimeout", {
 			pollable: pollable.location(),
 			currentTime: Date.now(),

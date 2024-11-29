@@ -13,5 +13,6 @@ runSingle((client, folder) => {
 	const dirname = folder.uri.with({
 		path: path.join(folder.uri.path, "directory_new"),
 	});
+
 	client.vscode.workspace.fileSystem.delete(dirname, { recursive: true });
 }).catch(console.error);

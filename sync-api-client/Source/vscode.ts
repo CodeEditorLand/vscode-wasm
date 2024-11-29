@@ -150,6 +150,7 @@ export class FileSystemError extends Error {
 					? messageOrUri.toString()
 					: "Unknown error",
 		);
+
 		this.code = code;
 	}
 

@@ -295,6 +295,7 @@ export namespace filesystem {
 
 			export type Timestamp = {
 				readonly tag: typeof timestamp;
+
 				readonly value: Datetime;
 			} & _common;
 
@@ -305,36 +306,46 @@ export namespace filesystem {
 			export type _tt = typeof noChange | typeof now | typeof timestamp;
 
 			export type _vt = Datetime | undefined;
+
 			type _common = Omit<VariantImpl, "tag" | "value">;
 
 			export function _ctor(t: _tt, v: _vt): NewTimestamp {
 				return new VariantImpl(t, v) as NewTimestamp;
 			}
+
 			class VariantImpl {
 				private readonly _tag: _tt;
+
 				private readonly _value?: _vt;
 
 				constructor(t: _tt, value: _vt) {
 					this._tag = t;
+
 					this._value = value;
 				}
+
 				get tag(): _tt {
 					return this._tag;
 				}
+
 				get value(): _vt {
 					return this._value;
 				}
+
 				isNoChange(): this is NoChange {
 					return this._tag === NewTimestamp.noChange;
 				}
+
 				isNow(): this is Now {
 					return this._tag === NewTimestamp.now;
 				}
+
 				isTimestamp(): this is Timestamp {
 					return this._tag === NewTimestamp.timestamp;
 				}
 			}
 		}
+
 		export type NewTimestamp =
 			| NewTimestamp.NoChange
 			| NewTimestamp.Now
@@ -547,6 +558,7 @@ export namespace filesystem {
 			 */
 			crossDevice = "crossDevice",
 		}
+
 		export namespace ErrorCode {
 			export class Error_ extends $wcm.ResultError<ErrorCode> {
 				constructor(value: ErrorCode) {
@@ -991,10 +1003,12 @@ export namespace filesystem {
 					path: string,
 				): MetadataHashValue;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type Descriptor = Descriptor.Interface;
 
 		export namespace DirectoryEntryStream {
@@ -1006,10 +1020,12 @@ export namespace filesystem {
 				 */
 				readDirectoryEntry(): DirectoryEntry | undefined;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type DirectoryEntryStream = DirectoryEntryStream.Interface;
 
 		/**
@@ -1026,9 +1042,12 @@ export namespace filesystem {
 		 */
 		export type filesystemErrorCode = (err: Error) => ErrorCode | undefined;
 	}
+
 	export type Types = {
 		Descriptor: Types.Descriptor.Class;
+
 		DirectoryEntryStream: Types.DirectoryEntryStream.Class;
+
 		filesystemErrorCode: Types.filesystemErrorCode;
 	};
 
@@ -1040,6 +1059,7 @@ export namespace filesystem {
 		 */
 		export type getDirectories = () => [Descriptor, string][];
 	}
+
 	export type Preopens = {
 		getDirectories: Preopens.getDirectories;
 	};
@@ -1194,12 +1214,14 @@ export namespace filesystem {
 		export const DirectoryEntryStream_Handle = new $wcm.ResourceHandleType(
 			"directory-entry-stream",
 		);
+
 		Descriptor.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]descriptor", [
 				["inst", Descriptor],
 			]),
 		);
+
 		Descriptor.addMethod(
 			"readViaStream",
 			new $wcm.MethodType<
@@ -1217,6 +1239,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"writeViaStream",
 			new $wcm.MethodType<
@@ -1236,6 +1259,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"appendViaStream",
 			new $wcm.MethodType<
@@ -1255,6 +1279,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"advise",
 			new $wcm.MethodType<
@@ -1273,6 +1298,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"syncData",
 			new $wcm.MethodType<
@@ -1287,6 +1313,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"getFlags",
 			new $wcm.MethodType<
@@ -1304,6 +1331,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"getType",
 			new $wcm.MethodType<
@@ -1317,6 +1345,7 @@ export namespace filesystem {
 				>(DescriptorType, ErrorCode, filesystem.Types.ErrorCode.Error_),
 			),
 		);
+
 		Descriptor.addMethod(
 			"setSize",
 			new $wcm.MethodType<
@@ -1331,6 +1360,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"setTimes",
 			new $wcm.MethodType<
@@ -1348,6 +1378,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"read",
 			new $wcm.MethodType<filesystem.Types.Descriptor.Interface["read"]>(
@@ -1369,6 +1400,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"write",
 			new $wcm.MethodType<filesystem.Types.Descriptor.Interface["write"]>(
@@ -1383,6 +1415,7 @@ export namespace filesystem {
 				>(Filesize, ErrorCode, filesystem.Types.ErrorCode.Error_),
 			),
 		);
+
 		Descriptor.addMethod(
 			"readDirectory",
 			new $wcm.MethodType<
@@ -1402,6 +1435,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"sync",
 			new $wcm.MethodType<filesystem.Types.Descriptor.Interface["sync"]>(
@@ -1414,6 +1448,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"createDirectoryAt",
 			new $wcm.MethodType<
@@ -1428,6 +1463,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"stat",
 			new $wcm.MethodType<filesystem.Types.Descriptor.Interface["stat"]>(
@@ -1439,6 +1475,7 @@ export namespace filesystem {
 				>(DescriptorStat, ErrorCode, filesystem.Types.ErrorCode.Error_),
 			),
 		);
+
 		Descriptor.addMethod(
 			"statAt",
 			new $wcm.MethodType<
@@ -1455,6 +1492,7 @@ export namespace filesystem {
 				>(DescriptorStat, ErrorCode, filesystem.Types.ErrorCode.Error_),
 			),
 		);
+
 		Descriptor.addMethod(
 			"setTimesAt",
 			new $wcm.MethodType<
@@ -1474,6 +1512,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"linkAt",
 			new $wcm.MethodType<
@@ -1498,6 +1537,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"openAt",
 			new $wcm.MethodType<
@@ -1520,6 +1560,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"readlinkAt",
 			new $wcm.MethodType<
@@ -1534,6 +1575,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"removeDirectoryAt",
 			new $wcm.MethodType<
@@ -1548,6 +1590,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"renameAt",
 			new $wcm.MethodType<
@@ -1571,6 +1614,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"symlinkAt",
 			new $wcm.MethodType<
@@ -1588,6 +1632,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"unlinkFileAt",
 			new $wcm.MethodType<
@@ -1602,6 +1647,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"isSameObject",
 			new $wcm.MethodType<
@@ -1619,6 +1665,7 @@ export namespace filesystem {
 				$wcm.bool,
 			),
 		);
+
 		Descriptor.addMethod(
 			"metadataHash",
 			new $wcm.MethodType<
@@ -1636,6 +1683,7 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		Descriptor.addMethod(
 			"metadataHashAt",
 			new $wcm.MethodType<
@@ -1656,12 +1704,14 @@ export namespace filesystem {
 				),
 			),
 		);
+
 		DirectoryEntryStream.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]directory-entry-stream", [
 				["inst", DirectoryEntryStream],
 			]),
 		);
+
 		DirectoryEntryStream.addMethod(
 			"readDirectoryEntry",
 			new $wcm.MethodType<
@@ -1689,6 +1739,7 @@ export namespace filesystem {
 				new $wcm.OptionType<filesystem.Types.ErrorCode>(ErrorCode),
 			);
 	}
+
 	export namespace Types._ {
 		export const id = "wasi:filesystem/types@0.2.1" as const;
 
@@ -1871,12 +1922,14 @@ export namespace filesystem {
 					"[resource-drop]descriptor": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = Descriptor.WasmInterface & {
 					"[dtor]descriptor": (self: i32) => void;
 				};
 			}
 		}
+
 		export namespace DirectoryEntryStream {
 			export type WasmInterface = {
 				"[method]directory-entry-stream.read-directory-entry": (
@@ -1893,6 +1946,7 @@ export namespace filesystem {
 						) => void;
 					};
 			}
+
 			export namespace exports {
 				export type WasmInterface =
 					DirectoryEntryStream.WasmInterface & {
@@ -1900,6 +1954,7 @@ export namespace filesystem {
 					};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -1948,6 +2003,7 @@ export namespace filesystem {
 				Descriptor.imports.WasmInterface &
 				DirectoryEntryStream.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				Descriptor.exports.WasmInterface &
@@ -1989,6 +2045,7 @@ export namespace filesystem {
 				),
 			);
 	}
+
 	export namespace Preopens._ {
 		export const id = "wasi:filesystem/preopens@0.2.1" as const;
 
@@ -2010,6 +2067,7 @@ export namespace filesystem {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}

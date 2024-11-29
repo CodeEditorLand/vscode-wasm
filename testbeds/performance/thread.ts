@@ -18,6 +18,7 @@ parentPort!.on("message", (message: string) => {
 
 		for (let i = 0; i < 1000000; i++) {
 			Atomics.store(sync, 0, 0);
+
 			parentPort!.postMessage(memory);
 
 			const result = Atomics.wait(sync, 0, 0);
@@ -36,6 +37,7 @@ parentPort!.on("message", (message: string) => {
 					} else {
 						console.log(`Not equal: ${value}`);
 					}
+
 					break;
 
 				case "timed-out":
@@ -44,7 +46,9 @@ parentPort!.on("message", (message: string) => {
 					break;
 			}
 		}
+
 		const end = Date.now();
+
 		console.log(
 			`Time taken to call 1000000 times: ${end - start}ms. Sum value: ${sum}`,
 		);

@@ -19,6 +19,7 @@ export function WorkerClient<C>(
 	if (workerLocation.scheme !== "file") {
 		throw new Error("Worker location must be a file URI");
 	}
+
 	return class extends base {
 		private worker: Worker | undefined;
 
@@ -38,6 +39,7 @@ export function WorkerClient<C>(
 					undefined,
 					Messages.Service.Notifications
 				>(this.worker);
+
 				connection.onNotify("workerReady", () => {
 					connection
 						.callAsync("initialize", {
@@ -45,7 +47,9 @@ export function WorkerClient<C>(
 						})
 						.then(resolve, reject);
 				});
+
 				connection.listen();
+
 				this.setConnection(connection as unknown as AnyConnection);
 			});
 		}

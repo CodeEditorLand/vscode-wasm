@@ -14,6 +14,7 @@ async function main(): Promise<void> {
 	const connection: WorkerConnection = await Connection.createWorker(
 		calculator._,
 	);
+
 	connection.listen();
 }
 

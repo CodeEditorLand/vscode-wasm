@@ -14,7 +14,9 @@ export abstract class NodeHostConnection extends HostConnection {
 
 	public constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
+
 		this.port.on("message", (message: ServiceMessage) => {
 			this.handleMessage(message).catch((error) => {
 				RAL().console.error(error);

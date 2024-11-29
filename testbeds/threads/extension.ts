@@ -8,6 +8,7 @@ import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
+
 	commands.registerCommand("testbed-threads.run", async () => {
 		const pty = wasm.createPseudoterminal();
 
@@ -16,6 +17,7 @@ export async function activate(context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const options: ProcessOptions = {
@@ -39,6 +41,7 @@ export async function activate(context: ExtensionContext) {
 		// process.stdout!.onData(data => {
 		// 	console.log('stdout', decoder.decode(data));
 		// });
+
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});

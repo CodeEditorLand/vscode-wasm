@@ -28,6 +28,7 @@ export class MessageConnection<
 
 	constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
 	}
 

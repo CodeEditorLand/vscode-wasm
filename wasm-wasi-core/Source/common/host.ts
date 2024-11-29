@@ -111,6 +111,7 @@ export abstract class HostConnection {
 		if (signature.params.length !== args.length) {
 			throw new WasiError(Errno.inval);
 		}
+
 		const [paramBuffer, resultBuffer, reverseTransfer] =
 			this.createCallArrays(
 				func.name,
@@ -144,6 +145,7 @@ export abstract class HostConnection {
 				if (param.kind !== ParamKind.ptr) {
 					continue;
 				}
+
 				const reverse = reverseTransfer[reverseIndex++];
 
 				if (reverse !== undefined) {
@@ -171,6 +173,7 @@ export abstract class HostConnection {
 				}
 			}
 		}
+
 		return result;
 	}
 
@@ -179,7 +182,9 @@ export abstract class HostConnection {
 		resultBuffer: SharedArrayBuffer,
 	): errno {
 		const sync = new Int32Array(paramBuffer, Offsets.lock_index, 1);
+
 		Atomics.store(sync, 0, 0);
+
 		this.postMessage([paramBuffer, resultBuffer]);
 
 		// Wait for the answer
@@ -214,6 +219,7 @@ export abstract class HostConnection {
 		);
 
 		const paramView = new DataView(paramBuffer);
+
 		paramView.setUint32(
 			Offsets.method_index,
 			WasiFunctions.getIndex(name),
@@ -226,9 +232,12 @@ export abstract class HostConnection {
 
 			for (let i = 0; i < args.length; i++) {
 				const param = signature.params[i];
+
 				param.write(paramView, offset, args[i] as number & bigint);
+
 				offset += param.size;
 			}
+
 			return [paramBuffer, wasmMemory, []];
 		} else {
 			const resultBuffer = new SharedArrayBuffer(transfer?.size ?? 0);
@@ -249,6 +258,7 @@ export abstract class HostConnection {
 				);
 			} else if (MemoryTransfer.isArguments(transfer)) {
 				let transferIndex = 0;
+
 				reverse = [];
 
 				for (let i = 0; i < args.length; i++) {
@@ -262,6 +272,7 @@ export abstract class HostConnection {
 						if (transferItem === undefined) {
 							throw new WasiError(Errno.inval);
 						}
+
 						reverse.push(
 							transferItem.copy(
 								wasmMemory,
@@ -270,6 +281,7 @@ export abstract class HostConnection {
 								result_ptr,
 							),
 						);
+
 						result_ptr += transferItem.memorySize;
 					} else {
 						param.write(
@@ -278,16 +290,20 @@ export abstract class HostConnection {
 							args[i] as number & bigint,
 						);
 					}
+
 					offset += param.size;
 				}
 			} else {
 				// Only copy params
 				for (let i = 0; i < args.length; i++) {
 					const param = signature.params[i];
+
 					param.write(paramView, offset, args[i] as number & bigint);
+
 					offset += param.size;
 				}
 			}
+
 			return [paramBuffer, resultBuffer, reverse];
 		}
 	}
@@ -296,20 +312,26 @@ export abstract class HostConnection {
 declare namespace WebAssembly {
 	interface Global {
 		value: any;
+
 		valueOf(): any;
 	}
+
 	interface Table {
 		readonly length: number;
 
 		get(index: number): any;
+
 		grow(delta: number, value?: any): number;
 
 		set(index: number, value?: any): void;
 	}
+
 	interface Memory {
 		readonly buffer: ArrayBuffer;
+
 		grow(delta: number): number;
 	}
+
 	type ExportValue = Function | Global | Memory | Table;
 
 	interface Instance {
@@ -318,6 +340,7 @@ declare namespace WebAssembly {
 
 	var Instance: {
 		prototype: Instance;
+
 		new (): Instance;
 	};
 }
@@ -326,7 +349,9 @@ export interface WasiHost extends WASI {
 	initialize: (
 		instOrMemory: WebAssembly.Instance | WebAssembly.Memory,
 	) => void;
+
 	memory: () => ArrayBuffer;
+
 	thread_exit: (tid: u32) => void;
 }
 
@@ -344,6 +369,7 @@ export namespace WasiHost {
 			if ($memory !== undefined) {
 				return $memory.buffer;
 			}
+
 			if (
 				$instance === undefined ||
 				$instance.exports.memory === undefined
@@ -352,6 +378,7 @@ export namespace WasiHost {
 					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
 				);
 			}
+
 			return ($instance.exports.memory as WebAssembly.Memory).buffer;
 		}
 
@@ -359,6 +386,7 @@ export namespace WasiHost {
 			if ($memory !== undefined) {
 				return new DataView($memory.buffer);
 			}
+
 			if (
 				$instance === undefined ||
 				$instance.exports.memory === undefined
@@ -367,6 +395,7 @@ export namespace WasiHost {
 					`WASI layer is not initialized. Missing WebAssembly instance or memory module.`,
 				);
 			}
+
 			return new DataView(
 				($instance.exports.memory as WebAssembly.Memory).buffer,
 			);
@@ -376,6 +405,7 @@ export namespace WasiHost {
 			if (error instanceof WasiError) {
 				return error.errno;
 			}
+
 			return def;
 		}
 
@@ -400,6 +430,7 @@ export namespace WasiHost {
 			): errno => {
 				try {
 					args_size.count = 0;
+
 					args_size.bufferSize = 0;
 
 					const result = connection.call(
@@ -411,12 +442,15 @@ export namespace WasiHost {
 
 					if (result === Errno.success) {
 						const view = memoryView();
+
 						args_size.count = view.getUint32(argvCount_ptr, true);
+
 						args_size.bufferSize = view.getUint32(
 							argvBufSize_ptr,
 							true,
 						);
 					}
+
 					return result;
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -429,6 +463,7 @@ export namespace WasiHost {
 				if (args_size.count === 0 || args_size.bufferSize === 0) {
 					return Errno.inval;
 				}
+
 				try {
 					return connection.call(
 						args_get,
@@ -478,6 +513,7 @@ export namespace WasiHost {
 			): errno => {
 				try {
 					environ_size.count = 0;
+
 					environ_size.bufferSize = 0;
 
 					const result = connection.call(
@@ -489,15 +525,18 @@ export namespace WasiHost {
 
 					if (result === Errno.success) {
 						const view = memoryView();
+
 						environ_size.count = view.getUint32(
 							environCount_ptr,
 							true,
 						);
+
 						environ_size.bufferSize = view.getUint32(
 							environBufSize_ptr,
 							true,
 						);
 					}
+
 					return result;
 				} catch (error) {
 					return handleError(error, Errno.inval);
@@ -510,6 +549,7 @@ export namespace WasiHost {
 				if (environ_size.count === 0 || environ_size.bufferSize === 0) {
 					return Errno.inval;
 				}
+
 				try {
 					return connection.call(
 						environ_get,
@@ -1178,6 +1218,7 @@ export namespace WasiHost {
 
 export interface Tracer {
 	tracer: WasiHost;
+
 	printSummary(): void;
 }
 
@@ -1196,6 +1237,7 @@ export namespace TraceWasiHost {
 					`${name} was called ${count} times and took ${time}ms in total. Average time: ${time / count}ms.`,
 				);
 			}
+
 			connection.postMessage({
 				method: "traceSummary",
 				summary: summary,
@@ -1217,6 +1259,7 @@ export namespace TraceWasiHost {
 						if (propertyName === "proc_exit") {
 							printSummary();
 						}
+
 						const start = Date.now();
 
 						const result = value.apply(target, args);
@@ -1233,6 +1276,7 @@ export namespace TraceWasiHost {
 										...(args as (number & bigint)[]),
 									)
 								: `Missing trace function for ${propertyName}. Execution took ${timeTaken}ms.`;
+
 						connection.postMessage({
 							method: "trace",
 							message,
@@ -1249,14 +1293,18 @@ export namespace TraceWasiHost {
 
 							if (perFunction === undefined) {
 								perFunction = { count: 0, time: 0 };
+
 								timePerFunction.set(
 									property.toString(),
 									perFunction,
 								);
 							}
+
 							perFunction.count++;
+
 							perFunction.time += timeTaken;
 						}
+
 						return result;
 					};
 				} else {

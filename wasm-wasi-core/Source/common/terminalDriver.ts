@@ -108,8 +108,11 @@ export function create(
 			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
+
 			result.fs_flags = fileDescriptor.fdflags;
+
 			result.fs_rights_base = fileDescriptor.rights_base;
+
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
 
 			return Promise.resolve();
@@ -119,14 +122,21 @@ export function create(
 			result: filestat,
 		): Promise<void> {
 			result.dev = fileDescriptor.deviceId;
+
 			result.ino = fileDescriptor.inode;
+
 			result.filetype = Filetype.character_device;
+
 			result.nlink = 0n;
+
 			result.size = 101n;
 
 			const now = BigInt(Date.now());
+
 			result.atim = now;
+
 			result.ctim = now;
+
 			result.mtim = now;
 
 			return Promise.resolve();
@@ -138,6 +148,7 @@ export function create(
 			if (buffers.length === 0) {
 				return 0;
 			}
+
 			const maxBytesToRead = buffers.reduce<number>(
 				(prev, current) => prev + current.length,
 				0,
@@ -151,14 +162,18 @@ export function create(
 
 			for (const buffer of buffers) {
 				const toCopy = Math.min(buffer.length, result.length - offset);
+
 				buffer.set(result.subarray(offset, offset + toCopy));
+
 				offset += toCopy;
+
 				totalBytesRead += toCopy;
 
 				if (toCopy < buffer.length) {
 					break;
 				}
 			}
+
 			return totalBytesRead;
 		},
 		fd_write(
@@ -174,15 +189,18 @@ export function create(
 					(prev, current) => prev + current.length,
 					0,
 				);
+
 				buffer = new Uint8Array(byteLength);
 
 				let offset = 0;
 
 				for (const item of buffers) {
 					buffer.set(item, offset);
+
 					offset = item.byteLength;
 				}
 			}
+
 			return terminal.write(buffer);
 		},
 	};

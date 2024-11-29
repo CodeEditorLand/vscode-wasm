@@ -18,6 +18,7 @@ declare namespace WebAssembly {
 
 	var CompileError: {
 		prototype: CompileError;
+
 		new (message?: string): CompileError;
 		(message?: string): CompileError;
 	};
@@ -26,23 +27,28 @@ declare namespace WebAssembly {
 
 	var LinkError: {
 		prototype: LinkError;
+
 		new (message?: string): LinkError;
 		(message?: string): LinkError;
 	};
 
 	interface MemoryDescriptor {
 		initial: number;
+
 		maximum?: number;
+
 		shared?: boolean;
 	}
 
 	interface Memory {
 		readonly buffer: ArrayBuffer;
+
 		grow(delta: number): number;
 	}
 
 	var Memory: {
 		prototype: Memory;
+
 		new (descriptor: MemoryDescriptor): Memory;
 	};
 
@@ -52,6 +58,7 @@ declare namespace WebAssembly {
 
 	var RuntimeError: {
 		prototype: RuntimeError;
+
 		new (message?: string): RuntimeError;
 		(message?: string): RuntimeError;
 	};

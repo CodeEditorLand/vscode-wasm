@@ -12,13 +12,16 @@ import { WebShellContributions } from "./webShellContributions";
 
 export async function activate(context: ExtensionContext): Promise<void> {
 	const wasm: Wasm = await Wasm.load();
+
 	await WebShell.initialize(wasm, WebShellContributions);
 
 	const coreUtils = new CoreUtils(context);
+
 	coreUtils.contributeHandlers(wasm, WebShell);
 
 	commands.registerCommand("ms-vscode.webshell.create", async () => {
 		const webShell = new WebShell(wasm, "/workspace");
+
 		void webShell.runCommandLoop();
 	});
 }

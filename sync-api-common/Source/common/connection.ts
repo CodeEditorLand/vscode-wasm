@@ -18,6 +18,7 @@ export type size = u32;
 
 export type Message = {
 	method: string;
+
 	params?: Params;
 };
 
@@ -43,6 +44,7 @@ namespace TypedArray {
 			value instanceof BigInt64Array
 		);
 	}
+
 	export function set(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
@@ -81,6 +83,7 @@ export type Params = {
 		| string
 		| object
 		| Uint8Array;
+
 	binary?: Uint8Array;
 };
 
@@ -117,11 +120,13 @@ export namespace Notification {
 
 type PromiseCallbacks<T> = {
 	resolve: (response: T) => void;
+
 	reject: (error: any) => void;
 };
 
 export type MessageType = {
 	method: string;
+
 	params?: null | object;
 };
 
@@ -133,18 +138,23 @@ class NoResult {
 	public static readonly kind = 0 as const;
 
 	constructor() {}
+
 	get kind() {
 		return NoResult.kind;
 	}
+
 	get byteLength(): number {
 		return 0;
 	}
+
 	get length(): number {
 		return 0;
 	}
+
 	getPadding(_offset: number): number {
 		return 0;
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
@@ -156,33 +166,42 @@ class NoResult {
 export class Uint8Result {
 	public static readonly kind = 1 as const;
 	#length: number;
+
 	public static fromLength(length: number): Uint8Result {
 		return new Uint8Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Uint8Result {
 		return new Uint8Result(byteLength);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Uint8Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Uint8Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Uint8Array {
 		return new Uint8Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Uint8Array {
 		return value instanceof Uint8Array;
 	}
@@ -191,33 +210,42 @@ export class Uint8Result {
 export class Int8Result {
 	public static readonly kind = 2 as const;
 	#length: number;
+
 	public static fromLength(length: number): Int8Result {
 		return new Int8Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Int8Result {
 		return new Int8Result(byteLength);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Int8Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Int8Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Int8Array {
 		return new Int8Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Int8Array {
 		return value instanceof Int8Array;
 	}
@@ -226,38 +254,48 @@ export class Int8Result {
 export class Uint16Result {
 	public static readonly kind = 3 as const;
 	#length: number;
+
 	public static fromLength(length: number): Uint16Result {
 		return new Uint16Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Uint16Result {
 		if (byteLength % Uint16Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${Uint16Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Uint16Result(byteLength / Uint16Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Uint16Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Uint16Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Uint16Array {
 		return new Uint16Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Uint16Array {
 		return value instanceof Uint16Array;
 	}
@@ -266,38 +304,48 @@ export class Uint16Result {
 export class Int16Result {
 	public static readonly kind = 4 as const;
 	#length: number;
+
 	public static fromLength(length: number): Int16Result {
 		return new Int16Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Int16Result {
 		if (byteLength % Int16Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${Int16Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Int16Result(byteLength / Int16Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Int16Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Int16Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Int16Array {
 		return new Int16Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Int16Array {
 		return value instanceof Int16Array;
 	}
@@ -306,38 +354,48 @@ export class Int16Result {
 export class Uint32Result {
 	public static readonly kind = 5 as const;
 	#length: number;
+
 	public static fromLength(length: number): Uint32Result {
 		return new Uint32Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Uint32Result {
 		if (byteLength % Uint32Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${Uint32Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Uint32Result(byteLength / Uint32Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Uint32Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Uint32Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Uint32Array {
 		return new Uint32Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Uint32Array {
 		return value instanceof Uint32Array;
 	}
@@ -346,38 +404,48 @@ export class Uint32Result {
 export class Int32Result {
 	public static readonly kind = 6 as const;
 	#length: number;
+
 	public static fromLength(length: number): Int32Result {
 		return new Int32Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Int32Result {
 		if (byteLength % Int32Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${Int32Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Int32Result(byteLength / Int32Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Int32Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * Int32Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return TypedArrayResult.getPadding(offset);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): Int32Array {
 		return new Int32Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is Int32Array {
 		return value instanceof Int32Array;
 	}
@@ -386,41 +454,51 @@ export class Int32Result {
 export class Uint64Result {
 	public static readonly kind = 7 as const;
 	#length: number;
+
 	public static fromLength(length: number): Uint64Result {
 		return new Uint64Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Uint64Result {
 		if (byteLength % BigUint64Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${BigUint64Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Uint64Result(byteLength / BigUint64Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Uint64Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * BigUint64Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return (
 			BigUint64Array.BYTES_PER_ELEMENT -
 			(offset % BigUint64Array.BYTES_PER_ELEMENT)
 		);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): BigUint64Array {
 		return new BigUint64Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is BigUint64Array {
 		return value instanceof BigUint64Array;
 	}
@@ -429,41 +507,51 @@ export class Uint64Result {
 export class Int64Result {
 	public static readonly kind = 8 as const;
 	#length: number;
+
 	public static fromLength(length: number): Int64Result {
 		return new Int64Result(length);
 	}
+
 	public static fromByteLength(byteLength: number): Int64Result {
 		if (byteLength % BigInt64Array.BYTES_PER_ELEMENT !== 0) {
 			throw new Error(
 				`Byte length must be a multiple of ${BigInt64Array.BYTES_PER_ELEMENT} but was ${byteLength}`,
 			);
 		}
+
 		return new Int64Result(byteLength / BigInt64Array.BYTES_PER_ELEMENT);
 	}
+
 	private constructor(value: number) {
 		this.#length = value;
 	}
+
 	get kind() {
 		return Int64Result.kind;
 	}
+
 	get byteLength(): number {
 		return this.#length * BigInt64Array.BYTES_PER_ELEMENT;
 	}
+
 	get length(): number {
 		return this.#length;
 	}
+
 	getPadding(offset: number): number {
 		return (
 			BigInt64Array.BYTES_PER_ELEMENT -
 			(offset % BigInt64Array.BYTES_PER_ELEMENT)
 		);
 	}
+
 	createResultArray(
 		sharedArrayBuffer: SharedArrayBuffer,
 		offset: number,
 	): BigInt64Array {
 		return new BigInt64Array(sharedArrayBuffer, offset, this.length);
 	}
+
 	is(value: any): value is BigInt64Array {
 		return value instanceof BigInt64Array;
 	}
@@ -472,21 +560,27 @@ export class Int64Result {
 export class VariableResult<_T = undefined> {
 	public static readonly kind = 9 as const;
 	#mode: "binary" | "json";
+
 	public constructor(mode: "binary" | "json") {
 		this.#mode = mode;
 	}
+
 	get kind() {
 		return VariableResult.kind;
 	}
+
 	get mode() {
 		return this.#mode;
 	}
+
 	get byteLength(): number {
 		return 0;
 	}
+
 	get length(): number {
 		return 0;
 	}
+
 	getPadding(_offset: number): number {
 		return 0;
 	}
@@ -720,6 +814,7 @@ export class RPCError extends Error {
 
 	public constructor(errno: RPCErrno, message?: string) {
 		super(message);
+
 		this.errno = errno;
 	}
 }
@@ -729,6 +824,7 @@ export interface ClientConnection<
 	ReadyParams extends Params | undefined = undefined,
 > {
 	readonly sendRequest: SendRequestSignatures<Requests>;
+
 	serviceReady(): Promise<ReadyParams>;
 }
 
@@ -738,15 +834,22 @@ export abstract class BaseClientConnection<
 > implements ClientConnection<Requests, ReadyParams>
 {
 	private id: number;
+
 	private readonly textEncoder: RAL.TextEncoder;
+
 	private readonly textDecoder: RAL.TextDecoder;
+
 	private readonly readyPromise: Promise<ReadyParams>;
+
 	private readyCallbacks: PromiseCallbacks<ReadyParams> | undefined;
 
 	constructor() {
 		this.id = 1;
+
 		this.textEncoder = RAL().TextEncoder.create();
+
 		this.textDecoder = RAL().TextDecoder.create();
+
 		this.readyPromise = new Promise<ReadyParams>((resolve, reject) => {
 			this.readyCallbacks = { resolve, reject };
 		});
@@ -782,14 +885,17 @@ export abstract class BaseClientConnection<
 		} else if (arg1 !== undefined || arg1 !== null) {
 			params = arg1;
 		}
+
 		if (typeof arg2 === "number") {
 			timeout = arg2;
 		} else if (arg2 !== undefined) {
 			resultType = arg2;
 		}
+
 		if (typeof arg3 === "number") {
 			timeout = arg3;
 		}
+
 		if (params !== undefined) {
 			request.params = {};
 
@@ -840,16 +946,25 @@ export abstract class BaseClientConnection<
 			SyncSize.total,
 			HeaderSize.total / 4,
 		);
+
 		header[HeaderIndex.messageOffset] = requestOffset;
+
 		header[HeaderIndex.messageByteLength] = requestData.byteLength;
+
 		header[HeaderIndex.binaryParamOffset] = binaryOffset;
+
 		header[HeaderIndex.binaryParamByteLength] = binaryDataLength;
+
 		header[HeaderIndex.errno] = RPCErrno.Success;
+
 		header[HeaderIndex.resultKind] = resultType.kind;
+
 		header[HeaderIndex.resultOffset] = resultOffset;
+
 		header[HeaderIndex.resultByteLength] = resultByteLength;
 
 		const raw = new Uint8Array(sharedArrayBuffer);
+
 		raw.set(requestData, requestOffset);
 
 		if (binaryData !== undefined) {
@@ -858,6 +973,7 @@ export abstract class BaseClientConnection<
 
 		// Send the shard array buffer to the other worker
 		const sync = new Int32Array(sharedArrayBuffer, 0, 1);
+
 		Atomics.store(sync, 0, 0);
 		// Send the shared array buffer to the extension host worker
 		this.postMessage(sharedArrayBuffer);
@@ -901,6 +1017,7 @@ export abstract class BaseClientConnection<
 									: "",
 						};
 					}
+
 					const lazyResult = this._sendRequest(
 						"$/fetchResult",
 						{ resultId: id },
@@ -911,6 +1028,7 @@ export abstract class BaseClientConnection<
 					if (lazyResult.errno !== 0) {
 						return { errno: lazyResult.errno };
 					}
+
 					if (RequestResult.hasData(lazyResult)) {
 						try {
 							// We need to slice the Uint8Array we received since it is a view onto a
@@ -938,6 +1056,7 @@ export abstract class BaseClientConnection<
 					} else {
 						return { errno: RPCErrno.LazyResultFailed };
 					}
+
 				default:
 					return {
 						errno: 0,
@@ -1057,6 +1176,7 @@ export interface ServiceConnection<
 	ReadyParams extends Params | undefined = undefined,
 > {
 	readonly onRequest: HandleRequestSignatures<RequestHandlers>;
+
 	signalReady(params: ReadyParams): void;
 }
 
@@ -1066,14 +1186,20 @@ export abstract class BaseServiceConnection<
 > implements ServiceConnection<RequestHandlers, ReadyParams>
 {
 	private readonly textDecoder: RAL.TextDecoder;
+
 	private readonly textEncoder: RAL.TextEncoder;
+
 	private readonly requestHandlers: Map<string, RequestHandler>;
+
 	private readonly requestResults: Map<number, TypedArray>;
 
 	constructor() {
 		this.textDecoder = RAL().TextDecoder.create();
+
 		this.textEncoder = RAL().TextEncoder.create();
+
 		this.requestHandlers = new Map();
+
 		this.requestResults = new Map();
 	}
 
@@ -1118,6 +1244,7 @@ export abstract class BaseServiceConnection<
 					const resultId: number = message.params!.resultId as number;
 
 					const result = this.requestResults.get(resultId);
+
 					this.requestResults.delete(resultId);
 
 					const resultOffset = header[HeaderIndex.resultOffset];
@@ -1130,6 +1257,7 @@ export abstract class BaseServiceConnection<
 						result.byteLength === resultByteLength
 					) {
 						TypedArray.set(sharedArrayBuffer, resultOffset, result);
+
 						header[HeaderIndex.errno] = RPCErrno.Success;
 					} else {
 						header[HeaderIndex.errno] = RPCErrno.LazyResultFailed;
@@ -1147,9 +1275,12 @@ export abstract class BaseServiceConnection<
 							binaryParamsOffset,
 							binaryParamsLength,
 						);
+
 						message.params = message.params ?? {};
+
 						message.params.binary = binary;
 					}
+
 					const handler = this.requestHandlers.get(message.method);
 
 					if (handler !== undefined) {
@@ -1172,10 +1303,12 @@ export abstract class BaseServiceConnection<
 									message.params !== undefined
 										? handler(message.params)
 										: handler();
+
 								requestResult =
 									handlerResult instanceof Promise
 										? await handlerResult
 										: handlerResult;
+
 								header[HeaderIndex.errno] = requestResult.errno;
 
 								break;
@@ -1185,10 +1318,12 @@ export abstract class BaseServiceConnection<
 									message.params !== undefined
 										? handler(message.params)
 										: handler();
+
 								requestResult =
 									handlerResult instanceof Promise
 										? await handlerResult
 										: handlerResult;
+
 								header[HeaderIndex.errno] = requestResult.errno;
 
 								if (requestResult.errno === 0) {
@@ -1204,6 +1339,7 @@ export abstract class BaseServiceConnection<
 														0,
 													),
 												);
+
 										header[HeaderIndex.resultByteLength] =
 											buffer.byteLength;
 										// We only need to keep a result which is greater than zero.
@@ -1216,6 +1352,7 @@ export abstract class BaseServiceConnection<
 										}
 									}
 								}
+
 								break;
 
 							default:
@@ -1230,6 +1367,7 @@ export abstract class BaseServiceConnection<
 										sharedArrayBuffer,
 										resultOffset,
 									);
+
 								handlerResult =
 									message.params !== undefined
 										? handler(
@@ -1237,10 +1375,12 @@ export abstract class BaseServiceConnection<
 												resultBuffer as TypedArray,
 											)
 										: handler(resultBuffer as TypedArray);
+
 								requestResult =
 									handlerResult instanceof Promise
 										? await handlerResult
 										: handlerResult;
+
 								header[HeaderIndex.errno] = requestResult.errno;
 						}
 					} else {
@@ -1252,15 +1392,20 @@ export abstract class BaseServiceConnection<
 			}
 		} catch (error) {
 			RAL().console.error(error);
+
 			header[HeaderIndex.errno] = RPCErrno.UnknownError;
 		}
+
 		const sync = new Int32Array(sharedArrayBuffer, 0, 1);
+
 		Atomics.store(sync, 0, 1);
+
 		Atomics.notify(sync, 0);
 	}
 
 	public signalReady(params: ReadyParams): void {
 		const notification: Notification = { method: "$/ready", params };
+
 		this.postMessage(notification);
 	}
 

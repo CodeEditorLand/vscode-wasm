@@ -34,6 +34,7 @@ export class Connection<
 
 	constructor(port: MessagePort | Worker) {
 		super();
+
 		this.port = port;
 	}
 
@@ -43,6 +44,7 @@ export class Connection<
 		if (this.port instanceof MessagePort) {
 			this.port.close();
 		}
+
 		super.dispose();
 	}
 

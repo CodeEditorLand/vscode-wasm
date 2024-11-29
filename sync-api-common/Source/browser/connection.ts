@@ -20,7 +20,9 @@ export class ClientConnection<
 
 	constructor(port: MessagePort | Worker | DedicatedWorkerGlobalScope) {
 		super();
+
 		this.port = port;
+
 		this.port.onmessage = (event: MessageEvent<Message>) => {
 			this.handleMessage(event.data);
 		};
@@ -39,7 +41,9 @@ export class ServiceConnection<
 
 	constructor(port: MessagePort | Worker | DedicatedWorkerGlobalScope) {
 		super();
+
 		this.port = port;
+
 		this.port.onmessage = async (
 			event: MessageEvent<SharedArrayBuffer>,
 		) => {

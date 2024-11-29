@@ -17,6 +17,7 @@ export async function activate(_context: ExtensionContext) {
 		if (editor === undefined) {
 			return;
 		}
+
 		const document = editor.document;
 
 		if (document.languageId !== "ruby") {
@@ -30,6 +31,7 @@ export async function activate(_context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const options: ProcessOptions = {
@@ -52,6 +54,7 @@ export async function activate(_context: ExtensionContext) {
 		const module = await WebAssembly.compile(bits);
 
 		const process = await wasm.createProcess("ruby", module, options);
+
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});

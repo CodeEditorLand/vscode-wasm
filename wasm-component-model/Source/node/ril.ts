@@ -69,9 +69,11 @@ const _ril: RIL = Object.freeze<RIL>({
 			if (port === undefined) {
 				port = parentPort;
 			}
+
 			if (!(port instanceof MessagePort)) {
 				throw new Error(`Expected MessagePort`);
 			}
+
 			const connection = await import("./connection.js");
 
 			return new connection.WorkerConnection(port, world, timeout);
@@ -80,6 +82,7 @@ const _ril: RIL = Object.freeze<RIL>({
 			if (!(port instanceof MessagePort) && !(port instanceof Worker)) {
 				throw new Error(`Expected MessagePort or Worker`);
 			}
+
 			const connection = await import("./connection.js");
 
 			return new connection.MainConnection(port);

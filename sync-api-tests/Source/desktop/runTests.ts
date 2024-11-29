@@ -38,12 +38,15 @@ async function go() {
 		fs.mkdirSync(testDir, { recursive: true });
 
 		const userDataDir = path.join(testDir, "userData");
+
 		fs.mkdirSync(userDataDir);
 
 		const extensionDir = path.join(testDir, "extensions");
+
 		fs.mkdirSync(extensionDir);
 
 		const workspaceFolder = path.join(testDir, "workspace");
+
 		fs.mkdirSync(workspaceFolder);
 
 		// Under Linux we quite often run the tests using Xvfb.
@@ -60,10 +63,12 @@ async function go() {
 				if (item.name !== "Xvfb") {
 					continue;
 				}
+
 				if (item.cmd !== undefined && item.cmd.length > 0) {
 					display = item.cmd.split(" ")[1];
 				}
 			}
+
 			if (display !== undefined) {
 				extensionTestsEnv = { "DISPLAY": display };
 			}
@@ -89,6 +94,7 @@ async function go() {
 		});
 	} catch (err) {
 		console.error("Failed to run tests", err);
+
 		process.exitCode = 1;
 	} finally {
 		rimraf(testDir);

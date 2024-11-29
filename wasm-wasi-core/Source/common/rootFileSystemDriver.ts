@@ -197,21 +197,30 @@ class VirtualRootFileSystem {
 	static inodeCounter: bigint = 1n;
 
 	public readonly deviceId: DeviceId;
+
 	private readonly inodes: Map<inode, Node>;
+
 	public readonly root: VirtualDirectoryNode;
+
 	private readonly deviceDrivers: Map<FileSystemDeviceDriver, MountPointNode>;
+
 	private readonly mountPoints: Map<string, MountPointNode>;
 
 	constructor(deviceId: DeviceId) {
 		this.deviceId = deviceId;
+
 		this.inodes = new Map();
+
 		this.root = VirtualDirectoryNode.create(
 			VirtualRootFileSystem.inodeCounter++,
 			undefined,
 			"/",
 		);
+
 		this.inodes.set(this.root.inode, this.root);
+
 		this.deviceDrivers = new Map();
+
 		this.mountPoints = new Map();
 	}
 
@@ -226,12 +235,15 @@ class VirtualRootFileSystem {
 		if (filepath.length === 0) {
 			throw new Error("Cannot mount root");
 		}
+
 		const path = RAL().path;
 
 		if (filepath.charAt(0) !== path.sep) {
 			throw new Error(`Cannot mount relative path: ${filepath}`);
 		}
+
 		const segments = filepath.split(path.sep);
+
 		segments.shift();
 
 		let current: Node = this.root;
@@ -242,6 +254,7 @@ class VirtualRootFileSystem {
 					`Cannot create virtual folder over mount point: ${path.sep}${segments.slice(0, i + 1).join(path.sep)}`,
 				);
 			}
+
 			const segment = segments[i];
 
 			if (i === segments.length - 1) {
@@ -251,9 +264,13 @@ class VirtualRootFileSystem {
 					segment,
 					deviceDriver,
 				);
+
 				this.inodes.set(child.inode, child);
+
 				current.entries.set(segment, child);
+
 				this.deviceDrivers.set(deviceDriver, child);
+
 				this.mountPoints.set(filepath, child);
 			} else {
 				let child = current.entries.get(segment);
@@ -264,9 +281,12 @@ class VirtualRootFileSystem {
 						current,
 						segment,
 					);
+
 					current.entries.set(segment, child);
+
 					this.inodes.set(child.inode, child);
 				}
+
 				current = child;
 			}
 		}
@@ -278,6 +298,7 @@ class VirtualRootFileSystem {
 		if (node === undefined) {
 			throw new WasiError(Errno.badf);
 		}
+
 		return node;
 	}
 
@@ -286,6 +307,7 @@ class VirtualRootFileSystem {
 		filePath: string,
 	): [Node, string | undefined] {
 		const path = RAL().path;
+
 		filePath = path.normalize(filePath);
 
 		if (filePath === "/") {
@@ -301,6 +323,7 @@ class VirtualRootFileSystem {
 				return [parentNode.parent, undefined];
 			}
 		}
+
 		const segments = filePath.split(path.sep);
 		// The filepath is absolute, so the first segment is empty.
 		if (segments[0] === "") {
@@ -309,14 +332,17 @@ class VirtualRootFileSystem {
 			if (parentNode !== this.root) {
 				throw new WasiError(Errno.noent);
 			}
+
 			segments.shift();
 		}
+
 		let current: Node = parentNode;
 
 		for (let i = 0; i < segments.length; i++) {
 			if (current.kind === NodeKind.MountPoint) {
 				return [current, path.join(...segments.slice(i))];
 			}
+
 			const segment = segments[i];
 
 			const child = current.entries.get(segment);
@@ -328,8 +354,10 @@ class VirtualRootFileSystem {
 					? [child, undefined]
 					: [child, "."];
 			}
+
 			current = child;
 		}
+
 		throw new WasiError(Errno.noent);
 	}
 
@@ -342,6 +370,7 @@ class VirtualRootFileSystem {
 		if (node === undefined) {
 			return undefined;
 		}
+
 		const nodePath = this.getPath(node);
 
 		return RAL().path.join(nodePath, filepath);
@@ -376,6 +405,7 @@ class VirtualRootFileSystem {
 				return [mountPoint, root];
 			}
 		}
+
 		return [undefined, uri];
 	}
 
@@ -386,6 +416,7 @@ class VirtualRootFileSystem {
 
 		do {
 			parts.push(current.name);
+
 			current = current.parent;
 		} while (current !== undefined);
 
@@ -485,8 +516,11 @@ export function create(
 			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
+
 			result.fs_flags = fileDescriptor.fdflags;
+
 			result.fs_rights_base = fileDescriptor.rights_base;
+
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
 
 			return Promise.resolve();
@@ -510,13 +544,21 @@ export function create(
 			if (node.kind === NodeKind.MountPoint) {
 				throw new WasiError(Errno.badf);
 			}
+
 			result.dev = fileDescriptor.deviceId;
+
 			result.ino = fileDescriptor.inode;
+
 			result.filetype = fileDescriptor.fileType;
+
 			result.nlink = 1n;
+
 			result.size = BigInt(node.entries.size);
+
 			result.atim = $atim;
+
 			result.mtim = $mtim;
+
 			result.ctim = $ctim;
 
 			return Promise.resolve();
@@ -544,6 +586,7 @@ export function create(
 			if (node.kind === NodeKind.MountPoint) {
 				throw new WasiError(Errno.badf);
 			}
+
 			for (const child of node.entries.values()) {
 				result.push({
 					d_name: child.name,
@@ -551,6 +594,7 @@ export function create(
 					d_ino: child.inode,
 				});
 			}
+
 			return result;
 		},
 		async path_filestat_get(
@@ -583,6 +627,7 @@ export function create(
 				if (rootFileDescriptor === undefined) {
 					throw new WasiError(Errno.badf);
 				}
+
 				return driver.path_filestat_get(
 					rootFileDescriptor,
 					flags,
@@ -592,12 +637,19 @@ export function create(
 			}
 
 			result.dev = fileDescriptor.deviceId;
+
 			result.ino = node.inode;
+
 			result.filetype = Filetype.directory;
+
 			result.nlink = 1n;
+
 			result.size = BigInt(node.entries.size);
+
 			result.atim = $atim;
+
 			result.mtim = $mtim;
+
 			result.ctim = $ctim;
 
 			return Promise.resolve();
@@ -627,6 +679,7 @@ export function create(
 				if (rootFileDescriptor === undefined) {
 					throw new WasiError(Errno.noent);
 				}
+
 				return driver.path_open(
 					rootFileDescriptor,
 					dirflags,

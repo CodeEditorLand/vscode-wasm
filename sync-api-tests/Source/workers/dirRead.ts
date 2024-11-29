@@ -22,8 +22,11 @@ runSingle((client, folder) => {
 
 	for (const entry of entries) {
 		assert.ok(valid.has(entry[0]));
+
 		assert.strictEqual(entry[1], FileType.File);
+
 		valid.delete(entry[0]);
 	}
+
 	assert.strictEqual(valid.size, 0);
 }).catch(console.error);

@@ -17,6 +17,7 @@ export async function activate(context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const options: ProcessOptions = {
@@ -43,6 +44,7 @@ export async function activate(context: ExtensionContext) {
 		const module = await WebAssembly.compile(bits);
 
 		const process = await wasm.createProcess("dotnet", module, options);
+
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});

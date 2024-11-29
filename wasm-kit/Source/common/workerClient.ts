@@ -9,6 +9,7 @@ import type * as Messages from "./workerMessages";
 
 export interface WorkerClient {
 	launch(memory: SharedMemory): Promise<void>;
+
 	terminate(): Promise<number>;
 }
 export namespace WorkerClient {

@@ -25,6 +25,7 @@ export default async function runSingle(
 	>();
 
 	const client = new ApiClient(connection);
+
 	await client.serviceReady();
 
 	const workspaceFolders = client.vscode.workspace.workspaceFolders;
@@ -33,6 +34,7 @@ export default async function runSingle(
 
 	try {
 		test(client, folder);
+
 		client.process.procExit(0);
 	} catch (error) {
 		if (error instanceof AssertionError) {
@@ -53,6 +55,7 @@ export default async function runSingle(
 				message: `Unknown error occurred during test execution`,
 			});
 		}
+
 		client.process.procExit(1);
 	}
 }

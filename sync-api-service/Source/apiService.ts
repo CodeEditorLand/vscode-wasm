@@ -23,7 +23,9 @@ export namespace ApiServiceConnection {
 	export type ReadyParams = {
 		stdio: {
 			stdin: DTOs.FileDescriptorDescription;
+
 			stdout: DTOs.FileDescriptorDescription;
+
 			stderr: DTOs.FileDescriptorDescription;
 		};
 	};
@@ -48,14 +50,18 @@ export type Options = {
 
 export class ApiService {
 	private readonly connection: ApiServiceConnection;
+
 	private readonly options: Options | undefined;
 
 	private readonly byteSources: Map<string, Source>;
+
 	private readonly byteSinks: Map<string, Sink>;
 
 	private stdio: {
 		stdin: FileDescriptorDescription;
+
 		stdout: FileDescriptorDescription;
+
 		stderr: FileDescriptorDescription;
 	};
 
@@ -67,21 +73,26 @@ export class ApiService {
 		this.connection = receiver;
 
 		this.byteSources = new Map();
+
 		this.byteSinks = new Map();
+
 		this.options = options;
 
 		const console = new ConsoleTerminal();
+
 		this.stdio = {
 			stdin: console.fileDescriptor,
 			stdout: console.fileDescriptor,
 			stderr: console.fileDescriptor,
 		};
+
 		this.registerCharacterDeviceDriver(console, false);
 
 		const handleError = (error: any): { errno: number } => {
 			if (error instanceof vscode.FileSystemError) {
 				return { errno: this.asFileSystemError(error) };
 			}
+
 			return { errno: RPCErrno.UnknownError };
 		};
 
@@ -101,6 +112,7 @@ export class ApiService {
 			if (source === undefined) {
 				return { errno: RPCErrno.NoHandlerFound };
 			}
+
 			const contents = await source.read(params.maxBytesToRead);
 
 			return { errno: 0, data: contents };
@@ -114,9 +126,11 @@ export class ApiService {
 			if (sink === undefined) {
 				return { errno: RPCErrno.NoHandlerFound };
 			}
+
 			const bytesWritten = await sink.write(params.binary);
 
 			const result = new Uint32Array(1);
+
 			result[0] = bytesWritten;
 
 			return { errno: 0, data: result };
@@ -132,14 +146,19 @@ export class ApiService {
 						await vscode.workspace.fs.stat(uri);
 
 					const stat = DTOs.Stat.create(resultBuffer);
+
 					stat.type = vStat.type;
+
 					stat.ctime = vStat.mtime;
+
 					stat.mtime = vStat.mtime;
+
 					stat.size = vStat.size;
 
 					if (vStat.permissions !== undefined) {
 						stat.permission = vStat.permissions;
 					}
+
 					return { errno: 0 };
 				} catch (error) {
 					return handleError(error);
@@ -162,6 +181,7 @@ export class ApiService {
 		this.connection.onRequest("fileSystem/writeFile", async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
+
 				await vscode.workspace.fs.writeFile(uri, params.binary);
 
 				return { errno: 0 };
@@ -191,6 +211,7 @@ export class ApiService {
 			async (params) => {
 				try {
 					const uri = vscode.Uri.from(params.uri);
+
 					await vscode.workspace.fs.createDirectory(uri);
 
 					return { errno: 0 };
@@ -203,6 +224,7 @@ export class ApiService {
 		this.connection.onRequest("fileSystem/delete", async (params) => {
 			try {
 				const uri = vscode.Uri.from(params.uri);
+
 				await vscode.workspace.fs.delete(uri, params.options);
 
 				return { errno: 0 };
@@ -216,6 +238,7 @@ export class ApiService {
 				const source = vscode.Uri.from(params.source);
 
 				const target = vscode.Uri.from(params.target);
+
 				await vscode.workspace.fs.rename(
 					source,
 					target,
@@ -247,6 +270,7 @@ export class ApiService {
 			if (this.options?.exitHandler !== undefined) {
 				this.options.exitHandler(params.rval);
 			}
+
 			return { errno: 0 };
 		});
 	}
@@ -262,7 +286,9 @@ export class ApiService {
 				deviceDriver.fileDescriptor,
 			);
 		}
+
 		this.byteSources.set(deviceDriver.uri.toString(true), deviceDriver);
+
 		this.byteSinks.set(deviceDriver.uri.toString(true), deviceDriver);
 	}
 
@@ -274,9 +300,11 @@ export class ApiService {
 		if (stdin !== undefined) {
 			this.stdio.stdin = stdin;
 		}
+
 		if (stdout !== undefined) {
 			this.stdio.stdout = stdout;
 		}
+
 		if (stderr !== undefined) {
 			this.stdio.stderr = stderr;
 		}
@@ -298,6 +326,7 @@ export class ApiService {
 				stderr: this.asFileDescriptorDescription(this.stdio.stderr),
 			},
 		};
+
 		this.connection.signalReady(p);
 	}
 
@@ -358,15 +387,19 @@ class ConsoleTerminal implements CharacterDeviceDriver {
 	private static authority = "global" as const;
 
 	private decoder: RAL.TextDecoder;
+
 	public readonly uri: vscode.Uri;
+
 	public readonly fileDescriptor: FileDescriptorDescription;
 
 	constructor() {
 		this.decoder = RAL().TextDecoder.create();
+
 		this.uri = vscode.Uri.from({
 			scheme: "console",
 			authority: ConsoleTerminal.authority,
 		});
+
 		this.fileDescriptor = { kind: "console", uri: this.uri };
 	}
 

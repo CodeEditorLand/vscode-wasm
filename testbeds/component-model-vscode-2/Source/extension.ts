@@ -19,6 +19,7 @@ export async function activate(
 	const bits = await vscode.workspace.fs.readFile(filename);
 
 	const module = await WebAssembly.compile(bits);
+
 	vscode_rust.activate(context, module);
 }
 

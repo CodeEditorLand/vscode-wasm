@@ -22,6 +22,7 @@ export class Pollable
 		if (!(inst instanceof this)) {
 			throw new Error(`Instance if not an instance of Pollable`);
 		}
+
 		inst.free();
 	}
 
@@ -54,6 +55,7 @@ export namespace Pollable {
 	export interface Properties extends SharedResource.Properties {
 		signal: Signal;
 	}
+
 	export const properties: Record.PropertyTypes =
 		SharedResource.properties.concat([["signal", Signal.Type]]);
 
@@ -67,7 +69,9 @@ export function createPoll(client: WasiClient) {
 			const pollables: Pollable[] = p as Pollable[];
 
 			const signal = new Signal(client.getSharedMemory());
+
 			client.racePollables(signal, pollables);
+
 			signal.wait();
 
 			const result: number[] = [];
@@ -77,6 +81,7 @@ export function createPoll(client: WasiClient) {
 					result.push(index);
 				}
 			}
+
 			return new Uint32Array(result);
 		},
 	} satisfies io.Poll;

@@ -2,6 +2,7 @@ import { parentPort } from "node:worker_threads";
 
 interface Memory {
 	malloc(size: number): number;
+
 	free(ptr: number): void;
 }
 
@@ -9,7 +10,9 @@ parentPort!.on(
 	"message",
 	async (message: {
 		index: number;
+
 		module: WebAssembly.Module;
+
 		memory: WebAssembly.Memory;
 	}) => {
 		const instance = new WebAssembly.Instance(message.module, {
@@ -33,6 +36,7 @@ parentPort!.on(
 				const ptr = allocated.shift()!;
 
 				exports.free(ptr);
+
 				parentPort!.postMessage(
 					`Worker ${message.index} freed ${ptr}.`,
 				);
@@ -40,11 +44,14 @@ parentPort!.on(
 				const bytes = Math.floor(Math.random() * 1000);
 
 				const ptr = exports.malloc(bytes);
+
 				allocated.push(ptr);
+
 				parentPort!.postMessage(
 					`Worker ${message.index} allocated ${bytes} bytes at ${ptr}.`,
 				);
 			}
+
 			await new Promise((resolve) =>
 				setTimeout(resolve, Math.random() * 10),
 			);

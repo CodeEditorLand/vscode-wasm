@@ -25,6 +25,7 @@ class MainNodeHostConnection extends NodeHostConnection {
 
 	constructor(port: MessagePort | Worker) {
 		super(port);
+
 		this._done = CapturedPromise.create();
 	}
 
@@ -44,8 +45,10 @@ class MainNodeHostConnection extends NodeHostConnection {
 
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
+
 				host = tracer.tracer;
 			}
+
 			const imports: WebAssembly.Imports = {
 				wasi_snapshot_preview1: host,
 				wasi: host,
@@ -56,13 +59,16 @@ class MainNodeHostConnection extends NodeHostConnection {
 					memory: memory,
 				};
 			}
+
 			const instance = await WebAssembly.instantiate(module, imports);
+
 			host.initialize(memory ?? instance);
 			(instance.exports._start as Function)();
 
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
+
 			this._done.resolve();
 		}
 	}
@@ -72,8 +78,11 @@ async function main(port: MessagePort | Worker): Promise<void> {
 	const connection = new MainNodeHostConnection(port);
 
 	const ready: WorkerReadyMessage = { method: "workerReady" };
+
 	connection.postMessage(ready);
+
 	await connection.done();
+
 	connection.destroy();
 }
 main(parentPort)

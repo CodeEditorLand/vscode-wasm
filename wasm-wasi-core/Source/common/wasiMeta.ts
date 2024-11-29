@@ -13,15 +13,21 @@ export enum ParamKind {
 
 export type NumberParam = {
 	kind: ParamKind.number;
+
 	size: number;
+
 	write: (view: DataView, offset: number, value: number) => void;
+
 	read: (view: DataView, offset: number) => number;
 };
 
 export type BigintParam = {
 	kind: ParamKind.bigint;
+
 	size: number;
+
 	write: (view: DataView, offset: number, value: bigint) => void;
+
 	read: (view: DataView, offset: number) => bigint;
 };
 
@@ -33,8 +39,11 @@ export enum DataKind {
 
 export type PtrParam = {
 	kind: ParamKind.ptr;
+
 	size: 4;
+
 	write: (view: DataView, offset: number, value: number) => void;
+
 	read: (view: DataView, offset: number) => number;
 };
 
@@ -51,6 +60,7 @@ const PtrParam: PtrParam = {
 
 export type WasiFunctionSignature = {
 	params: Param[];
+
 	memorySize: number;
 };
 
@@ -61,12 +71,14 @@ export namespace WasiFunctionSignature {
 			memorySize: getMemorySize(params),
 		};
 	}
+
 	function getMemorySize(params: Param[]): number {
 		let result: number = 0;
 
 		for (const param of params) {
 			result += param.size;
 		}
+
 		return result;
 	}
 }
@@ -79,7 +91,9 @@ export enum MemoryTransferDirection {
 
 export type SingleReverseArgumentTransfer = {
 	readonly from: ptr;
+
 	readonly to: ptr;
+
 	readonly size: number;
 };
 
@@ -92,6 +106,7 @@ export type ReverseArgumentsTransfer = ReverseArgumentTransfer[];
 
 export type ArgumentTransfer = {
 	readonly memorySize: number;
+
 	copy: (
 		wasmMemory: ArrayBuffer,
 		from: ptr,
@@ -102,6 +117,7 @@ export type ArgumentTransfer = {
 
 export type ArgumentsTransfer = {
 	items: ArgumentTransfer[];
+
 	readonly size: number;
 };
 
@@ -124,6 +140,7 @@ export namespace ArgumentsTransfer {
 		for (const transfer of transfers) {
 			result += transfer.memorySize;
 		}
+
 		return result;
 	}
 }
@@ -134,6 +151,7 @@ export type ReverseCustomTransfer = {
 
 export type CustomMemoryTransfer = {
 	readonly size: number;
+
 	copy: (
 		wasmMemory: ArrayBuffer,
 		args: (number | bigint)[],
@@ -157,6 +175,7 @@ export namespace MemoryTransfer {
 			typeof candidate.size === "number"
 		);
 	}
+
 	export function isArguments(
 		transfer: MemoryTransfer | undefined,
 	): transfer is ArgumentsTransfer {
@@ -180,6 +199,7 @@ export namespace ReverseTransfer {
 
 		return candidate && typeof candidate.copy === "function";
 	}
+
 	export function isArguments(
 		transfer: ReverseTransfer | undefined,
 	): transfer is ReverseArgumentsTransfer {
@@ -191,7 +211,9 @@ export namespace ReverseTransfer {
 
 export type WasiFunction = {
 	readonly name: string;
+
 	readonly signature: WasiFunctionSignature;
+
 	transfers?: (
 		memory: DataView,
 		...params: (number & bigint)[]
@@ -209,6 +231,7 @@ namespace _WasiFunctions {
 		if (index >= callbacks.length) {
 			throw new Error("Should never happen");
 		}
+
 		return callbacks[index];
 	}
 
@@ -218,6 +241,7 @@ namespace _WasiFunctions {
 		if (index === undefined) {
 			throw new Error("Should never happen");
 		}
+
 		return callbacks[index];
 	}
 
@@ -227,6 +251,7 @@ namespace _WasiFunctions {
 		if (result === undefined) {
 			throw new Error("Should never happen");
 		}
+
 		return result;
 	}
 
@@ -236,13 +261,17 @@ namespace _WasiFunctions {
 		if (result === undefined) {
 			throw new Error("Should never happen");
 		}
+
 		return result;
 	}
 
 	export function add(wasiFunction: WasiFunction): void {
 		const index = callbacks.length;
+
 		callbacks.push(wasiFunction);
+
 		name2Index.set(wasiFunction.name, index);
+
 		index2Name.set(index, wasiFunction.name);
 	}
 }
@@ -294,6 +323,7 @@ export namespace Bytes {
 						new Uint8Array(wasmMemory, from, length),
 					);
 				}
+
 				return direction === MemoryTransferDirection.param
 					? undefined
 					: { from: to, to: from, size: length };
@@ -394,6 +424,7 @@ export namespace Ptr {
 						new Uint8Array(wasmMemory, from, size),
 					);
 				}
+
 				return direction === MemoryTransferDirection.param
 					? undefined
 					: { from: to, to: from, size };

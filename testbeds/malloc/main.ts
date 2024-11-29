@@ -17,7 +17,9 @@ async function main(): Promise<void> {
 
 	for (let i = 0; i < 10; i++) {
 		const worker = new Worker(path.join(__dirname, "worker.js"));
+
 		worker.postMessage({ index: i, module, memory });
+
 		worker.on("message", (message: string) => {
 			console.log(message);
 		});

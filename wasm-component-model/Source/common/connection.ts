@@ -37,6 +37,7 @@ class ConnectionMemory implements Memory {
 	};
 
 	public buffer: SharedArrayBuffer;
+
 	public readonly id: string;
 
 	private next: Uint32Array;
@@ -54,18 +55,24 @@ class ConnectionMemory implements Memory {
 		if (sizeOrBuffer === undefined) {
 			sizeOrBuffer = 64 * 1024;
 		}
+
 		if (typeof sizeOrBuffer === "number") {
 			this.id = uuid.v4();
+
 			this.buffer = new SharedArrayBuffer(sizeOrBuffer);
+
 			this.next = new Uint32Array(
 				this.buffer,
 				ConnectionMemory.Header.next.offset,
 				1,
 			);
+
 			this.next[0] = ConnectionMemory.Header.end.offset;
 		} else {
 			this.buffer = sizeOrBuffer;
+
 			this.id = id!;
+
 			this.next = new Uint32Array(
 				this.buffer,
 				ConnectionMemory.Header.next.offset,
@@ -80,7 +87,9 @@ class ConnectionMemory implements Memory {
 			0,
 			ConnectionMemory.Header.end.offset,
 		);
+
 		view.fill(0);
+
 		this.next[0] = ConnectionMemory.Header.end.offset;
 	}
 
@@ -88,6 +97,7 @@ class ConnectionMemory implements Memory {
 		const next = this.next[0];
 
 		const result = Alignment.align(next, align);
+
 		this.next[0] = result + size;
 
 		return new MemoryRange(this, result, size);
@@ -135,6 +145,7 @@ export abstract class Connection {
 				result.push(param.toString());
 			}
 		}
+
 		return result;
 	}
 
@@ -150,6 +161,7 @@ export abstract class Connection {
 				result.push(param);
 			}
 		}
+
 		return result;
 	}
 
@@ -161,6 +173,7 @@ export abstract class Connection {
 		} else if (typeof result === "number") {
 			return result;
 		}
+
 		return undefined;
 	}
 
@@ -170,6 +183,7 @@ export abstract class Connection {
 		if (result === undefined) {
 			return;
 		}
+
 		return typeof result === "number" ? result : BigInt(result);
 	}
 
@@ -239,6 +253,7 @@ export abstract class Connection {
 					Connection.WasmTypeKind.signed,
 					true,
 				);
+
 				view.setBigInt64(
 					ConnectionMemory.Header.result.offset,
 					result,
@@ -250,6 +265,7 @@ export abstract class Connection {
 					Connection.WasmTypeKind.unsigned,
 					true,
 				);
+
 				view.setBigUint64(
 					ConnectionMemory.Header.result.offset,
 					result,
@@ -262,6 +278,7 @@ export abstract class Connection {
 				Connection.WasmTypeKind.float,
 				true,
 			);
+
 			view.setFloat64(
 				ConnectionMemory.Header.result.offset,
 				result,
@@ -288,15 +305,21 @@ export namespace Connection {
 
 	export type MainCallMessage = {
 		readonly method: "callMain";
+
 		readonly name: string;
+
 		readonly params: (number | string)[];
+
 		readonly memory: { buffer: SharedArrayBuffer; id: string };
 	};
 
 	export type ReportResultMessage = {
 		readonly method: "reportResult";
+
 		readonly name: string;
+
 		readonly result?: number | string;
+
 		readonly error?: string;
 	};
 
@@ -304,15 +327,21 @@ export namespace Connection {
 
 	export type InitializeWorker = {
 		method: "initializeWorker";
+
 		readonly module: WebAssembly_.Module;
+
 		readonly memory?: WebAssembly_.Memory;
+
 		readonly options: Options;
 	};
 
 	export type WorkerCallMessage = {
 		readonly method: "callWorker";
+
 		readonly name: string;
+
 		readonly params: (number | string)[];
+
 		readonly memory: { buffer: SharedArrayBuffer; id: string };
 	};
 
@@ -324,7 +353,9 @@ export abstract class BaseWorkerConnection
 	implements WorkerConnection
 {
 	private readonly world: WorldType;
+
 	private readonly timeout: number | undefined;
+
 	private readonly handlers: Map<
 		string,
 		(memory: Memory, params: WasmType[]) => WasmType | void
@@ -332,8 +363,11 @@ export abstract class BaseWorkerConnection
 
 	constructor(world: WorldType, timeout?: number) {
 		super(new ConnectionMemory());
+
 		this.world = world;
+
 		this.timeout = timeout;
+
 		this.handlers = new Map();
 	}
 
@@ -364,6 +398,7 @@ export abstract class BaseWorkerConnection
 			ConnectionMemory.Header.sync.offset,
 			1,
 		);
+
 		Atomics.store(sync, 0, 0);
 
 		const message: Connection.MainCallMessage = {
@@ -372,6 +407,7 @@ export abstract class BaseWorkerConnection
 			params: Connection.serializeParams(params),
 			memory: { buffer: this.memory.buffer, id: this.memory.id },
 		};
+
 		this.postMessage(message);
 		// Wait for the answer
 		const result = Atomics.wait(sync, 0, 0, this.timeout);
@@ -392,6 +428,7 @@ export abstract class BaseWorkerConnection
 					);
 				}
 		}
+
 		return Connection.loadResult(buffer);
 	}
 
@@ -410,6 +447,7 @@ export abstract class BaseWorkerConnection
 			if (message.memory !== undefined) {
 				(imports as any).env.memory = message.memory;
 			}
+
 			RAL()
 				.WebAssembly.instantiate(message.module, imports)
 				.then((instance) => {
@@ -422,6 +460,7 @@ export abstract class BaseWorkerConnection
 						instance.exports as any,
 						wasmContext,
 					);
+
 					this.postMessage({
 						method: "reportResult",
 						name: "$initializeWorker",
@@ -447,6 +486,7 @@ export abstract class BaseWorkerConnection
 
 				return;
 			}
+
 			try {
 				const memory: Memory = new ConnectionMemory(
 					message.memory.buffer,
@@ -457,6 +497,7 @@ export abstract class BaseWorkerConnection
 					memory,
 					Connection.deserializeParams(message.params),
 				);
+
 				this.postMessage({
 					method: "reportResult",
 					name: message.name,
@@ -482,6 +523,7 @@ export abstract class BaseMainConnection
 	private initializeCall:
 		| { resolve: () => void; reject: (error: any) => void }
 		| undefined;
+
 	private readonly handlers: Map<
 		string,
 		(
@@ -489,18 +531,24 @@ export abstract class BaseMainConnection
 			params: WasmType[],
 		) => WasmType | void | Promise<WasmType | void>
 	>;
+
 	private readonly callQueue: Semaphore<JType>;
+
 	private currentCall: CapturedPromise<WasmType | void> | undefined;
 
 	constructor() {
 		super(new ConnectionMemory());
+
 		this.handlers = new Map();
+
 		this.callQueue = new Semaphore(1);
+
 		this.currentCall = undefined;
 	}
 
 	public dispose(): void {
 		this.handlers.clear();
+
 		this.callQueue.dispose();
 	}
 
@@ -519,6 +567,7 @@ export abstract class BaseMainConnection
 	public async initialize(code: Code, options: Options): Promise<void> {
 		type literal = {
 			module: WebAssembly_.Module;
+
 			memory?: WebAssembly_.Memory;
 		};
 
@@ -528,10 +577,12 @@ export abstract class BaseMainConnection
 
 		if ((code as literal).module !== undefined) {
 			module = (code as literal).module;
+
 			memory = (code as literal).memory;
 		} else {
 			module = code;
 		}
+
 		return new Promise((resolve, reject) => {
 			const message: Connection.InitializeWorker = {
 				method: "initializeWorker",
@@ -539,7 +590,9 @@ export abstract class BaseMainConnection
 				memory: memory,
 				options: options,
 			};
+
 			this.initializeCall = { resolve, reject };
+
 			this.postMessage(message);
 		});
 	}
@@ -551,6 +604,7 @@ export abstract class BaseMainConnection
 		if (this.currentCall !== undefined) {
 			throw new ComponentModelTrap("Call already in progress");
 		}
+
 		this.currentCall = CapturedPromise.create();
 
 		const message: Connection.WorkerCallMessage = {
@@ -559,6 +613,7 @@ export abstract class BaseMainConnection
 			params: Connection.serializeParams(params),
 			memory: { buffer: this.memory.buffer, id: this.memory.id },
 		};
+
 		this.postMessage(message);
 
 		return this.currentCall.promise;
@@ -600,7 +655,9 @@ export abstract class BaseMainConnection
 					Connection.ErrorCodes.noHandler,
 					true,
 				);
+
 				Atomics.store(sync, 0, 1);
+
 				Atomics.notify(sync, 0);
 
 				return;
@@ -625,11 +682,14 @@ export abstract class BaseMainConnection
 						})
 						.finally(() => {
 							Atomics.store(sync, 0, 1);
+
 							Atomics.notify(sync, 0);
 						});
 				} else {
 					Connection.storeResult(buffer, result);
+
 					Atomics.store(sync, 0, 1);
+
 					Atomics.notify(sync, 0);
 				}
 			}
@@ -639,23 +699,28 @@ export abstract class BaseMainConnection
 					// Need to think about logging this.
 					return;
 				}
+
 				if (message.error !== undefined) {
 					this.initializeCall.reject(new Error(message.error));
 				} else {
 					this.initializeCall.resolve();
 				}
+
 				this.initializeCall = undefined;
 			} else {
 				if (this.currentCall === undefined) {
 					// Need to think about logging this.
 					return;
 				}
+
 				if (message.error !== undefined) {
 					this.currentCall.reject(new Error(message.error));
 				} else {
 					const result = Connection.deserializeResult(message.result);
+
 					this.currentCall.resolve(result);
 				}
+
 				this.currentCall = undefined;
 			}
 		}

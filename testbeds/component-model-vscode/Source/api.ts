@@ -10,18 +10,23 @@ export namespace api {
 	export namespace Types {
 		export type Position = {
 			line: u32;
+
 			character: u32;
 		};
 
 		export type Range = {
 			start: Position;
+
 			end: Position;
 		};
 
 		export type TextDocumentContentChangeEvent = {
 			range: Range;
+
 			rangeOffset: u32;
+
 			rangeLength: u32;
+
 			text: string;
 		};
 
@@ -32,7 +37,9 @@ export namespace api {
 
 		export type TextDocumentChangeEvent = {
 			document: own<TextDocument>;
+
 			contentChanges: TextDocumentContentChangeEvent[];
+
 			reason?: TextDocumentChangeReason | undefined;
 		};
 
@@ -46,10 +53,12 @@ export namespace api {
 
 				getText(): string;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type TextDocument = TextDocument.Interface;
 
 		export namespace OutputChannel {
@@ -64,20 +73,25 @@ export namespace api {
 
 				show(): void;
 			}
+
 			export type Statics = {};
 
 			export type Class = Statics & {};
 		}
+
 		export type OutputChannel = OutputChannel.Interface;
 	}
+
 	export type Types = {
 		TextDocument: Types.TextDocument.Class;
+
 		OutputChannel: Types.OutputChannel.Class;
 	};
 
 	export namespace Commands {
 		export type registerCommand = (command: string) => void;
 	}
+
 	export type Commands = {
 		registerCommand: Commands.registerCommand;
 	};
@@ -90,6 +104,7 @@ export namespace api {
 			languageId: string | undefined,
 		) => own<OutputChannel>;
 	}
+
 	export type Window = {
 		createOutputChannel: Window.createOutputChannel;
 	};
@@ -101,8 +116,10 @@ export namespace api {
 
 		export type registerOnDidChangeTextDocument = () => void;
 	}
+
 	export type Workspace = {
 		textDocuments: Workspace.textDocuments;
+
 		registerOnDidChangeTextDocument: Workspace.registerOnDidChangeTextDocument;
 	};
 
@@ -115,34 +132,44 @@ export namespace api {
 
 		export type executeCommand = (command: string) => void;
 	}
+
 	export type Callbacks = {
 		didChangeTextDocument: Callbacks.didChangeTextDocument;
+
 		executeCommand: Callbacks.executeCommand;
 	};
 
 	export namespace all {
 		export type Imports = {
 			types: api.Types;
+
 			workspace: api.Workspace;
+
 			commands: api.Commands;
+
 			window: api.Window;
 		};
 
 		export namespace Imports {
 			export type Promisified = $wcm.$imports.Promisify<Imports>;
 		}
+
 		export namespace imports {
 			export type Promisify<T> = $wcm.$imports.Promisify<T>;
 		}
+
 		export type Exports = {
 			activate: () => void;
+
 			deactivate: () => void;
+
 			callbacks: api.Callbacks;
 		};
 
 		export namespace Exports {
 			export type Promisified = $wcm.$exports.Promisify<Exports>;
 		}
+
 		export namespace exports {
 			export type Promisify<T> = $wcm.$exports.Promisify<T>;
 		}
@@ -214,12 +241,14 @@ export namespace api {
 		export const OutputChannel_Handle = new $wcm.ResourceHandleType(
 			"output-channel",
 		);
+
 		TextDocument.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]text-document", [
 				["inst", TextDocument],
 			]),
 		);
+
 		TextDocument.addMethod(
 			"uri",
 			new $wcm.MethodType<api.Types.TextDocument.Interface["uri"]>(
@@ -228,6 +257,7 @@ export namespace api {
 				$wcm.wstring,
 			),
 		);
+
 		TextDocument.addMethod(
 			"languageId",
 			new $wcm.MethodType<api.Types.TextDocument.Interface["languageId"]>(
@@ -236,6 +266,7 @@ export namespace api {
 				$wcm.wstring,
 			),
 		);
+
 		TextDocument.addMethod(
 			"version",
 			new $wcm.MethodType<api.Types.TextDocument.Interface["version"]>(
@@ -244,6 +275,7 @@ export namespace api {
 				$wcm.u32,
 			),
 		);
+
 		TextDocument.addMethod(
 			"getText",
 			new $wcm.MethodType<api.Types.TextDocument.Interface["getText"]>(
@@ -252,12 +284,14 @@ export namespace api {
 				$wcm.wstring,
 			),
 		);
+
 		OutputChannel.addDestructor(
 			"$drop",
 			new $wcm.DestructorType("[resource-drop]output-channel", [
 				["inst", OutputChannel],
 			]),
 		);
+
 		OutputChannel.addMethod(
 			"name",
 			new $wcm.MethodType<api.Types.OutputChannel.Interface["name"]>(
@@ -266,6 +300,7 @@ export namespace api {
 				$wcm.wstring,
 			),
 		);
+
 		OutputChannel.addMethod(
 			"append",
 			new $wcm.MethodType<api.Types.OutputChannel.Interface["append"]>(
@@ -274,6 +309,7 @@ export namespace api {
 				undefined,
 			),
 		);
+
 		OutputChannel.addMethod(
 			"appendLine",
 			new $wcm.MethodType<
@@ -284,6 +320,7 @@ export namespace api {
 				undefined,
 			),
 		);
+
 		OutputChannel.addMethod(
 			"clear",
 			new $wcm.MethodType<api.Types.OutputChannel.Interface["clear"]>(
@@ -292,6 +329,7 @@ export namespace api {
 				undefined,
 			),
 		);
+
 		OutputChannel.addMethod(
 			"show",
 			new $wcm.MethodType<api.Types.OutputChannel.Interface["show"]>(
@@ -301,6 +339,7 @@ export namespace api {
 			),
 		);
 	}
+
 	export namespace Types._ {
 		export const id = "host:api/types" as const;
 
@@ -328,12 +367,14 @@ export namespace api {
 					"[resource-drop]text-document": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = TextDocument.WasmInterface & {
 					"[dtor]text-document": (self: i32) => void;
 				};
 			}
 		}
+
 		export namespace OutputChannel {
 			export type WasmInterface = {
 				"[method]output-channel.name": (
@@ -359,12 +400,14 @@ export namespace api {
 					"[resource-drop]output-channel": (self: i32) => void;
 				};
 			}
+
 			export namespace exports {
 				export type WasmInterface = OutputChannel.WasmInterface & {
 					"[dtor]output-channel": (self: i32) => void;
 				};
 			}
 		}
+
 		export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 			string,
 			$wcm.AnyComponentModelType
@@ -396,6 +439,7 @@ export namespace api {
 				TextDocument.imports.WasmInterface &
 				OutputChannel.imports.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface &
 				TextDocument.exports.WasmInterface &
@@ -422,6 +466,7 @@ export namespace api {
 				undefined,
 			);
 	}
+
 	export namespace Commands._ {
 		export const id = "host:api/commands" as const;
 
@@ -438,6 +483,7 @@ export namespace api {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -456,6 +502,7 @@ export namespace api {
 				new $wcm.OwnType<api.Window.OutputChannel>(OutputChannel),
 			);
 	}
+
 	export namespace Window._ {
 		export const id = "host:api/window" as const;
 
@@ -483,6 +530,7 @@ export namespace api {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -507,6 +555,7 @@ export namespace api {
 				undefined,
 			);
 	}
+
 	export namespace Workspace._ {
 		export const id = "host:api/workspace" as const;
 
@@ -533,6 +582,7 @@ export namespace api {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
@@ -556,6 +606,7 @@ export namespace api {
 				undefined,
 			);
 	}
+
 	export namespace Callbacks._ {
 		export const id = "host:api/callbacks" as const;
 
@@ -585,10 +636,12 @@ export namespace api {
 		export namespace imports {
 			export type WasmInterface = _.WasmInterface;
 		}
+
 		export namespace exports {
 			export type WasmInterface = _.WasmInterface;
 		}
 	}
+
 	export namespace all.$ {
 		export namespace exports {
 			export const activate = new $wcm.FunctionType<
@@ -600,6 +653,7 @@ export namespace api {
 			>("deactivate", [], undefined);
 		}
 	}
+
 	export namespace all._ {
 		export const id = "host:api/all" as const;
 
@@ -622,6 +676,7 @@ export namespace api {
 			): Imports {
 				return $wcm.$imports.create<Imports>(_, service, context);
 			}
+
 			export function loop(
 				service: all.Imports,
 				context: $wcm.WasmContext,
@@ -629,6 +684,7 @@ export namespace api {
 				return $wcm.$imports.loop<all.Imports>(_, service, context);
 			}
 		}
+
 		export type Imports = {
 			"host:api/types": api.Types._.imports.WasmInterface;
 			"host:api/workspace": api.Workspace._.imports.WasmInterface;
@@ -654,6 +710,7 @@ export namespace api {
 				return $wcm.$exports.bind<all.Exports>(_, exports, context);
 			}
 		}
+
 		export type Exports = {
 			"activate": () => void;
 			"deactivate": () => void;

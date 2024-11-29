@@ -27,6 +27,7 @@ export function run(): Promise<void> {
 			});
 		} catch (error) {
 			console.error(error);
+
 			reject(error);
 		}
 	});

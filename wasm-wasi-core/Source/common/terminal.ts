@@ -9,23 +9,30 @@ import RAL from "./ral";
 
 class LineBuffer {
 	private offset: number;
+
 	private cursor: number;
+
 	private content: string[];
 
 	constructor() {
 		this.offset = 0;
+
 		this.cursor = 0;
+
 		this.content = [];
 	}
 
 	public clear(): void {
 		this.offset = 0;
+
 		this.cursor = 0;
+
 		this.content = [];
 	}
 
 	public setContent(content: string): void {
 		this.content = content.split("");
+
 		this.cursor = this.content.length;
 	}
 
@@ -56,6 +63,7 @@ class LineBuffer {
 	public insert(value: String) {
 		for (const char of value) {
 			this.content.splice(this.cursor, 0, char);
+
 			this.cursor++;
 		}
 	}
@@ -64,6 +72,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		this.content.splice(this.cursor, 1);
 
 		return true;
@@ -73,7 +82,9 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		this.cursor -= 1;
+
 		this.content.splice(this.cursor, 1);
 
 		return true;
@@ -85,6 +96,7 @@ class LineBuffer {
 		if (newValue < 0 || newValue > this.content.length) {
 			return false;
 		}
+
 		this.cursor = newValue;
 
 		return true;
@@ -94,6 +106,7 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		this.cursor = 0;
 
 		return true;
@@ -103,6 +116,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		this.cursor = this.content.length;
 
 		return true;
@@ -112,6 +126,7 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		let index: number;
 		// check if we are at the beginning of a word
 		if (this.content[this.cursor - 1] === " ") {
@@ -127,6 +142,7 @@ class LineBuffer {
 		} else {
 			index = this.cursor;
 		}
+
 		if (index === 0) {
 			this.cursor = index;
 
@@ -142,6 +158,7 @@ class LineBuffer {
 				index--;
 			}
 		}
+
 		this.cursor = index;
 
 		return true;
@@ -151,6 +168,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		let index: number;
 
 		if (this.content[this.cursor] === " ") {
@@ -166,6 +184,7 @@ class LineBuffer {
 		} else {
 			index = this.cursor;
 		}
+
 		if (index === this.content.length) {
 			this.cursor = index;
 
@@ -179,6 +198,7 @@ class LineBuffer {
 				index++;
 			}
 		}
+
 		this.cursor = index;
 
 		return true;
@@ -191,10 +211,12 @@ export interface Options {
 
 class CommandHistory {
 	private readonly history: string[];
+
 	private current: number;
 
 	constructor() {
 		this.history = [""];
+
 		this.current = 0;
 	}
 
@@ -207,13 +229,16 @@ class CommandHistory {
 		if (this.current !== this.history.length - 1) {
 			this.history[this.history.length - 1] = this.history[this.current];
 		}
+
 		if (
 			this.history[this.history.length - 1] ===
 			this.history[this.history.length - 2]
 		) {
 			this.history.pop();
 		}
+
 		this.history.push("");
+
 		this.current = this.history.length - 1;
 	}
 
@@ -221,6 +246,7 @@ class CommandHistory {
 		if (this.current === 0) {
 			return undefined;
 		}
+
 		return this.history[--this.current];
 	}
 
@@ -228,89 +254,121 @@ class CommandHistory {
 		if (this.current === this.history.length - 1) {
 			return undefined;
 		}
+
 		return this.history[++this.current];
 	}
 }
 
 export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	private readonly options: Options;
+
 	private readonly commandHistory: CommandHistory | undefined;
+
 	private state: PseudoterminalState;
 
 	private readonly _onDidClose: EventEmitter<void | number>;
+
 	public readonly onDidClose: Event<void | number>;
 
 	private readonly _onDidWrite: EventEmitter<string>;
+
 	public readonly onDidWrite: Event<string>;
 
 	private readonly _onDidChangeName: EventEmitter<string>;
+
 	public readonly onDidChangeName: Event<string>;
 
 	private readonly _onDidCtrlC: EventEmitter<void>;
+
 	public readonly onDidCtrlC: Event<void>;
 
 	private readonly _onAnyKey: EventEmitter<void>;
+
 	public readonly onAnyKey: Event<void>;
 
 	private readonly _onDidChangeState: EventEmitter<{
 		old: PseudoterminalState;
+
 		new: PseudoterminalState;
 	}>;
+
 	public readonly onDidChangeState: Event<{
 		old: PseudoterminalState;
+
 		new: PseudoterminalState;
 	}>;
 
 	private readonly _onDidCloseTerminal: EventEmitter<void>;
+
 	public readonly onDidCloseTerminal: Event<void>;
 
 	private lines: string[];
+
 	private lineBuffer: LineBuffer;
+
 	private readlineCallback: ((value: string) => void) | undefined;
 
 	private isOpen: boolean;
+
 	private nameBuffer: string | undefined;
+
 	private writeBuffer: string[] | undefined;
+
 	private encoder: RAL.TextEncoder;
+
 	private decoder: RAL.TextDecoder;
+
 	private isStdInClosed: boolean;
 
 	constructor(options: Options = {}) {
 		this.options = options;
+
 		this.commandHistory = this.options.history
 			? new CommandHistory()
 			: undefined;
+
 		this.state = PseudoterminalState.busy;
 
 		this._onDidClose = new EventEmitter();
+
 		this.onDidClose = this._onDidClose.event;
 
 		this._onDidWrite = new EventEmitter<string>();
+
 		this.onDidWrite = this._onDidWrite.event;
 
 		this._onDidChangeName = new EventEmitter<string>();
+
 		this.onDidChangeName = this._onDidChangeName.event;
 
 		this._onDidCtrlC = new EventEmitter<void>();
+
 		this.onDidCtrlC = this._onDidCtrlC.event;
 
 		this._onAnyKey = new EventEmitter<void>();
+
 		this.onAnyKey = this._onAnyKey.event;
 
 		this._onDidChangeState = new EventEmitter<{
 			old: PseudoterminalState;
+
 			new: PseudoterminalState;
 		}>();
+
 		this.onDidChangeState = this._onDidChangeState.event;
 
 		this._onDidCloseTerminal = new EventEmitter<void>();
+
 		this.onDidCloseTerminal = this._onDidCloseTerminal.event;
 
 		this.encoder = RAL().TextEncoder.create();
+
 		this.decoder = RAL().TextDecoder.create();
+
 		this.isStdInClosed = false;
 
 		this.lines = [];
+
 		this.lineBuffer = new LineBuffer();
 
 		this.isOpen = false;
@@ -326,6 +384,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	public setState(state: PseudoterminalState): void {
 		const old = this.state;
+
 		this.state = state;
 
 		if (old !== state) {
@@ -334,9 +393,12 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				state === PseudoterminalState.idle
 			) {
 				this.lineBuffer.clear();
+
 				this.lines = [];
+
 				this.isStdInClosed = false;
 			}
+
 			this._onDidChangeState.fire({ old, new: state });
 		}
 	}
@@ -358,12 +420,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 		if (this.nameBuffer !== undefined) {
 			this._onDidChangeName.fire(this.nameBuffer);
+
 			this.nameBuffer = undefined;
 		}
+
 		if (this.writeBuffer !== undefined) {
 			for (const item of this.writeBuffer) {
 				this._onDidWrite.fire(item);
 			}
+
 			this.writeBuffer = undefined;
 		}
 	}
@@ -376,6 +441,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		if (this.isStdInClosed && this.lines.length === 0) {
 			return new Uint8Array(0);
 		}
+
 		const value = await this.readline();
 
 		return this.encoder.encode(value);
@@ -385,9 +451,11 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		if (this.readlineCallback !== undefined) {
 			throw new Error(`Already in readline mode`);
 		}
+
 		if (this.lines.length > 0) {
 			return Promise.resolve(this.lines.shift()!);
 		}
+
 		if (this.isStdInClosed) {
 			return Promise.resolve("");
 		} else {
@@ -398,7 +466,9 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	}
 
 	public write(content: string): Promise<void>;
+
 	public write(content: Uint8Array, encoding?: "utf-8"): Promise<number>;
+
 	public write(
 		content: Uint8Array | string,
 		encoding?: "utf-8",
@@ -421,12 +491,14 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 			if (this.writeBuffer === undefined) {
 				this.writeBuffer = [];
 			}
+
 			this.writeBuffer.push(str);
 		}
 	}
 
 	public async prompt(prompt: string): Promise<void> {
 		await this.write(prompt);
+
 		this.lineBuffer.setOffset(prompt.length);
 	}
 
@@ -436,6 +508,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 			return;
 		}
+
 		const previousCursor = this.lineBuffer.getCursor();
 
 		switch (data) {
@@ -517,12 +590,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 					if (content !== undefined) {
 						this.eraseLine();
+
 						this.lineBuffer.setContent(content);
+
 						this.writeString(content);
 					} else {
 						this.bell();
 					}
 				}
+
 				break;
 
 			case "\x1b[B": // down
@@ -533,12 +609,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 					if (content !== undefined) {
 						this.eraseLine();
+
 						this.lineBuffer.setContent(content);
+
 						this.writeString(content);
 					} else {
 						this.bell();
 					}
 				}
+
 				break;
 
 			case "\x08": // shift+backspace
@@ -567,6 +646,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 				if (!this.lineBuffer.isCursorAtEnd()) {
 					this._onDidWrite.fire("\x1b[@");
 				}
+
 				this._onDidWrite.fire(data);
 
 				if (this.commandHistory !== undefined) {
@@ -577,10 +657,15 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 
 	private handleInterrupt(): void {
 		this._onDidCtrlC.fire();
+
 		this._onDidWrite.fire("\x1b[31m^C\x1b[0m\r\n");
+
 		this.lineBuffer.clear();
+
 		this.lines.length = 0;
+
 		this.readlineCallback?.("\n");
+
 		this.readlineCallback = undefined;
 	}
 
@@ -588,15 +673,20 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		this._onDidWrite.fire("\r\n");
 
 		const line = this.lineBuffer.getLine();
+
 		this.lineBuffer.clear();
+
 		this.lines.push(line);
 
 		if (this.commandHistory !== undefined) {
 			this.commandHistory.markExecuted();
 		}
+
 		if (this.readlineCallback !== undefined) {
 			const result = this.lines.shift()! + "\n";
+
 			this.readlineCallback(result);
+
 			this.readlineCallback = undefined;
 		}
 	}
@@ -605,14 +695,18 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		this.isStdInClosed = true;
 
 		const line = this.lineBuffer.getLine();
+
 		this.lineBuffer.clear();
 
 		if (line.length > 0) {
 			this.lines.push(line);
 		}
+
 		if (this.readlineCallback !== undefined && this.lines.length > 0) {
 			const result = this.lines.shift()!;
+
 			this.readlineCallback(result);
+
 			this.readlineCallback = undefined;
 		}
 	}
@@ -633,6 +727,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 		const code = change > 0 ? "D" : "C";
 
 		const sequence = `\x1b[${code}`.repeat(Math.abs(change));
+
 		this._onDidWrite.fire(sequence);
 	}
 
@@ -649,6 +744,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 	}
 
 	private static terminalRegExp = /(\r\n)|(\n)/gm;
+
 	private replaceNewlines(str: string): string {
 		return str.replace(
 			WasmPseudoterminalImpl.terminalRegExp,
@@ -663,6 +759,7 @@ export class WasmPseudoterminalImpl implements WasmPseudoterminal {
 			},
 		);
 	}
+
 	private getString(bytes: Uint8Array, _encoding?: "utf-8"): string {
 		return this.replaceNewlines(this.decoder.decode(bytes.slice()));
 	}

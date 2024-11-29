@@ -18,7 +18,9 @@ export abstract class BrowserHostConnection extends HostConnection {
 		port: MessagePort | Worker | DedicatedWorkerGlobalScope,
 	) {
 		super();
+
 		this.port = port;
+
 		this.port.onmessage = (event: MessageEvent<ServiceMessage>) => {
 			this.handleMessage(event.data).catch(RAL().console.error);
 		};

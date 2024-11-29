@@ -34,6 +34,7 @@ export function WorkerClient<C>(
 					undefined,
 					Messages.Service.Notifications
 				>(this.worker);
+
 				connection.onNotify("workerReady", () => {
 					connection
 						.callAsync("initialize", {
@@ -41,7 +42,9 @@ export function WorkerClient<C>(
 						})
 						.then(resolve, reject);
 				});
+
 				connection.listen();
+
 				this.setConnection(connection as unknown as AnyConnection);
 			});
 		}

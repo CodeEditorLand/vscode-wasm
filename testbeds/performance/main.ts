@@ -11,10 +11,13 @@ mainWorker.on("message", (buffer: SharedArrayBuffer) => {
 		const view = new DataView(buffer);
 
 		const value = Math.trunc(Math.random() * 1000);
+
 		view.setInt32(4, value, true);
 	} finally {
 		const sync = new Int32Array(buffer, 0, 1);
+
 		Atomics.store(sync, 0, 1);
+
 		Atomics.notify(sync, 0);
 	}
 });
@@ -27,6 +30,7 @@ const view = new DataView(buffer);
 
 function store(): void {
 	const value = Math.trunc(Math.random() * 1000);
+
 	view.setInt32(4, value, true);
 }
 
@@ -35,10 +39,12 @@ let sum: number = 0;
 const start = Date.now();
 for (let i = 0; i < 1000000; i++) {
 	store();
+
 	sum += view.getInt32(4, true);
 }
 
 const end = Date.now();
+
 console.log(
 	`Time taken to call 1000000 times: ${end - start}ms. Sum value: ${sum}`,
 );

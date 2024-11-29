@@ -41,6 +41,7 @@ class ErrorInvalidArgType extends Error {
 
 		if (typeof expected === "string" && expected.indexOf("not ") === 0) {
 			determiner = "must not be";
+
 			expected = expected.replace(/^not /, "");
 		} else {
 			determiner = "must be";
@@ -109,12 +110,15 @@ function normalizeString(
 
 						if (lastSlashIndex === -1) {
 							res = "";
+
 							lastSegmentLength = 0;
 						} else {
 							res = res.slice(0, lastSlashIndex);
+
 							lastSegmentLength =
 								res.length - 1 - res.lastIndexOf(separator);
 						}
+
 						lastSlash = i;
 
 						dots = 0;
@@ -122,7 +126,9 @@ function normalizeString(
 						continue;
 					} else if (res.length !== 0) {
 						res = "";
+
 						lastSegmentLength = 0;
+
 						lastSlash = i;
 
 						dots = 0;
@@ -130,8 +136,10 @@ function normalizeString(
 						continue;
 					}
 				}
+
 				if (allowAboveRoot) {
 					res += res.length > 0 ? `${separator}..` : "..";
+
 					lastSegmentLength = 2;
 				}
 			} else {
@@ -140,8 +148,10 @@ function normalizeString(
 				} else {
 					res = path.slice(lastSlash + 1, i);
 				}
+
 				lastSegmentLength = i - lastSlash - 1;
 			}
+
 			lastSlash = i;
 
 			dots = 0;
@@ -151,17 +161,25 @@ function normalizeString(
 			dots = -1;
 		}
 	}
+
 	return res;
 }
 
 export interface IPath {
 	dirname(path: string): string;
+
 	normalize(path: string): string;
+
 	isAbsolute(path: string): boolean;
+
 	join(...paths: string[]): string;
+
 	basename(path: string, ext?: string): string;
+
 	extname(path: string): string;
+
 	sep: "/";
+
 	delimiter: string;
 }
 
@@ -185,8 +203,10 @@ export const posix: IPath = {
 			if (isAbsolute) {
 				return "/";
 			}
+
 			return trailingSeparator ? "./" : ".";
 		}
+
 		if (trailingSeparator) {
 			path += "/";
 		}
@@ -204,10 +224,12 @@ export const posix: IPath = {
 		if (paths.length === 0) {
 			return ".";
 		}
+
 		let joined;
 
 		for (let i = 0; i < paths.length; ++i) {
 			const arg = paths[i];
+
 			validateString(arg, "path");
 
 			if (arg.length > 0) {
@@ -218,9 +240,11 @@ export const posix: IPath = {
 				}
 			}
 		}
+
 		if (joined === undefined) {
 			return ".";
 		}
+
 		return posix.normalize(joined);
 	},
 
@@ -230,6 +254,7 @@ export const posix: IPath = {
 		if (path.length === 0) {
 			return ".";
 		}
+
 		const hasRoot = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
 
 		let end = -1;
@@ -252,9 +277,11 @@ export const posix: IPath = {
 		if (end === -1) {
 			return hasRoot ? "/" : ".";
 		}
+
 		if (hasRoot && end === 1) {
 			return "//";
 		}
+
 		return path.slice(0, end);
 	},
 
@@ -262,6 +289,7 @@ export const posix: IPath = {
 		if (ext !== undefined) {
 			validateString(ext, "ext");
 		}
+
 		validateString(path, "path");
 
 		let start = 0;
@@ -276,6 +304,7 @@ export const posix: IPath = {
 			if (ext === path) {
 				return "";
 			}
+
 			let extIdx = ext.length - 1;
 
 			let firstNonSlashEnd = -1;
@@ -296,8 +325,10 @@ export const posix: IPath = {
 						// We saw the first non-path separator, remember this index in case
 						// we need it if the extension ends up not matching
 						matchedSlash = false;
+
 						firstNonSlashEnd = i + 1;
 					}
+
 					if (extIdx >= 0) {
 						// Try to match the explicit extension
 						if (code === ext.charCodeAt(extIdx)) {
@@ -310,6 +341,7 @@ export const posix: IPath = {
 							// Extension does not match, so our result is the entire path
 							// component
 							extIdx = -1;
+
 							end = firstNonSlashEnd;
 						}
 					}
@@ -321,8 +353,10 @@ export const posix: IPath = {
 			} else if (end === -1) {
 				end = path.length;
 			}
+
 			return path.slice(start, end);
 		}
+
 		for (i = path.length - 1; i >= 0; --i) {
 			if (path.charCodeAt(i) === CHAR_FORWARD_SLASH) {
 				// If we reached a path separator that was not part of a set of path
@@ -336,6 +370,7 @@ export const posix: IPath = {
 				// We saw the first non-path separator, mark this as the end of our
 				// path component
 				matchedSlash = false;
+
 				end = i + 1;
 			}
 		}
@@ -343,6 +378,7 @@ export const posix: IPath = {
 		if (end === -1) {
 			return "";
 		}
+
 		return path.slice(start, end);
 	},
 
@@ -371,14 +407,18 @@ export const posix: IPath = {
 
 					break;
 				}
+
 				continue;
 			}
+
 			if (end === -1) {
 				// We saw the first non-path separator, mark this as the end of our
 				// extension
 				matchedSlash = false;
+
 				end = i + 1;
 			}
+
 			if (code === CHAR_DOT) {
 				// If this is our first dot, mark it as the start of our extension
 				if (startDot === -1) {
@@ -405,6 +445,7 @@ export const posix: IPath = {
 		) {
 			return "";
 		}
+
 		return path.slice(startDot, end);
 	},
 

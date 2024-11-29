@@ -28,8 +28,10 @@ class TestServiceConnection<
 		const worker = new Worker(url);
 
 		super(worker);
+
 		this.worker = worker;
 	}
+
 	public terminate(): Promise<number> {
 		this.worker.terminate();
 

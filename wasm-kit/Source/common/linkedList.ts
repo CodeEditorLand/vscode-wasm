@@ -23,6 +23,7 @@ import {
 
 export class SharedLinkedList<T> extends ObjectProperty {
 	private readonly elementType: ValueType<T>;
+
 	protected readonly access: SharedLinkedList.Properties;
 
 	constructor(
@@ -31,6 +32,7 @@ export class SharedLinkedList<T> extends ObjectProperty {
 		context: SharedObjectContext,
 	) {
 		super(memoryRange);
+
 		this.elementType = elementType;
 
 		const access = SharedLinkedList.properties.load(
@@ -41,9 +43,13 @@ export class SharedLinkedList<T> extends ObjectProperty {
 
 		if (context.mode === SharedObjectContext.Mode.new) {
 			access.state = 0;
+
 			access.head = 0;
+
 			access.tail = 0;
+
 			access.size = 0;
+
 			access.elementSize = elementType.size;
 		} else {
 			if (elementType.size !== access.elementSize) {
@@ -52,6 +58,7 @@ export class SharedLinkedList<T> extends ObjectProperty {
 				);
 			}
 		}
+
 		this.access = access;
 	}
 }
@@ -59,9 +66,13 @@ export class SharedLinkedList<T> extends ObjectProperty {
 export namespace SharedLinkedList {
 	export type Properties = {
 		state: u32;
+
 		head: ptr;
+
 		tail: ptr;
+
 		size: u32;
+
 		elementSize: u32;
 	};
 
@@ -75,14 +86,19 @@ export namespace SharedLinkedList {
 
 	export class Type<T> implements ObjectType<SharedLinkedList<T>> {
 		public size: size;
+
 		public alignment: Alignment;
+
 		private elementType: ValueType<T>;
 
 		constructor(elementType: ValueType<T>) {
 			this.elementType = elementType;
+
 			this.size = properties.size;
+
 			this.alignment = properties.alignment;
 		}
+
 		public load(
 			memory: MemoryRange,
 			offset: offset,

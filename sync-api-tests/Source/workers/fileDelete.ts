@@ -13,5 +13,6 @@ runSingle((client, folder) => {
 	const filename = folder.uri.with({
 		path: path.join(folder.uri.path, "toDelete.txt"),
 	});
+
 	client.vscode.workspace.fileSystem.delete(filename);
 }).catch(console.error);

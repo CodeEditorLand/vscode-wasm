@@ -145,6 +145,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 			fdflags,
 			inode,
 		);
+
 		this._cursor = 0;
 	}
 
@@ -166,6 +167,7 @@ class FileFileDescriptor extends BaseFileDescriptor {
 		if (value < 0) {
 			throw new WasiError(Errno.inval);
 		}
+
 		this._cursor = value;
 	}
 }
@@ -306,6 +308,7 @@ class FileSystem {
 	static inodeCounter: bigint = 1n;
 
 	private readonly vscfs: Uri;
+
 	private readonly root: DirectoryNode;
 
 	private readonly inodes: Map<inode, Node>;
@@ -314,11 +317,14 @@ class FileSystem {
 	// Cached stats for deleted files and directories if there is still
 	// an open file descriptor
 	private readonly stats: Map<inode, FileStat>;
+
 	private readonly deletedNodes: Map<inode, Node>;
+
 	private readonly pathCache: LRUCache<Node, string>;
 
 	constructor(vscfs: Uri) {
 		this.vscfs = vscfs;
+
 		this.root = {
 			kind: NodeKind.Directory,
 			inode: FileSystem.inodeCounter++,
@@ -329,10 +335,15 @@ class FileSystem {
 		};
 
 		this.inodes = new Map();
+
 		this.inodes.set(this.root.inode, this.root);
+
 		this.contents = new Map();
+
 		this.stats = new Map();
+
 		this.deletedNodes = new Map();
+
 		this.pathCache = new LRUCache(256);
 	}
 
@@ -341,7 +352,9 @@ class FileSystem {
 	}
 
 	public getUri(node: Node): Uri;
+
 	public getUri(node: DirectoryNode, fsPath: string): Uri;
+
 	public getUri(node: DirectoryNode, fsPath?: string): Uri {
 		const paths = RAL().path;
 
@@ -356,14 +369,18 @@ class FileSystem {
 	}
 
 	public getNode(id: inode): Node;
+
 	public getNode(id: inode, kind: NodeKind.File): FileNode;
+
 	public getNode(id: inode, kind: NodeKind.Directory): DirectoryNode;
+
 	public getNode(id: inode, kind?: NodeKind): Node {
 		const node = this.inodes.get(id) ?? this.deletedNodes.get(id);
 
 		if (node === undefined) {
 			throw new WasiError(Errno.noent);
 		}
+
 		this.assertNodeKind(node, kind);
 
 		return node;
@@ -388,6 +405,7 @@ class FileSystem {
 				}
 			}
 		}
+
 		let current: FileNode | DirectoryNode = parent;
 
 		for (let i = 0; i < parts.length; i++) {
@@ -420,34 +438,41 @@ class FileSystem {
 								current,
 							);
 						}
+
 						current.entries.set(parts[i], entry);
 						// Cache the name for faster lookup.
 						entry.name = parts[i];
+
 						this.inodes.set(entry.inode, entry);
 					} else {
 						if (i === parts.length - 1 && ref) {
 							entry.refs++;
 						}
 					}
+
 					current = entry;
 
 					break;
 			}
 		}
+
 		return current;
 	}
 
 	public getNodeByPath(parent: DirectoryNode, path: string): Node | undefined;
+
 	public getNodeByPath(
 		parent: DirectoryNode,
 		path: string,
 		kind: NodeKind.File,
 	): FileNode | undefined;
+
 	public getNodeByPath(
 		parent: DirectoryNode,
 		path: string,
 		kind: NodeKind.Directory,
 	): DirectoryNode | undefined;
+
 	public getNodeByPath(
 		parent: DirectoryNode,
 		path: string,
@@ -462,6 +487,7 @@ class FileSystem {
 				return parent.parent;
 			}
 		}
+
 		let current: FileNode | DirectoryNode | undefined = parent;
 
 		for (let i = 0; i < parts.length; i++) {
@@ -475,12 +501,15 @@ class FileSystem {
 					if (current === undefined) {
 						return undefined;
 					}
+
 					break;
 			}
 		}
+
 		if (current !== undefined) {
 			this.assertNodeKind(current, kind);
 		}
+
 		return current;
 	}
 
@@ -500,8 +529,10 @@ class FileSystem {
 
 		if (content === undefined) {
 			content = await contentProvider.readFile(this.getUri(inode));
+
 			this.contents.set(inode.inode, content);
 		}
+
 		return Promise.resolve(content);
 	}
 
@@ -511,20 +542,25 @@ class FileSystem {
 		if (result === undefined) {
 			throw new WasiError(Errno.noent);
 		}
+
 		return result;
 	}
 
 	public deleteNode(node: DirectoryNode, stat: FileStat): void;
+
 	public deleteNode(
 		node: FileNode,
 		stat: FileStat,
 		content: Uint8Array,
 	): void;
+
 	public deleteNode(node: Node, stat?: FileStat, content?: Uint8Array): void;
+
 	public deleteNode(node: Node, stat?: FileStat, content?: Uint8Array): void {
 		if (node.parent === undefined) {
 			throw new WasiError(Errno.badf);
 		}
+
 		if (
 			node.refs > 0 &&
 			(stat === undefined ||
@@ -532,15 +568,19 @@ class FileSystem {
 		) {
 			throw new WasiError(Errno.inval);
 		}
+
 		const name = this.getName(node);
+
 		node.parent.entries.delete(name);
 
 		if (content !== undefined) {
 			this.contents.set(node.inode, content);
 		}
+
 		if (stat !== undefined) {
 			this.stats.set(node.inode, stat);
 		}
+
 		this.freeNode(node);
 	}
 
@@ -556,6 +596,7 @@ class FileSystem {
 		newPath: string,
 	): void {
 		this.deleteNode(oldNode, stat, content);
+
 		this.getOrCreateNode(newParent, newPath, oldNode.kind, false);
 	}
 
@@ -565,13 +606,16 @@ class FileSystem {
 		if (node.refs <= 0) {
 			throw new WasiError(Errno.badf);
 		}
+
 		node.refs--;
 
 		if (node.refs === 0) {
 			if (node.kind === NodeKind.File) {
 				this.contents.delete(node.inode);
+
 				this.stats.delete(node.inode);
 			}
+
 			this.deletedNodes.delete(node.inode);
 		}
 	}
@@ -580,6 +624,7 @@ class FileSystem {
 		if (kind === undefined) {
 			return;
 		}
+
 		if (kind === NodeKind.File && node.kind !== NodeKind.File) {
 			throw new WasiError(Errno.isdir);
 		} else if (
@@ -592,7 +637,9 @@ class FileSystem {
 
 	private freeNode(inode: Node): void {
 		this.inodes.delete(inode.inode);
+
 		this.pathCache.delete(inode);
+
 		inode.name = undefined;
 
 		if (inode.refs > 0) {
@@ -600,6 +647,7 @@ class FileSystem {
 			// access it with its inode id
 			this.deletedNodes.set(inode.inode, inode);
 		}
+
 		if (inode.kind === NodeKind.Directory) {
 			for (const child of inode.entries.values()) {
 				this.freeNode(child);
@@ -611,9 +659,11 @@ class FileSystem {
 		if (path.charAt(0) === "/") {
 			path = path.substring(1);
 		}
+
 		if (path.charAt(path.length - 1) === "/") {
 			path = path.substring(0, path.length - 1);
 		}
+
 		return path.normalize().split("/");
 	}
 
@@ -627,11 +677,15 @@ class FileSystem {
 
 			do {
 				parts.push(this.getName(current));
+
 				current = current.parent;
 			} while (current !== undefined);
+
 			result = parts.reverse().join("/");
+
 			this.pathCache.set(inode, result);
 		}
+
 		return result;
 	}
 
@@ -639,11 +693,13 @@ class FileSystem {
 		if (inode.name !== undefined) {
 			return inode.name;
 		}
+
 		const parent = inode.parent;
 
 		if (parent === undefined) {
 			throw new Error("The root node must always have a name");
 		}
+
 		for (const [name, child] of parent.entries) {
 			if (child === inode) {
 				inode.name = name;
@@ -651,6 +707,7 @@ class FileSystem {
 				return name;
 			}
 		}
+
 		throw new WasiError(Errno.noent);
 	}
 }
@@ -757,15 +814,21 @@ export function create(
 
 	function assignStat(result: filestat, inode: inode, vStat: FileStat): void {
 		result.dev = deviceId;
+
 		result.ino = inode;
+
 		result.filetype = code2Wasi.asFileType(vStat.type);
 		// nlink denotes the number of hard links (not soft links)
 		// Since VS Code doesn't support hard links on files we
 		// always return 1.
 		result.nlink = 1n;
+
 		result.size = BigInt(vStat.size);
+
 		result.atim = timeInNanoseconds(vStat.mtime);
+
 		result.ctim = timeInNanoseconds(vStat.ctime);
+
 		result.mtim = timeInNanoseconds(vStat.mtime);
 	}
 
@@ -782,14 +845,18 @@ export function create(
 
 		for (const buffer of buffers) {
 			const toRead = Math.min(buffer.length, content.byteLength - offset);
+
 			buffer.set(content.subarray(offset, offset + toRead));
+
 			totalBytesRead += toRead;
 
 			if (toRead < buffer.length) {
 				break;
 			}
+
 			offset += toRead;
 		}
+
 		return totalBytesRead;
 	}
 
@@ -807,12 +874,15 @@ export function create(
 		// Do we need to increase the buffer
 		if (offset + bytesToWrite > content.byteLength) {
 			const newContent = new Uint8Array(offset + bytesToWrite);
+
 			newContent.set(content);
+
 			content = newContent;
 		}
 
 		for (const bytes of buffers) {
 			content.set(bytes, offset);
+
 			offset += bytes.length;
 		}
 
@@ -825,6 +895,7 @@ export function create(
 		const content = new Uint8Array(0);
 
 		const inode = fs.getNode(fileDescriptor.inode, NodeKind.File);
+
 		fileDescriptor.cursor = 0;
 
 		return writeContent(inode, content);
@@ -835,6 +906,7 @@ export function create(
 		content?: Uint8Array,
 	): Promise<void> {
 		const toWrite = content ?? (await fs.getContent(node, vscode_fs));
+
 		await vscode_fs.writeFile(fs.getUri(node), toWrite);
 
 		if (content !== undefined) {
@@ -860,6 +932,7 @@ export function create(
 			if (path.length === 0) {
 				throw new WasiError(Errno.inval);
 			}
+
 			const fs_rights_base: rights =
 				(_fs_rights_base ?? fd === 0)
 					? StdInFileRights
@@ -918,7 +991,9 @@ export function create(
 			const newContent: Uint8Array = new Uint8Array(
 				content.byteLength + len,
 			);
+
 			newContent.set(content.subarray(0, offset), 0);
+
 			newContent.set(content.subarray(offset), offset + len);
 
 			return writeContent(inode, newContent);
@@ -940,8 +1015,11 @@ export function create(
 			result: fdstat,
 		): Promise<void> {
 			result.fs_filetype = fileDescriptor.fileType;
+
 			result.fs_flags = fileDescriptor.fdflags;
+
 			result.fs_rights_base = fileDescriptor.rights_base;
+
 			result.fs_rights_inheriting = fileDescriptor.rights_inheriting;
 
 			return Promise.resolve();
@@ -967,9 +1045,11 @@ export function create(
 
 				return;
 			}
+
 			const inode = fs.getNode(fileDescriptor.inode);
 
 			const vStat: FileStat = await vscode_fs.stat(fs.getUri(inode));
+
 			assignStat(result, inode.inode, vStat);
 		},
 		async fd_filestat_set_size(
@@ -988,11 +1068,15 @@ export function create(
 				return;
 			} else if (content.byteLength < size) {
 				const newContent = new Uint8Array(size);
+
 				newContent.set(content);
+
 				await writeContent(node, newContent);
 			} else if (content.byteLength > size) {
 				const newContent = new Uint8Array(size);
+
 				newContent.set(content.subarray(0, size));
+
 				await writeContent(node, newContent);
 			}
 		},
@@ -1035,6 +1119,7 @@ export function create(
 				offset,
 				buffers,
 			);
+
 			await writeContent(inode, newContent);
 
 			return bytesWritten;
@@ -1046,6 +1131,7 @@ export function create(
 			if (buffers.length === 0) {
 				return 0;
 			}
+
 			assertFileDescriptor(fileDescriptor);
 
 			const content = await fs.getContent(
@@ -1056,6 +1142,7 @@ export function create(
 			const offset = fileDescriptor.cursor;
 
 			const totalBytesRead = read(content, offset, buffers);
+
 			fileDescriptor.cursor = fileDescriptor.cursor + totalBytesRead;
 
 			return totalBytesRead;
@@ -1087,6 +1174,7 @@ export function create(
 					filetype === Filetype.directory
 						? NodeKind.Directory
 						: NodeKind.File;
+
 				result.push({
 					d_ino: fs.getOrCreateNode(
 						directoryNode,
@@ -1098,6 +1186,7 @@ export function create(
 					d_name: name,
 				});
 			}
+
 			return result;
 		},
 		async fd_seek(
@@ -1125,6 +1214,7 @@ export function create(
 						fs.getNode(fileDescriptor.inode, NodeKind.File),
 						vscode_fs,
 					);
+
 					fileDescriptor.cursor = Math.max(
 						0,
 						content.byteLength - offset,
@@ -1132,6 +1222,7 @@ export function create(
 
 					break;
 			}
+
 			return BigInt(fileDescriptor.cursor);
 		},
 		fd_renumber(fileDescriptor: FileDescriptor, _to: fd): Promise<void> {
@@ -1156,6 +1247,7 @@ export function create(
 			if (buffers.length === 0) {
 				return 0;
 			}
+
 			assertFileDescriptor(fileDescriptor);
 
 			const inode = fs.getNode(fileDescriptor.inode, NodeKind.File);
@@ -1166,12 +1258,15 @@ export function create(
 			if (Fdflags.appendOn(fileDescriptor.fdflags)) {
 				fileDescriptor.cursor = content.byteLength;
 			}
+
 			const [newContent, bytesWritten] = write(
 				content,
 				fileDescriptor.cursor,
 				buffers,
 			);
+
 			await writeContent(inode, newContent);
+
 			fileDescriptor.cursor = fileDescriptor.cursor + bytesWritten;
 
 			return bytesWritten;
@@ -1181,6 +1276,7 @@ export function create(
 			path: string,
 		): Promise<void> {
 			const inode = fs.getNode(fileDescriptor.inode, NodeKind.Directory);
+
 			await vscode_fs.createDirectory(fs.getUri(inode, path));
 		},
 		async path_filestat_get(
@@ -1196,6 +1292,7 @@ export function create(
 			const vStat: FileStat = await vscode_fs.stat(
 				fs.getUri(inode, path),
 			);
+
 			assignStat(
 				result,
 				fs.getOrCreateNode(
@@ -1244,7 +1341,9 @@ export function create(
 			fdProvider: FdProvider,
 		): Promise<FileDescriptor> {
 			assertDirectoryDescriptor(parentDescriptor);
+
 			parentDescriptor.assertRights(fs_rights_base);
+
 			parentDescriptor.assertInheritingRights(fs_rights_inheriting);
 
 			// We ignore lookup flags that request to follow symlinks. The POSIX FS
@@ -1274,6 +1373,7 @@ export function create(
 					throw new WasiError(Errno.noent);
 				}
 			}
+
 			let createFile: boolean = false;
 
 			if (Oflags.creatOn(oflags) && !entryExists) {
@@ -1295,7 +1395,9 @@ export function create(
 						throw new WasiError(Errno.noent);
 					}
 				}
+
 				filetype = Filetype.regular_file;
+
 				createFile = true;
 			} else {
 				if (filetype === undefined) {
@@ -1341,6 +1443,7 @@ export function create(
 			) {
 				await createOrTruncate(result);
 			}
+
 			return result;
 		},
 		path_readlink(
@@ -1379,6 +1482,7 @@ export function create(
 					};
 				}
 			}
+
 			await vscode_fs.delete(fs.getUri(inode, path), {
 				recursive: false,
 				useTrash: RAL().workbench.hasTrash,
@@ -1399,6 +1503,7 @@ export function create(
 			newPath: string,
 		): Promise<void> {
 			assertDirectoryDescriptor(oldFileDescriptor);
+
 			assertDirectoryDescriptor(newFileDescriptor);
 
 			const newParentNode = fs.getNode(
@@ -1409,6 +1514,7 @@ export function create(
 			if (fs.existsNode(newParentNode, newPath)) {
 				throw new WasiError(Errno.exist);
 			}
+
 			const oldParentNode = fs.getNode(
 				oldFileDescriptor.inode,
 				NodeKind.Directory,
@@ -1423,6 +1529,7 @@ export function create(
 			if (oldNode !== undefined && oldNode.refs > 0) {
 				try {
 					const uri = fs.getUri(oldNode);
+
 					filestat = await vscode_fs.stat(uri);
 
 					if (oldNode.kind === NodeKind.File) {
@@ -1435,6 +1542,7 @@ export function create(
 						mtime: Date.now(),
 						size: 0,
 					};
+
 					content = new Uint8Array(0);
 				}
 			}
@@ -1479,7 +1587,9 @@ export function create(
 			if (targetNode !== undefined && targetNode.refs > 0) {
 				try {
 					const uri = fs.getUri(targetNode);
+
 					filestat = await vscode_fs.stat(uri);
+
 					content = await vscode_fs.readFile(uri);
 				} catch {
 					filestat = {
@@ -1488,9 +1598,11 @@ export function create(
 						mtime: Date.now(),
 						size: 0,
 					};
+
 					content = new Uint8Array(0);
 				}
 			}
+
 			await vscode_fs.delete(fs.getUri(inode, path), {
 				recursive: false,
 				useTrash: RAL().workbench.hasTrash,

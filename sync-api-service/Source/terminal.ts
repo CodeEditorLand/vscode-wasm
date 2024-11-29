@@ -11,15 +11,18 @@ import { CharacterDeviceDriver, FileDescriptorDescription } from "./device";
 
 class LineBuffer {
 	private cursor: number;
+
 	private content: string[];
 
 	constructor() {
 		this.cursor = 0;
+
 		this.content = [];
 	}
 
 	public clear(): void {
 		this.cursor = 0;
+
 		this.content = [];
 	}
 
@@ -42,6 +45,7 @@ class LineBuffer {
 	public insert(value: String) {
 		for (const char of value) {
 			this.content.splice(this.cursor, 0, char);
+
 			this.cursor++;
 		}
 	}
@@ -50,6 +54,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		this.content.splice(this.cursor, 1);
 
 		return true;
@@ -59,7 +64,9 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		this.cursor -= 1;
+
 		this.content.splice(this.cursor, 1);
 
 		return true;
@@ -71,6 +78,7 @@ class LineBuffer {
 		if (newValue < 0 || newValue > this.content.length) {
 			return false;
 		}
+
 		this.cursor = newValue;
 
 		return true;
@@ -80,6 +88,7 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		this.cursor = 0;
 
 		return true;
@@ -89,6 +98,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		this.cursor = this.content.length;
 
 		return true;
@@ -98,6 +108,7 @@ class LineBuffer {
 		if (this.cursor === 0) {
 			return false;
 		}
+
 		let index: number;
 		// check if we are at the beginning of a word
 		if (this.content[this.cursor - 1] === " ") {
@@ -113,6 +124,7 @@ class LineBuffer {
 		} else {
 			index = this.cursor;
 		}
+
 		if (index === 0) {
 			this.cursor = index;
 
@@ -128,6 +140,7 @@ class LineBuffer {
 				index--;
 			}
 		}
+
 		this.cursor = index;
 
 		return true;
@@ -137,6 +150,7 @@ class LineBuffer {
 		if (this.cursor === this.content.length) {
 			return false;
 		}
+
 		let index: number;
 
 		if (this.content[this.cursor] === " ") {
@@ -152,6 +166,7 @@ class LineBuffer {
 		} else {
 			index = this.cursor;
 		}
+
 		if (index === this.content.length) {
 			this.cursor = index;
 
@@ -165,6 +180,7 @@ class LineBuffer {
 				index++;
 			}
 		}
+
 		this.cursor = index;
 
 		return true;
@@ -180,14 +196,19 @@ export interface ServicePseudoTerminal
 	extends Pseudoterminal,
 		CharacterDeviceDriver {
 	readonly id: string;
+
 	readonly onDidCtrlC: Event<void>;
+
 	readonly onDidClose: Event<void>;
+
 	readonly onAnyKey: Event<void>;
 
 	setMode(mode: TerminalMode): void;
 
 	setName(name: string): void;
+
 	writeString(str: string): void;
+
 	readline(): Promise<string>;
 }
 
@@ -207,55 +228,80 @@ class ServiceTerminalImpl
 	public readonly id: string;
 
 	private readonly _onDidClose: EventEmitter<void>;
+
 	public readonly onDidClose: Event<void>;
 
 	private readonly _onDidWrite: EventEmitter<string>;
+
 	public readonly onDidWrite: Event<string>;
 
 	private readonly _onDidChangeName: EventEmitter<string>;
+
 	public readonly onDidChangeName: Event<string>;
 
 	private readonly _onDidCtrlC: EventEmitter<void>;
+
 	public readonly onDidCtrlC: Event<void>;
 
 	private readonly _onAnyKey: EventEmitter<void>;
+
 	public readonly onAnyKey: Event<void>;
 
 	private lines: string[];
+
 	private lineBuffer: LineBuffer;
+
 	private readlineCallback: ((value: string) => void) | undefined;
 
 	private isOpen: boolean;
+
 	private nameBuffer: string | undefined;
+
 	private writeBuffer: string[] | undefined;
+
 	private encoder: RAL.TextEncoder;
+
 	private decoder: RAL.TextDecoder;
 
 	public readonly uri: Uri;
+
 	public readonly fileDescriptor: FileDescriptorDescription;
 
 	constructor() {
 		this.mode = TerminalMode.inUse;
 
 		this._onDidClose = new EventEmitter();
+
 		this.onDidClose = this._onDidClose.event;
+
 		this._onDidWrite = new EventEmitter<string>();
+
 		this.onDidWrite = this._onDidWrite.event;
+
 		this._onDidChangeName = new EventEmitter<string>();
+
 		this.onDidChangeName = this._onDidChangeName.event;
+
 		this._onDidCtrlC = new EventEmitter<void>();
+
 		this.onDidCtrlC = this._onDidCtrlC.event;
+
 		this._onAnyKey = new EventEmitter<void>();
+
 		this.onAnyKey = this._onAnyKey.event;
 
 		const id = (this.id = uuid.v4());
+
 		this.encoder = RAL().TextEncoder.create();
+
 		this.decoder = RAL().TextDecoder.create();
 
 		this.uri = Uri.from({ scheme: "terminal", authority: id });
+
 		this.fileDescriptor = { kind: "terminal", uri: this.uri };
 
 		this.lines = [];
+
 		this.lineBuffer = new LineBuffer();
 
 		this.isOpen = false;
@@ -278,12 +324,15 @@ class ServiceTerminalImpl
 
 		if (this.nameBuffer !== undefined) {
 			this._onDidChangeName.fire(this.nameBuffer);
+
 			this.nameBuffer = undefined;
 		}
+
 		if (this.writeBuffer !== undefined) {
 			for (const item of this.writeBuffer) {
 				this._onDidWrite.fire(item);
 			}
+
 			this.writeBuffer = undefined;
 		}
 	}
@@ -302,9 +351,11 @@ class ServiceTerminalImpl
 		if (this.readlineCallback !== undefined) {
 			throw new Error(`Already in readline mode`);
 		}
+
 		if (this.lines.length > 0) {
 			return Promise.resolve(this.lines.shift()!);
 		}
+
 		return new Promise((resolve) => {
 			this.readlineCallback = resolve;
 		});
@@ -323,6 +374,7 @@ class ServiceTerminalImpl
 			if (this.writeBuffer === undefined) {
 				this.writeBuffer = [];
 			}
+
 			this.writeBuffer.push(str);
 		}
 	}
@@ -333,6 +385,7 @@ class ServiceTerminalImpl
 
 			return;
 		}
+
 		const previousCursor = this.lineBuffer.getCursor();
 
 		switch (data) {
@@ -437,6 +490,7 @@ class ServiceTerminalImpl
 				if (!this.lineBuffer.isCursorAtEnd()) {
 					this._onDidWrite.fire("\x1b[@");
 				}
+
 				this._onDidWrite.fire(data);
 		}
 	}
@@ -445,11 +499,14 @@ class ServiceTerminalImpl
 		this._onDidWrite.fire("\r\n");
 
 		const line = this.lineBuffer.getLine();
+
 		this.lineBuffer.clear();
+
 		this.lines.push(line);
 
 		if (this.readlineCallback !== undefined) {
 			this.readlineCallback(`${this.lines.shift()!}\n`);
+
 			this.readlineCallback = undefined;
 		}
 	}
@@ -470,6 +527,7 @@ class ServiceTerminalImpl
 		const code = change > 0 ? "D" : "C";
 
 		const sequence = `\x1b[${code}`.repeat(Math.abs(change));
+
 		this._onDidWrite.fire(sequence);
 	}
 

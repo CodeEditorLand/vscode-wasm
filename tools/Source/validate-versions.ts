@@ -7,7 +7,9 @@ import * as path from "path";
 
 interface Package {
 	name: string;
+
 	location: string;
+
 	dependsOn?: { kind: "dev" | "release"; package: Package }[];
 }
 
@@ -59,9 +61,12 @@ const root = path.join(__dirname, "..", "..");
 
 interface ValidationEntry {
 	package: Package;
+
 	version: string;
+
 	violations: {
 		package: Package;
+
 		version: string;
 	}[];
 }
@@ -71,6 +76,7 @@ const validations: Map<string, ValidationEntry> = new Map();
 function check(): void {
 	for (const pack of packages) {
 		const json = require(path.join(root, pack.location, "package.json"));
+
 		validations.set(pack.name, {
 			package: pack,
 			version: json.version,
@@ -109,7 +115,9 @@ function printResult(): void {
 		if (entry.violations.length === 0) {
 			continue;
 		}
+
 		process.exitCode = 1;
+
 		process.stdout.write(
 			`Package ${entry.package.name} at version ${entry.version} is incorrectly referenced in the following packages:\n`,
 		);

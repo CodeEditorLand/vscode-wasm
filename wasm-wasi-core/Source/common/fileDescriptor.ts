@@ -136,11 +136,17 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		inode: bigint,
 	) {
 		this.deviceId = deviceId;
+
 		this.fd = fd;
+
 		this.fileType = fileType;
+
 		this.rights_base = rights_base;
+
 		this.rights_inheriting = rights_inheriting;
+
 		this.fdflags = fdflags;
+
 		this.inode = inode;
 	}
 
@@ -156,6 +162,7 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		if (((this.rights_base | this.rights_inheriting) & rights) === rights) {
 			return;
 		}
+
 		throw new WasiError(Errno.perm);
 	}
 
@@ -163,6 +170,7 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		if ((this.rights_base & rights) === rights) {
 			return;
 		}
+
 		throw new WasiError(Errno.perm);
 	}
 
@@ -170,6 +178,7 @@ export abstract class BaseFileDescriptor implements FileDescriptor {
 		if ((this.rights_inheriting & rights) === rights) {
 			return;
 		}
+
 		throw new WasiError(Errno.perm);
 	}
 
@@ -198,10 +207,13 @@ export interface FdProvider {
 
 export class FileDescriptors implements FdProvider {
 	private readonly descriptors: Map<fd, FileDescriptor> = new Map();
+
 	private readonly rootDescriptors: Map<DeviceId, FileDescriptor> = new Map();
 
 	private mode: "init" | "running" = "init";
+
 	private counter: fd = 0;
+
 	private firstReal: fd = 3;
 
 	constructor() {}
@@ -214,6 +226,7 @@ export class FileDescriptors implements FdProvider {
 		if (this.mode === "init") {
 			throw new WasiError(Errno.inval);
 		}
+
 		return this.counter++;
 	}
 
@@ -221,8 +234,11 @@ export class FileDescriptors implements FdProvider {
 		if (this.mode === "running") {
 			throw new WasiError(Errno.inval);
 		}
+
 		this.mode = "running";
+
 		this.counter = start;
+
 		this.firstReal = start;
 	}
 
@@ -236,6 +252,7 @@ export class FileDescriptors implements FdProvider {
 		if (!descriptor) {
 			throw new WasiError(Errno.badf);
 		}
+
 		return descriptor;
 	}
 

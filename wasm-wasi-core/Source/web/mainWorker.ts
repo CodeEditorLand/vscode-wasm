@@ -19,6 +19,7 @@ class MainBrowserHostConnection extends BrowserHostConnection {
 
 	constructor(port: MessagePort | Worker | DedicatedWorkerGlobalScope) {
 		super(port);
+
 		this._done = CapturedPromise.create();
 	}
 
@@ -38,8 +39,10 @@ class MainBrowserHostConnection extends BrowserHostConnection {
 
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
+
 				host = tracer.tracer;
 			}
+
 			const imports: WebAssembly.Imports = {
 				wasi_snapshot_preview1: host,
 				wasi: host,
@@ -50,13 +53,16 @@ class MainBrowserHostConnection extends BrowserHostConnection {
 					memory: memory,
 				};
 			}
+
 			const instance = await WebAssembly.instantiate(module, imports);
+
 			host.initialize(memory ?? instance);
 			(instance.exports._start as Function)();
 
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
+
 			this._done.resolve();
 		}
 	}
@@ -69,10 +75,13 @@ async function main(
 
 	try {
 		const ready: WorkerReadyMessage = { method: "workerReady" };
+
 		connection.postMessage(ready);
+
 		await connection.done();
 	} finally {
 		connection.postMessage({ method: "workerDone" });
+
 		connection.destroy();
 	}
 }

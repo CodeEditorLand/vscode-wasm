@@ -17,5 +17,6 @@ runSingle((client, folder) => {
 	});
 
 	const stat = client.vscode.workspace.fileSystem.stat(dirname);
+
 	assert.strictEqual(stat.type, FileType.Directory);
 }).catch(console.error);

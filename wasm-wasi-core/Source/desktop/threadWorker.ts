@@ -25,6 +25,7 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 
 	constructor(port: MessagePort | Worker) {
 		super(port);
+
 		this._done = CapturedPromise.create();
 	}
 
@@ -44,23 +45,28 @@ class ThreadNodeHostConnection extends NodeHostConnection {
 
 			if (message.trace) {
 				tracer = TraceWasiHost.create(this, host);
+
 				host = tracer.tracer;
 			}
+
 			const instance = await WebAssembly.instantiate(module, {
 				env: { memory: memory },
 				wasi_snapshot_preview1: host,
 				wasi: host,
 			});
+
 			host.initialize(memory ?? instance);
 			(instance.exports.wasi_thread_start as Function)(
 				message.tid,
 				message.start_arg,
 			);
+
 			host.thread_exit(message.tid);
 
 			if (tracer !== undefined) {
 				tracer.printSummary();
 			}
+
 			this._done.resolve();
 		}
 	}
@@ -70,8 +76,11 @@ async function main(port: MessagePort | Worker): Promise<void> {
 	const connection = new ThreadNodeHostConnection(port);
 
 	const ready: WorkerReadyMessage = { method: "workerReady" };
+
 	connection.postMessage(ready);
+
 	await connection.done();
+
 	connection.destroy();
 }
 

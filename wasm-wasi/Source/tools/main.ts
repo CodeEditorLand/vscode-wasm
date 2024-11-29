@@ -11,20 +11,31 @@ import * as yargs from "yargs";
 
 type FileNode = {
 	kind: "file";
+
 	name: string;
+
 	size: bigint;
+
 	ctime: bigint;
+
 	atime: bigint;
+
 	mtime: bigint;
 };
 
 type DirectoryNode = {
 	kind: "directory";
+
 	name: string;
+
 	size: bigint;
+
 	ctime: bigint;
+
 	atime: bigint;
+
 	mtime: bigint;
+
 	children: { [key: string]: Node };
 };
 
@@ -32,9 +43,13 @@ type Node = FileNode | DirectoryNode;
 
 export type Options = {
 	help: boolean;
+
 	version: boolean;
+
 	stdout: boolean;
+
 	out: string | undefined;
+
 	directory: string | undefined;
 };
 
@@ -57,6 +72,7 @@ async function readDirectory(
 	if (!stat.isDirectory()) {
 		throw new Error(`${path} is not a directory`);
 	}
+
 	const result: DirectoryNode = {
 		kind: "directory",
 		name,
@@ -89,6 +105,7 @@ async function readDirectory(
 			throw new Error(`${entryPath} is not a file or directory`);
 		}
 	}
+
 	return result;
 }
 
@@ -107,6 +124,7 @@ async function run(options: Options): Promise<number> {
 
 	if (!options.directory) {
 		console.error("Missing directory argument.");
+
 		yargs.showHelp();
 
 		return 1;
@@ -122,6 +140,7 @@ async function run(options: Options): Promise<number> {
 		}
 
 		const directory = await readDirectory(options.directory, stat);
+
 		directory.name = "/";
 
 		const dump = JSON.stringify(
@@ -137,10 +156,12 @@ async function run(options: Options): Promise<number> {
 			process.stdout.write(dump);
 		} else {
 			console.error("No output specified.");
+
 			yargs.showHelp();
 
 			return 1;
 		}
+
 		return 0;
 	} catch (error) {
 		console.error(`Creating dump failed`, error);
@@ -184,6 +205,7 @@ export async function main(): Promise<number> {
 	const parsed = await yargs.argv;
 
 	const options: Options = Object.assign({}, Options.defaults, parsed);
+
 	options.directory = parsed._[0] as string;
 
 	return run(options);
@@ -194,6 +216,7 @@ if (module === require.main) {
 		.then((exitCode) => (process.exitCode = exitCode))
 		.catch((error) => {
 			process.exitCode = 1;
+
 			console.error(error);
 		});
 }

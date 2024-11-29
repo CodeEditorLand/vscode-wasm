@@ -10,6 +10,7 @@ import { commands, ExtensionContext, window } from "vscode";
 
 export async function activate(_context: ExtensionContext) {
 	const wasm: Wasm = await Wasm.load();
+
 	commands.registerCommand("testbed-rust.run", async () => {
 		const pty = wasm.createPseudoterminal();
 
@@ -18,6 +19,7 @@ export async function activate(_context: ExtensionContext) {
 			pty,
 			isTransient: true,
 		});
+
 		terminal.show(true);
 
 		const options: ProcessOptions = {
@@ -39,6 +41,7 @@ export async function activate(_context: ExtensionContext) {
 		);
 
 		const process = await wasm.createProcess("test-rust", module, options);
+
 		process.run().catch((err) => {
 			void window.showErrorMessage(err.message);
 		});

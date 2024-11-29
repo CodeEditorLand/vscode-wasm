@@ -8,24 +8,32 @@ import { RPCErrno, u32, Uint32Result, VariableResult } from "./connection";
 export namespace DTOs {
 	export type UriComponents = {
 		scheme: string;
+
 		authority: string;
+
 		path: string;
+
 		query: string;
+
 		fragment: string;
 	};
 
 	export type FileDescriptorDescription =
 		| {
 				kind: "fileSystem";
+
 				uri: UriComponents;
+
 				path: string;
 		  }
 		| {
 				kind: "terminal";
+
 				uri: UriComponents;
 		  }
 		| {
 				kind: "console";
+
 				uri: UriComponents;
 		  };
 
@@ -100,9 +108,13 @@ export namespace DTOs {
 
 	export type Stat = {
 		type: fileType;
+
 		ctime: u32;
+
 		mtime: u32;
+
 		size: u32;
+
 		permission: filePermission;
 	};
 
@@ -149,7 +161,9 @@ export namespace DTOs {
 
 	export interface WorkspaceFolder {
 		readonly uri: UriComponents;
+
 		readonly name: string;
+
 		readonly index: number;
 	}
 
@@ -164,9 +178,11 @@ export type Requests =
 			 * The WebAssembly execution has existed.
 			 */
 			method: "process/proc_exit";
+
 			params: {
 				rval: number;
 			};
+
 			result: null;
 	  }
 	| {
@@ -174,9 +190,11 @@ export type Requests =
 			 * Sleep for the amount of ms.
 			 */
 			method: "timer/sleep";
+
 			params: {
 				ms: number;
 			};
+
 			result: null;
 	  }
 	| {
@@ -184,7 +202,9 @@ export type Requests =
 			 * Retrieve the set of workspace folders
 			 */
 			method: "workspace/workspaceFolders";
+
 			params: null;
+
 			result: VariableResult<DTOs.WorkspaceFolder[]>;
 	  }
 	| {
@@ -192,10 +212,13 @@ export type Requests =
 			 * Writes bytes to a sink
 			 */
 			method: "byteSink/write";
+
 			params: {
 				uri: DTOs.UriComponents;
+
 				binary: Uint8Array;
 			};
+
 			result: Uint32Array;
 	  }
 	| {
@@ -203,10 +226,13 @@ export type Requests =
 			 * Reads bytes from a source
 			 */
 			method: "byteSource/read";
+
 			params: {
 				uri: DTOs.UriComponents;
+
 				maxBytesToRead: number;
 			};
+
 			result: VariableResult<Uint8Array>;
 	  }
 	| {
@@ -214,9 +240,11 @@ export type Requests =
 			 * Stat a file / directory
 			 */
 			method: "fileSystem/stat";
+
 			params: {
 				uri: DTOs.UriComponents;
 			};
+
 			result: Uint32Array;
 	  }
 	| {
@@ -224,9 +252,11 @@ export type Requests =
 			 * Read a file
 			 */
 			method: "fileSystem/readFile";
+
 			params: {
 				uri: DTOs.UriComponents;
 			};
+
 			result: VariableResult<Uint8Array>;
 	  }
 	| {
@@ -234,10 +264,13 @@ export type Requests =
 			 * Write a file
 			 */
 			method: "fileSystem/writeFile";
+
 			params: {
 				uri: DTOs.UriComponents;
+
 				binary: Uint8Array;
 			};
+
 			result: null;
 	  }
 	| {
@@ -245,37 +278,49 @@ export type Requests =
 			 * Read a directory
 			 */
 			method: "fileSystem/readDirectory";
+
 			params: {
 				uri: DTOs.UriComponents;
 			};
+
 			result: VariableResult<DTOs.DirectoryEntries>;
 	  }
 	| {
 			method: "fileSystem/createDirectory";
+
 			params: {
 				uri: DTOs.UriComponents;
 			};
+
 			result: null;
 	  }
 	| {
 			method: "fileSystem/delete";
+
 			params: {
 				uri: DTOs.UriComponents;
+
 				options?: {
 					recursive?: boolean;
+
 					useTrash?: boolean;
 				};
 			};
+
 			result: null;
 	  }
 	| {
 			method: "fileSystem/rename";
+
 			params: {
 				source: DTOs.UriComponents;
+
 				target: DTOs.UriComponents;
+
 				options?: {
 					overwrite?: boolean;
 				};
 			};
+
 			result: null;
 	  };

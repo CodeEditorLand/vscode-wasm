@@ -19,15 +19,20 @@ class ReadableStreamImpl implements RAL.ReadableStream {
 	private readonly errorEmitter: Emitter<
 		[Error, Message | undefined, number | undefined]
 	>;
+
 	private readonly closeEmitter: Emitter<void>;
+
 	private readonly endEmitter: Emitter<void>;
 
 	private readonly readable: Readable;
 
 	constructor(readable: Readable) {
 		this.errorEmitter = new Emitter<[Error, Message, number]>();
+
 		this.closeEmitter = new Emitter<void>();
+
 		this.endEmitter = new Emitter<void>();
+
 		this.readable = readable;
 	}
 
@@ -68,15 +73,20 @@ class WritableStreamImpl implements RAL.WritableStream {
 	private readonly errorEmitter: Emitter<
 		[Error, Message | undefined, number | undefined]
 	>;
+
 	private readonly closeEmitter: Emitter<void>;
+
 	private readonly endEmitter: Emitter<void>;
 
 	private readonly writable: Writable;
 
 	constructor(writable: Writable) {
 		this.errorEmitter = new Emitter<[Error, Message, number]>();
+
 		this.closeEmitter = new Emitter<void>();
+
 		this.endEmitter = new Emitter<void>();
+
 		this.writable = writable;
 	}
 

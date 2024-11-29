@@ -20,7 +20,9 @@ interface _TextDecoder {
 
 interface _ConnectionPort {
 	postMessage(message: any, ...args: any[]): void;
+
 	on?(event: "message", listener: (value: any) => void): this;
+
 	onmessage?: ((this: any, ev: any) => any) | null;
 }
 
@@ -35,8 +37,11 @@ interface RAL {
 
 	readonly console: {
 		info(message?: any, ...optionalParams: any[]): void;
+
 		log(message?: any, ...optionalParams: any[]): void;
+
 		warn(message?: any, ...optionalParams: any[]): void;
+
 		error(message?: any, ...optionalParams: any[]): void;
 	};
 
@@ -61,6 +66,7 @@ interface RAL {
 
 	readonly Connection: {
 		createMain(port: RAL.ConnectionPort): Promise<MainConnection>;
+
 		createWorker(
 			port: RAL.ConnectionPort | undefined,
 			world: WorldType,
@@ -72,11 +78,13 @@ interface RAL {
 		getPort(): RAL.ConnectionPort;
 
 		getArgs(): string[];
+
 		exitCode: number | undefined;
 	};
 
 	readonly WebAssembly: {
 		compile(bytes: Uint8Array): Promise<WebAssembly_.Module>;
+
 		instantiate(
 			module: WebAssembly_.Module,
 			imports: WebAssembly_.Imports,
@@ -90,6 +98,7 @@ function RAL(): RAL {
 	if (_ral === undefined) {
 		throw new Error(`No runtime abstraction layer installed`);
 	}
+
 	return _ral;
 }
 
@@ -106,8 +115,10 @@ namespace RAL {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);
 		}
+
 		_ral = ral;
 	}
+
 	export function isInstalled(): boolean {
 		return _ral !== undefined;
 	}

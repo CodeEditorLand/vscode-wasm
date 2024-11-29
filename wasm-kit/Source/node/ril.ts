@@ -96,6 +96,7 @@ const _ril: RIL = Object.freeze<RIL>(
 				) {
 					throw new Error(`Expected MessagePort or Worker`);
 				}
+
 				return new AnyConnection(
 					port,
 				) as commonConnection.AnyConnection;

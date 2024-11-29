@@ -8,13 +8,17 @@ import yargs from "yargs";
 
 type Options = {
 	help: boolean;
+
 	version: boolean;
+
 	wasm?: string;
+
 	ts?: string;
 };
 
 export type ResolvedOptions = Required<Options> & {
 	file: string;
+
 	outDir: string;
 };
 
@@ -63,20 +67,27 @@ export async function run(options: Options): Promise<number> {
 			throw error;
 		}
 	}
+
 	const bytes = await fs.readFile(options.wasm);
 
 	const buffer: string[] = [];
+
 	buffer.push(
 		`/* --------------------------------------------------------------------------------------------`,
 	);
+
 	buffer.push(` * Copyright (c) Microsoft Corporation. All rights reserved.`);
+
 	buffer.push(
 		` * Licensed under the MIT License. See License.txt in the project root for license information.`,
 	);
+
 	buffer.push(
 		` * ------------------------------------------------------------------------------------------ */`,
 	);
+
 	buffer.push(``);
+
 	buffer.push(`const bytes = new Uint8Array([`);
 
 	let line: string[] = [];
@@ -88,16 +99,23 @@ export async function run(options: Options): Promise<number> {
 
 		if ((i + 1) % 16 === 0) {
 			lines.push(`\t${line.join(", ")}`);
+
 			line = [];
 		}
 	}
+
 	if (line.length > 0) {
 		lines.push(`\t${line.join(", ")}`);
 	}
+
 	buffer.push(lines.join(",\n"));
+
 	buffer.push(`]);`);
+
 	buffer.push(``);
+
 	buffer.push(`const _module = WebAssembly.compile(bytes);`);
+
 	buffer.push(`export default _module;`);
 
 	if (options.ts === undefined) {
@@ -105,6 +123,7 @@ export async function run(options: Options): Promise<number> {
 	} else {
 		await fs.writeFile(options.ts, buffer.join("\n"));
 	}
+
 	return 0;
 }
 
@@ -140,6 +159,7 @@ async function main(): Promise<number> {
 	const parsed = await yargs.argv;
 
 	const options: Options = Object.assign({}, Options.defaults, parsed);
+
 	options.wasm = parsed._[0] as string;
 
 	return run(options);
@@ -150,6 +170,7 @@ if (module === require.main) {
 		.then((exitCode) => (process.exitCode = exitCode))
 		.catch((error) => {
 			process.exitCode = 1;
+
 			process.stderr.write(`${error.toString()}`);
 		});
 }

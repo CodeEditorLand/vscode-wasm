@@ -12,30 +12,38 @@ import type { WorkerClient, WorkerClientBase } from "./workerClient";
 interface RAL extends _RAL {
 	readonly Memory: {
 		create(constructor: SharedMemory.Constructor): Promise<SharedMemory>;
+
 		createFrom(
 			constructor: SharedMemory.Constructor,
 			transferable: SharedMemory.Transferable,
 		): Promise<SharedMemory>;
 	};
+
 	readonly MessageChannel: {
 		create(): [ConnectionPort, ConnectionPort];
 	};
+
 	readonly AnyConnection: {
 		create(port: ConnectionPort): AnyConnection;
 	};
+
 	WorkerClient<C>(
 		base: new () => WorkerClientBase,
 		worker: URI,
 		args?: string[],
 	): new () => WorkerClient & C;
+
 	readonly Worker: {
 		getPort(): ConnectionPort;
 
 		getArgs(): string[];
+
 		exitCode: number | undefined;
 	};
+
 	readonly WebAssembly: {
 		compile(bytes: Uint8Array): Promise<WebAssembly_.Module>;
+
 		instantiate(
 			module: WebAssembly_.Module,
 			imports: WebAssembly_.Imports,
@@ -49,6 +57,7 @@ function RAL(): RAL {
 	if (_ral === undefined) {
 		throw new Error(`No runtime abstraction layer installed`);
 	}
+
 	return _ral;
 }
 
@@ -63,8 +72,10 @@ namespace RAL {
 		if (ral === undefined) {
 			throw new Error(`No runtime abstraction layer provided`);
 		}
+
 		_ral = ral;
 	}
+
 	export function isInstalled(): boolean {
 		return _ral !== undefined;
 	}

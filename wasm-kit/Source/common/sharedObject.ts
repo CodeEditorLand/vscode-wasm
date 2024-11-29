@@ -24,14 +24,19 @@ import RAL from "./ral";
 
 export interface SharedMemory extends Memory {
 	id: string;
+
 	free(range: MemoryRange): void;
+
 	isSame(memory: SharedMemory): boolean;
 
 	getTransferable(): SharedMemory.Transferable;
+
 	copyWithin(dest: MemoryRange, src: ReadonlyMemoryRange): void;
+
 	range: {
 		fromLocation(location: MemoryLocation): MemoryRange;
 	};
+
 	resources: {
 		computeHandle(memoryRange: BaseMemoryRange): u32;
 
@@ -49,6 +54,7 @@ export namespace SharedMemory {
 			exports: SharedMemory.Exports,
 			size: u32,
 		): SharedMemory;
+
 		new (
 			module: WebAssembly_.Module,
 			memory: WebAssembly_.Memory,
@@ -61,15 +67,21 @@ export namespace SharedMemory {
 
 	export type Transferable = {
 		id: string;
+
 		module: WebAssembly_.Module;
+
 		memory: WebAssembly_.Memory;
+
 		size: u32;
+
 		counter: ptr;
 	};
 
 	export interface Exports {
 		malloc(size: number): number;
+
 		free(ptr: number): void;
+
 		aligned_alloc(align: number, size: number): number;
 	}
 
@@ -91,21 +103,27 @@ export namespace SharedMemory {
 type _Range = SharedMemory["range"];
 class RangeImpl implements _Range {
 	constructor(private readonly memory: MemoryImpl) {}
+
 	public fromLocation(location: MemoryLocation): MemoryRange {
 		if (this.memory.id !== location.memory.id) {
 			throw new MemoryError(
 				`MemoryLocation {${JSON.stringify(location, undefined, undefined)}} is not from this memory [${this.memory.id}]`,
 			);
 		}
+
 		return new MemoryRange(this.memory, location.ptr, location.size);
 	}
 }
 type _Resources = SharedMemory["resources"];
 class ResourcesImpl implements _Resources {
 	private readonly size: size;
+
 	private readonly counter: Int32Array;
+
 	private readonly pointerMask: u32;
+
 	private readonly counterLimit: u32;
+
 	private readonly counterShift: u32;
 
 	constructor(size: size, counter: Int32Array) {
@@ -114,12 +132,18 @@ class ResourcesImpl implements _Resources {
 		if (!Number.isInteger(power)) {
 			throw new MemoryError("Memory size must be a power of 2");
 		}
+
 		this.size = size;
+
 		this.counter = counter;
+
 		this.pointerMask = size - 1;
+
 		this.counterLimit = Math.pow(2, 32 - power) - 1;
+
 		this.counterShift = power;
 	}
+
 	public computeHandle(memoryRange: BaseMemoryRange): u32 {
 		const ptr = memoryRange.ptr;
 
@@ -128,6 +152,7 @@ class ResourcesImpl implements _Resources {
 				`Memory access is out of bounds. Using [${ptr}], allocated[${this.size}]`,
 			);
 		}
+
 		const nextId = Atomics.add(this.counter, 0, 1);
 
 		return ((nextId & this.counterLimit) << this.counterShift) | ptr;
@@ -144,13 +169,19 @@ class ResourcesImpl implements _Resources {
 
 class MemoryImpl implements SharedMemory {
 	public readonly id: string;
+
 	public readonly range: _Range;
+
 	public readonly resources: _Resources;
 
 	private readonly module: WebAssembly_.Module;
+
 	private readonly memory: WebAssembly_.Memory;
+
 	private readonly exports: SharedMemory.Exports;
+
 	private readonly size: u32;
+
 	private readonly counter: Int32Array;
 
 	private _view: DataView | undefined;
@@ -161,6 +192,7 @@ class MemoryImpl implements SharedMemory {
 		exports: SharedMemory.Exports,
 		size: u32,
 	);
+
 	public constructor(
 		module: WebAssembly_.Module,
 		memory: WebAssembly_.Memory,
@@ -169,6 +201,7 @@ class MemoryImpl implements SharedMemory {
 		id: string,
 		counter: ptr,
 	);
+
 	public constructor(
 		module: WebAssembly_.Module,
 		memory: WebAssembly_.Memory,
@@ -178,18 +211,25 @@ class MemoryImpl implements SharedMemory {
 		counter?: ptr,
 	) {
 		this.id = id ?? uuid.v4();
+
 		this.module = module;
+
 		this.memory = memory;
+
 		this.exports = exports;
+
 		this.size = size;
 
 		if (counter === undefined) {
 			const ptr = this.exports.aligned_alloc(u32.alignment, u32.size);
+
 			this.counter = new Int32Array(this.memory.buffer, ptr, 1);
 		} else {
 			this.counter = new Int32Array(this.memory.buffer, counter, 1);
 		}
+
 		this.range = new RangeImpl(this);
+
 		this.resources = new ResourcesImpl(size, this.counter);
 	}
 
@@ -218,6 +258,7 @@ class MemoryImpl implements SharedMemory {
 		) {
 			this._view = new DataView(this.memory.buffer);
 		}
+
 		return this._view;
 	}
 
@@ -228,7 +269,9 @@ class MemoryImpl implements SharedMemory {
 			if (ptr === 0) {
 				throw new Error("Allocation failed");
 			}
+
 			const result = new MemoryRange(this, ptr, size);
+
 			result.getUint8View(0).fill(0);
 
 			return result;
@@ -255,6 +298,7 @@ class MemoryImpl implements SharedMemory {
 				`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`,
 			);
 		}
+
 		return new MemoryRange(this, ptr, size, true);
 	}
 
@@ -276,11 +320,13 @@ class MemoryImpl implements SharedMemory {
 				`Memory access is out of bounds. Accessing [${ptr}, ${size}], allocated[${0},${this.buffer.byteLength}]`,
 			);
 		}
+
 		return new ReadonlyMemoryRange(this, ptr, size);
 	}
 
 	public copyWithin(dest: MemoryRange, src: ReadonlyMemoryRange): void {
 		const raw = new Uint8Array(this.buffer);
+
 		raw.copyWithin(dest.ptr, src.ptr, src.ptr + src.size);
 	}
 }
@@ -289,7 +335,9 @@ export type MemoryLocation = {
 	memory: {
 		id: string;
 	};
+
 	ptr: ptr;
+
 	size: u32;
 };
 
@@ -323,12 +371,15 @@ export interface SharedObjectContext extends ComponentModelContext {
 
 export interface BasePropertyType {
 	readonly size: size;
+
 	readonly alignment: Alignment;
 }
 
 export abstract class ObjectType<T = any> implements BasePropertyType {
 	public abstract readonly size: size;
+
 	public abstract readonly alignment: Alignment;
+
 	public abstract load(
 		memory: MemoryRange,
 		offset: offset,
@@ -342,6 +393,7 @@ export interface ValueType<T = any> extends BasePropertyType {
 		offset: offset,
 		context: ComponentModelContext,
 	): T;
+
 	store(
 		memory: MemoryRange,
 		offset: offset,
@@ -374,9 +426,11 @@ export namespace ValueType {
 			value: MemoryRange,
 		): void {
 			memory.setUint32(offset, value.ptr);
+
 			memory.setUint32(offset + ptr.size, value.size);
 		}
 	}
+
 	export const MemoryRange: ValueType<MemoryRange> = $MemoryRange;
 
 	namespace $ReadonlyMemoryRange {
@@ -403,9 +457,11 @@ export namespace ValueType {
 			value: ReadonlyMemoryRange,
 		): void {
 			memory.setUint32(offset, value.ptr);
+
 			memory.setUint32(offset + ptr.size, value.size);
 		}
 	}
+
 	export const ReadonlyMemoryRange: ValueType<ReadonlyMemoryRange> =
 		$ReadonlyMemoryRange;
 }
@@ -415,6 +471,7 @@ export namespace Record {
 	export interface Properties {
 		[key: string]: any;
 	}
+
 	export type PropertyTypes = [string, PropertyType][];
 
 	export namespace PropertyTypes {
@@ -426,12 +483,16 @@ export namespace Record {
 					: props.reduce((r, p) => r.concat(p), []);
 		}
 	}
+
 	export namespace Type {
 		export type FieldInfo = { type: PropertyType; offset: number };
 	}
+
 	export class Type<T extends Properties> extends ObjectType<T> {
 		public readonly alignment: Alignment;
+
 		public readonly size: size;
+
 		private readonly fields: Map<string, Type.FieldInfo>;
 
 		constructor(properties: PropertyTypes) {
@@ -452,16 +513,24 @@ export namespace Record {
 				if (fieldsMap.has(name)) {
 					throw new ComponentModelTrap(`Duplicate property ${name}`);
 				}
+
 				alignment = Math.max(alignment, type.alignment);
+
 				size = Alignment.align(size, type.alignment);
 
 				const info = { offset: size, type };
+
 				fieldsMap.set(name, info);
+
 				fields[name] = info;
+
 				size = size + type.size;
 			}
+
 			this.alignment = alignment;
+
 			this.size = size;
+
 			this.fields = fieldsMap;
 		}
 
@@ -491,6 +560,7 @@ export namespace Record {
 						offset + fieldInfo.offset,
 						context,
 					);
+
 					Object.defineProperty(result, name, {
 						get() {
 							return propResult;
@@ -517,6 +587,7 @@ export namespace Record {
 					});
 				}
 			}
+
 			return result as T;
 		}
 	}
@@ -537,6 +608,7 @@ export abstract class ObjectProperty {
 				`Memory is not a shared memory instance.`,
 			);
 		}
+
 		return result;
 	}
 
@@ -551,6 +623,7 @@ export abstract class ObjectProperty {
 
 export class Lock extends ObjectProperty {
 	private readonly buffer: Int32Array;
+
 	private lockCount: number;
 
 	constructor(memory: SharedMemory);
@@ -564,11 +637,13 @@ export class Lock extends ObjectProperty {
 		const isMemory = SharedMemory.is(arg);
 
 		super(isMemory ? Lock.alloc(arg) : arg);
+
 		this.buffer = this.memoryRange.getInt32View(0, 1);
 
 		if (isMemory || context?.mode === SharedObjectContext.Mode.new) {
 			Atomics.store(this.buffer, 0, 1);
 		}
+
 		this.lockCount = 0;
 	}
 
@@ -579,6 +654,7 @@ export class Lock extends ObjectProperty {
 
 			return;
 		}
+
 		while (true) {
 			const value = Atomics.load(this.buffer, 0);
 
@@ -591,6 +667,7 @@ export class Lock extends ObjectProperty {
 
 				return;
 			}
+
 			Atomics.wait(this.buffer, 0, value);
 		}
 	}
@@ -601,15 +678,20 @@ export class Lock extends ObjectProperty {
 
 			return;
 		}
+
 		Atomics.add(this.buffer, 0, 1);
+
 		Atomics.notify(this.buffer, 0, 1);
+
 		this.lockCount = 0;
 	}
 }
 export namespace Lock {
 	class $Type extends ObjectType<Lock> {
 		public readonly alignment: Alignment = u32.alignment;
+
 		public readonly size: size = u32.size;
+
 		public load(
 			memory: MemoryRange,
 			offset: offset,
@@ -620,6 +702,7 @@ export namespace Lock {
 			return new Lock(memory.range(offset, this.size), context);
 		}
 	}
+
 	export const Type = new $Type();
 
 	export function alloc(memory: SharedMemory): MemoryRange {
@@ -641,6 +724,7 @@ export class Signal extends ObjectProperty {
 		const isMemory = SharedMemory.is(arg);
 
 		super(isMemory ? Signal.alloc(arg) : arg);
+
 		this.buffer = this.memoryRange.getInt32View(0, 1);
 
 		if (isMemory || context?.mode === SharedObjectContext.Mode.new) {
@@ -690,6 +774,7 @@ export class Signal extends ObjectProperty {
 
 	public resolve(agentsToNotify?: number | undefined): void {
 		Atomics.store(this.buffer, 0, 1);
+
 		Atomics.notify(this.buffer, 0, agentsToNotify);
 	}
 }
@@ -697,7 +782,9 @@ export class Signal extends ObjectProperty {
 export namespace Signal {
 	class $Type extends ObjectType<Signal> {
 		public readonly alignment: Alignment = u32.alignment;
+
 		public readonly size: size = u32.size;
+
 		public load(
 			memory: MemoryRange,
 			offset: offset,
@@ -708,6 +795,7 @@ export namespace Signal {
 			return new Signal(memory.range(offset, this.size), context);
 		}
 	}
+
 	export const Type = new $Type();
 
 	export function alloc(memory: SharedMemory): MemoryRange {
@@ -734,7 +822,9 @@ export abstract class SharedObject<
 	};
 
 	protected readonly memoryRange: MemoryRange;
+
 	protected readonly access: T;
+
 	private readonly lock: Lock;
 
 	protected constructor(
@@ -751,7 +841,9 @@ export abstract class SharedObject<
 					`Allocated memory[${memoryRange.ptr},${memoryRange.size}] doesn't match the record size[${type.size}].`,
 				);
 			}
+
 			this.memoryRange = memoryRange;
+
 			this.access = type.load(
 				this.memoryRange,
 				0,
@@ -763,6 +855,7 @@ export abstract class SharedObject<
 					`The memory size of the shared object ${this.access._size} doesn't match the allocated memory [${memoryRange.ptr},${memoryRange.size}].`,
 				);
 			}
+
 			if (this.access._id !== surrogate.id) {
 				throw new MemoryError(
 					`The shared object id ${this.access._id} doesn't match the allocated memory id ${surrogate.id}.`,
@@ -773,16 +866,20 @@ export abstract class SharedObject<
 				type.alignment,
 				type.size,
 			);
+
 			this.access = type.load(
 				this.memoryRange,
 				0,
 				SharedObject.Context.new,
 			);
+
 			this.access._size = this.memoryRange.size;
+
 			this.access._id = this.computeId();
 		} else {
 			throw new ComponentModelTrap(`Invalid memory or location.`);
 		}
+
 		this.lock = this.access._lock;
 	}
 
@@ -795,6 +892,7 @@ export abstract class SharedObject<
 			// We should think about a trace when we dispose
 			// a shared object from a thread that hasn't allocated it.
 		}
+
 		this.memoryRange.free();
 	}
 
@@ -804,6 +902,7 @@ export abstract class SharedObject<
 		if (!(result instanceof MemoryImpl)) {
 			throw new Error(`Memory is not a shared memory instance`);
 		}
+
 		return result as SharedMemory;
 	}
 
@@ -841,7 +940,9 @@ export abstract class SharedObject<
 export namespace SharedObject {
 	export interface Properties extends Record.Properties {
 		_size: size;
+
 		_id: u32;
+
 		_lock: Lock;
 	}
 
@@ -857,6 +958,7 @@ export namespace SharedObject {
 
 	export type Surrogate = {
 		memoryRange: MemoryRange;
+
 		id: u32;
 	};
 
@@ -924,6 +1026,7 @@ export function Synchronize<T extends ObjectProperty>(
 			lock.release();
 		}
 	}
+
 	function func(target: T, p: PropertyKey, ...args: any[]): any {
 		try {
 			lock.acquire();
@@ -933,10 +1036,12 @@ export function Synchronize<T extends ObjectProperty>(
 			lock.release();
 		}
 	}
+
 	function isPropertyOrGetter(target: any, p: PropertyKey): boolean {
 		if (Object.hasOwn(target, p)) {
 			return true;
 		}
+
 		const prototype = Reflect.getPrototypeOf(target);
 
 		const descriptor =
@@ -947,6 +1052,7 @@ export function Synchronize<T extends ObjectProperty>(
 		if (descriptor !== undefined && descriptor.get !== undefined) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -954,6 +1060,7 @@ export function Synchronize<T extends ObjectProperty>(
 		if (Object.hasOwn(target, p)) {
 			return true;
 		}
+
 		const prototype = Reflect.getPrototypeOf(target);
 
 		const descriptor =
@@ -964,8 +1071,10 @@ export function Synchronize<T extends ObjectProperty>(
 		if (descriptor !== undefined && descriptor.set !== undefined) {
 			return true;
 		}
+
 		return false;
 	}
+
 	return new Proxy<T & { runLocked(callback: (value: T) => void): void }>(
 		object as any,
 		{
@@ -973,6 +1082,7 @@ export function Synchronize<T extends ObjectProperty>(
 				if (p === "runLocked") {
 					return runLocked.bind(null, target);
 				}
+
 				if (isPropertyOrGetter(target, p)) {
 					try {
 						lock.acquire();
@@ -1002,8 +1112,10 @@ export function Synchronize<T extends ObjectProperty>(
 					} finally {
 						lock.release();
 					}
+
 					return true;
 				}
+
 				return false;
 			},
 		},

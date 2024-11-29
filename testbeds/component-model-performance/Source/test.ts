@@ -11,16 +11,19 @@ export namespace Window {
 		export interface Interface extends $wcm.Resource {
 			call(value: u32): u32;
 		}
+
 		export type Statics = {};
 
 		export type Class = Statics & {};
 	}
+
 	export type TestResource = TestResource.Interface;
 
 	export type createTestResource = () => own<TestResource>;
 }
 export type Window = {
 	TestResource: Window.TestResource.Class;
+
 	createTestResource: Window.createTestResource;
 };
 
@@ -32,9 +35,11 @@ export namespace test {
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
 	}
+
 	export namespace imports {
 		export type Promisify<T> = $wcm.$imports.Promisify<T>;
 	}
+
 	export type Exports = {
 		run: () => void;
 	};
@@ -42,6 +47,7 @@ export namespace test {
 	export namespace Exports {
 		export type Promisified = $wcm.$exports.Promisify<Exports>;
 	}
+
 	export namespace exports {
 		export type Promisify<T> = $wcm.$exports.Promisify<T>;
 	}
@@ -56,12 +62,14 @@ export namespace Window.$ {
 	export const TestResource_Handle = new $wcm.ResourceHandleType(
 		"test-resource",
 	);
+
 	TestResource.addDestructor(
 		"$drop",
 		new $wcm.DestructorType("[resource-drop]test-resource", [
 			["inst", TestResource],
 		]),
 	);
+
 	TestResource.addMethod(
 		"call",
 		new $wcm.MethodType<Window.TestResource.Interface["call"]>(
@@ -93,12 +101,14 @@ export namespace Window._ {
 				"[resource-drop]test-resource": (self: i32) => void;
 			};
 		}
+
 		export namespace exports {
 			export type WasmInterface = TestResource.WasmInterface & {
 				"[dtor]test-resource": (self: i32) => void;
 			};
 		}
 	}
+
 	export const types: Map<string, $wcm.AnyComponentModelType> = new Map<
 		string,
 		$wcm.AnyComponentModelType
@@ -121,6 +131,7 @@ export namespace Window._ {
 		export type WasmInterface = _.WasmInterface &
 			TestResource.imports.WasmInterface;
 	}
+
 	export namespace exports {
 		export type WasmInterface = _.WasmInterface &
 			TestResource.exports.WasmInterface;
@@ -160,6 +171,7 @@ export namespace test._ {
 		): Imports {
 			return $wcm.$imports.create<Imports>(_, service, context);
 		}
+
 		export function loop(
 			service: test.Imports,
 			context: $wcm.WasmContext,
@@ -167,6 +179,7 @@ export namespace test._ {
 			return $wcm.$imports.loop<test.Imports>(_, service, context);
 		}
 	}
+
 	export type Imports = {
 		"vscode:example/window": Window._.imports.WasmInterface;
 	};
@@ -183,6 +196,7 @@ export namespace test._ {
 			return $wcm.$exports.bind<test.Exports>(_, exports, context);
 		}
 	}
+
 	export type Exports = {
 		"run": () => void;
 	};

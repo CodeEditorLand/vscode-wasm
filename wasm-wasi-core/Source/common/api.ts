@@ -55,6 +55,7 @@ export enum PseudoterminalState {
 
 export interface PseudoterminalStateChangeEvent {
 	old: PseudoterminalState;
+
 	new: PseudoterminalState;
 }
 
@@ -225,7 +226,9 @@ export type OpenFlags = number;
  */
 export type StdioFileDescriptor = {
 	kind: "file";
+
 	path: string;
+
 	openFlags?: OpenFlags;
 };
 
@@ -234,6 +237,7 @@ export type StdioFileDescriptor = {
  */
 export type StdioTerminalDescriptor = {
 	kind: "terminal";
+
 	terminal: WasmPseudoterminal;
 };
 
@@ -243,6 +247,7 @@ export type StdioTerminalDescriptor = {
  */
 export type StdioPipeInDescriptor = {
 	kind: "pipeIn";
+
 	pipe?: Writable;
 };
 
@@ -252,6 +257,7 @@ export type StdioPipeInDescriptor = {
  */
 export type StdioPipeOutDescriptor = {
 	kind: "pipeOut";
+
 	pipe?: Readable;
 };
 
@@ -267,11 +273,13 @@ export type StdioConsoleDescriptor = {
  */
 export type Stdio = {
 	in?: StdioFileDescriptor | StdioTerminalDescriptor | StdioPipeInDescriptor;
+
 	out?:
 		| StdioFileDescriptor
 		| StdioTerminalDescriptor
 		| StdioConsoleDescriptor
 		| StdioPipeOutDescriptor;
+
 	err?:
 		| StdioFileDescriptor
 		| StdioTerminalDescriptor
@@ -293,8 +301,11 @@ export type WorkspaceFolderDescriptor = {
  */
 export type ExtensionLocationDescriptor = {
 	kind: "extensionLocation";
+
 	extension: ExtensionContext | Extension<any>;
+
 	path: string;
+
 	mountPoint: string;
 };
 
@@ -304,7 +315,9 @@ export type ExtensionLocationDescriptor = {
  */
 export type VSCodeFileSystemDescriptor = {
 	kind: "vscodeFileSystem";
+
 	uri: Uri;
+
 	mountPoint: string;
 };
 
@@ -314,7 +327,9 @@ export type VSCodeFileSystemDescriptor = {
  */
 export type MemoryFileSystemDescriptor = {
 	kind: "memoryFileSystem";
+
 	fileSystem: MemoryFileSystem;
+
 	mountPoint: string;
 };
 
@@ -435,13 +450,16 @@ export enum Filetype {
  */
 export interface MemoryFileSystem {
 	createDirectory(path: string): void;
+
 	createFile(
 		path: string,
 		content:
 			| Uint8Array
 			| { size: bigint; reader: () => Promise<Uint8Array> },
 	): void;
+
 	createReadable(path: string): Readable;
+
 	createWritable(path: string, encoding?: "utf-8"): Writable;
 }
 
@@ -600,6 +618,7 @@ namespace WasiCoreImpl {
 				`Failed to determine extension version. Found ${version}`,
 			);
 		}
+
 		return {
 			version,
 			versions: { api: 1, extension: version },
@@ -625,6 +644,7 @@ namespace WasiCoreImpl {
 					info,
 					fileDescriptors,
 				);
+
 				await result.initialize();
 
 				return result;
@@ -640,6 +660,7 @@ namespace WasiCoreImpl {
 				if (optionsOrEncoding === undefined) {
 					return new WritableStream();
 				}
+
 				let ctor: new (encoding?: "utf-8") => Writable = WritableStream;
 
 				let encoding: "utf-8" | undefined = undefined;
@@ -650,6 +671,7 @@ namespace WasiCoreImpl {
 							`Unsupported encoding: ${optionsOrEncoding}`,
 						);
 					}
+
 					encoding = optionsOrEncoding;
 				} else {
 					if (
@@ -660,12 +682,14 @@ namespace WasiCoreImpl {
 							`Unsupported encoding: ${optionsOrEncoding.encoding}`,
 						);
 					}
+
 					encoding = optionsOrEncoding.encoding;
 
 					if (optionsOrEncoding.eot) {
 						ctor = WritableStreamEOT;
 					}
 				}
+
 				return new ctor(encoding);
 			},
 			async createProcess(
@@ -689,12 +713,14 @@ namespace WasiCoreImpl {
 					MemoryDescriptor.is(memoryOrOptions)
 				) {
 					memory = memoryOrOptions;
+
 					options = optionsOrMapWorkspaceFolders as
 						| ProcessOptions
 						| undefined;
 				} else {
 					options = memoryOrOptions;
 				}
+
 				const result = new processConstructor(
 					context.extensionUri,
 					name,
@@ -702,6 +728,7 @@ namespace WasiCoreImpl {
 					memory,
 					options,
 				);
+
 				await result.initialize();
 
 				return result;
@@ -713,7 +740,9 @@ namespace WasiCoreImpl {
 
 export class APILoader {
 	private readonly context: ExtensionContext;
+
 	private readonly processConstructor: ProcessConstructor;
+
 	private readonly compile: Compile;
 
 	constructor(
@@ -722,12 +751,16 @@ export class APILoader {
 		compile: Compile,
 	) {
 		this.context = context;
+
 		this.processConstructor = processConstructor;
+
 		this.compile = compile;
 	}
 
 	load(): Wasm;
+
 	load(apiVersion: 1): Wasm;
+
 	load(_apiVersion?: number): Wasm {
 		return WasiCoreImpl.create(
 			this.context,
