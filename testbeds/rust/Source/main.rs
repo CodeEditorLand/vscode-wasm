@@ -8,6 +8,7 @@ use std::fs;
 fn main() {
 	let contents =
 		fs::read_to_string("/workspace/test.bat").expect("Something went wrong reading the file");
+
 	println!("Content:\n{}", contents);
 
 	// let args: Vec<String> = env::args().collect();

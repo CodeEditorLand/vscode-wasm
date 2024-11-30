@@ -5,7 +5,9 @@ pub type Operation = vscode::example::types::Operation;
 pub fn log(msg:&str) {
 	unsafe {
 		let vec0 = msg;
+
 		let ptr0 = vec0.as_ptr().cast::<u8>();
+
 		let len0 = vec0.len();
 
 		#[cfg(target_arch = "wasm32")]
@@ -17,6 +19,7 @@ pub fn log(msg:&str) {
 
 		#[cfg(not(target_arch = "wasm32"))]
 		fn wit_import(_:*mut u8, _:usize) { unreachable!() }
+
 		wit_import(ptr0.cast_mut(), len0);
 	}
 }
@@ -25,7 +28,9 @@ pub fn generate() -> _rt::String {
 	unsafe {
 		#[repr(align(4))]
 		struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 		let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 		let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 		#[cfg(target_arch = "wasm32")]
 		#[link(wasm_import_module = "$root")]
@@ -36,11 +41,17 @@ pub fn generate() -> _rt::String {
 
 		#[cfg(not(target_arch = "wasm32"))]
 		fn wit_import(_:*mut u8) { unreachable!() }
+
 		wit_import(ptr0);
+
 		let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 		let l2 = *ptr0.add(4).cast::<usize>();
+
 		let len3 = l2;
+
 		let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 		_rt::string_lift(bytes3)
 	}
 }
@@ -49,27 +60,36 @@ pub fn generate() -> _rt::String {
 pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	#[cfg(target_arch = "wasm32")]
 	_rt::run_ctors_once();
+
 	use vscode::example::types::Operation as V0;
+
 	let v0 = match arg0 {
 		0 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Add(e0)
 		},
 		1 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Sub(e0)
 		},
 		2 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
+
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Div(e0)
 		},
 	};
+
 	let result1 = T::calc(v0);
+
 	_rt::as_i32(result1)
 }
 #[doc(hidden)]
@@ -77,25 +97,34 @@ pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 pub unsafe fn _export_msg_cabi<T:Guest>() -> *mut u8 {
 	#[cfg(target_arch = "wasm32")]
 	_rt::run_ctors_once();
+
 	let result0 = T::msg();
+
 	let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+
 	let vec2 = (result0.into_bytes()).into_boxed_slice();
+
 	let ptr2 = vec2.as_ptr().cast::<u8>();
+
 	let len2 = vec2.len();
 	::core::mem::forget(vec2);
 	*ptr1.add(4).cast::<usize>() = len2;
 	*ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+
 	ptr1
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
 pub unsafe fn __post_return_msg<T:Guest>(arg0:*mut u8) {
 	let l0 = *arg0.add(0).cast::<*mut u8>();
+
 	let l1 = *arg0.add(4).cast::<usize>();
+
 	_rt::cabi_dealloc(l0, l1, 1);
 }
 pub trait Guest {
 	fn calc(o:Operation) -> u32;
+
 	fn msg() -> _rt::String;
 }
 #[doc(hidden)]
@@ -133,6 +162,7 @@ pub mod vscode {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			use super::super::super::_rt;
 			#[repr(C)]
 			#[derive(Clone, Copy)]
@@ -140,6 +170,7 @@ pub mod vscode {
 				pub left:u32,
 				pub right:u32,
 			}
+
 			impl ::core::fmt::Debug for Operands {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
@@ -155,6 +186,7 @@ pub mod vscode {
 				Mul(Operands),
 				Div(Operands),
 			}
+
 			impl ::core::fmt::Debug for Operation {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -217,17 +249,22 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) -> i32 { unreachable!() }
+
 						let ret = wit_import(_rt::as_i32(&level));
+
 						Channel::from_handle(ret as u32)
 					}
 				}
 			}
+
 			impl Channel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn send(&self, msg:&str) {
 					unsafe {
 						let vec0 = msg;
+
 						let ptr0 = vec0.as_ptr().cast::<u8>();
+
 						let len0 = vec0.len();
 
 						#[cfg(target_arch = "wasm32")]
@@ -239,6 +276,7 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
@@ -259,6 +297,7 @@ pub mod exports {
 				#[cfg(target_arch = "wasm32")]
 				static __FORCE_SECTION_REF:fn() =
 					super::super::super::super::__link_custom_section_describing_imports;
+
 				use super::super::super::super::_rt;
 				#[repr(u8)]
 				#[derive(Clone, Copy, Eq, PartialEq)]
@@ -268,6 +307,7 @@ pub mod exports {
 					Mul,
 					Div,
 				}
+
 				impl ::core::fmt::Debug for Operation {
 					fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 						match self {
@@ -315,8 +355,11 @@ pub mod exports {
 					/// `Engine`.
 					pub fn new<T:GuestEngine>(val:T) -> Self {
 						Self::type_guard::<T>();
+
 						let val:_EngineRep<T> = Some(val);
+
 						let ptr:*mut _EngineRep<T> = _rt::Box::into_raw(_rt::Box::new(val));
+
 						unsafe { Self::from_handle(T::_resource_new(ptr.cast())) }
 					}
 
@@ -324,6 +367,7 @@ pub mod exports {
 					/// resource.
 					pub fn get<T:GuestEngine>(&self) -> &T {
 						let ptr = unsafe { &*self.as_ptr::<T>() };
+
 						ptr.as_ref().unwrap()
 					}
 
@@ -331,12 +375,14 @@ pub mod exports {
 					/// represents this resource.
 					pub fn get_mut<T:GuestEngine>(&mut self) -> &mut T {
 						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+
 						ptr.as_mut().unwrap()
 					}
 
 					/// Consumes this resource and returns the underlying `T`.
 					pub fn into_inner<T:GuestEngine>(self) -> T {
 						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+
 						ptr.take().unwrap()
 					}
 
@@ -357,10 +403,14 @@ pub mod exports {
 					#[doc(hidden)]
 					fn type_guard<T:'static>() {
 						use core::any::TypeId;
+
 						static mut LAST_TYPE:Option<TypeId> = None;
+
 						unsafe {
 							assert!(!cfg!(target_feature = "threads"));
+
 							let id = TypeId::of::<T>();
+
 							match LAST_TYPE {
 								Some(ty) => {
 									assert!(
@@ -376,11 +426,13 @@ pub mod exports {
 					#[doc(hidden)]
 					pub unsafe fn dtor<T:'static>(handle:*mut u8) {
 						Self::type_guard::<T>();
+
 						let _ = _rt::Box::from_raw(handle as *mut _EngineRep<T>);
 					}
 
 					fn as_ptr<T:GuestEngine>(&self) -> *mut _EngineRep<T> {
 						Engine::type_guard::<T>();
+
 						T::_resource_rep(self.handle()).cast()
 					}
 				}
@@ -403,6 +455,7 @@ pub mod exports {
 					/// Gets access to the underlying `T` in this resource.
 					pub fn get<T:GuestEngine>(&self) -> &T {
 						let ptr = unsafe { &mut *self.as_ptr::<T>() };
+
 						ptr.as_ref().unwrap()
 					}
 
@@ -412,6 +465,7 @@ pub mod exports {
 
 					fn as_ptr<T:'static>(&self) -> *mut _EngineRep<T> {
 						Engine::type_guard::<T>();
+
 						self.rep.cast()
 					}
 				}
@@ -440,6 +494,7 @@ pub mod exports {
 				pub unsafe fn _export_constructor_engine_cabi<T:GuestEngine>() -> i32 {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
+
 					let result0 = Engine::new(T::new());
 					(result0).take_handle() as i32
 				}
@@ -451,6 +506,7 @@ pub mod exports {
 				) {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
+
 					T::push_operand(EngineBorrow::lift(arg0 as u32 as usize).get(), arg1 as u32);
 				}
 				#[doc(hidden)]
@@ -461,6 +517,7 @@ pub mod exports {
 				) {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
+
 					T::push_operation(
 						EngineBorrow::lift(arg0 as u32 as usize).get(),
 						Operation::_lift(arg1 as u8),
@@ -473,12 +530,16 @@ pub mod exports {
 				) -> i32 {
 					#[cfg(target_arch = "wasm32")]
 					_rt::run_ctors_once();
+
 					let result0 = T::execute(EngineBorrow::lift(arg0 as u32 as usize).get());
+
 					_rt::as_i32(result0)
 				}
+
 				pub trait Guest {
 					type Engine: GuestEngine;
 				}
+
 				pub trait GuestEngine: 'static {
 					#[doc(hidden)]
 					unsafe fn _resource_new(val:*mut u8) -> u32
@@ -487,6 +548,7 @@ pub mod exports {
 						#[cfg(not(target_arch = "wasm32"))]
 						{
 							let _ = val;
+
 							unreachable!();
 						}
 
@@ -497,6 +559,7 @@ pub mod exports {
 								#[link_name = "[resource-new]engine"]
 								fn new(_:*mut u8) -> u32;
 							}
+
 							new(val)
 						}
 					}
@@ -508,6 +571,7 @@ pub mod exports {
 						#[cfg(not(target_arch = "wasm32"))]
 						{
 							let _ = handle;
+
 							unreachable!();
 						}
 
@@ -518,13 +582,17 @@ pub mod exports {
 								#[link_name = "[resource-rep]engine"]
 								fn rep(_:u32) -> *mut u8;
 							}
+
 							unsafe { rep(handle) }
 						}
 					}
 
 					fn new() -> Self;
+
 					fn push_operand(&self, operand:u32);
+
 					fn push_operation(&self, operation:Operation);
+
 					fn execute(&self) -> u32;
 				}
 				#[doc(hidden)]
@@ -614,6 +682,7 @@ mod _rt {
 		#[doc(hidden)]
 		pub unsafe fn from_handle(handle:u32) -> Self {
 			debug_assert!(handle != u32::MAX);
+
 			Self { handle:AtomicU32::new(handle), _marker:marker::PhantomData }
 		}
 
@@ -708,7 +777,9 @@ mod _rt {
 		#[inline]
 		fn as_i32(self) -> i32 { self as i32 }
 	}
+
 	pub use alloc_crate::{string::String, vec::Vec};
+
 	pub unsafe fn string_lift(bytes:Vec<u8>) -> String {
 		if cfg!(debug_assertions) {
 			String::from_utf8(bytes).unwrap()
@@ -719,15 +790,21 @@ mod _rt {
 
 	#[cfg(target_arch = "wasm32")]
 	pub fn run_ctors_once() { wit_bindgen::rt::run_ctors_once(); }
+
 	pub unsafe fn cabi_dealloc(ptr:*mut u8, size:usize, align:usize) {
 		if size == 0 {
 			return;
 		}
+
 		let layout = alloc::Layout::from_size_align_unchecked(size, align);
+
 		alloc::dealloc(ptr as *mut u8, layout);
 	}
+
 	pub use alloc_crate::boxed::Box;
+
 	extern crate alloc as alloc_crate;
+
 	pub use alloc_crate::alloc;
 }
 

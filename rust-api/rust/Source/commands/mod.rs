@@ -18,8 +18,11 @@ where
 	unsafe {
 		HANDLERS.insert(command.to_string(), Box::new(callback));
 	}
+
 	commands::register_command(command);
+
 	let unregister = command.to_string();
+
 	return move || {
 		unsafe {
 			HANDLERS.remove(&unregister);
@@ -29,9 +32,11 @@ where
 
 pub fn execute_command(command:&str) {
 	let handler;
+
 	unsafe {
 		handler = HANDLERS.get(command);
 	}
+
 	if handler.is_some() {
 		handler.unwrap()();
 	}

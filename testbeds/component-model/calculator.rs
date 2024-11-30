@@ -5,26 +5,34 @@ pub type Operation = vscode::example::types::Operation;
 #[allow(non_snake_case)]
 pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	use vscode::example::types::Operation as V0;
+
 	let v0 = match arg0 {
 		0 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Add(e0)
 		},
 		1 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Sub(e0)
 		},
 		2 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
+
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Div(e0)
 		},
 	};
+
 	let result1 = T::calc(v0);
+
 	_rt::as_i32(result1)
 }
 pub trait Guest {
@@ -73,6 +81,7 @@ pub mod vscode {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import() { unreachable!() }
+
 					wit_import();
 				}
 			}
@@ -89,7 +98,9 @@ pub mod vscode {
 			pub fn register(command:&str) {
 				unsafe {
 					let vec0 = command;
+
 					let ptr0 = vec0.as_ptr().cast::<u8>();
+
 					let len0 = vec0.len();
 
 					#[cfg(target_arch = "wasm32")]
@@ -101,6 +112,7 @@ pub mod vscode {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import(_:*mut u8, _:usize) { unreachable!() }
+
 					wit_import(ptr0.cast_mut(), len0);
 				}
 			}
@@ -113,6 +125,7 @@ pub mod vscode {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			use super::super::super::_rt;
 			#[repr(C)]
 			#[derive(Clone, Copy)]
@@ -120,6 +133,7 @@ pub mod vscode {
 				pub left:u32,
 				pub right:u32,
 			}
+
 			impl ::core::fmt::Debug for Operands {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
@@ -135,6 +149,7 @@ pub mod vscode {
 				Mul(Operands),
 				Div(Operands),
 			}
+
 			impl ::core::fmt::Debug for Operation {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -190,6 +205,7 @@ pub mod vscode {
 				Undo,
 				Redo,
 			}
+
 			impl ::core::fmt::Debug for TextDocumentChangeReason {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -262,7 +278,9 @@ pub mod vscode {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -273,22 +291,31 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn language_id(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -299,15 +326,22 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn version(&self) -> u32 {
@@ -321,18 +355,23 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) -> i32 { unreachable!() }
+
 						let ret = wit_import((self).handle() as i32);
+
 						ret as u32
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn get_text(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -343,22 +382,31 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn name(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "vscode:example/types")]
@@ -369,21 +417,30 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn append(&self, value:&str) {
 					unsafe {
 						let vec0 = value;
+
 						let ptr0 = vec0.as_ptr().cast::<u8>();
+
 						let len0 = vec0.len();
 
 						#[cfg(target_arch = "wasm32")]
@@ -395,16 +452,20 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn append_line(&self, value:&str) {
 					unsafe {
 						let vec0 = value;
+
 						let ptr0 = vec0.as_ptr().cast::<u8>();
+
 						let len0 = vec0.len();
 
 						#[cfg(target_arch = "wasm32")]
@@ -416,10 +477,12 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn clear(&self) {
@@ -433,10 +496,12 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) { unreachable!() }
+
 						wit_import((self).handle() as i32);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn show(&self) {
@@ -450,6 +515,7 @@ pub mod vscode {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) { unreachable!() }
+
 						wit_import((self).handle() as i32);
 					}
 				}
@@ -463,17 +529,23 @@ pub mod vscode {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			pub type OutputChannel = super::super::super::vscode::example::types::OutputChannel;
 			#[allow(unused_unsafe, clippy::all)]
 			pub fn create_output_channel(name:&str, language_id:Option<&str>) -> OutputChannel {
 				unsafe {
 					let vec0 = name;
+
 					let ptr0 = vec0.as_ptr().cast::<u8>();
+
 					let len0 = vec0.len();
+
 					let (result2_0, result2_1, result2_2) = match language_id {
 						Some(e) => {
 							let vec1 = e;
+
 							let ptr1 = vec1.as_ptr().cast::<u8>();
+
 							let len1 = vec1.len();
 
 							(1i32, ptr1.cast_mut(), len1)
@@ -491,7 +563,9 @@ pub mod vscode {
 					fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32 {
 						unreachable!()
 					}
+
 					let ret = wit_import(ptr0.cast_mut(), len0, result2_0, result2_1, result2_2);
+
 					super::super::super::vscode::example::types::OutputChannel::from_handle(
 						ret as u32,
 					)
@@ -510,6 +584,7 @@ pub mod exports {
 				#[cfg(target_arch = "wasm32")]
 				static __FORCE_SECTION_REF:fn() =
 					super::super::super::super::__link_custom_section_describing_imports;
+
 				use super::super::super::super::_rt;
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
@@ -518,9 +593,12 @@ pub mod exports {
 					arg1:usize,
 				) {
 					let len0 = arg1;
+
 					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+
 					T::did_change_text_document(_rt::string_lift(bytes0));
 				}
+
 				pub trait Guest {
 					fn did_change_text_document(uri:_rt::String);
 				}
@@ -546,14 +624,18 @@ pub mod exports {
 				#[cfg(target_arch = "wasm32")]
 				static __FORCE_SECTION_REF:fn() =
 					super::super::super::super::__link_custom_section_describing_imports;
+
 				use super::super::super::super::_rt;
 				#[doc(hidden)]
 				#[allow(non_snake_case)]
 				pub unsafe fn _export_execute_cabi<T:Guest>(arg0:*mut u8, arg1:usize) {
 					let len0 = arg1;
+
 					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+
 					T::execute(_rt::string_lift(bytes0));
 				}
+
 				pub trait Guest {
 					fn execute(command:_rt::String);
 				}
@@ -620,6 +702,7 @@ mod _rt {
 		#[doc(hidden)]
 		pub unsafe fn from_handle(handle:u32) -> Self {
 			debug_assert!(handle != u32::MAX);
+
 			Self { handle:AtomicU32::new(handle), _marker:marker::PhantomData }
 		}
 
@@ -664,7 +747,9 @@ mod _rt {
 			}
 		}
 	}
+
 	pub use alloc_crate::{string::String, vec::Vec};
+
 	pub unsafe fn string_lift(bytes:Vec<u8>) -> String {
 		if cfg!(debug_assertions) {
 			String::from_utf8(bytes).unwrap()
@@ -722,6 +807,7 @@ mod _rt {
 		#[inline]
 		fn as_i32(self) -> i32 { self as i32 }
 	}
+
 	extern crate alloc as alloc_crate;
 }
 

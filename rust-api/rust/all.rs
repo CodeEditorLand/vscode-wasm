@@ -9,6 +9,7 @@ pub mod host {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			use super::super::super::_rt;
 			#[repr(C)]
 			#[derive(Clone, Copy)]
@@ -16,6 +17,7 @@ pub mod host {
 				pub line:u32,
 				pub character:u32,
 			}
+
 			impl ::core::fmt::Debug for Position {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Position")
@@ -30,6 +32,7 @@ pub mod host {
 				pub start:Position,
 				pub end:Position,
 			}
+
 			impl ::core::fmt::Debug for Range {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Range")
@@ -45,6 +48,7 @@ pub mod host {
 				pub range_length:u32,
 				pub text:_rt::String,
 			}
+
 			impl ::core::fmt::Debug for TextDocumentContentChangeEvent {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("TextDocumentContentChangeEvent")
@@ -100,6 +104,7 @@ pub mod host {
 				Undo,
 				Redo,
 			}
+
 			impl ::core::fmt::Debug for TextDocumentChangeReason {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -133,6 +138,7 @@ pub mod host {
 				pub content_changes:_rt::Vec<TextDocumentContentChangeEvent>,
 				pub reason:Option<TextDocumentChangeReason>,
 			}
+
 			impl ::core::fmt::Debug for TextDocumentChangeEvent {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("TextDocumentChangeEvent")
@@ -185,6 +191,7 @@ pub mod host {
 			pub enum GlobPattern {
 				Pattern(_rt::String),
 			}
+
 			impl ::core::fmt::Debug for GlobPattern {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -201,6 +208,7 @@ pub mod host {
 				pub notebook_type:Option<_rt::String>,
 				pub pattern:Option<GlobPattern>,
 			}
+
 			impl ::core::fmt::Debug for DocumentFilter {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("DocumentFilter")
@@ -216,6 +224,7 @@ pub mod host {
 				Many(_rt::Vec<DocumentFilter>),
 				Single(DocumentFilter),
 			}
+
 			impl ::core::fmt::Debug for DocumentSelector {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -228,13 +237,16 @@ pub mod host {
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn uri(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -245,22 +257,31 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn language_id(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -271,15 +292,22 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn version(&self) -> u32 {
@@ -293,18 +321,23 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) -> i32 { unreachable!() }
+
 						let ret = wit_import((self).handle() as i32);
+
 						ret as u32
 					}
 				}
 			}
+
 			impl TextDocument {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn get_text(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -315,22 +348,31 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn name(&self) -> _rt::String {
 					unsafe {
 						#[repr(align(4))]
 						struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 						let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 						let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 						#[cfg(target_arch = "wasm32")]
 						#[link(wasm_import_module = "host:api/types")]
@@ -341,21 +383,30 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0);
+
 						let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 						let l2 = *ptr0.add(4).cast::<usize>();
+
 						let len3 = l2;
+
 						let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 						_rt::string_lift(bytes3)
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn append(&self, value:&str) {
 					unsafe {
 						let vec0 = value;
+
 						let ptr0 = vec0.as_ptr().cast::<u8>();
+
 						let len0 = vec0.len();
 
 						#[cfg(target_arch = "wasm32")]
@@ -367,16 +418,20 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn append_line(&self, value:&str) {
 					unsafe {
 						let vec0 = value;
+
 						let ptr0 = vec0.as_ptr().cast::<u8>();
+
 						let len0 = vec0.len();
 
 						#[cfg(target_arch = "wasm32")]
@@ -388,10 +443,12 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32, _:*mut u8, _:usize) { unreachable!() }
+
 						wit_import((self).handle() as i32, ptr0.cast_mut(), len0);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn clear(&self) {
@@ -405,10 +462,12 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) { unreachable!() }
+
 						wit_import((self).handle() as i32);
 					}
 				}
 			}
+
 			impl OutputChannel {
 				#[allow(unused_unsafe, clippy::all)]
 				pub fn show(&self) {
@@ -422,6 +481,7 @@ pub mod host {
 
 						#[cfg(not(target_arch = "wasm32"))]
 						fn wit_import(_:i32) { unreachable!() }
+
 						wit_import((self).handle() as i32);
 					}
 				}
@@ -435,14 +495,18 @@ pub mod host {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			use super::super::super::_rt;
+
 			pub type TextDocument = super::super::super::host::api::types::TextDocument;
 			#[allow(unused_unsafe, clippy::all)]
 			pub fn text_documents() -> _rt::Vec<TextDocument> {
 				unsafe {
 					#[repr(align(4))]
 					struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 					let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 					let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 					#[cfg(target_arch = "wasm32")]
 					#[link(wasm_import_module = "host:api/workspace")]
@@ -453,14 +517,22 @@ pub mod host {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import(_:*mut u8) { unreachable!() }
+
 					wit_import(ptr0);
+
 					let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 					let l2 = *ptr0.add(4).cast::<usize>();
+
 					let base4 = l1;
+
 					let len4 = l2;
+
 					let mut result4 = _rt::Vec::with_capacity(len4);
+
 					for i in 0..len4 {
 						let base = base4.add(i * 4);
+
 						let e4 = {
 							let l3 = *base.add(0).cast::<i32>();
 
@@ -468,9 +540,12 @@ pub mod host {
 								l3 as u32,
 							)
 						};
+
 						result4.push(e4);
 					}
+
 					_rt::cabi_dealloc(base4, len4 * 4, 4);
+
 					result4
 				}
 			}
@@ -486,6 +561,7 @@ pub mod host {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import() { unreachable!() }
+
 					wit_import();
 				}
 			}
@@ -501,6 +577,7 @@ pub mod host {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import() { unreachable!() }
+
 					wit_import();
 				}
 			}
@@ -517,7 +594,9 @@ pub mod host {
 			pub fn register_command(command:&str) {
 				unsafe {
 					let vec0 = command;
+
 					let ptr0 = vec0.as_ptr().cast::<u8>();
+
 					let len0 = vec0.len();
 
 					#[cfg(target_arch = "wasm32")]
@@ -529,6 +608,7 @@ pub mod host {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import(_:*mut u8, _:usize) { unreachable!() }
+
 					wit_import(ptr0.cast_mut(), len0);
 				}
 			}
@@ -536,7 +616,9 @@ pub mod host {
 			pub fn unregister_command(command:&str) {
 				unsafe {
 					let vec0 = command;
+
 					let ptr0 = vec0.as_ptr().cast::<u8>();
+
 					let len0 = vec0.len();
 
 					#[cfg(target_arch = "wasm32")]
@@ -548,6 +630,7 @@ pub mod host {
 
 					#[cfg(not(target_arch = "wasm32"))]
 					fn wit_import(_:*mut u8, _:usize) { unreachable!() }
+
 					wit_import(ptr0.cast_mut(), len0);
 				}
 			}
@@ -560,17 +643,23 @@ pub mod host {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			pub type OutputChannel = super::super::super::host::api::types::OutputChannel;
 			#[allow(unused_unsafe, clippy::all)]
 			pub fn create_output_channel(name:&str, language_id:Option<&str>) -> OutputChannel {
 				unsafe {
 					let vec0 = name;
+
 					let ptr0 = vec0.as_ptr().cast::<u8>();
+
 					let len0 = vec0.len();
+
 					let (result2_0, result2_1, result2_2) = match language_id {
 						Some(e) => {
 							let vec1 = e;
+
 							let ptr1 = vec1.as_ptr().cast::<u8>();
+
 							let len1 = vec1.len();
 
 							(1i32, ptr1.cast_mut(), len1)
@@ -588,7 +677,9 @@ pub mod host {
 					fn wit_import(_:*mut u8, _:usize, _:i32, _:*mut u8, _:usize) -> i32 {
 						unreachable!()
 					}
+
 					let ret = wit_import(ptr0.cast_mut(), len0, result2_0, result2_1, result2_2);
+
 					super::super::super::host::api::types::OutputChannel::from_handle(ret as u32)
 				}
 			}
@@ -601,14 +692,19 @@ pub mod host {
 			#[cfg(target_arch = "wasm32")]
 			static __FORCE_SECTION_REF:fn() =
 				super::super::super::__link_custom_section_describing_imports;
+
 			use super::super::super::_rt;
+
 			pub type DocumentSelector = super::super::super::host::api::types::DocumentSelector;
+
 			pub type TextDocument = super::super::super::host::api::types::TextDocument;
 			#[allow(unused_unsafe, clippy::all)]
 			pub fn match_selector(selector:&DocumentSelector, document:TextDocument) -> u32 {
 				unsafe {
 					let mut cleanup_list = _rt::Vec::new();
+
 					use super::super::super::host::api::types::DocumentSelector as V18;
+
 					let (
 						result19_0,
 						result19_1,
@@ -627,18 +723,24 @@ pub mod host {
 					) = match selector {
 						V18::Many(e) => {
 							let vec6 = e;
+
 							let len6 = vec6.len();
+
 							let layout6 =
 								_rt::alloc::Layout::from_size_align_unchecked(vec6.len() * 52, 4);
+
 							let result6 = if layout6.size() != 0 {
 								let ptr = _rt::alloc::alloc(layout6).cast::<u8>();
+
 								if ptr.is_null() {
 									_rt::alloc::handle_alloc_error(layout6);
 								}
+
 								ptr
 							} else {
 								{ ::core::ptr::null_mut() }
 							};
+
 							for (i, e) in vec6.into_iter().enumerate() {
 								let base = result6.add(i * 52);
 								{
@@ -648,11 +750,15 @@ pub mod host {
 										notebook_type: notebook_type0,
 										pattern: pattern0,
 									} = e;
+
 									match language0 {
 										Some(e) => {
 											*base.add(0).cast::<u8>() = (1i32) as u8;
+
 											let vec1 = e;
+
 											let ptr1 = vec1.as_ptr().cast::<u8>();
+
 											let len1 = vec1.len();
 											*base.add(8).cast::<usize>() = len1;
 											*base.add(4).cast::<*mut u8>() = ptr1.cast_mut();
@@ -661,11 +767,15 @@ pub mod host {
 											*base.add(0).cast::<u8>() = (0i32) as u8;
 										},
 									};
+
 									match scheme0 {
 										Some(e) => {
 											*base.add(12).cast::<u8>() = (1i32) as u8;
+
 											let vec2 = e;
+
 											let ptr2 = vec2.as_ptr().cast::<u8>();
+
 											let len2 = vec2.len();
 											*base.add(20).cast::<usize>() = len2;
 											*base.add(16).cast::<*mut u8>() = ptr2.cast_mut();
@@ -674,11 +784,15 @@ pub mod host {
 											*base.add(12).cast::<u8>() = (0i32) as u8;
 										},
 									};
+
 									match notebook_type0 {
 										Some(e) => {
 											*base.add(24).cast::<u8>() = (1i32) as u8;
+
 											let vec3 = e;
+
 											let ptr3 = vec3.as_ptr().cast::<u8>();
+
 											let len3 = vec3.len();
 											*base.add(32).cast::<usize>() = len3;
 											*base.add(28).cast::<*mut u8>() = ptr3.cast_mut();
@@ -687,15 +801,21 @@ pub mod host {
 											*base.add(24).cast::<u8>() = (0i32) as u8;
 										},
 									};
+
 									match pattern0 {
 										Some(e) => {
 											*base.add(36).cast::<u8>() = (1i32) as u8;
+
 											use super::super::super::host::api::types::GlobPattern as V5;
+
 											match e {
 												V5::Pattern(e) => {
 													*base.add(40).cast::<u8>() = (0i32) as u8;
+
 													let vec4 = e;
+
 													let ptr4 = vec4.as_ptr().cast::<u8>();
+
 													let len4 = vec4.len();
 													*base.add(48).cast::<usize>() = len4;
 													*base.add(44).cast::<*mut u8>() =
@@ -709,6 +829,7 @@ pub mod host {
 									};
 								}
 							}
+
 							cleanup_list.extend_from_slice(&[(result6, layout6)]);
 
 							(
@@ -735,43 +856,56 @@ pub mod host {
 								notebook_type: notebook_type7,
 								pattern: pattern7,
 							} = e;
+
 							let (result9_0, result9_1, result9_2) = match language7 {
 								Some(e) => {
 									let vec8 = e;
+
 									let ptr8 = vec8.as_ptr().cast::<u8>();
+
 									let len8 = vec8.len();
 
 									(1i32, ptr8.cast_mut(), len8)
 								},
 								None => (0i32, ::core::ptr::null_mut(), 0usize),
 							};
+
 							let (result11_0, result11_1, result11_2) = match scheme7 {
 								Some(e) => {
 									let vec10 = e;
+
 									let ptr10 = vec10.as_ptr().cast::<u8>();
+
 									let len10 = vec10.len();
 
 									(1i32, ptr10.cast_mut(), len10)
 								},
 								None => (0i32, ::core::ptr::null_mut(), 0usize),
 							};
+
 							let (result13_0, result13_1, result13_2) = match notebook_type7 {
 								Some(e) => {
 									let vec12 = e;
+
 									let ptr12 = vec12.as_ptr().cast::<u8>();
+
 									let len12 = vec12.len();
 
 									(1i32, ptr12.cast_mut(), len12)
 								},
 								None => (0i32, ::core::ptr::null_mut(), 0usize),
 							};
+
 							let (result17_0, result17_1, result17_2, result17_3) = match pattern7 {
 								Some(e) => {
 									use super::super::super::host::api::types::GlobPattern as V15;
+
 									let (result16_0, result16_1, result16_2) = match e {
 										V15::Pattern(e) => {
 											let vec14 = e;
+
 											let ptr14 = vec14.as_ptr().cast::<u8>();
+
 											let len14 = vec14.len();
 
 											(0i32, ptr14.cast_mut(), len14)
@@ -844,6 +978,7 @@ pub mod host {
 					) -> i32 {
 						unreachable!()
 					}
+
 					let ret = wit_import(
 						result19_0,
 						result19_1,
@@ -861,11 +996,13 @@ pub mod host {
 						result19_13,
 						(&document).take_handle() as i32,
 					);
+
 					for (ptr, layout) in cleanup_list {
 						if layout.size() != 0 {
 							_rt::alloc::dealloc(ptr.cast(), layout);
 						}
 					}
+
 					ret as u32
 				}
 			}
@@ -882,7 +1019,9 @@ pub mod exports {
 				#[cfg(target_arch = "wasm32")]
 				static __FORCE_SECTION_REF:fn() =
 					super::super::super::super::__link_custom_section_describing_imports;
+
 				use super::super::super::super::_rt;
+
 				pub type TextDocumentChangeEvent =
 					super::super::super::super::host::api::types::TextDocumentChangeEvent;
 				#[doc(hidden)]
@@ -895,20 +1034,33 @@ pub mod exports {
 					arg4:i32,
 				) {
 					let base9 = arg1;
+
 					let len9 = arg2;
+
 					let mut result9 = _rt::Vec::with_capacity(len9);
+
 					for i in 0..len9 {
 						let base = base9.add(i * 32);
+
 						let e9 = {
 							let l0 = *base.add(0).cast::<i32>();
+
 							let l1 = *base.add(4).cast::<i32>();
+
 							let l2 = *base.add(8).cast::<i32>();
+
 							let l3 = *base.add(12).cast::<i32>();
+
 							let l4 = *base.add(16).cast::<i32>();
+
 							let l5 = *base.add(20).cast::<i32>();
+
 							let l6 = *base.add(24).cast::<*mut u8>();
+
 							let l7 = *base.add(28).cast::<usize>();
+
 							let len8 = l7;
+
 							let bytes8 = _rt::Vec::from_raw_parts(l6.cast(), len8, len8);
 
 							super::super::super::super::host::api::types::TextDocumentContentChangeEvent{
@@ -927,9 +1079,12 @@ pub mod exports {
                 text: _rt::string_lift(bytes8),
               }
 						};
+
 						result9.push(e9);
 					}
+
 					_rt::cabi_dealloc(base9, len9 * 32, 4);
+
 					T::did_change_text_document(super::super::super::super::host::api::types::TextDocumentChangeEvent{
             document: super::super::super::super::host::api::types::TextDocument::from_handle(arg0 as u32),
             content_changes: result9,
@@ -937,6 +1092,7 @@ pub mod exports {
               0 => None,
               1 => {
                 let e = super::super::super::super::host::api::types::TextDocumentChangeReason::_lift(arg4 as u8);
+
                 Some(e)
               }
               _ => _rt::invalid_enum_discriminant(),
@@ -947,11 +1103,15 @@ pub mod exports {
 				#[allow(non_snake_case)]
 				pub unsafe fn _export_execute_command_cabi<T:Guest>(arg0:*mut u8, arg1:usize) {
 					let len0 = arg1;
+
 					let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+
 					T::execute_command(_rt::string_lift(bytes0));
 				}
+
 				pub trait Guest {
 					fn did_change_text_document(event:TextDocumentChangeEvent);
+
 					fn execute_command(command:_rt::String);
 				}
 				#[doc(hidden)]
@@ -1022,6 +1182,7 @@ mod _rt {
 		#[doc(hidden)]
 		pub unsafe fn from_handle(handle:u32) -> Self {
 			debug_assert!(handle != u32::MAX);
+
 			Self { handle:AtomicU32::new(handle), _marker:marker::PhantomData }
 		}
 
@@ -1066,7 +1227,9 @@ mod _rt {
 			}
 		}
 	}
+
 	pub use alloc_crate::vec::Vec;
+
 	pub unsafe fn string_lift(bytes:Vec<u8>) -> String {
 		if cfg!(debug_assertions) {
 			String::from_utf8(bytes).unwrap()
@@ -1074,14 +1237,19 @@ mod _rt {
 			String::from_utf8_unchecked(bytes)
 		}
 	}
+
 	pub unsafe fn cabi_dealloc(ptr:*mut u8, size:usize, align:usize) {
 		if size == 0 {
 			return;
 		}
+
 		let layout = alloc::Layout::from_size_align_unchecked(size, align);
+
 		alloc::dealloc(ptr as *mut u8, layout);
 	}
+
 	pub use alloc_crate::alloc;
+
 	pub unsafe fn invalid_enum_discriminant<T>() -> T {
 		if cfg!(debug_assertions) {
 			panic!("invalid enum discriminant")
@@ -1089,6 +1257,7 @@ mod _rt {
 			core::hint::unreachable_unchecked()
 		}
 	}
+
 	extern crate alloc as alloc_crate;
 }
 

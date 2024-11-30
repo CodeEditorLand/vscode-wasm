@@ -6,7 +6,9 @@ pub fn generate() -> _rt::String {
 	unsafe {
 		#[repr(align(4))]
 		struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+
 		let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+
 		let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
 		#[cfg(target_arch = "wasm32")]
 		#[link(wasm_import_module = "$root")]
@@ -17,11 +19,17 @@ pub fn generate() -> _rt::String {
 
 		#[cfg(not(target_arch = "wasm32"))]
 		fn wit_import(_:*mut u8) { unreachable!() }
+
 		wit_import(ptr0);
+
 		let l1 = *ptr0.add(0).cast::<*mut u8>();
+
 		let l2 = *ptr0.add(4).cast::<usize>();
+
 		let len3 = l2;
+
 		let bytes3 = _rt::Vec::from_raw_parts(l1.cast(), len3, len3);
+
 		_rt::string_lift(bytes3)
 	}
 }
@@ -30,27 +38,36 @@ pub fn generate() -> _rt::String {
 pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 	#[cfg(target_arch = "wasm32")]
 	_rt::run_ctors_once();
+
 	use vscode::example::types::Operation as V0;
+
 	let v0 = match arg0 {
 		0 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Add(e0)
 		},
 		1 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Sub(e0)
 		},
 		2 => {
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Mul(e0)
 		},
 		n => {
 			debug_assert_eq!(n, 3, "invalid enum discriminant");
+
 			let e0 = vscode::example::types::Operands { left:arg1 as u32, right:arg2 as u32 };
+
 			V0::Div(e0)
 		},
 	};
+
 	let result1 = T::calc(v0);
+
 	_rt::as_i32(result1)
 }
 #[doc(hidden)]
@@ -58,25 +75,34 @@ pub unsafe fn _export_calc_cabi<T:Guest>(arg0:i32, arg1:i32, arg2:i32) -> i32 {
 pub unsafe fn _export_msg_cabi<T:Guest>() -> *mut u8 {
 	#[cfg(target_arch = "wasm32")]
 	_rt::run_ctors_once();
+
 	let result0 = T::msg();
+
 	let ptr1 = _RET_AREA.0.as_mut_ptr().cast::<u8>();
+
 	let vec2 = (result0.into_bytes()).into_boxed_slice();
+
 	let ptr2 = vec2.as_ptr().cast::<u8>();
+
 	let len2 = vec2.len();
 	::core::mem::forget(vec2);
 	*ptr1.add(4).cast::<usize>() = len2;
 	*ptr1.add(0).cast::<*mut u8>() = ptr2.cast_mut();
+
 	ptr1
 }
 #[doc(hidden)]
 #[allow(non_snake_case)]
 pub unsafe fn __post_return_msg<T:Guest>(arg0:*mut u8) {
 	let l0 = *arg0.add(0).cast::<*mut u8>();
+
 	let l1 = *arg0.add(4).cast::<usize>();
+
 	_rt::cabi_dealloc(l0, l1, 1);
 }
 pub trait Guest {
 	fn calc(o:Operation) -> u32;
+
 	fn msg() -> _rt::String;
 }
 #[doc(hidden)]
@@ -120,6 +146,7 @@ pub mod vscode {
 				pub left:u32,
 				pub right:u32,
 			}
+
 			impl ::core::fmt::Debug for Operands {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					f.debug_struct("Operands")
@@ -135,6 +162,7 @@ pub mod vscode {
 				Mul(Operands),
 				Div(Operands),
 			}
+
 			impl ::core::fmt::Debug for Operation {
 				fn fmt(&self, f:&mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
 					match self {
@@ -150,6 +178,7 @@ pub mod vscode {
 }
 mod _rt {
 	pub use alloc_crate::{string::String, vec::Vec};
+
 	pub unsafe fn string_lift(bytes:Vec<u8>) -> String {
 		if cfg!(debug_assertions) {
 			String::from_utf8(bytes).unwrap()
@@ -210,14 +239,19 @@ mod _rt {
 		#[inline]
 		fn as_i32(self) -> i32 { self as i32 }
 	}
+
 	pub unsafe fn cabi_dealloc(ptr:*mut u8, size:usize, align:usize) {
 		if size == 0 {
 			return;
 		}
+
 		let layout = alloc::Layout::from_size_align_unchecked(size, align);
+
 		alloc::dealloc(ptr as *mut u8, layout);
 	}
+
 	extern crate alloc as alloc_crate;
+
 	pub use alloc_crate::alloc;
 }
 

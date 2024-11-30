@@ -12,11 +12,14 @@ pub fn activate() -> vscode::Disposables {
 	// Create an output channel.
 	let channel:Rc<vscode::OutputChannel> =
 		Rc::new(vscode::window::create_output_channel("Rust Extension", Some("plaintext")));
+
 	let channel_clone = channel.clone();
+
 	disposables.push(vscode::commands::register_command(
 		"testbed-component-model-vscode.run",
 		move || {
 			channel_clone.append_line("Hello World!");
+
 			for document in vscode::workspace::text_documents() {
 				channel_clone.append_line(&format!(
 					"Document: {} {}",
@@ -26,6 +29,7 @@ pub fn activate() -> vscode::Disposables {
 			}
 		},
 	));
+
 	return disposables;
 }
 

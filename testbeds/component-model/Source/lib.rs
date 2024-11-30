@@ -11,6 +11,7 @@ impl Guest for MyType {
 			Operation::Mul(operands) => operands.left * operands.right,
 			Operation::Div(operands) => operands.left / operands.right,
 		};
+
 		return result;
 	}
 

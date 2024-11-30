@@ -31,7 +31,9 @@ impl EngineImpl {
 
 	fn push_operation(&mut self, operation:Operation) {
 		let left = self.left.unwrap();
+
 		let right = self.right.unwrap();
+
 		self.left = Some(match operation {
 			Operation::Add => left + right,
 			Operation::Sub => left - right,
@@ -67,13 +69,16 @@ impl reverse_notation::Guest for Implementation {
 impl calculator::Guest for Implementation {
 	fn calc(op:types::Operation) -> u32 {
 		calculator::log(&format!("Starting calculation: {:?}", op));
+
 		let result = match op {
 			types::Operation::Add(operands) => operands.left + operands.right,
 			types::Operation::Sub(operands) => operands.left - operands.right,
 			types::Operation::Mul(operands) => operands.left * operands.right,
 			types::Operation::Div(operands) => operands.left / operands.right,
 		};
+
 		calculator::log(&format!("Finished calculation: {:?}", op));
+
 		return result;
 	}
 

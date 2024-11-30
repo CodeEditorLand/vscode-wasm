@@ -30,15 +30,20 @@ where
 		if self.listeners.borrow().len() == 0 {
 			(self.hook)();
 		}
+
 		let id = self.next_id;
+
 		self.next_id += 1;
+
 		self.listeners.borrow_mut().insert(id, Box::new(listener));
 
 		let listeners = self.listeners.clone();
+
 		let unhook = self.unhook.clone();
 
 		return move || {
 			listeners.borrow_mut().shift_remove(&id);
+
 			if listeners.borrow().len() == 0 {
 				(unhook)();
 			}
