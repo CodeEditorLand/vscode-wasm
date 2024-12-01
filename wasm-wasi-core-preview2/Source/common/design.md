@@ -15,7 +15,7 @@ due to constraints in the JavaScript runtime and VS code respectively.
 -   multi threading WASM applications: wasm threads need to be backed by the
     host and the only means JavaScript runtimes have are workers. This will be
     true even with the new
-    [`shared everything thread proposal`](HTTPS://github.com/webAssembly/shared-everything-threads)
+    [`shared everything thread proposal`](https://github.com/webAssembly/shared-everything-threads)
     for threads that will be implemented on the WASM layer (W3C). However WASM
     has one memory region shared between the threads but JavaScript workers all
     have their own memory context (e.g. a heap where they can allocate objects).
