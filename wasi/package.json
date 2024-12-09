@@ -1,10 +1,8 @@
 {
-	"dependencies": {},
-	"description": "WASI preview 2 interfaces for VS Code",
-	"devDependencies": {},
-	"enabledApiProposals": [],
-	"main": "./lib/main.js",
 	"name": "@codeeditorland/wasi",
+	"description": "WASI preview 2 interfaces for VS Code",
+	"main": "./lib/main.js",
+	"typings": "./lib/main.d.ts",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",
@@ -15,5 +13,7 @@
 		"prepack": "npm run all:publish",
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
-	"typings": "./lib/main.d.ts"
+	"dependencies": {},
+	"devDependencies": {},
+	"enabledApiProposals": []
 }

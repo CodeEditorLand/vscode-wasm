@@ -1,21 +1,7 @@
 {
-	"activationEvents": [
-		"*"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"category": "wasm",
-				"command": "testbed-component-model-async.run",
-				"title": "Run Calc Service"
-			}
-		]
-	},
-	"dependencies": {},
-	"description": "Component Model Example",
-	"devDependencies": {},
-	"main": "./out/extension.js",
 	"name": "testbed-component-model-async",
+	"description": "Component Model Example",
+	"main": "./out/extension.js",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:rust",
 		"build:rust": "cargo build --target wasm32-unknown-unknown",
@@ -25,5 +11,19 @@
 		"generate:wat": "wasm-tools print ./target/wasm32-unknown-unknown/debug/calculator.wasm > ./target/wasm32-unknown-unknown/debug/calculator.wat",
 		"run": "npm run build:rust && npm run compile:ts && node ./out/main.js",
 		"watch:ts": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json -w"
-	}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"category": "wasm",
+				"command": "testbed-component-model-async.run",
+				"title": "Run Calc Service"
+			}
+		]
+	},
+	"activationEvents": [
+		"*"
+	],
+	"dependencies": {},
+	"devDependencies": {}
 }

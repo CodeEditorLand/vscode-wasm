@@ -1,5 +1,11 @@
 {
-	"activationEvents": [],
+	"name": "@codeeditorland/testbed-ruby",
+	"description": "Ruby Example",
+	"main": "./out/extension.js",
+	"scripts": {
+		"build": "npm run compile",
+		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -10,17 +16,11 @@
 			}
 		]
 	},
+	"activationEvents": [],
 	"dependencies": {},
-	"description": "Ruby Example",
 	"devDependencies": {},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
-	],
-	"main": "./out/extension.js",
-	"name": "@codeeditorland/testbed-ruby",
-	"scripts": {
-		"build": "npm run compile",
-		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json"
-	}
+	]
 }
