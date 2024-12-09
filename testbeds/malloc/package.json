@@ -1,5 +1,7 @@
 {
+	"dependencies": {},
 	"description": "Malloc Library",
+	"devDependencies": {},
 	"name": "malloc",
 	"scripts": {
 		"compile": "../../node_modules/.bin/make-dir ./out && clang --target=wasm32-wasi-threads -pthread -c _malloc.c -o out/_malloc.o",

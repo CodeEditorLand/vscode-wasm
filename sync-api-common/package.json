@@ -2,9 +2,11 @@
 	"browser": {
 		"./lib/node/main.js": "./lib/browser/main.js"
 	},
+	"dependencies": {},
 	"description": "An RPC implementation between Web and NodeJS workers that works sync",
+	"devDependencies": {},
 	"main": "./lib/node/main.js",
-	"name": "@vscode/sync-api-common",
+	"name": "@codeeditorland/sync-api-common",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint && npm run test",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm run test",

@@ -12,7 +12,9 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Thread Example",
+	"devDependencies": {},
 	"main": "./out/extension.js",
 	"name": "testbed-threads",
 	"scripts": {

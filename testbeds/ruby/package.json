@@ -10,13 +10,15 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Ruby Example",
+	"devDependencies": {},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"
 	],
 	"main": "./out/extension.js",
-	"name": "testbed-ruby",
+	"name": "@codeeditorland/testbed-ruby",
 	"scripts": {
 		"build": "npm run compile",
 		"compile": "node ../../node_modules/typescript/lib/tsc.js -b tsconfig.json"

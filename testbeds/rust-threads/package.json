@@ -11,7 +11,9 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Rust Threads Example",
+	"devDependencies": {},
 	"main": "./out/extension.js",
 	"name": "testbed-rust-threads",
 	"scripts": {

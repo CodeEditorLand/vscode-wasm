@@ -1,4 +1,5 @@
 {
+	"dependencies": {},
 	"description": "A WASI implementation that uses VS Code's extension host as the implementing API",
 	"devDependencies": {
 		"@types/assert": "1.5.11",
@@ -16,7 +17,7 @@
 		"shelljs": "0.8.5",
 		"shx": "0.3.4"
 	},
-	"name": "vscode-wasi",
+	"name": "@codeeditorland/wasi",
 	"scripts": {
 		"build": "node ./node_modules/typescript/lib/tsc.js -b tsconfig.json",
 		"clean": "node ./build/bin/all.js run clean",

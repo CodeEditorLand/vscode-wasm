@@ -10,7 +10,9 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Demonstrate issue with big buffer writes in vscode-wasm-core",
+	"devDependencies": {},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core"
 	],

@@ -21,7 +21,7 @@
 			"types": "./lib/node/main.d.ts"
 		}
 	},
-	"name": "@vscode/wasm-kit",
+	"name": "@codeeditorland/wasm-kit",
 	"scripts": {
 		"clean": "rimraf lib",
 		"compile": "tsc -b ./tsconfig.json",

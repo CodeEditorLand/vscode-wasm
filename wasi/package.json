@@ -4,7 +4,7 @@
 	"devDependencies": {},
 	"enabledApiProposals": [],
 	"main": "./lib/main.js",
-	"name": "@vscode/wasi",
+	"name": "@codeeditorland/wasi",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint",

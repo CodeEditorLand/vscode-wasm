@@ -9,7 +9,9 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Ruby Example",
+	"devDependencies": {},
 	"extensionDependencies": [
 		"ms-vscode.wasm-wasi-core",
 		"ms-vscode.webshell"

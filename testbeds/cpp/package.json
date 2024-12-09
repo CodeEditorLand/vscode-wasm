@@ -11,7 +11,9 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "C++ Example",
+	"devDependencies": {},
 	"main": "./out/extension.js",
 	"name": "testbed-cpp",
 	"scripts": {

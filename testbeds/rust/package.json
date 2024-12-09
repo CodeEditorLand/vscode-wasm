@@ -11,9 +11,11 @@
 			}
 		]
 	},
+	"dependencies": {},
 	"description": "Rust Example",
+	"devDependencies": {},
 	"main": "./out/extension.js",
-	"name": "testbed-rust",
+	"name": "@codeeditorland/testbed-rust",
 	"scripts": {
 		"build": "npm run compile:ts && npm run build:rust",
 		"build:rust": "cargo build --target wasm32-wasip1",

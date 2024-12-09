@@ -29,7 +29,7 @@
 			"types": "./lib/node/main.d.ts"
 		}
 	},
-	"name": "@vscode/wasm-component-model",
+	"name": "@codeeditorland/wasm-component-model",
 	"scripts": {
 		"all": "npm run clean && npm run compile && npm run lint",
 		"all:publish": "git clean -xfd . && npm install && npm run compile:publish && npm run lint && npm test",
