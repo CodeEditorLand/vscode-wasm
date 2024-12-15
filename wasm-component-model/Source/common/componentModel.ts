@@ -3634,9 +3634,7 @@ export class FlagsType<_T> implements ComponentModelType<u32 | bigint> {
 
 			for (
 				let f = 0, i = result.length - 1;
-
 				f < result.length;
-
 				f++, i--
 			) {
 				const bits = Number(
@@ -3952,9 +3950,7 @@ export class VariantType<T extends JVariantCase, I, V extends JType>
 
 		for (
 			let i = flatTypes.length - valuesToFill;
-
 			i < flatTypes.length;
-
 			i++
 		) {
 			const type = flatTypes[i];

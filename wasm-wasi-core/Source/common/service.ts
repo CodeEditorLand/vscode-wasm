@@ -1025,9 +1025,7 @@ export namespace DeviceWasiService {
 
 					for (
 						;
-
 						i < entries.length && spaceLeft >= Dirent.size;
-
 						i++
 					) {
 						const entry = entries[i];
