@@ -7,12 +7,12 @@ use std::{error::Error, fs, path::Path};
 
 use lsp_server::{Connection, ExtractError, Message, RequestId, Response};
 use lsp_types::{
-	request::{GotoDefinition, Request},
 	GotoDefinitionResponse,
 	InitializeParams,
 	Location,
 	OneOf,
 	ServerCapabilities,
+	request::{GotoDefinition, Request},
 };
 use serde::{Deserialize, Serialize};
 // use walkdir::WalkDir;
@@ -26,7 +26,6 @@ pub struct CountFilesParams {
 pub enum CountFilesRequest {}
 impl Request for CountFilesRequest {
 	type Params = CountFilesParams;
-
 	type Result = u32;
 
 	const METHOD:&'static str = "wasm-language-server/countFilesInDirectory";
