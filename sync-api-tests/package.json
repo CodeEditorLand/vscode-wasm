@@ -21,7 +21,7 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@types/uuid": "10.0.0",
-		"find-process": "1.4.7",
-		"uuid": "11.0.3"
+		"find-process": "1.4.9",
+		"uuid": "11.0.4"
 	}
 }

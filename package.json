@@ -18,10 +18,10 @@
 	"devDependencies": {
 		"@types/assert": "1.5.11",
 		"@types/glob": "8.1.0",
-		"@types/node": "22.10.1",
+		"@types/node": "22.10.5",
 		"@types/path-browserify": "1.0.3",
 		"assert": "2.1.0",
-		"esbuild": "0.24.0",
+		"esbuild": "0.24.2",
 		"glob": "11.0.0",
 		"http-server": "14.1.1",
 		"make-dir-cli": "4.0.0",

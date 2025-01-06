@@ -13,7 +13,7 @@
 		"prepublishOnly": "echo \"⛔ Can only publish from a secure pipeline ⛔\" && node ../build/npm/fail"
 	},
 	"dependencies": {
-		"uuid": "11.0.3"
+		"uuid": "11.0.4"
 	},
 	"devDependencies": {
 		"@types/uuid": "10.0.0"
