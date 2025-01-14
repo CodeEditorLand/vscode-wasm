@@ -15,7 +15,7 @@
 	},
 	"activationEvents": [],
 	"dependencies": {
-		"uuid": "11.0.4"
+		"uuid": "11.0.5"
 	},
 	"devDependencies": {
 		"@types/assert": "1.5.11",
